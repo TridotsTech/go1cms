@@ -99,12 +99,9 @@ class PageSection(Document):
 		json_obj['mobile_app_template'] = self.mobile_app_template
 		json_obj['login_required'] = self.is_login_required
 		json_obj['dynamic_data'] = self.dynamic_data
-		# json_obj['context'] = self.context
 		json_obj['is_full_width'] = self.is_full_width
 		json_obj['layout_json'] = self.layout_json
-
 		if self.section_type == 'Predefined Section' and not self.is_login_required:
-			# frappe.log_error(self.predefined_section, "--res1--")
 			if self.predefined_section=="Recommended Items":
 				# frappe.log_error("rec", "recommended")
 				json_obj['data'] = get_recommended_products(self.query, self.reference_document, self.no_of_records, business=self.business, customer=customer, add_info=add_info,store_business=store_business)
