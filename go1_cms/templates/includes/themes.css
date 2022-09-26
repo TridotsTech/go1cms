@@ -1,0 +1,117 @@
+:root{
+    --body-bg-color: {{doc.body_background_color}};
+    --body-link-color: {{doc.body_link_color}};
+    --body-link-hover-color: {{doc.body_link_hover_color}};
+   
+    --header-bg-color: {{doc.header_background_color}};
+    --topbar-bg-color: {{doc.top_menu_background_color}};
+    --topbar-text-color: {{doc.top_menu_text_color}};
+    --menu-text-color: {{doc.menu_text_color}};
+    --menu-hover-color: {{doc.menu_hover_color}};
+    --menu-hover-bg-color: {{doc.menu_hover_background_color}};
+    --submenu-text-color: {{doc.submenu_text_color}};
+    --submenu-hover-color: {{doc.submenu_hover_color}};
+    --submenu-hover-bg-color: {{doc.submenu_hover_background_color}};
+
+    --footer-text-color:{{doc.footer_text_color}};
+    --footer-background-color:{{doc.footer_background_color}};
+    --footer-link-color:{{doc.footer_link_color}};
+    --footer-link-hover-color:{{doc.footer_link_hover_color}};
+}
+{% if doc.body_link_color %}
+body a{
+    color: var(--body-link-color);
+}
+{% endif %}
+
+{% if doc.body_link_hover_color %}
+body a:hover {
+    color: {{doc.body_link_hover_color}};
+}
+{% endif %}
+body {
+    background:{{doc.body_background_color}};
+    {% if doc.body_background_image %}
+    background-image: url('{{doc.body_background_image}}');
+    {% endif %}
+     {% if doc.site_layout=="Boxed" %}
+     width: {{doc.boxed_container_width}};
+     margin: 0 auto;
+     {% endif %}
+     color:{{doc.body_text_color}};
+}
+.container{
+    max-width: {{doc.container_width}};
+}
+
+
+{% if doc.header_background_color %}
+.navbar-expand-md{
+    background-color:var( --header-bg-color);
+}
+{% endif %}
+{% if doc.menu_text_color %}
+.nav-link{
+    color: var(--menu-text-color);
+}
+{% endif %}
+{% if doc.menu_hover_background_color %}
+.nav-link:hover{
+    background-color:var(--menu-hover-bg-color);
+}
+{% endif %}
+{% if doc.menu_hover_color%}
+.nav-link:hover:hover{
+    color: var(--menu-hover-color);
+}
+{% endif %}
+{% if doc.submenu_text_color %}
+.dropdown-menu li a{
+  color:var(--submenu-text-color);
+}
+{% endif %}
+{% if doc.submenu_hover_color %}
+.dropdown-menu li a:hover{
+    color: var(--submenu-hover-color);
+}
+{% endif %}
+{% if doc.top_menu_background_color %}
+.top-menu-bar {
+  background-color: var( --topbar-bg-color);
+ }
+{% endif %}
+{% if doc.top_menu_text_color %}
+.top-menu-bar a {
+  color: var(--topbar-text-color);
+ }
+{% endif %}  
+
+{% if doc.footer_text_color %}
+.footer{
+    color:var(--footer-text-color);
+}
+{% endif %}
+
+
+{% if doc.footer_background_color %}
+.footer{
+    background-color: var(--footer-background-color);
+}
+{% endif %}
+
+{% if doc.footer_link_color %}
+.footer a{
+    color: var(--footer-link-color);
+}
+{% endif %}
+
+{% if doc.footer_link_hover_color%}
+.footer a:hover{
+    color: var( --footer-link-hover-color);
+}
+{% endif %}
+
+
+{% if doc.page_css %}
+{{doc.page_css}}
+{% endif %}

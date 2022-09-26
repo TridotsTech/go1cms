@@ -1,0 +1,616 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "PS-.YY.-.#####",
+ "creation": "2022-08-16 11:09:30.920452",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_title",
+  "route",
+  "class_name",
+  "section_info_section",
+  "section_group",
+  "is_full_width",
+  "column_break_3",
+  "section_type",
+  "predefined_section",
+  "column_break_5",
+  "view_type",
+  "device_type",
+  "is_editable",
+  "is_login_required",
+  "content_type",
+  "reference_name",
+  "fetch_product",
+  "section_name",
+  "image_options_section",
+  "image_option",
+  "image_link_documents",
+  "section_style_section",
+  "allow_update_to_style",
+  "column_break_21",
+  "choose_style_properties",
+  "column_break_23",
+  "css_field_list",
+  "dynamic_section_section",
+  "reference_document",
+  "condition",
+  "column_break_27",
+  "no_of_records",
+  "sort_field",
+  "sort_by",
+  "dynamic_data",
+  "display_data_randomly",
+  "column_break_31",
+  "choose_fields",
+  "field_list",
+  "section_break_63",
+  "content",
+  "section_layout",
+  "image",
+  "section_break_32",
+  "enable_view_more",
+  "column_break_16",
+  "view_more_display_text",
+  "column_break_36",
+  "view_more_type",
+  "column_break_38",
+  "view_more_redirect_to",
+  "section_title_section",
+  "title",
+  "column_break_42",
+  "sub_title",
+  "column_break_44",
+  "banners_section",
+  "section_break_46",
+  "query",
+  "section_break_48",
+  "custom_section_data",
+  "styles_section",
+  "bg_type",
+  "column_break_52",
+  "bg_color",
+  "bg_image",
+  "file_path",
+  "website_template_section",
+  "web_options",
+  "web_template",
+  "mobile_template_section",
+  "mobile_view_template",
+  "column_break_61",
+  "mobile_app_template",
+  "section_break_65",
+  "custom_css",
+  "column_break_67",
+  "custom_js",
+  "css_json",
+  "css_text",
+  "layout_json",
+  "layout_id",
+  "layout_type",
+  "section_column_css",
+  "menu"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_info_section",
+   "fieldtype": "Section Break",
+   "label": "Section Info"
+  },
+  {
+   "fieldname": "section_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Section Group",
+   "options": "Section Template Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_full_width",
+   "fieldtype": "Check",
+   "label": "Is Full Width Section ?"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Section Type",
+   "options": "\nSlider\nStatic Section\nPredefined Section\nCustom Section\nMenu",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.section_type == \"Predefined Section\";",
+   "fieldname": "predefined_section",
+   "fieldtype": "Link",
+   "label": "Choose Custom Query",
+   "options": "Custom Query"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "view_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "View Type",
+   "options": "\nSlider\n1 Column\n2 Column\n3 Column\n1 - 2 Column"
+  },
+  {
+   "fieldname": "device_type",
+   "fieldtype": "Select",
+   "label": "Device Type",
+   "options": "\nWeb\nMobile\nWeb & Mobile"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.section_type == \"Predefined Section\";",
+   "fieldname": "is_editable",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Editable"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:(doc.section_type == \"Predefined Section\" && doc.dynamic_data != 1); ",
+   "fieldname": "is_login_required",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Login Required"
+  },
+  {
+   "depends_on": "eval:doc.section_type == \"Custom Section\";",
+   "fieldname": "content_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Content Type",
+   "options": "\nStatic\nDynamic"
+  },
+  {
+   "depends_on": "eval:doc.fetch_product== 1 ",
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_document"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:(doc.content_type == \"Dynamic\" && doc.section_type == \"Custom Section\" || doc.section_type == \"Tabs\")",
+   "fieldname": "fetch_product",
+   "fieldtype": "Check",
+   "label": "Get Data From Products"
+  },
+  {
+   "fieldname": "section_name",
+   "fieldtype": "Data",
+   "label": "Section Name",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.section_type == \"Lists\"",
+   "fieldname": "image_options_section",
+   "fieldtype": "Section Break",
+   "label": "Image Options"
+  },
+  {
+   "fieldname": "image_option",
+   "fieldtype": "Select",
+   "label": "Image Option",
+   "options": "Same Document\nChild Table\nLinked Documents"
+  },
+  {
+   "depends_on": "eval:doc.image_option != \"Same Document\" ",
+   "fieldname": "image_link_documents",
+   "fieldtype": "Code",
+   "label": "Image Link Documents"
+  },
+  {
+   "fieldname": "section_style_section",
+   "fieldtype": "Section Break",
+   "label": "Section Style"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_update_to_style",
+   "fieldtype": "Check",
+   "label": "Enable Section Style"
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1",
+   "fieldname": "choose_style_properties",
+   "fieldtype": "Button",
+   "label": "Choose Style Properties"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1;",
+   "fieldname": "css_field_list",
+   "fieldtype": "Code",
+   "label": "CSS Properties List",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:  doc.section_type == \"Custom Section\"",
+   "fieldname": "dynamic_section_section",
+   "fieldtype": "Section Break",
+   "label": "Dynamic Section"
+  },
+  {
+   "depends_on": "eval: doc.section_type == \"Custom Section\"",
+   "fieldname": "reference_document",
+   "fieldtype": "Link",
+   "label": "Reference Document",
+   "options": "DocType"
+  },
+  {
+   "depends_on": "eval:(doc.section_type != \"Menu\" && doc.section_type != \"Static Section\" && doc.section_type != \"Predefined Section\")",
+   "description": "Give field name of the selected doctype. This can be used as follows:\n<ul><li>doc.is_active = 1</li>\n<li>doc.is_active = 1 and doc.name = \"sample\"</li></ul>",
+   "fieldname": "condition",
+   "fieldtype": "Small Text",
+   "label": "Condition"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:  doc.section_type == \"Custom Section\" || doc.section_type == \"Predefined Section\" || doc.section_type == \"Lists\" || doc.section_type == \"Tabs\"",
+   "fieldname": "no_of_records",
+   "fieldtype": "Int",
+   "label": "No. Of Records"
+  },
+  {
+   "fieldname": "sort_field",
+   "fieldtype": "Data",
+   "label": "Sort Field"
+  },
+  {
+   "default": "DESC",
+   "fieldname": "sort_by",
+   "fieldtype": "Select",
+   "label": "Sort By",
+   "options": "ASC\nDESC"
+  },
+  {
+   "default": "1",
+   "description": "If unchecked then data will saved as JSON while saving page and data wont fetch from doctype dynamically.You need save page builder for getting latest data.",
+   "fieldname": "dynamic_data",
+   "fieldtype": "Check",
+   "label": "Fetch Data Dynamically ?"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:  doc.dynamic_data == 1 ",
+   "fieldname": "display_data_randomly",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Display Data Randomly"
+  },
+  {
+   "fieldname": "column_break_31",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:  doc.section_type == \"Custom Section\" ",
+   "fieldname": "choose_fields",
+   "fieldtype": "Button",
+   "label": "Choose Fields"
+  },
+  {
+   "fieldname": "field_list",
+   "fieldtype": "Code",
+   "label": "Field List",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_63",
+   "fieldtype": "Section Break",
+   "label": "Field List"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Table",
+   "label": "Add fields that you would like to collect for this section template",
+   "options": "Section Content"
+  },
+  {
+   "fieldname": "section_layout",
+   "fieldtype": "Section Break",
+   "label": "Section Layout"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "fieldname": "section_break_32",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.section_type == \"Custom Section\" ",
+   "fieldname": "enable_view_more",
+   "fieldtype": "Check",
+   "label": "Enable View More"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_view_more == 1 ",
+   "fieldname": "view_more_display_text",
+   "fieldtype": "Data",
+   "label": "View More Display Text"
+  },
+  {
+   "fieldname": "column_break_36",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_view_more == 1 ",
+   "fieldname": "view_more_type",
+   "fieldtype": "Link",
+   "label": "View More Redirect Page Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_view_more == 1 ",
+   "fieldname": "view_more_redirect_to",
+   "fieldtype": "Dynamic Link",
+   "label": "View More Redirect To",
+   "options": "view_more_type"
+  },
+  {
+   "fieldname": "section_title_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Section Title"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "column_break_42",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sub_title",
+   "fieldtype": "Data",
+   "label": "Sub Title"
+  },
+  {
+   "fieldname": "column_break_44",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.section_type == \"Banner\" ",
+   "fieldname": "banners_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Banners"
+  },
+  {
+   "fieldname": "section_break_46",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "fetch_from": "predefined_section.query",
+   "fieldname": "query",
+   "fieldtype": "Code",
+   "label": "Query"
+  },
+  {
+   "depends_on": "eval:(doc.section_type == \"Custom Section\" && doc.content_type == 'Static')",
+   "fieldname": "section_break_48",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "custom_section_data",
+   "fieldtype": "Code",
+   "label": "Custom Section Data"
+  },
+  {
+   "fieldname": "styles_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Styles"
+  },
+  {
+   "default": "Color",
+   "fieldname": "bg_type",
+   "fieldtype": "Select",
+   "label": "Background Type",
+   "options": "\nColor\nImage"
+  },
+  {
+   "fieldname": "column_break_52",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#ffffff",
+   "depends_on": "eval:doc.bg_type == \"Color\" ",
+   "fieldname": "bg_color",
+   "fieldtype": "Data",
+   "label": "Background Color"
+  },
+  {
+   "depends_on": "eval:doc.bg_type == \"Image\" ",
+   "fieldname": "bg_image",
+   "fieldtype": "Attach Image",
+   "label": "Background Image"
+  },
+  {
+   "fieldname": "file_path",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "File Path"
+  },
+  {
+   "fieldname": "website_template_section",
+   "fieldtype": "Section Break",
+   "label": "Template For Web"
+  },
+  {
+   "fieldname": "web_options",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "web_template",
+   "fieldtype": "Text",
+   "ignore_xss_filter": 1,
+   "label": "Web Template"
+  },
+  {
+   "fieldname": "mobile_template_section",
+   "fieldtype": "Section Break",
+   "label": "Template For Mobile"
+  },
+  {
+   "fieldname": "mobile_view_template",
+   "fieldtype": "Text",
+   "ignore_xss_filter": 1,
+   "label": "Mobile View Template"
+  },
+  {
+   "fieldname": "column_break_61",
+   "fieldtype": "Column Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "mobile_app_template",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "ignore_xss_filter": 1,
+   "label": "Mobile App Template"
+  },
+  {
+   "fieldname": "section_break_65",
+   "fieldtype": "Section Break",
+   "label": "Custom Css and Js"
+  },
+  {
+   "fieldname": "custom_css",
+   "fieldtype": "Text",
+   "label": "Custom Css"
+  },
+  {
+   "fieldname": "column_break_67",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custom_js",
+   "fieldtype": "Text",
+   "label": "Custom Js"
+  },
+  {
+   "fieldname": "section_title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Route"
+  },
+  {
+   "fieldname": "class_name",
+   "fieldtype": "Data",
+   "label": "Class Name"
+  },
+  {
+   "fieldname": "css_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Css JSON",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "css_text",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "CSS Text",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "layout_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Layout JSON"
+  },
+  {
+   "fieldname": "layout_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Layout ID"
+  },
+  {
+   "fieldname": "layout_type",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Layout Type"
+  },
+  {
+   "fieldname": "section_column_css",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Section Column CSS",
+   "options": "Section Column CSS"
+  },
+  {
+   "fieldname": "menu",
+   "fieldtype": "Link",
+   "label": "Menu",
+   "options": "Menu"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-09-24 14:05:53.151927",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Page Section",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

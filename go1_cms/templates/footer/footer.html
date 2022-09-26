@@ -1,0 +1,157 @@
+<div class="footer">
+
+	<div class="f2 footer__container go1-cms-footer">
+		<div class="container">
+		 {%if footer.layout_json_data%}
+            <div class="d__flex" style="align-items: flex-start;">
+                {%for col in footer.layout_json_data%}
+             
+                  {%if col.columns%}
+                    {%for each_col in col.columns%}
+                    {%set col_index = loop.index %}
+                        <div style="width: {{each_col.width}}" class="footer_sec">
+                            {%for sec_item in footer.get("items")%}
+                                {%if col_index == (sec_item.column_index+1) %}
+                                	{%for m_sec_item in sec_item.get("items")%}
+	                                	 {%if m_sec_item.section_name=="Footer About"%}
+	                                	 <div class="footer_p_b">
+	                                	 	<div class="{{m_sec_item.class_name}}">
+	                                	 		<img   class="home__logo  " style="max-height: 35px;" src="{{m_sec_item.logo}}" />
+	                                	 		<p class="about_content">
+	                                	 			{{m_sec_item.content}}
+	                                	 		</p>
+	                                	 	</div>
+	                                	 	</div>
+	                                	 {%endif%}
+	                                	 {%if m_sec_item.section_name=="Menu"%}
+	                                	 <div class="footer_p_b">
+	                                	 	<div class="{{m_sec_item.class_name}}">
+	                                	 		<span  class="go1-cms-footer-title">{{m_sec_item.title}}</span>
+	                                	 		<div class="border_line"></div>
+	                                	 		{%for menu_item in m_sec_item.menus%}
+		                                	 		<div  class="d__flex" style="align-items: flex-start;"><a href="{{menu_item.redirect_url}}" class="d__flex go1-cms-footer-text m-0">
+		                                	 		{%if footer.enable_link_icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>{%endif%}
+		                                	 		<span>{{menu_item.menu_label}}</span></a></div>
+		                                	 	{%endfor%}
+	                                	 	</div>
+	                                	 	</div>
+	                                	 {%endif%}
+	                                	 {%if m_sec_item.section_name=="Social Links"%}
+	                                	 	<span  class="go1-cms-footer-title">Social Media</span>
+		                                	 		<ul  class="d__flex" style="gap:10px">
+
+	                                	 	{%for menu_item in theme_settings.social_links%}
+	                                	 	<li>
+		                                	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+		                                	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+		                                	 		<span>{{menu_item.social_type}}</span>
+		                                	 		{%else%}
+		                                	 			<img src="{{menu_item.icon}}" height="35px" />
+		                                	 		{%endif%}
+		                                	 	</a>
+		                                	 </li>
+		                                	 	{%endfor%}
+		                                	 </ul>
+	                                	 {%endif%}
+                                	 {%endfor%}
+                                  {%endif%}
+                             
+                            {%endfor%}
+                        </div>
+                    {%endfor%}
+                  {%endif%}
+                    
+                {%endfor%}
+            </div>
+        {%endif%}
+		</div>
+	</div>
+
+</div>
+{%if footer.enable_copyright%}
+<div class="go1-cms-copyright-content">
+	<div class="container">
+		<div class="d_flex">
+		{%if footer.copyright_layout == "One Column"%}
+			<div class="col-md-12" >
+				<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}{%if footer.cp_fc_alignment=="Center"%}justify-content: center;{%endif%}">
+				{%if footer.fc_ct_type == "Custom" %}
+					<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
+						{{footer.cp_fc_content}}
+					</div>
+				{%endif%}
+				{%if footer.fc_ct_type == "Social Links" %}
+					<ul  class="d__flex" style="gap:10px">
+
+                	 	{%for menu_item in theme_settings.social_links%}
+                	 	<li>
+                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+                    	 		<span>{{menu_item.social_type}}</span>
+                    	 		{%else%}
+                    	 			<img src="{{menu_item.icon}}" height="35px" />
+                    	 		{%endif%}
+                    	 	</a>
+                    	 </li>
+                    	 	{%endfor%}
+                    	 </ul>
+				{%endif%}
+			</div>
+		</div>
+		{%else%}
+			<div class="col-md-6" >
+				<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}">
+				{%if footer.fc_ct_type == "Custom" %}
+					<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
+						{{footer.cp_fc_content}}
+					</div>
+				{%endif%}
+				{%if footer.fc_ct_type == "Social Links" %}
+					<ul  class="d__flex" style="gap:10px">
+
+                	 	{%for menu_item in theme_settings.social_links%}
+                	 	<li>
+                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+                    	 		<span>{{menu_item.social_type}}</span>
+                    	 		{%else%}
+                    	 			<img src="{{menu_item.icon}}" height="35px" />
+                    	 		{%endif%}
+                    	 	</a>
+                    	 </li>
+                    	 	{%endfor%}
+                    	 </ul>
+				{%endif%}
+				</div>
+			</div>
+			<div class="col-md-6" >
+				<div style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left"%}justify-content: start;{%endif%}">
+
+				{%if footer.sc_ct_type == "Custom" %}
+					<div class="go1-cms-copyright-sc-content"    >
+						{{footer.cp_sc_content}}
+					</div>
+				{%endif%}
+				{%if footer.sc_ct_type == "Social Links" %}
+					<ul  class="d__flex" style="gap:10px">
+
+                	 	{%for menu_item in theme_settings.social_links%}
+                	 	<li>
+                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+                    	 		<span>{{menu_item.social_type}}</span>
+                    	 		{%else%}
+                    	 			<img src="{{menu_item.icon}}" height="35px" />
+                    	 		{%endif%}
+                    	 	</a>
+                    	 </li>
+                    	 	{%endfor%}
+                    	 </ul>
+				{%endif%}
+			</div>
+		</div>
+		{%endif%}
+	</div>
+</div>
+</div>
+{%endif%}

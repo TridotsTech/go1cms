@@ -1,0 +1,178 @@
+
+{% if footer_settings %}
+.{{page_route}} .go1-cms-footer{
+    {% if footer_settings.background_color %}
+        background-color:{{footer_settings.background_color}};
+    {% endif %}
+    {% if footer_settings.text_color %}
+        color:{{footer_settings.text_color}};
+    {% endif %}
+    {% if footer_settings.footer_vertical_padding %}
+        padding:{{footer_settings.footer_vertical_padding}} 0px;
+    {% endif %}
+
+    {% if footer_settings.f_txt_font_family %}
+        font-family: {{footer_settings.f_txt_font_family}};
+    {% endif %} 
+    {% if footer_settings.f_txt_line_height %}
+        line-height: {{footer_settings.f_txt_line_height}};
+    {% endif %}   
+    {% if footer_settings.f_txt_font_wt %}
+        font-weight: {{footer_settings.f_txt_font_wt}};
+    {% endif %} 
+    {% if footer_settings.f_txt_ls %}
+        letter-spacing: {{footer_settings.f_txt_ls}};
+    {% endif %}  
+    {% if footer_settings.f_txt_size %}
+        font-size: {{footer_settings.f_txt_size}};
+    {% endif %} 
+    {% if footer_settings.f_txt_color %}
+        color: {{footer_settings.f_txt_color}};
+    {% endif %} 
+}
+.{{page_route}} .go1-cms-footer p{
+     {% if footer_settings.text_color %}
+        color:{{footer_settings.text_color}};
+    {% endif %}
+    {% if footer_settings.f_txt_font_family %}
+        font-family: {{footer_settings.f_txt_font_family}};
+    {% endif %} 
+    {% if footer_settings.f_txt_line_height %}
+        line-height: {{footer_settings.f_txt_line_height}};
+    {% endif %}   
+    {% if footer_settings.f_txt_font_wt %}
+        font-weight: {{footer_settings.f_txt_font_wt}};
+    {% endif %} 
+    {% if footer_settings.f_txt_ls %}
+        letter-spacing: {{footer_settings.f_txt_ls}};
+    {% endif %}  
+    {% if footer_settings.f_txt_size %}
+        font-size: {{footer_settings.f_txt_size}};
+    {% endif %} 
+    {% if footer_settings.f_txt_color %}
+        color: {{footer_settings.f_txt_color}};
+    {% endif %} 
+}
+.{{page_route}} .go1-cms-footer .social_link ul{
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.{{page_route}} .go1-cms-footer .social_link ul li img{
+    max-height: 35px;
+    margin: 0 5px;
+    }
+.{{page_route}} .go1-cms-footer .footer_sec{
+    display: flex;
+    flex-direction: column;
+}
+.{{page_route}} .go1-cms-footer .about_content {
+  
+    margin-top: 10px;
+    float: left;width: 85%;
+}
+.{{page_route}} .go1-cms-footer a{
+    padding: 8px 0;
+    {% if footer_settings.link_color %}
+        color: {{footer_settings.link_color}};
+    {% endif %} 
+    {% if footer_settings.f_txt_size %}
+        font-size: {{footer_settings.f_txt_size}};
+    {% endif %}  
+}
+.{{page_route}} .go1-cms-footer a span{
+    {% if footer_settings.link_color %}
+        color: {{footer_settings.link_color}};
+    {% endif %} 
+    {% if footer_settings.f_txt_size %}
+        font-size: {{footer_settings.f_txt_size}};
+    {% endif %}  
+     {% if footer_settings.f_txt_font_wt %}
+        font-weight: {{footer_settings.f_txt_font_wt}};
+    {% endif %}
+}
+{%if footer_settings.enable_title_border%}
+ .{{page_route}} .go1-cms-footer .border_line{
+     border: 1px solid var(--go1-primary-color);
+    width: 20%;
+    margin: 10px 0;
+ }
+{%endif%}
+.{{page_route}} .go1-cms-footer a:hover{
+    {% if footer_settings.link_hover_color %}
+        color: {{footer_settings.link_hover_color}};
+    {% endif %}  
+}
+.{{page_route}} .go1-cms-footer-title{
+    {% if footer_settings.font_family %}
+        font-family: {{footer_settings.font_family}};
+    {% endif %} 
+    {% if footer_settings.f_title_line_height %}
+        line-height: {{footer_settings.f_title_line_height}};
+    {% endif %}   
+    {% if footer_settings.f_title_wt %}
+        font-weight: {{footer_settings.f_title_wt}};
+    {% endif %} 
+    {% if footer_settings.f_title_ls %}
+        letter-spacing: {{footer_settings.f_title_ls}};
+    {% endif %}  
+    {% if footer_settings.f_title_size %}
+        font-size: {{footer_settings.f_title_size}};
+    {% endif %} 
+    {% if footer_settings.f_title_color %}
+        color: {{footer_settings.f_title_color}};
+    {% endif %} 
+       padding:0 0 15px 0;
+}
+
+{% if footer_settings.enable_copyright %}
+
+.{{page_route}} .go1-cms-copyright-content{
+    {% if footer_settings.copyright_font_size %}
+        font-size: {{footer_settings.copyright_font_size}};
+    {% endif %}
+    {% if footer_settings.enable_footer_border %}
+        border-top:1px solid {{footer_settings.footer_border_color}};
+    {% endif %}
+    {% if footer_settings.copyright_vertical_padding %}
+        padding:{{footer_settings.copyright_vertical_padding}} 0px;
+    {% endif %}
+    {% if footer_settings.cp_text_color %}
+        color: {{footer_settings.cp_text_color}};
+    {% endif %}
+    {% if footer_settings.cr_bg_color %}
+        background-color:{{footer_settings.cr_bg_color}};
+    {% endif %}
+}
+.{{page_route}} .go1-cms-copyright-fc-content{
+    text-align: {{footer_settings.cp_fc_alignment}};
+}
+.{{page_route}} .go1-cms-copyright-sc-content{
+    display: flex;
+     {%if footer_settings.cp_sc_alignment=="Left"%}
+        justify-content: flex-start;
+        {%endif%}
+         {%if footer_settings.cp_sc_alignment=="Center"%}
+        justify-content: center;
+        {%endif%}
+         {%if footer_settings.cp_sc_alignment=="Right"%}
+          justify-content: right;
+    {%endif%}
+}
+.{{page_route}} .go1-cms-copyright-content a{
+    {% if footer_settings.cpy_link_color %}
+        color: {{footer_settings.cpy_link_color}};
+    {% endif %}  
+}
+
+.{{page_route}} .go1-cms-copyright-content a:hover{
+    {% if footer_settings.link_color_hover_color %}
+        color: {{footer_settings.link_color_hover_color}};
+    {% endif %}  
+}
+
+{% endif %}
+
+{% endif %}

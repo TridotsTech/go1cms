@@ -1,0 +1,187 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "SCM-.#####",
+ "creation": "2022-08-09 15:43:41.882903",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "group_name",
+  "column_break_2",
+  "icon",
+  "preview_image",
+  "component_type",
+  "section_style_section",
+  "allow_update_to_style",
+  "column_break_6",
+  "choose_style_properties",
+  "column_break_8",
+  "css_field_list",
+  "section_break_3",
+  "content",
+  "section_break_4",
+  "web_template",
+  "template_for_mobile_section",
+  "mobile_view_template",
+  "custom_section",
+  "custom_css",
+  "column_break_21",
+  "custom_js",
+  "route"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break",
+   "label": "Fields"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Table",
+   "label": "Fields",
+   "options": "Section Content"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Attach",
+   "label": "Icon"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Template For Web"
+  },
+  {
+   "fieldname": "section_style_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Component Style"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_update_to_style",
+   "fieldtype": "Check",
+   "label": "Enable Component Style"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1",
+   "fieldname": "choose_style_properties",
+   "fieldtype": "Button",
+   "label": "Choose Style Properties"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1;",
+   "fieldname": "css_field_list",
+   "fieldtype": "Code",
+   "label": "CSS Properties List",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "group_name",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_standard_filter": 1,
+   "label": "Group Name",
+   "options": "Section Component Group"
+  },
+  {
+   "fieldname": "preview_image",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Preview Image"
+  },
+  {
+   "fieldname": "component_type",
+   "fieldtype": "Data",
+   "label": "Type"
+  },
+  {
+   "fieldname": "template_for_mobile_section",
+   "fieldtype": "Section Break",
+   "label": "Template For Mobile"
+  },
+  {
+   "fieldname": "mobile_view_template",
+   "fieldtype": "HTML Editor",
+   "label": "Mobile View Template"
+  },
+  {
+   "fieldname": "custom_section",
+   "fieldtype": "Section Break",
+   "label": "Custom"
+  },
+  {
+   "fieldname": "custom_css",
+   "fieldtype": "Text",
+   "label": "Custom Css"
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custom_js",
+   "fieldtype": "Text",
+   "label": "Custom Js"
+  },
+  {
+   "fieldname": "web_template",
+   "fieldtype": "HTML Editor",
+   "ignore_xss_filter": 1,
+   "label": "Web Template"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Route"
+  }
+ ],
+ "has_web_view": 1,
+ "links": [],
+ "modified": "2022-09-23 19:18:18.264949",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Section Component",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

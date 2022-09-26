@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+<div>
+	
+	<div class="print-format-builder-layout">
+		{% for(var i=0; i < data.length; i++) { %}
+			{%= frappe.render_template("print_format_builder_section",
+				{section: data[i], me:me}) %}
+		{% } %}
+	</div>
+
+	<div class="print-format-builder-add-section">
+		<span>{%= __("Add a new section") %}</span>
+	</div>
+</div>

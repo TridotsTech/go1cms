@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-09 15:53:24.282958",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "settings_section",
+  "enable_go1_builder",
+  "generate_html",
+  "styles_to_update",
+  "field_type_properties",
+  "website_settings_section",
+  "use_other_domain",
+  "domain"
+ ],
+ "fields": [
+  {
+   "fieldname": "settings_section",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_html",
+   "fieldtype": "Check",
+   "label": "Generate Pages as a HTML"
+  },
+  {
+   "fieldname": "styles_to_update",
+   "fieldtype": "Code",
+   "label": "Styles To Update"
+  },
+  {
+   "fieldname": "field_type_properties",
+   "fieldtype": "Table",
+   "label": "Field Type Properties",
+   "options": "Field Types Property"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_go1_builder",
+   "fieldtype": "Check",
+   "label": "Enable Go1 CMS Builder"
+  },
+  {
+   "fieldname": "website_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Website Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_other_domain",
+   "fieldtype": "Check",
+   "label": "Use Other Domain"
+  },
+  {
+   "depends_on": "eval:doc.use_other_domain==1",
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-09-20 13:49:32.833273",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CMS Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

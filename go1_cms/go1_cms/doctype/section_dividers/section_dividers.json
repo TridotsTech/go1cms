@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "SD.####",
+ "creation": "2022-09-15 17:01:55.758466",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "svg_code",
+  "svg_file"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title"
+  },
+  {
+   "fieldname": "svg_code",
+   "fieldtype": "Long Text",
+   "ignore_xss_filter": 1,
+   "label": "Svg code"
+  },
+  {
+   "fieldname": "svg_file",
+   "fieldtype": "Attach Image",
+   "label": "Svg File"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-09-19 14:43:53.792827",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Section Dividers",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

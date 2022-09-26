@@ -1,0 +1,98 @@
+
+
+
+
+{% if type =="new" %}
+<div class="regular_section row page_section" id="{{data.page_section}}">
+    <div class="regular_section_head col-md-12">
+        <div class="section_name">
+            Regular Section
+        </div>
+        <div class="edit_block">
+            <span class="section-settings pull-right cursor-pointer">
+                <i class="fa-solid fa-gear"></i>
+            </span>
+           <span class="delete_section">
+            <i class="fa-regular fa-trash-can"></i>
+           </span>
+        </div>
+    </div>
+    
+
+    <div class="col-md-12 template_grid" id="{{data.u_id}}">
+        <div class="row main_row">
+            <!-- {{row.fullwidth}} -->
+            <div class="main_row_head col-md-12">
+                <div class="section_name">
+                     Row
+                </div>
+                <div class="edit_block">
+                  
+                </div>
+            </div>
+    </div>
+    
+    <div class="row">
+        {% for(var t=0; t < data.layout_json[0].columns.length; t++) { var each_col_=data.layout_json[0].columns[t]; %}
+        <div class="{{each_col_.bs_width}} paceHolder_" id="{{each_col_.u_id}}">
+           <div class="add_button" >
+               <button class="add_component">
+                <i class="fa-solid fa-plus"></i>
+               </button>
+                 <button class="edit_settings" style="float: left;margin-left: 30px;background-color: #4c5966;">
+               <i class="fa-solid fa-cog" style="
+                    font-size: 14px;
+                    margin-top: 0px;
+                    float: left;margin-left: -1px;
+                "></i>
+               </button>
+           </div>
+          
+        </div>
+        {% } %}
+                   
+    </div> 
+</div>
+
+
+{% endif %}
+{% if type =="add" %}
+   
+    <div class="col-md-12 template_grid" id="{{data.u_id}}">
+        <div class="row main_row">
+            <div class="main_row_head col-md-12">
+                <div class="section_name">
+                     Row
+                </div>
+                <div class="edit_block">
+                    <!-- <span class="clone_row"><i class="fa-regular fa-copy"></i></span> -->
+                    <span class="section-settings pull-right cursor-pointer">
+                        <i class="fa-solid fa-gear"></i>
+                    </span>
+                   <span class="delete_row">
+                    <i class="fa-regular fa-trash-can"></i>
+                   </span>
+                </div>
+            </div>
+    </div>
+    
+    <div class="row">
+    {% for(var t=0; t < data.layout_json.length; t++) { var each_col_=data.layout_json[t]; %}
+    <div class="{{each_col_.bs_width}} paceHolder_" id="each_col_.u_id">
+       <div class="add_button" >
+           <button class="add_component">
+            <i class="fa-solid fa-plus"></i>
+           </button>
+           <button class="edit_settings" style="float: left;margin-left: 30px;background-color: #4c5966;">
+               <i class="fa-solid fa-cog" style="
+                    font-size: 14px;
+                    margin-top: 0px;
+                    float: left;margin-left: -1px;
+                "></i>
+               </button>
+       </div>
+    </div>
+    {% } %}
+    </div> 
+</div>   
+{% endif %}

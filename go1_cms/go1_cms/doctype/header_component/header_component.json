@@ -1,0 +1,558 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:title",
+ "creation": "2022-08-09 13:08:08.971380",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "layout_section",
+  "pick_layout",
+  "layout_json",
+  "preview",
+  "preview_html",
+  "column_break_7",
+  "menu",
+  "is_menu_full_width",
+  "header_items_section",
+  "web_section_html",
+  "top_navbar_menus_section",
+  "enable_top_menu",
+  "top_menu_bg",
+  "top_bar_padding",
+  "column_break_6",
+  "sticky_on_top",
+  "top_text_color",
+  "layout",
+  "column_break_8",
+  "is_dismissable",
+  "top_text_size",
+  "top_menu_items_section",
+  "top_menus",
+  "header_settings_section",
+  "header_background",
+  "header_padding",
+  "header_shadow",
+  "c1",
+  "logo_height",
+  "sticky_header",
+  "sticky_header_background",
+  "is_transparent_header",
+  "c2",
+  "enable_header_border",
+  "header_border_color",
+  "header_extras_section",
+  "call_to_action_button",
+  "button_text",
+  "column_break_14",
+  "button_link",
+  "column_break_16",
+  "link_target",
+  "menu_settings_section",
+  "font_family",
+  "line_height",
+  "menu_hover_color",
+  "dropdown_background_color",
+  "dropdown_menu_hover_color",
+  "column_break_35",
+  "font_weight",
+  "letter_spacing",
+  "menu_item_spacing",
+  "dropdown_menu_color",
+  "column_break_38",
+  "font_size",
+  "menu_text_color",
+  "menu_alignment",
+  "dropdown_menu_hover_bg_color",
+  "mobile_menu_section",
+  "m_logo_height",
+  "m_font_weight",
+  "m_letter_spacing",
+  "column_break_45",
+  "mobile_menu_background",
+  "m_font_size",
+  "m_link_color",
+  "column_break_47",
+  "m_font_family",
+  "m_line_height",
+  "m_hover_color",
+  "web_section",
+  "page_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "menu",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Menu",
+   "options": "Menu"
+  },
+  {
+   "default": "0",
+   "description": "Enable a top bar above the header.",
+   "fieldname": "enable_top_menu",
+   "fieldtype": "Check",
+   "label": "Enable Announcement Bar"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_menu_full_width",
+   "fieldtype": "Check",
+   "label": "Is Menu Full Width"
+  },
+  {
+   "fieldname": "top_navbar_menus_section",
+   "fieldtype": "Section Break",
+   "label": "Announcement Bar"
+  },
+  {
+   "fieldname": "top_menus",
+   "fieldtype": "Table",
+   "options": "Menus Item"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Top Banner stays fixed on top on page scroll.",
+   "fieldname": "sticky_on_top",
+   "fieldtype": "Check",
+   "label": "Sticky on Top"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Allow users to dismiss the banner using a close button.",
+   "fieldname": "is_dismissable",
+   "fieldtype": "Check",
+   "label": "Is Dismissable?"
+  },
+  {
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Set the background for top banner.",
+   "fieldname": "top_menu_bg",
+   "fieldtype": "Color",
+   "label": "Background"
+  },
+  {
+   "default": "#FFFFFF",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Set the text color for top banner.",
+   "fieldname": "top_text_color",
+   "fieldtype": "Color",
+   "label": "Text Color"
+  },
+  {
+   "default": "12px",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Set the text size for top banner.",
+   "fieldname": "top_text_size",
+   "fieldtype": "Data",
+   "label": "Text Size"
+  },
+  {
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "fieldname": "top_menu_items_section",
+   "fieldtype": "Section Break",
+   "label": "Announcement Bar Items"
+  },
+  {
+   "default": "12px",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Set the top/bottom spacing for top banner.",
+   "fieldname": "top_bar_padding",
+   "fieldtype": "Data",
+   "label": "Top Bar Padding"
+  },
+  {
+   "default": "One Column",
+   "depends_on": "eval:doc.enable_top_menu==1",
+   "description": "Set the top banner column layout.",
+   "fieldname": "layout",
+   "fieldtype": "Select",
+   "label": "Layout",
+   "options": "One Column\nTwo Column"
+  },
+  {
+   "fieldname": "header_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Header Settings"
+  },
+  {
+   "default": "#FFFFFF",
+   "description": "Set the header background.",
+   "fieldname": "header_background",
+   "fieldtype": "Color",
+   "label": "Header Background"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "40px",
+   "description": "Set the header logo height.",
+   "fieldname": "logo_height",
+   "fieldtype": "Data",
+   "label": "Logo Height"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Set a 1px border bottom to header.",
+   "fieldname": "enable_header_border",
+   "fieldtype": "Check",
+   "label": "Enable Header Border"
+  },
+  {
+   "default": "#E6E9EC",
+   "depends_on": "eval:doc.enable_header_border==1",
+   "description": "Set the header border color.",
+   "fieldname": "header_border_color",
+   "fieldtype": "Color",
+   "label": "Header Border Color"
+  },
+  {
+   "fieldname": "header_extras_section",
+   "fieldtype": "Section Break",
+   "label": "Header Extras"
+  },
+  {
+   "default": "0",
+   "description": "Add a call to action button on the right side of the header.",
+   "fieldname": "call_to_action_button",
+   "fieldtype": "Check",
+   "label": "Enable Call to Action Button"
+  },
+  {
+   "default": "Get a Free Quote",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "description": "Set the call to action button text.",
+   "fieldname": "button_text",
+   "fieldtype": "Data",
+   "label": "Button Text"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "description": "Set the call to action button link.",
+   "fieldname": "button_link",
+   "fieldtype": "Data",
+   "label": "Button Link"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "_self",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "description": "Set the call to action button link.",
+   "fieldname": "link_target",
+   "fieldtype": "Select",
+   "label": "Link Target",
+   "options": "_self\n_blank"
+  },
+  {
+   "fieldname": "menu_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Web Menu Settings"
+  },
+  {
+   "fieldname": "font_family",
+   "fieldtype": "Link",
+   "label": "Font Family",
+   "options": "CSS Font"
+  },
+  {
+   "default": "1.2",
+   "fieldname": "line_height",
+   "fieldtype": "Float",
+   "label": "Line Height"
+  },
+  {
+   "default": "#222222",
+   "fieldname": "menu_hover_color",
+   "fieldtype": "Color",
+   "label": "Menu Hover Color"
+  },
+  {
+   "fieldname": "column_break_35",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "600",
+   "fieldname": "font_weight",
+   "fieldtype": "Select",
+   "label": "Font Weight",
+   "options": "300\n400\n500\n600\n700"
+  },
+  {
+   "default": "1px",
+   "fieldname": "letter_spacing",
+   "fieldtype": "Data",
+   "label": "Letter Spacing"
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "14px",
+   "fieldname": "font_size",
+   "fieldtype": "Data",
+   "label": "Font Size"
+  },
+  {
+   "default": "#222222",
+   "fieldname": "menu_text_color",
+   "fieldtype": "Color",
+   "label": "Menu Text Color"
+  },
+  {
+   "default": "20px",
+   "fieldname": "menu_item_spacing",
+   "fieldtype": "Data",
+   "label": "Menu Item Spacing"
+  },
+  {
+   "fieldname": "mobile_menu_section",
+   "fieldtype": "Section Break",
+   "label": "Mobile Menu"
+  },
+  {
+   "default": "24px",
+   "fieldname": "m_logo_height",
+   "fieldtype": "Data",
+   "label": "Mobile Logo Height"
+  },
+  {
+   "default": "600",
+   "fieldname": "m_font_weight",
+   "fieldtype": "Select",
+   "label": "Font Weight",
+   "options": "300\n400\n500\n600\n700"
+  },
+  {
+   "fieldname": "column_break_45",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#FFFFFF",
+   "fieldname": "mobile_menu_background",
+   "fieldtype": "Color",
+   "label": "Mobile Menu Background"
+  },
+  {
+   "fieldname": "column_break_47",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "m_font_family",
+   "fieldtype": "Link",
+   "label": "Font Family",
+   "options": "CSS Font"
+  },
+  {
+   "default": "18px",
+   "fieldname": "m_font_size",
+   "fieldtype": "Data",
+   "label": "Font Size"
+  },
+  {
+   "default": "1.2",
+   "fieldname": "m_line_height",
+   "fieldtype": "Data",
+   "label": "Line Height"
+  },
+  {
+   "default": "1px",
+   "fieldname": "m_letter_spacing",
+   "fieldtype": "Data",
+   "label": "Letter Spacing"
+  },
+  {
+   "default": "#222222",
+   "fieldname": "m_link_color",
+   "fieldtype": "Color",
+   "label": "Color"
+  },
+  {
+   "default": "#222222",
+   "fieldname": "m_hover_color",
+   "fieldtype": "Color",
+   "label": "Hover Color"
+  },
+  {
+   "fieldname": "layout_section",
+   "fieldtype": "Section Break",
+   "label": "Layout"
+  },
+  {
+   "fieldname": "pick_layout",
+   "fieldtype": "Button",
+   "label": "Pick Layout"
+  },
+  {
+   "fieldname": "layout_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Layout Json"
+  },
+  {
+   "fieldname": "preview",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Preview",
+   "read_only": 1
+  },
+  {
+   "fieldname": "preview_html",
+   "fieldtype": "HTML",
+   "label": "Preview HTML"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Add a box shadow on the header.\n",
+   "fieldname": "header_shadow",
+   "fieldtype": "Check",
+   "label": "Header Shadow?"
+  },
+  {
+   "default": "0",
+   "description": "Set the header to fixed on top after scroll.",
+   "fieldname": "sticky_header",
+   "fieldtype": "Check",
+   "label": "Sticky Header?"
+  },
+  {
+   "default": "40px",
+   "description": "Set top/bottom spacing for header bar.",
+   "fieldname": "header_padding",
+   "fieldtype": "Data",
+   "label": "Header Padding"
+  },
+  {
+   "default": "Right",
+   "fieldname": "menu_alignment",
+   "fieldtype": "Select",
+   "label": "Menu Alignment",
+   "options": "Left\nCenter\nRight"
+  },
+  {
+   "fieldname": "header_items_section",
+   "fieldtype": "Section Break",
+   "label": "Header Items"
+  },
+  {
+   "fieldname": "web_section_html",
+   "fieldtype": "HTML",
+   "label": "Items Html"
+  },
+  {
+   "fieldname": "web_section",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "options": "Mobile Page Section"
+  },
+  {
+   "fieldname": "page_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Page Type",
+   "options": "Responsive\nAdoptive"
+  },
+  {
+   "default": "#FFFFFF",
+   "description": "Set the dropdown menu background color.",
+   "fieldname": "dropdown_background_color",
+   "fieldtype": "Color",
+   "label": "Dropdown Background Color"
+  },
+  {
+   "default": "#222222",
+   "description": "Set the dropdown menu text colors.",
+   "fieldname": "dropdown_menu_color",
+   "fieldtype": "Color",
+   "label": "Dropdown Menu Color"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_transparent_header",
+   "fieldtype": "Check",
+   "label": "Is Transparent Header"
+  },
+  {
+   "default": "#FFFFFF",
+   "depends_on": "eval:doc.sticky_header==1",
+   "fieldname": "sticky_header_background",
+   "fieldtype": "Color",
+   "label": "Sticky Header Background"
+  },
+  {
+   "default": "#222222",
+   "fieldname": "dropdown_menu_hover_color",
+   "fieldtype": "Color",
+   "label": "Dropdown Menu Hover Color"
+  },
+  {
+   "default": "#F5F5F5",
+   "fieldname": "dropdown_menu_hover_bg_color",
+   "fieldtype": "Color",
+   "label": "Dropdown Menu Hover Background Color"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-09-19 17:23:07.216054",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Header Component",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

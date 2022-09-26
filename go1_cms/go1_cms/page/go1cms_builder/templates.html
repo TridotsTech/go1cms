@@ -1,0 +1,62 @@
+<div class="speciality_section row page_section" id="{{section.page_section}}">
+    <div class="speciality_section_head col-md-12">
+        <div class="section_name">
+            Speciality Section
+        </div>
+        <div class="edit_block">
+            <span class="section-settings pull-right cursor-pointer">
+               <i class="fa-solid fa-gear"></i>
+            </span>
+           <span class="delete_section">
+            <i class="fa-regular fa-trash-can"></i>
+           </span>
+        </div>
+    </div>
+    <div class="col-md-12 template_grid" id="{{section.unique_id}}">
+            {% for(var j=0; j < section.layout_json.length; j++) { var row=section.layout_json[j]; %}            
+            <div class="row main_row" id="{{row.u_id}}">
+           
+                <div class="main_row_head col-md-12">
+                    <div class="section_name">
+                         Row
+                    </div>
+                   
+                </div>
+                {% for(var k=0; k < row.columns.length; k++) 
+                    { var each_column=row.columns[k]; %} 
+                     <div class="{{each_column.bs_width}}" id="{{each_column.u_id}}">
+                    {% for(var l=0; l < each_column.rows.length; l++) 
+                    { var each_col_row=each_column.rows[l]; %} 
+              
+                     <div class="row" id="{{each_col_row.u_id}}">           
+                        {% if each_col_row.columns&&each_col_row.columns.length %}
+                        {% for(var c=0; c < each_col_row.columns.length; c++) 
+                        { var each_col_=each_col_row.columns[c]; %}
+                     
+                         <div class="{{each_col_.bs_width}} paceHolder_" id="{{each_col_row.columns[c].u_id}}">
+                          
+                            <div class="add_button" >
+                                <button class="add_component">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button class="edit_settings" style="float: left;margin-left: 30px;background-color: #4c5966;">
+               <i class="fa-solid fa-cog" style="
+                    font-size: 14px;
+                    margin-top: 0px;
+                    float: left;margin-left: -1px;
+                "></i>
+               </button>
+                            </div>
+                    </div>
+                    {% } %}
+                    {% endif %}
+                     </div>
+               
+                    {% } %}
+                </div>
+            {% } %}
+
+    </div>
+    {% } %}
+</div>
+</div>

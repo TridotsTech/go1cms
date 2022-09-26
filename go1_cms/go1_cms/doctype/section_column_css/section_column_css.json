@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-09-20 20:04:42.673378",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "page_section",
+  "column_class",
+  "css_json",
+  "css_text"
+ ],
+ "fields": [
+  {
+   "fieldname": "page_section",
+   "fieldtype": "Data",
+   "label": "Page Section"
+  },
+  {
+   "fieldname": "column_class",
+   "fieldtype": "Data",
+   "label": "Column Class"
+  },
+  {
+   "fieldname": "css_json",
+   "fieldtype": "Code",
+   "label": "Css JSON"
+  },
+  {
+   "fieldname": "css_text",
+   "fieldtype": "Code",
+   "label": "CSS Text"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-09-20 20:04:42.673378",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Section Column CSS",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

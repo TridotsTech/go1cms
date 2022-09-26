@@ -1,0 +1,704 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2022-08-29 15:00:11.575074",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "h_f_section",
+  "default_header",
+  "is_active",
+  "file_path",
+  "column_break_2",
+  "default_footer",
+  "enable_noindex",
+  "branding_section",
+  "website_logo",
+  "favicon",
+  "cl1",
+  "secondary_logo",
+  "cl2",
+  "mobile_logo",
+  "cl3",
+  "secondary_mobile_logo",
+  "color_palette_section",
+  "pick_color_palette",
+  "palette_image",
+  "palette_img_prview",
+  "body_text_color",
+  "accent_color",
+  "dark_color",
+  "secondary_color",
+  "heading_text_color",
+  "light_color",
+  "primary_color",
+  "global_fonts_section",
+  "fonts_size_html",
+  "font",
+  "size",
+  "font_size_with_property",
+  "global_fonts",
+  "buttons_section",
+  "buttons_table",
+  "general_section",
+  "site_layout",
+  "container_width",
+  "border_color",
+  "body_background_image",
+  "column_break_8",
+  "boxed_container_width",
+  "body_background_color",
+  "back_to_top",
+  "font_family",
+  "body_link_color",
+  "column_break_10",
+  "boxed_background_color",
+  "body_theme_color",
+  "back_to_top_mobile",
+  "body_link_hover_color",
+  "header_section",
+  "header_background_color",
+  "menu_text_color",
+  "submenu_text_color",
+  "data_18",
+  "menu_hover_color",
+  "submenu_hover_color",
+  "top_menu_background_color",
+  "column_break_23",
+  "menu_hover_background_color",
+  "submenu_hover_background_color",
+  "top_menu_text_color",
+  "footer_section",
+  "footer_background_color",
+  "column_break_32",
+  "footer_text_color",
+  "column_break_34",
+  "footer_link_color",
+  "column_break_36",
+  "footer_link_hover_color",
+  "sub_header_section",
+  "enable_page_title",
+  "page_title_padding",
+  "title_text_transform",
+  "enable_breadcrumbs",
+  "is_transparent",
+  "column_break_53",
+  "page_title_bg",
+  "page_title_bg_img",
+  "page_title_tag",
+  "title_text_align",
+  "column_break_55",
+  "page_title_overlay",
+  "page_title_color",
+  "container_max_width",
+  "fonts_section",
+  "google_fonts",
+  "custom_css_section",
+  "page_css",
+  "column_break_91",
+  "page_js",
+  "css_section",
+  "css_list",
+  "js_section",
+  "js_list",
+  "font_section",
+  "heading",
+  "text",
+  "social_links_section",
+  "social_links"
+ ],
+ "fields": [
+  {
+   "fieldname": "website_logo",
+   "fieldtype": "Attach",
+   "label": "Primary Logo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_header",
+   "fieldtype": "Link",
+   "label": "Default Header",
+   "options": "Header Component"
+  },
+  {
+   "fieldname": "file_path",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "File Path"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach",
+   "label": "Favicon",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_footer",
+   "fieldtype": "Link",
+   "label": "Default Footer",
+   "options": "Footer Component"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_noindex",
+   "fieldtype": "Check",
+   "label": "Enable NoIndex?"
+  },
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "body_background_image",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Body Background Image"
+  },
+  {
+   "fieldname": "body_background_color",
+   "fieldtype": "Color",
+   "label": "Body Background Color"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "font_family",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Font Family"
+  },
+  {
+   "fieldname": "body_link_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Body Link Color"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "body_theme_color",
+   "fieldtype": "Color",
+   "label": "Browser Theme Color"
+  },
+  {
+   "fieldname": "body_link_hover_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Body Link Hover Color"
+  },
+  {
+   "fieldname": "header_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Header"
+  },
+  {
+   "fieldname": "header_background_color",
+   "fieldtype": "Color",
+   "label": "Header Background Color"
+  },
+  {
+   "fieldname": "menu_text_color",
+   "fieldtype": "Color",
+   "label": "Menu Text Color"
+  },
+  {
+   "fieldname": "submenu_text_color",
+   "fieldtype": "Color",
+   "label": "Submenu Text Color"
+  },
+  {
+   "fieldname": "data_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "menu_hover_color",
+   "fieldtype": "Color",
+   "label": "Menu Hover Color"
+  },
+  {
+   "fieldname": "submenu_hover_color",
+   "fieldtype": "Color",
+   "label": "Submenu Hover Color"
+  },
+  {
+   "fieldname": "top_menu_background_color",
+   "fieldtype": "Color",
+   "label": "Top Menu Background Color"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "menu_hover_background_color",
+   "fieldtype": "Color",
+   "label": "Menu Hover Background Color"
+  },
+  {
+   "fieldname": "submenu_hover_background_color",
+   "fieldtype": "Color",
+   "label": "Submenu Hover Background Color"
+  },
+  {
+   "fieldname": "top_menu_text_color",
+   "fieldtype": "Data",
+   "label": "Top Menu Text Color"
+  },
+  {
+   "fieldname": "footer_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Footer"
+  },
+  {
+   "fieldname": "footer_background_color",
+   "fieldtype": "Color",
+   "label": "Footer Background Color"
+  },
+  {
+   "fieldname": "column_break_32",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "footer_text_color",
+   "fieldtype": "Color",
+   "label": "Footer Text Color"
+  },
+  {
+   "fieldname": "column_break_34",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "footer_link_color",
+   "fieldtype": "Color",
+   "label": "Footer Link Color"
+  },
+  {
+   "fieldname": "column_break_36",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "footer_link_hover_color",
+   "fieldtype": "Color",
+   "label": "Footer Link Hover Color"
+  },
+  {
+   "fieldname": "fonts_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Fonts"
+  },
+  {
+   "fieldname": "google_fonts",
+   "fieldtype": "Table",
+   "label": "Google Fonts",
+   "options": "Theme Fonts"
+  },
+  {
+   "fieldname": "css_section",
+   "fieldtype": "Section Break",
+   "label": "Css"
+  },
+  {
+   "fieldname": "css_list",
+   "fieldtype": "Table",
+   "label": " Css List",
+   "options": "Css List"
+  },
+  {
+   "fieldname": "custom_css_section",
+   "fieldtype": "Section Break",
+   "label": "Custom Css & Js"
+  },
+  {
+   "fieldname": "page_css",
+   "fieldtype": "Long Text",
+   "label": "Custom Css"
+  },
+  {
+   "fieldname": "js_section",
+   "fieldtype": "Section Break",
+   "label": "Js"
+  },
+  {
+   "fieldname": "js_list",
+   "fieldtype": "Table",
+   "label": "Js List",
+   "options": "Js List"
+  },
+  {
+   "fieldname": "page_js",
+   "fieldtype": "Long Text",
+   "label": "Custom Js"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "font_section",
+   "fieldtype": "Section Break",
+   "label": "Typography"
+  },
+  {
+   "fieldname": "heading",
+   "fieldtype": "Table",
+   "label": "Heading",
+   "options": "Typography Heading"
+  },
+  {
+   "fieldname": "text",
+   "fieldtype": "Table",
+   "label": "Text",
+   "options": "Typography Text"
+  },
+  {
+   "fieldname": "font_size_with_property",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Font Size With Property",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pick_color_palette",
+   "fieldtype": "Button",
+   "label": "Pick Color Palette"
+  },
+  {
+   "fieldname": "palette_image",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Palette Image",
+   "read_only": 1
+  },
+  {
+   "fieldname": "palette_img_prview",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Primary Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "light_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Light Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "heading_text_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Heading Text Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Secondary Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "dark_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Dark Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Accent Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "body_text_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Body Text Color",
+   "read_only": 1
+  },
+  {
+   "fieldname": "buttons_section",
+   "fieldtype": "Section Break",
+   "label": "Buttons"
+  },
+  {
+   "fieldname": "buttons_table",
+   "fieldtype": "Table",
+   "options": "Web Theme Button"
+  },
+  {
+   "fieldname": "branding_section",
+   "fieldtype": "Section Break",
+   "label": "Branding"
+  },
+  {
+   "fieldname": "cl1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "secondary_logo",
+   "fieldtype": "Attach",
+   "label": "Secondary Logo"
+  },
+  {
+   "fieldname": "cl2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mobile_logo",
+   "fieldtype": "Attach",
+   "label": "Mobile Logo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cl3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "secondary_mobile_logo",
+   "fieldtype": "Attach",
+   "label": "Secondary Mobile Logo"
+  },
+  {
+   "default": "Full Width",
+   "fieldname": "site_layout",
+   "fieldtype": "Select",
+   "label": "Layout",
+   "options": "Full Width\nBoxed"
+  },
+  {
+   "default": "1300px",
+   "depends_on": "eval:doc.site_layout == \"Boxed\"",
+   "fieldname": "boxed_container_width",
+   "fieldtype": "Data",
+   "label": "Boxed Container Width"
+  },
+  {
+   "default": "#f6f6f6",
+   "depends_on": "eval:doc.site_layout == \"Boxed\"",
+   "fieldname": "boxed_background_color",
+   "fieldtype": "Color",
+   "label": "Boxed Background Color"
+  },
+  {
+   "default": "1170px",
+   "fieldname": "container_width",
+   "fieldtype": "Data",
+   "label": "Container Width"
+  },
+  {
+   "default": "0",
+   "fieldname": "back_to_top",
+   "fieldtype": "Check",
+   "label": "Enable Back to Top"
+  },
+  {
+   "default": "0",
+   "fieldname": "back_to_top_mobile",
+   "fieldtype": "Check",
+   "label": "Back to Top: Show on Mobile"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_page_title",
+   "fieldtype": "Check",
+   "label": "Enable Sub Header"
+  },
+  {
+   "fieldname": "column_break_53",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_bg",
+   "fieldtype": "Color",
+   "label": "Sub Header Background"
+  },
+  {
+   "fieldname": "column_break_55",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_overlay",
+   "fieldtype": "Color",
+   "label": "Sub Header Background Overlay"
+  },
+  {
+   "default": "100px",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_padding",
+   "fieldtype": "Data",
+   "label": "Vertical Padding"
+  },
+  {
+   "default": "H1",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_tag",
+   "fieldtype": "Select",
+   "label": "Title Tag",
+   "options": "H1\nH2\nH3\nH4\nH5\nH6"
+  },
+  {
+   "default": "#FFFFFF",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_color",
+   "fieldtype": "Color",
+   "label": "Title Color"
+  },
+  {
+   "default": "None",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "title_text_transform",
+   "fieldtype": "Select",
+   "label": "Title Text Transform",
+   "options": "None\nCapitalize\nUppercase\nLowercase"
+  },
+  {
+   "default": "Left",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "title_text_align",
+   "fieldtype": "Select",
+   "label": "Title Text Align",
+   "options": "Left\nCenter"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "enable_breadcrumbs",
+   "fieldtype": "Check",
+   "label": "Enable Breadcrumbs?"
+  },
+  {
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "container_max_width",
+   "fieldtype": "Data",
+   "label": "Container Max Width"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "is_transparent",
+   "fieldtype": "Check",
+   "label": "Is Transparent?"
+  },
+  {
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "page_title_bg_img",
+   "fieldtype": "Attach",
+   "label": "Sub Header Background Image"
+  },
+  {
+   "fieldname": "global_fonts_section",
+   "fieldtype": "Section Break",
+   "label": "Global Fonts"
+  },
+  {
+   "fieldname": "fonts_size_html",
+   "fieldtype": "HTML",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "font",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Font",
+   "options": "CSS Font",
+   "read_only": 1
+  },
+  {
+   "fieldname": "color_palette_section",
+   "fieldtype": "Section Break",
+   "label": "Global Colors"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Font Size",
+   "read_only": 1
+  },
+  {
+   "fieldname": "global_fonts",
+   "fieldtype": "Table",
+   "in_standard_filter": 1,
+   "label": "Global Fonts",
+   "options": "Global Fonts"
+  },
+  {
+   "fieldname": "border_color",
+   "fieldtype": "Color",
+   "label": "Border Color"
+  },
+  {
+   "fieldname": "sub_header_section",
+   "fieldtype": "Section Break",
+   "label": "Sub Header"
+  },
+  {
+   "fieldname": "h_f_section",
+   "fieldtype": "Section Break",
+   "label": "Header & Footer"
+  },
+  {
+   "fieldname": "column_break_91",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "social_links_section",
+   "fieldtype": "Section Break",
+   "label": "Social Links"
+  },
+  {
+   "fieldname": "social_links",
+   "fieldtype": "Table",
+   "label": "Social Links",
+   "options": "Social Link"
+  }
+ ],
+ "links": [],
+ "modified": "2022-09-19 20:57:33.198042",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Web Theme",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

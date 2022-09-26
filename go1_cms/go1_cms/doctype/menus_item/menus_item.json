@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-09 13:06:42.424351",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "menu_label",
+  "parent_menu",
+  "redirect_url",
+  "position",
+  "icon"
+ ],
+ "fields": [
+  {
+   "fieldname": "menu_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Menu Label"
+  },
+  {
+   "fieldname": "parent_menu",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parent Menu"
+  },
+  {
+   "fieldname": "redirect_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Redirect URL"
+  },
+  {
+   "fieldname": "position",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Position",
+   "options": "Left\nRight"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Attach Image",
+   "label": "Icon"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-08-11 12:56:45.143407",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Menus Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

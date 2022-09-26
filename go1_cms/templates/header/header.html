@@ -1,0 +1,370 @@
+{%if header.enable_top_menu%}
+<div class="go1-cms-top-bar" >
+    <div class="container d__flex">
+    {%if header.layout == "One Column"%}
+        <div class="col-md-12 d__flex flex-center">
+            {%if header.top_menu%}
+                {%for item in header.top_menu.left_items%}
+                    <div class="top_menu d__flex">
+                    <a   href="{{item.redirect_url}}" target="blank">
+                        {%if item.icon%}
+                        <img  src="{{item.icon}}" style="margin-right:5px" />
+                        {%endif%}
+                       {{item.menu_label}}
+                    </a>
+                </div>
+                {%endfor%}
+                 {%for item in header.top_menu.right_items%}
+                  <div class="top_menu d__flex">
+                    <a    href="{{item.redirect_url}}" target="blank">
+                        {%if item.icon%}
+                        <img  src="{{item.icon}}" style="margin-right:5px" />
+                        {%endif%}
+                       {{item.menu_label}}
+                    </a>
+                </div>
+                {%endfor%}
+            {%endif%}
+        </div>
+
+    {%endif%}
+    {%if header.layout == "Two Column"%}
+        <div class="col-md-6 d__flex">
+            {%for item in header.top_menu.left_items%}
+                    <div class="top_menu d__flex">
+                    <a  href="{{item.redirect_url}}" target="blank">
+                        {%if item.icon%}
+                        <img  src="{{item.icon}}" style="margin-right:5px" />
+                        {%endif%}
+                       {{item.menu_label}}
+                    </a>
+                </div>
+                {%endfor%}
+        </div>
+        <div class="col-md-6 d__flex flex-right">
+            {%for item in header.top_menu.right_items%}
+                  <div class="top_menu d__flex">
+                    <a  href="{{item.redirect_url}}" target="blank">
+                        {%if item.icon%}
+                        <img  src="{{item.icon}}" style="margin-right:5px" />
+                        {%endif%}
+                       {{item.menu_label}}
+                    </a>
+                </div>
+                {%endfor%}
+        </div>
+    {%endif%}
+</div>
+</div>
+{%endif%}
+
+<div class="desktop__header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
+   <div  class="web__header go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
+       <div class="container"> 
+        {%if header.layout_json%}
+            <div class="d__flex">
+                {%for col in header.layout_json%}
+               
+                  {%if col.columns%}
+                    {%for each_col in col.columns%}
+                    {%set col_index = loop.index %}
+                        <div style="width: {{each_col.width}}">
+                            {%for sec_item in header.get("items")%}
+                                {%if col_index == (sec_item.column_index+1) %}
+                                    {%if sec_item.section_name == "Header Logo"%}
+                                        <img class="logo" src="{{theme_settings.website_logo}}"/>
+                                    {%endif%}
+                                    {%if sec_item.section_name == "Header Menu"%}
+                                        <ul class="default_header desktop__header d__flex go1-cms-menu">
+                                            {%for menu_item in sec_item.get("menus")%}
+                                             <li class="drop__down__header menu-item" style="position: relative;">
+                                                <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
+                                                {%if menu_item.child_menu%}
+                                                    <ul class="sub-categoryy go1-cms-dropdown">
+                                                        {%for sub_menu_item in menu_item.child_menu%}
+                                                         <li class="drop__down__header sub-menu-item" >
+                                                            <a href="{{sub_menu_item.redirect_url}}" style="float: left">   {{sub_menu_item.menu_label}}</a>
+                                                            {%if sub_menu_item.child_menu%}
+                                                                 <ul class="sub-child sub__children go1-cms-dropdown">
+                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                         <li class="drop__down__header sub-sub-menu-item">
+                                                            <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                        </li>
+                                                         {%endfor%}
+                                                            
+                                                        </ul>
+                                                        {%endif%}
+                                                        </li>
+                                                        {%endfor%}
+                                                    </ul>
+                                                {%endif%}
+                                             </li>
+                                            {%endfor%}
+                                        </ul>
+                                    {%endif%}
+                                     {%if sec_item.section_name == "Header Button"%}
+                                     {%if header.call_to_action_button==1%}
+                                     <div class="d__flex custom-button">
+                                        <a href="" class="primary-btn md button button-clear ion-activatable ion-focusable hydrated">
+                                            {{header.button_text}}
+                                        </a>
+                                    </div>
+                                     {%endif%}
+
+                                     {%endif%}
+                                {%endif%}
+                            {%endfor%}
+                        </div>
+                    {%endfor%}
+                  {%endif%}
+                    
+                {%endfor%}
+            </div>
+        {%endif%}
+     </div>
+</div>
+</div>
+<div class="mobile__header go1-cms-header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
+    <div class="container">
+        <div class="nav-icon">
+            <i class="fa fa-bars"></i>
+        </div>
+        <div class="m-logo">
+            <img src="{{theme_settings.website_logo}}" class="logo"/>
+        </div>
+         {%for sec_item in header.get("items")%}
+        {%if sec_item.section_name == "Header Button"%}
+             {%if header.call_to_action_button==1%}
+             <div class="d__flex custom-button">
+                <a href="" class="btn btn-primary btn-md ">
+                    {{header.button_text}}
+                </a>
+            </div>
+             {%endif%}
+             {%endif%}
+         {%endfor%}
+        <div class="mobile_menu go1-cms-menu">
+             <div class="m-logo" style="border-bottom: 1px solid #ddd;">
+                <img src="{{theme_settings.website_logo}}" class="logo"/>
+            </div>
+             {%for sec_item in header.get("items")%}
+              {%if sec_item.section_name == "Header Menu"%}
+              <ul>
+                {%for menu_item in sec_item.get("menus")%}
+                    <li>
+                        <a href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right:5px">
+                        </i>{{menu_item.menu_label}}</a>
+                    </li>
+                {%endfor%}
+                </ul>
+              {%endif%}
+             {%endfor%}
+        </div>
+    </div>
+    <div class="mobile-blackdrop" ></div>
+</div>
+{%if theme_settings.enable_page_title%}
+<div class="sub_header">
+    <div class="header-title">
+        <h2  class="white-text_ title">{{theme_settings.sub_header_title}}</h2>
+         {%if theme_settings.enable_breadcrumbs%}
+    <div class="breadcrumb">
+        <a href="/">Home</a><i class="fa fa-chevron-right"></i>
+        <span>{{theme_settings.sub_header_title}}</span>
+    </div>
+    {%endif%}
+    </div>
+   
+</div>
+ {%endif%}
+
+<style type="text/css">
+.primary-btn{
+    padding: 6px 18px;
+}
+    @media only screen and (max-width: 768px){
+
+
+.desktop__header {
+    display: none;
+}
+.mobile__header {
+    display: block;
+    padding: 15px 0;    float: left;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 0 5px #ddd;
+}
+.nav-icon{
+    float: left;
+    margin-right: 15px;
+}
+.mobile_menu{
+       justify-content: flex-start;
+    position: fixed;
+    background-color: #fff;
+    left: 0;
+    top: 0;
+    width: 85%;z-index: 9999;
+    height: 100%;
+    flex-direction: row;
+    display: block;box-shadow: 0 0 5px #ddd;display: none;
+}
+.mobile-blackdrop {
+    background-color: #000;
+    opacity: .5;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    display: none;
+}
+.mobile_menu .m-logo{
+    border-bottom: 1px solid #ddd;
+    flex: 0 0 100%;
+    width: 100%;
+    float: left;
+    padding: 15px;
+}
+.mobile_menu ul{
+   margin: 0;
+    flex: 0 0 100%;
+    float: left;
+    width: 100%;padding: 0;
+}
+.mobile_menu ul li{
+    padding: 10px 5px;
+}
+ .mobile_menu.visible{
+    display: block;
+ }.custom-button {
+    justify-content: end;
+    float: right;
+    display: block;
+}.m-logo {
+    float: left;
+}
+.custom-button .btn{
+    font-size: 13px;
+}
+}
+ @media only screen and (min-width: 769px){
+    .mobile__header{display: none;}
+    }
+    .d__flex {
+    display: flex;align-items: center;
+}
+.top_menu.d__flex{margin-right: 10px;}
+.flex-center{justify-content: center;}
+.flex-right{justify-content: end;}
+
+.custom-button{
+    justify-content: end;
+}
+.top_menu img{
+    height: 15px;
+}
+.go1-cms-header.transparent_header{background: transparent;}
+.go1-cms-header.transparent_header .menu-item a{
+color: #fff;
+}
+.sticky_header .go1-cms-header{background-color:{{header.sticky_header_background}};}
+.sticky_header .go1-cms-header .menu-item a{
+    color: {{header.menu_text_color}};
+}
+ul.sub-categoryy.go1-cms-dropdown{
+      width: 270px;
+    top: 175%;
+    display: none;
+    left: 15px;
+}
+li.drop__down__header.menu-item:hover > .sub-categoryy {
+    display: block;
+}
+.go1-cms-dropdown .sub__children{
+    display: none;
+}
+li.drop__down__header.sub-menu-item:hover > .sub__children {
+    display: block;
+}
+.sub-sub-menu-item a{
+    float: left;
+}
+{%if theme_settings.enable_page_title%}
+    .sub_header .header-title{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;min-height: 100%;
+    }
+    .sub_header{
+        background-color: {{theme_settings.page_title_bg}};
+       background-image:url('{{theme_settings.page_title_bg_img}}');
+    min-height: 260px;
+    position: relative;
+    {%if theme_settings.page_title_bg_img%}
+    background-size: cover;height: 150px;
+    {%endif%}
+    }
+    .sub_header .header-title h2{
+        color: {{theme_settings.page_title_color}};
+        margin: 0;
+    text-align: center;
+    padding: 15px 0;
+    }
+    .breadcrumb{
+    text-align: center;color: {{theme_settings.page_title_color}};
+}
+.breadcrumb a{
+ color: {{theme_settings.page_title_color}};
+}
+.breadcrumb i{
+
+    float: left;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: 3px;
+
+}
+{%endif%}
+</style>
+<script type="text/javascript">
+    {%if header.sticky_header%}
+    $(window).scroll(function(){
+        if($(window).scrollTop()>40){
+            $(".desktop__header").addClass("sticky_header");
+            console.log("{{header.is_transparent_header}}")
+            if("{{header.is_transparent_header}}" == "1"){
+            $(".go1-cms-header").removeClass("transparent_header");
+          }
+        }
+        else{
+
+            $(".desktop__header").removeClass("sticky_header");
+            if("{{header.is_transparent_header}}" == "1"){
+            $(".go1-cms-header").addClass("transparent_header");
+          }
+            
+        }
+    })
+    {%endif%}
+    $(document).ready(function(){
+       $(".nav-icon").click(function(){
+        mobile_menu();
+       })
+       $(".mobile-blackdrop").click(function(){
+        mobile_menu();
+       })
+    })
+    function mobile_menu(){
+         var hidden = $('.mobile_menu');
+        if (hidden.hasClass('visible')){
+            hidden.animate({"left":"-1000px"}, "slow").removeClass('visible');
+            $(".mobile-blackdrop").hide();
+        } else {
+            hidden.animate({"left":"0px"}, "slow").addClass('visible');
+            $(".mobile-blackdrop").show();
+        }
+    }
+</script>

@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-09-02 18:22:39.148540",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "name1",
+  "column_break_2",
+  "type",
+  "column_break_4",
+  "edit_styles",
+  "css_design",
+  "style_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "\nh1\nh2\nh3\nh4\nh5\nh6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "edit_styles",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Edit Styles"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "css_design",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Css Design",
+   "read_only": 1
+  },
+  {
+   "fieldname": "style_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Style Json",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-09-03 16:53:37.504661",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Typography Heading",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

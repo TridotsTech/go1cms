@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-09 13:27:51.878699",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "group_name",
+  "field_label",
+  "field_key",
+  "column_break_4",
+  "field_type",
+  "content_type",
+  "image_dimension",
+  "allow_update_to_style",
+  "choose_style_properties",
+  "css_properties_list",
+  "section_break_11",
+  "content",
+  "section_break_12",
+  "fields_json",
+  "css_section",
+  "setup_defaults",
+  "css_json",
+  "css_text",
+  "component_ref",
+  "component_id",
+  "component_type",
+  "cid"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field Label"
+  },
+  {
+   "fieldname": "field_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field Key"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Field Type",
+   "options": "Text\nSmall Text\nLong Text\nAttach\nList\nLink\nAttach Video\nText Editor\nButton\nBorder\nDate"
+  },
+  {
+   "fieldname": "content_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Content Type",
+   "options": "Data\nDesign"
+  },
+  {
+   "depends_on": "eval:doc.field_type==\"Attach\"",
+   "fieldname": "image_dimension",
+   "fieldtype": "Data",
+   "label": "Image Dimension"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_update_to_style",
+   "fieldtype": "Check",
+   "label": "Enable Style?"
+  },
+  {
+   "fieldname": "css_properties_list",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "CSS Properties List"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Long Text",
+   "ignore_xss_filter": 1,
+   "label": "Content"
+  },
+  {
+   "depends_on": "eval:doc.field_type == \"List\"",
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "fields_json",
+   "fieldtype": "Code",
+   "label": "Fields JSON"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1",
+   "fieldname": "css_section",
+   "fieldtype": "Section Break",
+   "label": "CSS"
+  },
+  {
+   "fieldname": "setup_defaults",
+   "fieldtype": "Button",
+   "label": "Set Default Style Properties"
+  },
+  {
+   "fieldname": "css_json",
+   "fieldtype": "Small Text",
+   "label": "CSS Json"
+  },
+  {
+   "fieldname": "css_text",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "CSS Text"
+  },
+  {
+   "depends_on": "eval:doc.allow_update_to_style==1",
+   "fieldname": "choose_style_properties",
+   "fieldtype": "Button",
+   "label": "Choose Style Properties"
+  },
+  {
+   "depends_on": "eval:doc.field_type != 'List'",
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "group_name",
+   "fieldtype": "Data",
+   "label": "Section Group Name"
+  },
+  {
+   "fieldname": "component_ref",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Component Ref"
+  },
+  {
+   "fieldname": "component_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Component Id"
+  },
+  {
+   "fieldname": "component_type",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Component Type"
+  },
+  {
+   "fieldname": "cid",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Cid"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-09-20 20:55:27.493233",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Section Content",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -1,0 +1,640 @@
+{
+ "actions": [],
+ "allow_guest_to_view": 1,
+ "allow_rename": 1,
+ "autoname": "field:page_title",
+ "creation": "2022-08-09 19:27:35.885794",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "business",
+  "page_title",
+  "page_type",
+  "w_page_type",
+  "use_page_builder",
+  "column_break_7",
+  "published",
+  "document",
+  "route",
+  "edit_with_go1_builder",
+  "hf_sec",
+  "hf_settings",
+  "column_break_14",
+  "header_component",
+  "column_break_16",
+  "footer_component",
+  "list_settings_section",
+  "choose_list_style",
+  "list_style",
+  "list_style_image",
+  "enable_side_menu",
+  "side_menu_position",
+  "data_fetch_from",
+  "side_menu_display_field",
+  "redirect_to_detail_",
+  "column_break_18",
+  "columns_mapping",
+  "column_break_20",
+  "sort_field",
+  "sort_by",
+  "condition",
+  "header_section",
+  "edit_header_style",
+  "menu_hover_bg",
+  "cl",
+  "is_transparent_header",
+  "menu_hover_text_color",
+  "column_break_32",
+  "menu_text_color",
+  "detail_settings_section",
+  "choose_detail_style",
+  "detail_layout",
+  "detail_layout_image",
+  "detail_layout_json",
+  "column_break_43",
+  "enable_related_items",
+  "related_item_mapping_column",
+  "related_records_count",
+  "column_break_44",
+  "enable_recent_posts",
+  "recent_records_count",
+  "sub_header_section",
+  "enable_sub_header",
+  "enable_breadcrumbs",
+  "is_transparent_sub_header",
+  "sub_header_bg_color",
+  "column_break_21",
+  "sub_header_bg_img",
+  "page_title_overlay",
+  "container_max_width",
+  "column_break_30",
+  "sub_header_title",
+  "text_color",
+  "title_text_align",
+  "sec_content",
+  "content",
+  "jodit_editor",
+  "web_page_section",
+  "web_section_html",
+  "mobile_page",
+  "mobile_section_html",
+  "section_break_18",
+  "custom_css",
+  "column_break_74",
+  "custom_js",
+  "file_path",
+  "seo_section",
+  "meta_title",
+  "column_break_24",
+  "meta_description",
+  "column_break_26",
+  "meta_keywords",
+  "section_break_28",
+  "web_section",
+  "mobile_section",
+  "is_converted_to_template",
+  "is_location_based",
+  "layout_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "page_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Page Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Responsive",
+   "fieldname": "page_type",
+   "fieldtype": "Select",
+   "label": "Design Type",
+   "options": "Responsive\nAdaptive"
+  },
+  {
+   "depends_on": "eval:doc.hf_settings == \"Custom\"",
+   "fieldname": "header_component",
+   "fieldtype": "Link",
+   "label": "Header Template",
+   "options": "Header Component"
+  },
+  {
+   "depends_on": "eval:doc.hf_settings == \"Custom\"",
+   "fieldname": "footer_component",
+   "fieldtype": "Link",
+   "label": "Footer Template",
+   "options": "Footer Component"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.page_type == \"Responsive\" || doc.page_type == \"Adaptive\"",
+   "fieldname": "use_page_builder",
+   "fieldtype": "Check",
+   "label": "Use Page Builder"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Published"
+  },
+  {
+   "depends_on": "eval:doc.w_page_type == \"List\" || doc.w_page_type == \"Detail\"",
+   "fieldname": "document",
+   "fieldtype": "Link",
+   "label": "Document",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.use_page_builder==0 && doc.w_page_type==\"Regular\" && (doc.page_type == \"Responsive\" || doc.page_type == \"Adaptive\")",
+   "fieldname": "sec_content",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Content"
+  },
+  {
+   "fieldname": "jodit_editor",
+   "fieldtype": "HTML",
+   "label": "jodit_editor"
+  },
+  {
+   "depends_on": "eval:doc.use_page_builder==1",
+   "fieldname": "web_page_section",
+   "fieldtype": "Section Break",
+   "label": "Web Page"
+  },
+  {
+   "fieldname": "web_section_html",
+   "fieldtype": "HTML",
+   "label": "Web Section HTML"
+  },
+  {
+   "depends_on": "eval:(doc.page_type == \"Adaptive\" && doc.use_page_builder==1)",
+   "fieldname": "mobile_page",
+   "fieldtype": "Section Break",
+   "label": "Mobile Page"
+  },
+  {
+   "fieldname": "mobile_section_html",
+   "fieldtype": "HTML",
+   "label": "Mobile Section HTML"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.use_page_builder == 1;",
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Custom CSS & JS"
+  },
+  {
+   "fieldname": "custom_css",
+   "fieldtype": "Text",
+   "ignore_xss_filter": 1,
+   "label": "Custom Css"
+  },
+  {
+   "fieldname": "custom_js",
+   "fieldtype": "Text",
+   "ignore_xss_filter": 1,
+   "label": "Custom Js"
+  },
+  {
+   "fieldname": "file_path",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "File Path"
+  },
+  {
+   "fieldname": "seo_section",
+   "fieldtype": "Section Break",
+   "label": "SEO"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title"
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_keywords",
+   "fieldtype": "Small Text",
+   "label": "Meta Keywords"
+  },
+  {
+   "fieldname": "section_break_28",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "web_section",
+   "fieldtype": "Table",
+   "options": "Mobile Page Section"
+  },
+  {
+   "fieldname": "mobile_section",
+   "fieldtype": "Table",
+   "options": "Mobile Page Section"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "business"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_converted_to_template",
+   "fieldtype": "Check",
+   "label": "Is Converted To Template"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_location_based",
+   "fieldtype": "Check",
+   "label": "Is Location Based"
+  },
+  {
+   "depends_on": "eval:doc.page_type == \"List\"",
+   "fieldname": "list_style",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "List Style"
+  },
+  {
+   "depends_on": "eval:doc.page_type == \"List\"",
+   "fieldname": "list_style_image",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "List Style Image"
+  },
+  {
+   "fieldname": "choose_list_style",
+   "fieldtype": "Button",
+   "label": "Choose List Style"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.w_page_type == \"List\"",
+   "fieldname": "enable_side_menu",
+   "fieldtype": "Check",
+   "label": "Enable Side Menu"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.page_type == \"List\"",
+   "fieldname": "redirect_to_detail_",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Redirect To Detail ?"
+  },
+  {
+   "fieldname": "sub_header_section",
+   "fieldtype": "Section Break",
+   "label": "Sub Header"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_sub_header",
+   "fieldtype": "Check",
+   "label": "Edit Sub Header Style"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "sub_header_title",
+   "fieldtype": "Data",
+   "label": "Sub Header Title"
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "columns_mapping",
+   "fieldtype": "Code",
+   "label": "Columns Mapping"
+  },
+  {
+   "depends_on": "eval:doc.w_page_type == \"List\" && doc.document",
+   "fieldname": "list_settings_section",
+   "fieldtype": "Section Break",
+   "label": "List Settings"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Give field name of the selected doctype. This can be used as follows:\n<ul><li>doc.is_active = 1</li>\n<li>doc.is_active = 1 and doc.name = \"sample\"</li></ul>",
+   "fieldname": "condition",
+   "fieldtype": "Small Text",
+   "label": "Condition"
+  },
+  {
+   "fieldname": "sort_field",
+   "fieldtype": "Data",
+   "label": "Sort Field"
+  },
+  {
+   "fieldname": "sort_by",
+   "fieldtype": "Select",
+   "label": "Sort By",
+   "options": "ASC\nDESC"
+  },
+  {
+   "fieldname": "column_break_30",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_side_menu == 1",
+   "fieldname": "data_fetch_from",
+   "fieldtype": "Link",
+   "label": "Side Menu Document",
+   "options": "DocType"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "sub_header_bg_color",
+   "fieldtype": "Color",
+   "label": "Background Color"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "sub_header_bg_img",
+   "fieldtype": "Attach",
+   "label": "Sub Header Background"
+  },
+  {
+   "default": "Left",
+   "depends_on": "eval:doc.enable_side_menu ==1",
+   "fieldname": "side_menu_position",
+   "fieldtype": "Select",
+   "label": "Side Menu Position",
+   "options": "Left\nRight\nTop"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "is_transparent_sub_header",
+   "fieldtype": "Check",
+   "label": "Is Transparent Sub Header?"
+  },
+  {
+   "depends_on": "eval:doc.data_fetch_from",
+   "fieldname": "side_menu_display_field",
+   "fieldtype": "Select",
+   "label": "Side Menu Display Field"
+  },
+  {
+   "default": "#ffffff",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "text_color",
+   "fieldtype": "Color",
+   "label": "Text Color"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "enable_breadcrumbs",
+   "fieldtype": "Check",
+   "label": "Enable Breadcrumbs?"
+  },
+  {
+   "default": "50%",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "container_max_width",
+   "fieldtype": "Data",
+   "label": "Container Max Width"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "page_title_overlay",
+   "fieldtype": "Color",
+   "label": "Sub Header Background Overlay"
+  },
+  {
+   "default": "Left",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "title_text_align",
+   "fieldtype": "Select",
+   "label": "Title Text Align",
+   "options": "Left\nCenter"
+  },
+  {
+   "fieldname": "layout_json",
+   "fieldtype": "Code",
+   "label": "Layout Json"
+  },
+  {
+   "fieldname": "edit_with_go1_builder",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Edit With Go1 Builder"
+  },
+  {
+   "fieldname": "header_section",
+   "fieldtype": "Section Break",
+   "label": "Header Style"
+  },
+  {
+   "default": "0",
+   "fieldname": "edit_header_style",
+   "fieldtype": "Check",
+   "label": "Edit Header Style"
+  },
+  {
+   "fieldname": "cl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.edit_header_style==1",
+   "fieldname": "is_transparent_header",
+   "fieldtype": "Check",
+   "label": "Is Transparent Header?"
+  },
+  {
+   "fieldname": "column_break_32",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#FFFFFF",
+   "depends_on": "eval:doc.is_transparent_header==1",
+   "fieldname": "menu_text_color",
+   "fieldtype": "Color",
+   "label": "Menu Text Color"
+  },
+  {
+   "default": "#FFFFFF",
+   "depends_on": "eval:doc.is_transparent_header==1",
+   "fieldname": "menu_hover_bg",
+   "fieldtype": "Color",
+   "label": "Menu Hover Background Color"
+  },
+  {
+   "default": "#222222",
+   "depends_on": "eval:doc.is_transparent_header==1",
+   "fieldname": "menu_hover_text_color",
+   "fieldtype": "Color",
+   "label": "Menu Hover Text Color"
+  },
+  {
+   "fieldname": "w_page_type",
+   "fieldtype": "Select",
+   "label": "Page Type",
+   "options": "Regular\nList\nDetail"
+  },
+  {
+   "fieldname": "hf_sec",
+   "fieldtype": "Section Break",
+   "label": "Header & Footer"
+  },
+  {
+   "default": "Use Global",
+   "fieldname": "hf_settings",
+   "fieldtype": "Select",
+   "label": "Settings",
+   "options": "Use Global\nCustom"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.w_page_type==\"Detail\" && doc.document",
+   "fieldname": "detail_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Detail Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_related_items",
+   "fieldtype": "Check",
+   "label": "Enable Related Items"
+  },
+  {
+   "depends_on": "eval:doc.enable_related_items == 1",
+   "fieldname": "related_item_mapping_column",
+   "fieldtype": "Select",
+   "label": "Related Item Mapping Column"
+  },
+  {
+   "fieldname": "column_break_44",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_recent_posts",
+   "fieldtype": "Check",
+   "label": "Enable Recent Posts"
+  },
+  {
+   "default": "5",
+   "depends_on": "eval:doc.enable_recent_posts==1",
+   "fieldname": "recent_records_count",
+   "fieldtype": "Int",
+   "label": "No.of Records Fetch ( Recent Posts )"
+  },
+  {
+   "default": "10",
+   "depends_on": "eval:doc.enable_related_items == 1",
+   "fieldname": "related_records_count",
+   "fieldtype": "Data",
+   "label": "No.of Records Fetch ( Related Items )"
+  },
+  {
+   "fieldname": "choose_detail_style",
+   "fieldtype": "Button",
+   "label": "Choose Detail Style"
+  },
+  {
+   "fieldname": "column_break_43",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "detail_layout",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Detail Layout",
+   "options": "Detail Page Layout"
+  },
+  {
+   "fieldname": "detail_layout_image",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Detail Layout Image"
+  },
+  {
+   "fieldname": "detail_layout_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Detail Layout Json"
+  },
+  {
+   "fieldname": "column_break_74",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "has_web_view": 1,
+ "index_web_pages_for_search": 1,
+ "is_published_field": "published",
+ "links": [],
+ "modified": "2022-09-22 20:44:40.555835",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Web Page Builder",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
