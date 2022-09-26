@@ -79,7 +79,8 @@
   "m_line_height",
   "m_hover_color",
   "web_section",
-  "page_type"
+  "page_type",
+  "update_theme"
  ],
  "fields": [
   {
@@ -528,11 +529,18 @@
    "fieldname": "dropdown_menu_hover_bg_color",
    "fieldtype": "Color",
    "label": "Dropdown Menu Hover Background Color"
+  },
+  {
+   "default": "1",
+   "fieldname": "update_theme",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Update Theme"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-19 17:23:07.216054",
+ "modified": "2022-09-26 17:53:15.481412",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",

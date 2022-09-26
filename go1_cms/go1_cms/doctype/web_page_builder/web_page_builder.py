@@ -12,8 +12,6 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.website.website_generator import WebsiteGenerator
 from go1_cms.go1_cms.api import check_domain, get_business_from_login
 from frappe.model.naming import make_autoname
-# from go1_cms.utils.setup import get_settings_from_domain, \
-# 	get_settings_value_from_domain, get_theme_settings
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 

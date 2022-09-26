@@ -13,5 +13,6 @@
 	{"doctype": "Section Template Group", "group_name":"Footer"},
 	{"doctype": "Section Template Group", "group_name":"Page List Style"},
 	{"doctype": "Section Template Group", "group_name":"Header"},
-	{"doctype": "Section Template Group", "group_name":"List Sections"}
+	{"doctype": "Section Template Group", "group_name":"List Sections"},
+	{"doctype": "Section Template Group", "group_name":"General"}
 ]

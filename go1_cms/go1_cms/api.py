@@ -894,7 +894,11 @@ def update_web_themes(doc,method):
 	frappe.enqueue(update_website_themes, queue='default',doc=doc)
 
 def update_website_themes(doc):
-	themes = frappe.db.get_all("Web Theme")
-	for x in themes:
-		theme = frappe.get_doc("Web Theme",x.name)
-		theme.save(ignore_permissions=True)
+	update_themes = 1
+	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.update_theme == 0:
+		update_themes = 0
+	if update_themes == 1:
+		themes = frappe.db.get_all("Web Theme")
+		for x in themes:
+			theme = frappe.get_doc("Web Theme",x.name)
+			theme.save(ignore_permissions=True)
