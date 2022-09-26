@@ -5,15 +5,7 @@
 from __future__ import unicode_literals
 import frappe 
 import os, re, json, mimetypes
-from werkzeug.wrappers import Response
-from werkzeug.routing import Map, Rule, NotFound
-# from ecommerce_business_store.utils.setup import get_business_from_web_domain, get_website_user_home_page, get_settings_from_domain
 from frappe.utils import getdate, nowdate, now, get_url
-
-# from mobile.sniffer.utilities import get_user_agent
-# from mobile.sniffer.detect import  detect_mobile_browser
-
-
 
 @frappe.whitelist(allow_guest=True)
 def get_template_folder(url=None, business=None, temp=0):

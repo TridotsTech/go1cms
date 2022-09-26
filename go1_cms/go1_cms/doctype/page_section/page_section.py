@@ -9,16 +9,11 @@ import os
 import urllib.parse
 from frappe.utils import encode, get_files_path , getdate, to_timedelta,  flt
 from frappe.model.document import Document
-#hide by boopathy
-# from ecommerce_business_store.ecommerce_business_store.api import get_product_details
-#end
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils.password import encrypt
 from go1_cms.go1_cms.api import get_business_from_login, check_domain, get_today_date
-# from ecommerce_business_store.utils.setup import get_settings_value_from_domain
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
-# from ecommerce_business_store.utils.setup import get_settings_from_domain,get_business_from_web_domain
 
 class PageSection(Document):
 	 
@@ -91,11 +86,6 @@ class PageSection(Document):
 
 	
 	def section_data(self, customer=None, add_info=None,store_business=None):
-		# frappe.log_error(self.name, "section_name")
-		# frappe.log_error(customer, "section_name")
-		# frappe.log_error(store_business, "section_name")
-		# store_business = self.business
-		# generate json object for the section
 		json_obj = {}
 		json_obj['section'] = self.name
 		json_obj['class_name'] = self.class_name
@@ -169,112 +159,7 @@ class PageSection(Document):
 							json_obj['title'] = frappe.db.get_value(self.reference_document, self.reference_name, field)
 							if self.reference_document == 'Product Category':
 								json_obj['route'] = frappe.db.get_value(self.reference_document, self.reference_name, "route")
-		elif self.section_type == 'Lists':
-			data = json.loads(self.custom_section_data)
-			if not data: data = []
-			if self.reference_document != 'Product':
-				json_obj['data'] = json.loads(self.custom_section_data) if self.custom_section_data else []
-				for item in data:
-					if not frappe.db.get_value(self.reference_document, item.get('item')):
-						frappe.throw(frappe._('{} <b>{}</b> is deleted. Please delete from the section <b>{}</b>').format(frappe._(self.reference_document), (item.get('name') or item.get('item')), self.section_title))
-			else:
-				#by siva 05/03/21
-				con_items = '""'
-				business_condition = ''
-				if data:
-					con_items = ",".join(['"' + x.get('item') + '"' for x in data])
-				if check_domain("multi_store") and self.dynamic_data == 1:
-					multi_store_business = frappe.request.cookies.get('selected_store')
-					if not multi_store_business:
-						all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
-						if all_locations:
-							multi_store_business = all_locations[0].name
-					else:
-						multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-					if multi_store_business:		
-						business_condition = "AND doc.restaurant = '{0}' ".format(multi_store_business)
-				if check_domain("multi_store") and self.dynamic_data == 1:
-					if store_business:
-						business_condition = "AND doc.restaurant = '{0}' ".format(store_business)
-				if check_domain('saas'):
-					domain = frappe.get_request_header('host')
-					business = get_business_from_web_domain(domain)
-					if business:
-						business_condition = " AND doc.restaurant = '{0}' ".format(business)
-				query = '''SELECT doc.name, doc.item,doc.item as item_title, doc.tax_category, doc.price, doc.old_price, doc.short_description, 
-					doc.full_description, doc.sku, doc.route, doc.inventory_method, doc.minimum_order_qty, doc.enable_preorder_product, doc.weight,doc.gross_weight,
-					doc.maximum_order_qty, doc.stock, doc.disable_add_to_cart_button, (select list_image from 
-					`tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as product_image, 
-					(select detail_thumbnail from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as thumbnail,
-					(select brand_name from `tabProduct Brand Mapping` where parent = doc.name limit 1) as product_brand,
-					(select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand = B.name
-					where MP.parent = doc.name and B.published = 1 limit 1) as brand_route from `tabProduct` doc where doc.is_active = 1 and doc.name in ({0}) {2} order by FIELD(doc.name,{1})'''.format(con_items,con_items,business_condition)
-				result = frappe.db.sql(query, as_dict=1)
-				datas = get_product_details(result, customer=customer)
-				org_datas = []
-				for item in datas:
-					info = list(filter(lambda x: x.get('item')==item.get('name'), data))
-					if len(info)>0:
-						item['idx'] = info[0]['idx']
-						item['image'] = info[0]['image']
-						item['image_type'] = info[0]['image_type']
-					if not frappe.db.get_value('Product', item.get('name')):
-						frappe.throw(frappe._('Product <b>{}</b> is deleted. Please delete from the section <b>{}</b>').format((item.get('name') or item.get('item')), self.section_title))
-					product = frappe.get_doc('Product', item.get('name'))
-					#item['price'] = product.price
-					#item['old_price'] = product.price
-					#item['name'] = product.name
-					price_info = get_product_discount(product, 1, item['price'], customer_id=customer)
-					if price_info:
-						item['discount'] = price_info.get('discount_label')
-						#if price_info.get('discount_amount'):
-						#	item['price'] = price_info.get('rate')
-				org_datas = []
-				org_datas = get_products_json(result)
-				data = datas
-				json_obj['data'] = org_datas
 		
-		elif self.section_type == 'Collections':
-			data = json.loads(self.custom_section_data)
-			collections = ''
-			if self.collections:
-				collections = self.collections
-			if collections:
-				items_list = frappe.db.sql('''select C.title,PC.product,PC.product_name from `tabCollections` C inner join `tabProduct Collection` PC on PC.parent=C.name where C.name="{name}"'''.format(name=collections),as_dict=1)
-				child_items = '""'
-				if items_list:
-					child_items = ",".join(['"' + x.product + '"' for x in items_list])
-					json_obj['collection_title'] = items_list[0].title
-				business_condition = ''
-				if check_domain("multi_store") and self.dynamic_data == 1:
-					multi_store_business = frappe.request.cookies.get('selected_store')
-					if not multi_store_business:
-						all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
-						if all_locations:
-							multi_store_business = all_locations[0].name
-					else:
-						multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-					if multi_store_business:		
-						business_condition = "AND doc.restaurant = '{0}' ".format(multi_store_business)
-				if check_domain("multi_store") and self.dynamic_data == 1:
-					if store_business:
-						business_condition = "AND doc.restaurant = '{0}' ".format(store_business)
-				if check_domain('saas'):
-					domain = frappe.get_request_header('host')
-					business = get_business_from_web_domain(domain)
-					if business:
-						business_condition = " AND doc.restaurant = '{0}' ".format(business)
-				query = '''SELECT doc.name, doc.item,doc.item as item_title, doc.tax_category, doc.price, doc.old_price, doc.short_description, 
-					doc.full_description, doc.sku, doc.route, doc.inventory_method, doc.minimum_order_qty, doc.enable_preorder_product, doc.weight,doc.gross_weight,
-					doc.maximum_order_qty, doc.stock, doc.disable_add_to_cart_button, (select list_image from 
-					`tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as product_image, 
-					(select detail_thumbnail from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as thumbnail,
-					(select brand_name from `tabProduct Brand Mapping` where parent = doc.name limit 1) as product_brand,
-					(select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand = B.name
-					where MP.parent = doc.name and B.published = 1 limit 1) as brand_route from `tabProduct` doc where doc.is_active = 1 and doc.name in ({0}) {1}'''.format(child_items,business_condition)
-				result = frappe.db.sql(query, as_dict=1)
-				result = get_product_details(result, customer=customer)
-				json_obj['data'] = result
 		elif self.section_type == 'Tabs' and self.reference_document == 'Custom Query':
 			if self.reference_document == 'Custom Query':
 				data = json.loads(self.custom_section_data)
@@ -293,82 +178,7 @@ class PageSection(Document):
 					item['products'] = org_datas
 				json_obj['data'] = data
 
-		elif self.section_type == 'Tabs':
-			if self.reference_document != 'Custom Query':
-				 
-				if self.reference_document == 'Product Category':
-					child_doc = 'Product Category Mapping'
-				elif self.reference_document == 'Author':
-					child_doc = 'Author'
-				elif self.reference_document == 'Publisher':
-					child_doc = 'Publisher'
-				else:
-					child_doc = 'Product Brand Mapping'
-				data = json.loads(self.custom_section_data)
-				for item in data:
-					condition = ""
-					no_of_records = 10
-					if item.get('no_of_records'):
-						no_of_records = item.get('no_of_records')
-					if self.reference_document == 'Product Category':
-						#hided by boopathy on 10/08/2022
-						# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
-						#end
-						child = get_child_categories(item.get('item1'))
-						child_category = '""'
-						if child:
-							child_category = ",".join(['"' + x.name + '"' for x in child])
-						condition += ' and (child.category = "{0}" or child.category in ({1}))'.format(item.get('item1'), child_category)
-						# condition += ' and (child.category = "{0}")'.format(item.get('item1'))
-					elif self.reference_document == 'Author':
-						condition += ' and (doc.author = "{0}")'.format(item.get('item1'))
-					elif self.reference_document == 'Publisher':
-						condition += ' and (doc.publisher = "{0}")'.format(item.get('item1'))
-					if self.condition and self.validate_sql_condition():
-						condition += ' {}'.format(self.condition)
-					books_columns_query = ''
-					books_join_query = ''
-					installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
-					business_condition = ''
-					if check_domain("multi_store") and self.dynamic_data == 1:
-						multi_store_business = frappe.request.cookies.get('selected_store')
-						if not multi_store_business:
-							all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
-							if all_locations:
-								multi_store_business = all_locations[0].name
-						else:
-							multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-						if multi_store_business:		
-							condition += "AND doc.restaurant = '{0}' ".format(multi_store_business)
-					if check_domain("multi_store") and self.dynamic_data == 1:
-						if store_business:
-							business_condition += "AND doc.restaurant = '{0}' ".format(store_business)
-					# if check_domain("multi_store") and self.dynamic_data == 1:
-					# 	condition += "AND doc.restaurant = '{0}' ".format(unquote(frappe.request.cookies.get('selected_store')))
-					if check_domain('saas'):
-						domain = frappe.get_request_header('host')
-						business = get_business_from_web_domain(domain)
-						if business:
-							condition += " AND doc.restaurant = '{0}' ".format(business)
-					if len(installed_apps) > 0:
-						books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
-						books_join_query = '  left join `tabAuthor` AU on AU.name=doc.author left join `tabPublisher` PU on PU.name=doc.publisher'
-					query = '''SELECT doc.name, doc.item,doc.item as item_title, doc.tax_category, doc.price, doc.old_price, doc.short_description,doc.enable_preorder_product,  doc.weight,doc.gross_weight,
-						doc.full_description, doc.sku, doc.route, doc.inventory_method, doc.minimum_order_qty {books_columns_query}, 
-						doc.maximum_order_qty, doc.stock, doc.disable_add_to_cart_button, (select list_image from 
-						`tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as product_image, 
-						(select detail_thumbnail from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as thumbnail,
-						(select brand_name from `tabProduct Brand Mapping` where parent = doc.name limit 1) as product_brand,
-						(select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand = B.name
-						where MP.parent = doc.name and B.published = 1 limit 1) as brand_route from `tabProduct` doc {books_join_query} left join 
-						`tab{doctype}` child on child.parent = doc.name where doc.is_active = 1 {condition} limit {limit}'''.format(books_columns_query=books_columns_query,books_join_query=books_join_query,condition=condition, doctype=child_doc, limit=no_of_records)
-					result = frappe.db.sql(query, as_dict=1)
-					result = get_product_details(result, customer=customer)
-					item['product'] = result
-					org_datas = []
-					org_datas = get_products_json(result)
-					item['product'] = org_datas
-				json_obj['data'] = data
+	
 		if self.content:
 			for item in self.content:
 				if item.field_type != 'List':
