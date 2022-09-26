@@ -839,8 +839,6 @@ def get_blog_categories():
 	bloglist_query = "SELECT name,title,route FROM `tabBlog Category` WHERE published = 1 ORDER BY creation DESC "
 	return frappe.db.sql(bloglist_query,as_dict=1)
 
-
-
 @frappe.whitelist(allow_guest=True)
 def get_blog_details(route):
 	blog_details = frappe.db.get_all("Blog Post",filters={"route":route},fields=["*"])
@@ -868,7 +866,6 @@ def insert_blog_comments(data):
 	blog.save(ignore_permissions=True)
 	return blog.__dict__
 
-
 @frappe.whitelist()
 def get_blogger_bloglist(customer_email):
 	check_blogger = frappe.db.get_all("Blogger",filters={"user":customer_email})
@@ -892,7 +889,6 @@ def generate_sections_json():
 @frappe.whitelist()
 def update_web_themes(doc,method):
 	frappe.enqueue(update_website_themes, queue='default',doc=doc)
-
 def update_website_themes(doc):
 	update_themes = 1
 	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.update_theme == 0:
