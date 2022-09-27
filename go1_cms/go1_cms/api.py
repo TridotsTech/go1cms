@@ -556,7 +556,7 @@ def get_header_info(header_id):
 	return None
 
 def get_footer_info(footer_id):
-	footer_list = frappe.db.get_all("Footer Component",filters={"name":footer_id},fields=['title','enable_link_icon','layout_json','enable_copyright','footer_content','copyright_layout','fc_ct_type','cp_fc_alignment','sc_ct_type','cp_sc_alignment','cp_fc_content','cp_sc_content'])
+	footer_list = frappe.db.get_all("Footer Component",filters={"name":footer_id},fields=['title','enable_link_icon','layout_json','enable_copyright','copyright_layout','fc_ct_type','cp_fc_alignment','sc_ct_type','cp_sc_alignment','cp_fc_content','cp_sc_content'])
 	if footer_list:
 		path = frappe.utils.get_files_path()
 		with open(os.path.join(path, 'data_source', (footer_id.lower().replace(' ','_')  + '_web.json'))) as f:
