@@ -22,12 +22,17 @@ def after_install():
 	insert_background_masks()
 	insert_background_gradients()
 	insert_css_fonts()
+	insert_menus()
 	insert_header_components()
 	insert_footer_components()
 	insert_web_theme()
 	
 def insert_css_fonts():
 	file_name = "css_fonts.json"
+	read_module_path(file_name)
+
+def insert_menus():
+	file_name = "menus.json"
 	read_module_path(file_name)
 
 def insert_header_layouts():
@@ -108,9 +113,10 @@ def insert_header_components():
 						p_doc.custom_title = section_name
 						p_doc.choose_from_template = 1
 						p_doc.section_template = template
+						if j.get("section_type") == "Menu":
+							p_doc.menu = j.get("menu")
 						p_doc.save(ignore_permissions=True)
 						doc.append("web_section",{
-							"parent": "Default Footer",
 					        "idx": j.get("idx"),
 					        "docstatus": 0,
 					        "section": p_doc.name,
@@ -153,9 +159,10 @@ def insert_footer_components():
 						p_doc.custom_title = section_name
 						p_doc.choose_from_template = 1
 						p_doc.section_template = template
+						if j.get("section_type") == "Menu":
+							p_doc.menu = j.get("menu")
 						p_doc.save(ignore_permissions=True)
 						doc.append("web_section",{
-							"parent": "Default Footer",
 					        "idx": j.get("idx"),
 					        "docstatus": 0,
 					        "section": p_doc.name,

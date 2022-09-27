@@ -619,7 +619,7 @@ frappe.ui.form.on('Typography Heading', {
 				args:{field_type:item.type},
 				freeze:true,
 				callback:(res) =>{
-					// console.log(">> api response <<"",res)
+					// console.log(">> api response <<",res)
 					if(res && res.message && res.message.length > 0){
 						res.message[0].css_json = item.style_json ? item.style_json:null
 						res.message[0].field_key = item.type.replace(/[&\/ \\#,+()$~%.'":*?<>{}]/g, '')
