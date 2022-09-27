@@ -298,7 +298,7 @@ def get_json_render_properties(field_type):
 			fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 			if fonts_list:
 				css_properties[0].fonts_list = fonts_list
-			frappe.log_error(css_properties,"fields")
+			# frappe.log_error(css_properties,"fields")
 		return css_properties
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.get_json_render_properties")

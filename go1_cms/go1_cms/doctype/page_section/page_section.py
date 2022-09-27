@@ -417,6 +417,7 @@ def get_recommended_products(query=None, dt=None, no_of_records=0, login_require
 def get_dynamic_data_source(doc, customer=None,store_business=None):
 	result = []
 	condition = ""
+	business = None
 	if not business:
 		business = get_business_from_login()
 	if doc.condition: condition = ' and {0}'.format(doc.condition)
