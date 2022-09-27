@@ -669,7 +669,11 @@ def update_component_page_section(page_section,comp_id,comp_uuid,cid):
 
 @frappe.whitelist()
 def delete_section(name, parentfield):
+	page_section = frappe.db.get_all("Mobile Page Section",filters={"name":name},fields=['section'])
 	frappe.db.sql('''delete from `tabMobile Page Section` where name = %(name)s and parentfield = %(parentfield)s''',{'name': name,'parentfield': parentfield})
+	if page_section:
+		frappe.db.sql('''delete from `tabPage Section` where name = %(name)s''',{'name': page_section[0].section})
+		frappe.db.commit()
 	return {'status': 'Success'}
 
 @frappe.whitelist()
