@@ -21,10 +21,14 @@ def after_install():
 	insert_cms_settings()
 	insert_background_masks()
 	insert_background_gradients()
+	insert_css_fonts()
 	insert_header_components()
 	insert_footer_components()
 	insert_web_theme()
 	
+def insert_css_fonts():
+	file_name = "css_fonts.json"
+	read_module_path(file_name)
 
 def insert_header_layouts():
 	file_name = "header_layouts.json"
