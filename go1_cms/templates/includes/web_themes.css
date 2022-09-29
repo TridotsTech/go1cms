@@ -933,9 +933,9 @@ li {
 /* footer */
 /* footer end*/
 /*attached files css data  */
-{% if doc.css_file_data %}
+/* {% if doc.css_file_data %}
     {{doc.css_file_data}}
-{% endif %}
+{% endif %} */
 /*attached files css data  end*/
 /* field written css data */
 {% if doc.page_css %}

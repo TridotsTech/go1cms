@@ -78,17 +78,17 @@ def generate_webtheme_css_file(path,sitename,self):
 		# check and append custom css
 		doc_obj.page_css = (self.page_css.replace('\n','')) if self.page_css else ""
 		# check and read css file
-		css_file_data=""
-		if doc_obj.css_list and len(doc_obj.css_list)>0:
-			for file in doc_obj.css_list:
-				if file.css_file:
-					path_name = get_absolute_path(file.css_file)
-					if path_name:
-						# frappe.log_error(path_name,">> css file path name<<")
-						exe_file = open(path_name,"r")
-						css_file_data += exe_file.read()
-						# frappe.log_error(exe_file.read(),">> exe_file <<")
-		doc_obj.css_file_data = css_file_data
+		# hide by gopi on 29/9/22
+		# css_file_data=""
+		# if doc_obj.css_list and len(doc_obj.css_list)>0:
+		# 	for file in doc_obj.css_list:
+		# 		if file.css_file:
+		# 			path_name = get_absolute_path(file.css_file)
+		# 			if path_name:
+		# 				exe_file = open(path_name,"r")
+		# 				css_file_data += exe_file.read()
+		# doc_obj.css_file_data = css_file_data
+		# end
 		# Check and assign vaiable css 
 		var_name_css = ""
 		if doc_obj.heading and len(doc_obj.heading) > 0: 
@@ -246,25 +246,27 @@ def replace_value_of_globalfonts(css_design,doc_obj):
 	return ";".join(api_css_parse_data)+';' if len(api_css_parse_data) > 0 else ""
 
 
-def get_absolute_path(file_name):
-	# frappe.log_error(file_name,">>doc file name<<")
-	temp_file_name = ""
-	file_path_type =""
-	if(file_name.startswith('/files/')):
-		file_path_type = 'public'
-		temp_file_name = file_name[7:]
-	if(file_name.startswith('/private/')):
-		file_path_type ='private'
-		temp_file_name = file_name[15:]
-	if(file_name.startswith('/public/')):
-		file_path_type ='public'
-		temp_file_name = file_name[14:]
-	# frappe.log_error(temp_file_name,"file_name")
-	# frappe.log_error(file_path_type,"file_path_type")
-	if file_name and file_name.endswith(".css"):
-		return frappe.utils.get_bench_path()+ "/sites/" + frappe.utils.get_path(file_path_type,'files', temp_file_name)[2:]
-	else:
-		return ""
+# def get_absolute_path(file_name):
+# 	# frappe.log_error(file_name,">>doc file name<<")
+# 	temp_file_name = ""
+# 	file_path_type =""
+# 	if(file_name.startswith('/files/')):
+# 		file_path_type = 'public'
+# 		temp_file_name = file_name[7:]
+# 	if(file_name.startswith('/private/')):
+# 		file_path_type ='private'
+# 		temp_file_name = file_name[15:]
+# 	if(file_name.startswith('/public/')):
+# 		file_path_type ='public'
+# 		temp_file_name = file_name[14:]
+# 	# frappe.log_error(temp_file_name,"file_name")
+# 	# frappe.log_error(file_path_type,"file_path_type")
+# 	if file_name and file_name.endswith(".css") and temp_file_name and file_path_type:
+# 		return frappe.utils.get_bench_path()+ "/sites/" + frappe.utils.get_path(file_path_type,'files', temp_file_name)[2:]
+# 	elif 'http' in file_name:
+# 		return file_name
+# 	else:
+# 		return ""
 
 @frappe.whitelist()
 def get_cms_json():
