@@ -80,14 +80,7 @@ def generate_webtheme_css_file(path,sitename,self):
 		# check and read css file
 		# hide by gopi on 29/9/22
 		# css_file_data=""
-		# if doc_obj.css_list and len(doc_obj.css_list)>0:
-		# 	for file in doc_obj.css_list:
-		# 		if file.css_file:
-		# 			path_name = get_absolute_path(file.css_file)
-		# 			if path_name:
-		# 				exe_file = open(path_name,"r")
-		# 				css_file_data += exe_file.read()
-		# doc_obj.css_file_data = css_file_data
+		
 		# end
 		# Check and assign vaiable css 
 		var_name_css = ""
