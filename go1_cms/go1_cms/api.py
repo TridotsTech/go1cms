@@ -393,11 +393,11 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 	path = frappe.utils.get_files_path()
 	import os
 	if page[0].page_type == 'Adaptive':
-		ptype =  _('_web')
+		ptype =  ('_web')
 		if application_type == "mobile":
-			ptype =  _('_mobile')
+			ptype =  ('_mobile')
 	else:
-		ptype = _('_web')
+		ptype = ('_web')
 	use_page_builder = 1
 	page_builders = frappe.db.get_all("Web Page Builder",filters={"name":page[0].name},fields=['use_page_builder'])
 
