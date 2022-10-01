@@ -1266,33 +1266,11 @@ def get_source_doc(doc, device_type):
 	return source_doc, sections, html
 
 def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, page_no=0, page_len=3):
-	#hided by boopathy on 10/08/2022
-	# from ecommerce_business_store.ecommerce_business_store.api import get_all_restaurant_data, check_restaurant_distance
-	#end
 	section_list = sections[int(page_no):int(page_len)]
-	# frappe.log_error(section_list,">> section_list data <<")
 	data = get_page_section(source_doc)
-	# frappe.log_error(data,">> page section data <<")
 	html_list = []
 	js_list = ''
 	res = {}
-	#hided by boopathy
-	# if doc.is_location_based:
-	# 	latitude, longitude, order_type, distance = None, None, None, 0
-	# 	try:
-	# 		check_cookie = frappe.request.cookies.get('geoLocation')
-	# 		if check_cookie:
-	# 			cookie_val = urllib.parse.unquote(check_cookie)
-	# 			latitude, longitude = cookie_val.split(',')
-	# 			latitude = float(latitude)
-	# 			longitude = float(longitude)
-	# 		order_type = frappe.request.cookies.get('order_type') or "Delivery"
-	# 	except Exception as e:
-	# 		latitude, longitude = None, None
-	# 	if latitude and longitude:
-	# 		res = check_restaurant_distance(latitude, longitude)
-	# 	distance = get_settings_value_from_domain('Business Setting', 'nearby_distance')
-	#end
 	for item in section_list:
 		section_html, css, js, reference_document = frappe.db.get_value('Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document'])
 		if section_html:
@@ -1305,11 +1283,15 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 				if js.find('<script') == -1:
 					if page_no == 0:
 						js_list += frappe.render_template('<script>{0}</script>'.format(js), item.as_dict())
+						section_html += frappe.render_template('<script>{0}</script>'.format(js), item.as_dict())
+						
 					else:
 						section_html += '<script>{0}</script>'.format(js)
 				else:
 					if page_no == 0:
 						js_list += frappe.render_template('{0}'.format(js), item.as_dict())
+						section_html += frappe.render_template('{0}'.format(js), item.as_dict())
+						
 					else:
 						section_html += '{0}'.format(js)
 		data_source = next((x for x in data if x.get('section') == item.section), None)
@@ -1357,7 +1339,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 			if product_box:
 				data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 			try:
-				# frappe.log_error(data_source,">> render data_source <<")
+				# frappe.log_error(section_html,">> section_html <<")
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:

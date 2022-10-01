@@ -594,7 +594,7 @@ def update_website_context(context):
 	try:
 	# theme = frappe.get_doc("Theme Settings")
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
-		frappe.log_error(theme_list,">> Web theme data <<")
+		# frappe.log_error(theme_list,">> Web theme data <<")
 		if not theme_list:
 			theme_list = frappe.get_all("Web Theme",fields=['*'],order_by='creation desc')
 		footer_template = {}
@@ -636,8 +636,8 @@ def update_website_context(context):
 					context.theme_settings.sub_header_title = context.doc.page_title
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
-		frappe.log_error(context.theme_settings,">> context theme settings data <<")
-		frappe.log_error(context,">> context data <<")
+		# frappe.log_error(context.theme_settings,">> context theme settings data <<")
+		# frappe.log_error(context,">> context data <<")
 	except Exception as e:
 		print(frappe.get_traceback())
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")
