@@ -72,10 +72,17 @@
                             {%for sec_item in header.get("items")%}
                                 {%if col_index == (sec_item.column_index+1) %}
                                     {%if sec_item.section_name == "Header Logo"%}
-                                        <img class="logo" src="{{theme_settings.website_logo}}"/>
+                                        <!-- <img class="logo" src="{{theme_settings.website_logo}}"/> -->
+                                        {%if header.sticky_header %}
+                                            <img class="logo" src="{{theme_settings.secondary_logo}}"/>
+                                        {%endif%}
+                                        {%if header.is_transparent_header %}
+                                            <img class="logo" src="{{theme_settings.website_logo}}"/>
+                                        {%endif%}
                                     {%endif%}
                                     {%if sec_item.section_name == "Header Menu"%}
                                         <ul class="default_header desktop__header d__flex go1-cms-menu">
+                                            {% if sec_item.get("menus") %}
                                             {%for menu_item in sec_item.get("menus")%}
                                              <li class="drop__down__header menu-item" style="position: relative;">
                                                 <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
@@ -100,6 +107,7 @@
                                                 {%endif%}
                                              </li>
                                             {%endfor%}
+                                            {% endif %}
                                         </ul>
                                     {%endif%}
                                      {%if sec_item.section_name == "Header Button"%}
@@ -150,12 +158,14 @@
              {%for sec_item in header.get("items")%}
               {%if sec_item.section_name == "Header Menu"%}
               <ul>
+                {% if sec_item.get("menus") %}
                 {%for menu_item in sec_item.get("menus")%}
                     <li>
                         <a href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right:5px">
                         </i>{{menu_item.menu_label}}</a>
                     </li>
                 {%endfor%}
+                {% endif %}
                 </ul>
               {%endif%}
              {%endfor%}

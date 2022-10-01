@@ -26,6 +26,9 @@ def after_install():
 	insert_header_components()
 	insert_footer_components()
 	insert_web_theme()
+	insert_faq()
+	insert_testimonial()
+	insert_webpage_builder()
 	
 def insert_css_fonts():
 	file_name = "css_fonts.json"
@@ -83,6 +86,65 @@ def insert_background_gradients():
 def insert_web_theme():
 	file_name = "web_themes.json"
 	read_module_path(file_name)
+
+def insert_faq():
+	file_name = "faq.json"
+	read_module_path(file_name)
+
+def insert_testimonial():
+	file_name = "testimonial.json"
+	read_module_path(file_name)
+
+
+def insert_webpage_builder():
+	pass
+	# path = frappe.get_module_path("go1_cms")
+	# from frappe.model.mapper import get_mapped_doc
+	# file_path = os.path.join(path,'json_data',"header_components.json")
+	# if os.path.exists(file_path):
+	# 	with open(file_path, 'r') as f:
+	# 		out = json.load(f)
+	# 	for i in out:
+	# 		try:
+	# 			doc = frappe.get_doc(i).insert()
+	# 			web_sections = i.get("web_section")
+	# 			header_sec_file_path = os.path.join(path,'json_data',"header_sections.json")
+	# 			if os.path.exists(header_sec_file_path):
+	# 				with open(header_sec_file_path, 'r') as f:
+	# 					header_out = json.load(f)
+	# 				for j in header_out:
+	# 					template = section_name = j.get("section_title")
+	# 					p_doc = get_mapped_doc("Section Template", template, {
+	# 						"Section Template": {
+	# 							"doctype": "Page Section"
+	# 						},
+	# 						"Section Content":{
+	# 							"doctype": "Section Content"
+	# 						}
+	# 					}, None, ignore_permissions=True)
+	# 					p_doc.section_title = template
+	# 					p_doc.custom_title = section_name
+	# 					p_doc.choose_from_template = 1
+	# 					p_doc.section_template = template
+	# 					if j.get("section_type") == "Menu":
+	# 						p_doc.menu = j.get("menu")
+	# 					p_doc.save(ignore_permissions=True)
+	# 					doc.append("web_section",{
+	# 				        "idx": j.get("idx"),
+	# 				        "docstatus": 0,
+	# 				        "section": p_doc.name,
+	# 				        "section_title": template,
+	# 				        "section_type": j.get("section_type"),
+	# 				        "allow_update_to_style": 0,
+	# 				        "column_index": j.get("column_index"),
+	# 						})
+	# 			doc.save()
+	# 		except frappe.NameError:
+	# 			pass
+	# 		except Exception as e:
+	# 			frappe.log_error(frappe.get_traceback(), "Header Component Insertion") 
+
+
 
 def insert_header_components():
 	path = frappe.get_module_path("go1_cms")

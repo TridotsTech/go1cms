@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2019, Tridots and contributors
 # For license information, please see license.txt
-
 from __future__ import unicode_literals
 import frappe 
 import os, re, json, mimetypes
@@ -595,6 +594,7 @@ def update_website_context(context):
 	try:
 	# theme = frappe.get_doc("Theme Settings")
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
+		frappe.log_error(theme_list,">> Web theme data <<")
 		if not theme_list:
 			theme_list = frappe.get_all("Web Theme",fields=['*'],order_by='creation desc')
 		footer_template = {}
@@ -607,8 +607,10 @@ def update_website_context(context):
 				default_header = get_header_info(theme_list[0].default_header)
 			if theme_list[0].default_footer:
 				default_footer = get_footer_info(theme_list[0].default_footer)
-			# frappe.log_error(theme_list[0])
+			# frappe.log_error(theme_list[0],">> update web site context <<")
 			theme_list[0].social_links = frappe.db.get_all("Social Link",filters={"parent":theme_list[0].name},fields=['icon','social_type','link_url'])
+			theme_list[0].js_list = frappe.db.get_all("Js List",filters={"parent":theme_list[0].name},fields=['js_file'])
+			theme_list[0].css_list = frappe.db.get_all("Css List",filters={"parent":theme_list[0].name},fields=['css_file'])
 			context.theme_settings = theme_list[0]
 		if default_header:
 			if default_header.layout_json:
@@ -634,6 +636,8 @@ def update_website_context(context):
 					context.theme_settings.sub_header_title = context.doc.page_title
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
+		frappe.log_error(context.theme_settings,">> context theme settings data <<")
+		frappe.log_error(context,">> context data <<")
 	except Exception as e:
 		print(frappe.get_traceback())
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")

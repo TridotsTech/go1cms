@@ -1243,6 +1243,7 @@ def get_page_section(source_doc):
 	path = get_files_path()
 	file_path = os.path.join(path, source_doc)
 	if os.path.exists(file_path):
+		# frappe.log_error(file_path,">> file path <<")
 		with open(file_path) as f:
 			data = json.loads(f.read())
 	return data
@@ -1269,7 +1270,9 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 	# from ecommerce_business_store.ecommerce_business_store.api import get_all_restaurant_data, check_restaurant_distance
 	#end
 	section_list = sections[int(page_no):int(page_len)]
+	# frappe.log_error(section_list,">> section_list data <<")
 	data = get_page_section(source_doc)
+	# frappe.log_error(data,">> page section data <<")
 	html_list = []
 	js_list = ''
 	res = {}
@@ -1354,6 +1357,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 			if product_box:
 				data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 			try:
+				# frappe.log_error(data_source,">> render data_source <<")
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:
@@ -1403,7 +1407,11 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 @frappe.whitelist(allow_guest=True)
 def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Web Page Builder', page)
+	# frappe.log_error(doc.as_dict(),">> Web page builder data <<")
 	source_doc, sections, html = get_source_doc(doc, device_type)
+	# frappe.log_error(source_doc,">> source_doc data <<")
+	# frappe.log_error(list(sections),">> sections data <<")
+	# frappe.log_error(html,">> hrml Template field name <<")
 	html_list = []
 	start = int(page_no) * int(page_len)
 	if source_doc:
