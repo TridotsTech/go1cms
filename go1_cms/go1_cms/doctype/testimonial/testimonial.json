@@ -10,6 +10,11 @@
   "title",
   "posted_by",
   "image",
+  "column_break_4",
+  "name1",
+  "role",
+  "company_logo",
+  "content_section",
   "content",
   "naming_series"
  ],
@@ -47,11 +52,35 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "TSM-"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "label": "Name"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Data",
+   "label": "Role"
+  },
+  {
+   "fieldname": "company_logo",
+   "fieldtype": "Attach Image",
+   "label": "Company Logo"
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Content"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-08 20:06:22.903591",
+ "modified": "2022-10-03 19:08:49.411991",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Testimonial",
