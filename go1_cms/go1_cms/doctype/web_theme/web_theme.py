@@ -146,29 +146,38 @@ def generate_webtheme_css_file(path,sitename,self):
 			if page.header_component:
 				template = frappe.get_template("templates/includes/header.css")
 				header_settings = frappe.get_doc("Header Component",page.header_component)
-				header_css = template.render({'header_settings':header_settings,"page_route":page.route})
+				p_route = page.route
+				if "/" in p_route:
+					p_route = p_route.split('/')[1]
+				header_css = template.render({'header_settings':header_settings,"page_route":p_route})
 				webtheme_css+=header_css
 			if page.footer_component:
+				p_route = page.route
+				if "/" in p_route:
+					p_route = p_route.split('/')[1]
 				template = frappe.get_template("templates/includes/footer.css")
 				footer_settings = frappe.get_doc("Footer Component",page.footer_component)
-				footer_css = template.render({'footer_settings':footer_settings,"page_route":page.route})
+				footer_css = template.render({'footer_settings':footer_settings,"page_route":p_route})
 				webtheme_css+=footer_css
 			if page.edit_header_style == 1:
 				if page.is_transparent_header == 1:
-					webtheme_css+="."+page.route+" .go1-cms-header{background:transparent;}"
-					webtheme_css+="."+page.route+" .go1-cms-menu li a{color:"+page.menu_text_color+";}"
+					p_route = page.route
+					if "/" in p_route:
+						p_route = p_route.split('/')[1]
+					webtheme_css+="."+p_route+" .go1-cms-header{background:transparent;}"
+					webtheme_css+="."+p_route+" .go1-cms-menu li a{color:"+page.menu_text_color+";}"
 					if page.menu_hover_bg:
-						webtheme_css+="."+page.route+" .go1-cms-menu li a:hover{background-color:"+page.menu_hover_bg+";}"
+						webtheme_css+="."+p_route+" .go1-cms-menu li a:hover{background-color:"+page.menu_hover_bg+";}"
 					if page.menu_hover_text_color:
-						webtheme_css+="."+page.route+" .go1-cms-menu li a:hover{color:"+page.menu_hover_text_color+";}"
+						webtheme_css+="."+p_route+" .go1-cms-menu li a:hover{color:"+page.menu_hover_text_color+";}"
 					if header_settings:
-						webtheme_css+="."+page.route+" .sticky_header .go1-cms-menu li a{color:"+header_settings.menu_text_color+";}"
-						webtheme_css+="."+page.route+" .sticky_header .go1-cms-menu li a:hover{color:"+header_settings.menu_hover_color+";}"
+						webtheme_css+="."+p_route+" .sticky_header .go1-cms-menu li a{color:"+header_settings.menu_text_color+";}"
+						webtheme_css+="."+p_route+" .sticky_header .go1-cms-menu li a:hover{color:"+header_settings.menu_hover_color+";}"
 					else:
 						if is_custom_header:
 							if doc_obj.header_settings:
-								webtheme_css+="."+page.route+" .sticky_header .go1-cms-menu li a{color:"+doc_obj.header_settings.menu_text_color+";}"
-								webtheme_css+="."+page.route+" .sticky_header .go1-cms-menu li a:hover{color:"+doc_obj.header_settings.menu_hover_color+";}"
+								webtheme_css+="."+p_route+" .sticky_header .go1-cms-menu li a{color:"+doc_obj.header_settings.menu_text_color+";}"
+								webtheme_css+="."+p_route+" .sticky_header .go1-cms-menu li a:hover{color:"+doc_obj.header_settings.menu_hover_color+";}"
 							
 		if not os.path.exists(os.path.join(path,css_file_name)):
 			res = frappe.get_doc({

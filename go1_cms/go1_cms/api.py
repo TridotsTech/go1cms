@@ -592,9 +592,7 @@ def key_func(k):
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
 	try:
-	# theme = frappe.get_doc("Theme Settings")
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
-		# frappe.log_error(theme_list,">> Web theme data <<")
 		if not theme_list:
 			theme_list = frappe.get_all("Web Theme",fields=['*'],order_by='creation desc')
 		footer_template = {}
