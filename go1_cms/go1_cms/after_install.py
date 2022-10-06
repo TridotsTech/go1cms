@@ -7,6 +7,8 @@ import frappe
 import frappe, os, re
 import json
 import zipfile
+from frappe.utils import encode, get_files_path , getdate, to_timedelta,  flt
+
 
 def after_install():
 	unzip_section_images()
@@ -254,6 +256,7 @@ def unzip_section_images():
 	path = frappe.get_module_path("go1_cms")
 	file_path = os.path.join(path,"section_images.zip")
 	with zipfile.ZipFile(file_path) as z:
+		frappe.log_error(z.filelist,'z.filelist')
 		for file in z.filelist:
 			if file.is_dir() or file.filename.startswith("__MACOSX/"):
 				# skip directories and macos hidden directory
@@ -262,9 +265,12 @@ def unzip_section_images():
 			if filename.startswith("."):
 				# skip hidden files
 				continue
-			file_doc = frappe.new_doc("File")
-			file_doc.content = z.read(file.filename)
-			file_doc.file_name = filename
-			file_doc.folder = "Home"
-			file_doc.is_private = 0
-			file_doc.save()
+			origin = get_files_path()
+			item_file_path = os.path.join(origin, file.filename)
+			if not os.path.exists(item_file_path):
+				file_doc = frappe.new_doc("File")
+				file_doc.content = z.read(file.filename)
+				file_doc.file_name = filename
+				file_doc.folder = "Home"
+				file_doc.is_private = 0
+				file_doc.save()
