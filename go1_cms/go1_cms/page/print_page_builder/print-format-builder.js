@@ -372,7 +372,7 @@ frappe.PrintFormatBuilder = class PrintFormatBuilder {
 				// on drop, change the HTML
 
 				var $item = $(evt.item);
-				if (!$item.hasClass("print-format-builder-field")) {
+				if (!$item.hasClass("print-format-builder-field")) {	
 					var fieldname = $item.attr("data-fieldname");
 
 					if (fieldname === "_custom_html") {
@@ -553,6 +553,7 @@ frappe.PrintFormatBuilder = class PrintFormatBuilder {
 				// append each field to prev
 				$col.parent().addClass("to-drop");
 				$col.find(".print-format-builder-field").each(function () {
+					console.log('test_drag');
 					$(this).appendTo(prev);
 				});
 			}

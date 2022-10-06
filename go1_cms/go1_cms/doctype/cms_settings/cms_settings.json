@@ -11,6 +11,8 @@
   "generate_html",
   "styles_to_update",
   "field_type_properties",
+  "route_prefix_section",
+  "route_prefix",
   "website_settings_section",
   "use_other_domain",
   "domain"
@@ -60,12 +62,23 @@
    "fieldname": "domain",
    "fieldtype": "Data",
    "label": "Domain"
+  },
+  {
+   "fieldname": "route_prefix_section",
+   "fieldtype": "Section Break",
+   "label": "Route Prefix"
+  },
+  {
+   "fieldname": "route_prefix",
+   "fieldtype": "Table",
+   "label": "Route Prefix",
+   "options": "CMS Route"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-09-20 13:49:32.833273",
+ "modified": "2022-10-06 13:14:04.149793",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",

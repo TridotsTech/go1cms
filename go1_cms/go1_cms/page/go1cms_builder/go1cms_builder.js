@@ -169,6 +169,7 @@ frappe.Go1CmsBuilder = class Go1CmsBuilder {
         $(".title-area").append(pages_html);
          // console.log(this.page.main);
 		// bind only once
+        this.handle_drag();
 		this.setup_section_settings();
 		this.add_component()
 		this.add_row();
@@ -1146,6 +1147,39 @@ async setup_add_section() {
 			    $(section.parent().parent().parent()).clone().insertAfter(section.parent().parent().parent())
 			});
 		}
+         handle_drag(){
+            var me= this
+            this.page.main.find(".add_button").each(function () {
+                me.setup_sortable_for_column(this);
+            });
+         }
+        
+         setup_sortable_for_column(col) {
+            var me = this;
+            Sortable.create(col, {
+                group: {
+                    name: "field",
+                    put: true,
+                    pull: true,
+                },
+                onAdd: function (evt) {
+                    // on drop, change the HTML
+        
+                    var $item = $(evt.item);
+                    if (!$item.hasClass("component_label")) {
+                        var html = frappe.render_template("components", {
+                            me: me,
+                        });
+        
+                        $item.replaceWith(html);
+                    }
+                },
+            });
+        }
+
+
+
+
 		// edit component 
 	    edit_component_block(){
 			var me = this;
@@ -3857,3 +3891,5 @@ $(document).ready(function(){
        $(".page-list").hide();
 	})
 })
+
+

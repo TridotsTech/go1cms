@@ -34,9 +34,12 @@ class WebPageBuilder(WebsiteGenerator):
 			self.construct_html('web', 'web_section')
 		if self.mobile_section:
 			self.construct_html('mobile', 'mobile_section')
-
+		route_prefix = ""
+		r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
+		if r_prefix:
+			route_prefix ="/"+r_prefix[0].page_prefix+"/"
 		if not self.route:
-			self.route = self.scrub(self.page_title)
+			self.route = route_prefix+self.scrub(self.page_title)
 		if not self.meta_title:
 			self.meta_title = self.page_title
 		if not self.meta_keywords:

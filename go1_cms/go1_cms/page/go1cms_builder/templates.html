@@ -4,6 +4,9 @@
             Speciality Section
         </div>
         <div class="edit_block">
+            <!-- <span class="carousel" data-toggle="collapse" href="#{{section.page_section}}" aria-expanded="false" aria-controls="collapseExample">
+                <i class="fa-solid fa-chevron-down"></i>
+            </span> -->
             <span class="section-settings pull-right cursor-pointer">
                <i class="fa-solid fa-gear"></i>
             </span>
@@ -12,7 +15,8 @@
            </span>
         </div>
     </div>
-    <div class="col-md-12 template_grid" id="{{section.unique_id}}">
+
+    <div class="col-md-12 template_grid" class="collapse" id="{{section.page_section}}">
             {% for(var j=0; j < section.layout_json.length; j++) { var row=section.layout_json[j]; %}            
             <div class="row main_row" id="{{row.u_id}}">
            

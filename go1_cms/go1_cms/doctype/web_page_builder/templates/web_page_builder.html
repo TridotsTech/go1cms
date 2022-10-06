@@ -47,7 +47,6 @@ var body_scroll = true
 $(window).scroll(function() {
    body_scroll = false
     if (allow_scroll == true) {
-         
         var hT = $('.page-sections-main').offset().top,
             hH = $('.page-sections-main').outerHeight(),
             wH = $(window).height(),
@@ -63,7 +62,6 @@ $(window).scroll(function() {
         }
         allow_scroll = false;
         page = page + 1;
-        console.log("hiu")
         $.ajax({
 
             type: 'POST',
@@ -93,7 +91,6 @@ $(window).scroll(function() {
 if(body_scroll){
 $('body').scroll(function(){
     if (allow_scroll == true) {
-       
         var hT = $('.page-sections-main').offset().top,
             hH = $('.page-sections-main').outerHeight(),
             wH = $(window).height(),
