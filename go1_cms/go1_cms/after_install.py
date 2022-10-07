@@ -293,9 +293,14 @@ def unzip_section_images():
 				file_doc.is_private = 0
 				file_doc.save()
 
+@frappe.whitelist()
+def load_sample_pages():
+	frappe.enqueue(insert_sample_pages, queue='default')
+
 def insert_sample_pages():
 	pages_list = [{"json_file":"about_us.json","sections_file":"about_us_sections.json"}
 				 ,{"json_file":"our_team.json","sections_file":"our_team_sections.json"}
+				 ,{"json_file":"testimonials.json","sections_file":"testimonials_sections.json"}
 				 ]
 	path = frappe.get_module_path("go1_cms")
 	from frappe.model.mapper import get_mapped_doc
@@ -306,57 +311,59 @@ def insert_sample_pages():
 				out = json.load(f)
 			for i in out:
 				try:
-					doc = frappe.get_doc(i).insert()
-					web_sections = i.get("web_section")
-					webpage_section_file_path = os.path.join(path,'json_data',"sample_pages",page.get("sections_file"))
-					if os.path.exists(webpage_section_file_path):
-						with open(webpage_section_file_path, 'r') as f:
-							header_out = json.load(f)
-						for j in header_out:
-							template = section_name = j.get("section_title")
-							p_doc = get_mapped_doc("Section Template", template, {
-								"Section Template": {
-									"doctype": "Page Section"
-								},
-								"Section Content":{
-									"doctype": "Section Content"
-								}
-							}, None, ignore_permissions=True)
-							p_doc.section_title = template
-							p_doc.custom_title = section_name
-							p_doc.choose_from_template = 1
-							p_doc.section_template = template
-							if j.get("content"):
-								p_doc.content = []
-								for ct in j.get("content"):
-									p_doc.append("content",ct)
-							if j.get("web_template"):
-								p_doc.web_template = j.get("web_template")
-							if j.get("css_field_list"):
-								p_doc.css_field_list = j.get("css_field_list")
-							if j.get("class_name"):
-								p_doc.class_name = j.get("class_name")
-							if j.get("css_json"):
-								p_doc.css_json = j.get("css_json")
-							if j.get("css_text"):
-								p_doc.css_text = j.get("css_text")
-							p_doc.allow_update_to_style = 0
-							if j.get("allow_update_to_style"):
-								p_doc.allow_update_to_style = j.get("allow_update_to_style")
-							p_doc.insert()
-							doc.append("web_section",{
-						        "idx": j.get("idx"),
-						        "docstatus": 0,
-						        "section": p_doc.name,
-						        "section_title": template,
-						        "section_type": j.get("section_type"),
-						        "allow_update_to_style": p_doc.allow_update_to_style
-								})
+					if not frappe.db.get_all("Web Page Builder",filters={"page_title":i.get("page_title")}):
+						doc = frappe.get_doc(i).insert()
+						web_sections = i.get("web_section")
+						webpage_section_file_path = os.path.join(path,'json_data',"sample_pages",page.get("sections_file"))
+						if os.path.exists(webpage_section_file_path):
+							with open(webpage_section_file_path, 'r') as f:
+								header_out = json.load(f)
+							for j in header_out:
+								template = section_name = j.get("section_title")
+								p_doc = get_mapped_doc("Section Template", template, {
+									"Section Template": {
+										"doctype": "Page Section"
+									},
+									"Section Content":{
+										"doctype": "Section Content"
+									}
+								}, None, ignore_permissions=True)
+								p_doc.section_title = template
+								p_doc.custom_title = section_name
+								p_doc.choose_from_template = 1
+								p_doc.section_template = template
+								if j.get("content"):
+									p_doc.content = []
+									for ct in j.get("content"):
+										p_doc.append("content",ct)
+								if j.get("web_template"):
+									p_doc.web_template = j.get("web_template")
+								if j.get("css_field_list"):
+									p_doc.css_field_list = j.get("css_field_list")
+								if j.get("class_name"):
+									p_doc.class_name = j.get("class_name")
+								if j.get("css_json"):
+									p_doc.css_json = j.get("css_json")
+								if j.get("css_text"):
+									p_doc.css_text = j.get("css_text")
+								p_doc.allow_update_to_style = 0
+								if j.get("allow_update_to_style"):
+									p_doc.allow_update_to_style = j.get("allow_update_to_style")
+								p_doc.insert()
+								doc.append("web_section",{
+							        "idx": j.get("idx"),
+							        "docstatus": 0,
+							        "section": p_doc.name,
+							        "section_title": template,
+							        "section_type": j.get("section_type"),
+							        "allow_update_to_style": p_doc.allow_update_to_style
+									})
 
-					doc.save()
+						doc.save()
 				except frappe.NameError:
 					pass
 				except Exception as e:
 					frappe.log_error(frappe.get_traceback(), "insert_sample_page") 
+	frappe.publish_realtime('msgprint', 'Sample pages are created.')
 
 
