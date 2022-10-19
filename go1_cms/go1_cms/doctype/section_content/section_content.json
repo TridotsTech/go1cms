@@ -16,6 +16,7 @@
   "allow_update_to_style",
   "choose_style_properties",
   "css_properties_list",
+  "options",
   "section_break_11",
   "content",
   "section_break_12",
@@ -51,7 +52,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Field Type",
-   "options": "Text\nSmall Text\nLong Text\nAttach\nList\nLink\nAttach Video\nText Editor\nButton\nBorder\nDate"
+   "options": "Text\nSmall Text\nLong Text\nSelect\nAttach\nList\nLink\nAttach Video\nText Editor\nButton\nBorder\nDate"
   },
   {
    "fieldname": "content_type",
@@ -155,12 +156,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Cid"
+  },
+  {
+   "depends_on": "eval:((doc.field_type==\"Select\"))",
+   "fieldname": "options",
+   "fieldtype": "Long Text",
+   "label": "Options"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-09-20 20:55:27.493233",
+ "modified": "2022-10-19 12:44:51.472995",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Section Content",
