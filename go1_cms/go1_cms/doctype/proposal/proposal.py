@@ -87,16 +87,16 @@ class Proposal(WebsiteGenerator):
 		generate_css_file()
 
 	def construct_html(self, view_type, ref_field):
-		frappe.log_error(ref_field, "ref_field")
+		# frappe.log_error(ref_field, "ref_field")
 		result = self.get_json_data(ref_field)
-		frappe.log_error( result,"result----")
+		# frappe.log_error( result,"result----")
 		path = get_files_path()
 		if not os.path.exists(os.path.join(path,'data_source')):
 			frappe.create_folder(os.path.join(path,'data_source'))
 		# frappe.log_error(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "jsonpath")
 		with open(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "w") as f:
-			frappe.log_error(result,"result---0-")
-			frappe.log_error(json.dumps(result, separators=(',', ':')),"result---3-")
+			# frappe.log_error(result,"result---0-")
+			# frappe.log_error(json.dumps(result, separators=(',', ':')),"result---3-")
 			content = json.dumps(result, separators=(',', ':'))	
 			f.write(content)
 			# if view_type == "mobile":
@@ -112,15 +112,15 @@ class Proposal(WebsiteGenerator):
 
 	def get_json_data(self, ref_field):
 		results = []
-		frappe.log_error(ref_field, "ref_field")
-		frappe.log_error(self.as_dict()[ref_field], "sections")
+		# frappe.log_error(ref_field, "ref_field")
+		# frappe.log_error(self.as_dict()[ref_field], "sections")
 		for item in self.as_dict()[ref_field]:
-			frappe.log_error(item,"item")
+			# frappe.log_error(item,"item")
 			doc = frappe.get_doc('Page Section', item.section)
 			obj = doc.run_method('section_data')
-			frappe.log_error(obj,"obj")
+			# frappe.log_error(obj,"obj")
 			results.append(obj)
-		frappe.log_error(results,"results")
+		# frappe.log_error(results,"results")
 		return results
 
 	def get_context(self, context):
@@ -815,7 +815,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 									})
 							ret.insert()
 							return_url = ret.make_thumbnail(set_as_thumbnail=False,width=width,height=height,suffix=str(height))
-							frappe.log_error(return_url,"dm")
+							# frappe.log_error(return_url,"dm")
 							item["content"] = return_url
 							update_doc(item)
 		else:
@@ -1400,7 +1400,7 @@ def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Proposal', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
 	context['section_len']= len(page_section)
-	frappe.log_error(len(page_section), "-----context------")
+	# frappe.log_error(len(page_section), "-----context------")
 	page_section = page_section[int(page_no):int(page_len)]
 	for item in page_section:
 		data=get_section_data(item.section, item.parent, context.device_type)
@@ -2688,7 +2688,7 @@ def generate_email_pdf(page, name):
 		options['footer-html'] = footer_template
 		options['footer-spacing'] = '2'
 		html = page_template
-		frappe.log_error(html,'final pdf render html')
+		# frappe.log_error(html,'final pdf render html')
 		content = get_pdf(html)
 		return content
 	except Exception:

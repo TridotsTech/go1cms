@@ -74,7 +74,6 @@ class WebPageBuilder(WebsiteGenerator):
 		# 	css_text=""
 		# 	for d in self.web_section:
 		# 		res = frappe.get_list("Page Section",filters={"name":d.section},fields={"css_text"})
-		# 		# frappe.log_error(res,"res")
 		# 		if res and res[0]['css_text']:css_text +=str(res[0]['css_text'])
 		# 	import os
 		# 	from frappe.utils import get_files_path
@@ -200,9 +199,7 @@ class WebPageBuilder(WebsiteGenerator):
 					footer_template[z['section_type']] = frappe.db.get_all("Menus Item",filters={"parent":z['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
 			context['footer'] = footer_template
 		
-		# frappe.log_error(doc,"doc111")
 		context.doc = doc
-		# frappe.log_error(context.doc.name,"context.doc")
 		if doc.meta_title:
 			context.meta_title = doc.meta_title
 		if doc.meta_description:
@@ -691,14 +688,11 @@ def get_section_content(section, content_type):
 		# if section[0].section_title:
 		# 	style_fields = frappe.get_list("Section Template",filters={"name":section[0].section_title},fields={"css_field_list","allow_update_to_style"})
 		# 	if style_fields:styles = style_fields[0]['css_field_list']
-			# frappe.log_error(styles,"styles")
 	# styles = frappe.db.get_single_value("CMS Settings","styles_to_update")
-	# frappe.log_error(styles)
 	# if styles:
 	# 	section[0].styles =  json.loads((styles))
 	# section[0]['allow_update_to_style']= style_fields[0]['allow_update_to_style']
 	# if section[0]['css_json']:section[0]['css_json']=json.loads(section[0]['css_json'])
-	# frappe.log_error(section[0],"section[0]")
 	fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 	section[0].fonts_list = fonts_list
 	return section[0]
@@ -757,14 +751,11 @@ def get_section_properties(section_name):
 					# style_fields = frappe.get_list("Page Section",filters={"name":section},fields={"css_field_list","allow_update_to_style"})
 					styles = section[0].css_field_list
 					allow_update_to_style = 1
-				# frappe.log_error(styles,"styles")
 		# styles = frappe.db.get_single_value("CMS Settings","styles_to_update")
-		# frappe.log_error(styles)
 		if styles:
 			section[0].styles =  json.loads((styles))
 		section[0]['allow_update_to_style']= allow_update_to_style
 		if section[0]['css_json']:section[0]['css_json']=json.loads(section[0]['css_json'])
-		# frappe.log_error(section[0],"section[0]")
 		fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 		section[0].fonts_list = fonts_list
 		return section[0]
@@ -1039,7 +1030,6 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 									})
 							ret.insert()
 							return_url = ret.make_thumbnail(set_as_thumbnail=False,width=width,height=height,suffix=str(height))
-							frappe.log_error(return_url,"dm")
 							item["content"] = return_url
 							update_doc(item)
 		else:
@@ -1054,19 +1044,14 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 			elif item.get('name') == 'menu':
 				frappe.db.set_value('Page Section', section, 'menu', item.get('content'))
 			elif item.get('name') == 'section_css_text':
-				# frappe.log_error("css_text",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'css_text', item.get('content'))
 			elif item.get('name') == 'section_css_json':
-				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'css_json', json.dumps(item.get('content')))
 			elif item.get('name') == 'is_full_width':
-				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'is_full_width', item.get('content'))
 			elif item.get('name') == 'dynamic_data':
-				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'dynamic_data', item.get('content'))
 			elif item.get('name') == 'display_data_randomly':
-				# frappe.log_error("css_json",item.get('content'))
 				check_val = 0
 				if item.get('content'):
 					check_val = item.get('content')
@@ -1104,13 +1089,11 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 							inner join `tabProduct Category` pc on CM.category=pc.name\
 													where p.is_active=1 and p.status='Approved' and  %s group by p.name ORDER BY FIND_IN_SET(p.name,'%s')" \
 							% (conditions,order_by[:-1])
-						# frappe.log_error(query,"query")
 						products = frappe.db.sql(query,as_dict=1)
 						# products = frappe.db.sql(""" SELECT route,name,item,short_description,full_description,price,old_price FROM `tabProduct` WHERE name in (%s) """%(products_filters),as_dict=1)
 						# for x in products:
 							# x.images = frappe.db.sql('''select detail_thumbnail, title, is_primary, image_name, product_image, detail_image,name from `tabProduct Image` where parent = %(parent)s order by is_primary desc, idx''',{'parent': x.name},as_dict=1)
 						result = get_product_details(products)
-						# frappe.log_error(result,'result')
 						frappe.db.set_value('Page Section', section, 'custom_section_data',json.dumps(result, indent=1, sort_keys=False, default=str))
 					else:
 						frappe.db.set_value('Page Section', section, 'custom_section_data',"[]")
@@ -1130,7 +1113,6 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 						conditions = "  p.name in("+products_filters+")"
 						query = "select distinct * from `tabBlog Post` p where p.published=1 and  %s group by p.name ORDER BY FIND_IN_SET(p.name,'%s')" \
 							% (conditions,order_by[:-1])
-						# frappe.log_error(query,"query")
 						result = frappe.db.sql(query,as_dict=1)
 						# result = get_product_details(products)
 						
@@ -1248,7 +1230,6 @@ def get_page_section(source_doc):
 	path = get_files_path()
 	file_path = os.path.join(path, source_doc)
 	if os.path.exists(file_path):
-		# frappe.log_error(file_path,">> file path <<")
 		with open(file_path) as f:
 			data = json.loads(f.read())
 	return data
@@ -1344,7 +1325,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 			if product_box:
 				data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 			try:
-				# frappe.log_error(section_html,">> section_html <<")
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:
@@ -1394,11 +1374,7 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 @frappe.whitelist(allow_guest=True)
 def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Web Page Builder', page)
-	# frappe.log_error(doc.as_dict(),">> Web page builder data <<")
 	source_doc, sections, html = get_source_doc(doc, device_type)
-	# frappe.log_error(source_doc,">> source_doc data <<")
-	# frappe.log_error(list(sections),">> sections data <<")
-	# frappe.log_error(html,">> hrml Template field name <<")
 	html_list = []
 	start = int(page_no) * int(page_len)
 	if source_doc:
@@ -1622,7 +1598,6 @@ def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Web Page Builder', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
 	context['section_len']= len(page_section)
-	frappe.log_error(len(page_section), "-----context------")
 	page_section = page_section[int(page_no):int(page_len)]
 	for item in page_section:
 		data=get_section_data(item.section, item.parent, context.device_type)
