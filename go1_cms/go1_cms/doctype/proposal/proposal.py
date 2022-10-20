@@ -2148,7 +2148,10 @@ def generate_pdf1(page):
 		component = frappe.db.get_all('Mobile Page Section' ,fields=['section','name', 'section_title', 'section_name', 'section_type', 'content_type', 'route'],filters={'parent':builder.name, 'parentfield':'web_section'},order_by='idx')
 		if len(component)>0:
 			for item in component:
-				product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				# by gopi 20/10/22
+				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				# end
 				if product_template:
 					data_source = get_section_data(item.section)
 					print("data_source----------------------------------------------------------")
@@ -2217,7 +2220,10 @@ def generate_pdf2(page):
 		if len(component)>0:
 			page_template += '<div class="builder-cont" style="">\n'
 			for item in component:
-				product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				# by gopi 20/10/22
+				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)	
+				# end
 				if product_template:
 					data_source = get_section_data(item.section)
 					
@@ -2341,7 +2347,10 @@ def generate_pdf(page, name):
 		if len(component)>0:
 			page_template += '<div class="page" style=""><div>\n'
 			for item in component:
-				product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				# by gopi 20/10/22
+				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				# end
 				if product_template:
 					data_source = get_section_data(item.section)
 					data_source['quotation']= quotation
@@ -2467,7 +2476,10 @@ def get_page_pdf(page, name):
 		if len(component)>0:
 			page_template += '<div class="page" style=""><div>\n'
 			for item in component:
-				product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				# by gopi 20/10/22
+				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				# end
 				if product_template:
 					data_source = get_section_data(item.section)
 					data_source["quotation"] = quotation
@@ -2638,7 +2650,10 @@ def generate_email_pdf(page, name):
 			if len(component)>0:
 				page_template += '<div class="page" style=""><div>\n'
 				for item in component:
-					product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+					# by gopi 20/10/22
+					# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+					product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+					# end
 					if product_template:
 						data_source = get_section_data(item.section)
 						data_source['quotation']= quotation

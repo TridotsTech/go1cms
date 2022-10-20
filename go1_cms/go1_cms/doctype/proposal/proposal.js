@@ -71,15 +71,15 @@ frappe.ui.form.on('Proposal', {
         }
         if (!frm.__islocal && frm.doc.published==1) {
 
-            frm.add_custom_button(__('Preview'), function () {
-                window.open(
-                  'https://go1-cms.web.app/p/'+frm.doc.route,
-                  '_blank' // <- This is what makes it open in a new window.
-                );
+            // frm.add_custom_button(__('Preview'), function () {
+            //     window.open(
+            //       'https://go1-cms.web.app/p/'+frm.doc.route,
+            //       '_blank' // <- This is what makes it open in a new window.
+            //     );
 
-            });
-            $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
-            $('button[data-label="Preview"]').html("<i class='fa fa-eye' style='margin-right:5px'></i> Preview");
+            // });
+            // $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
+            // $('button[data-label="Preview"]').html("<i class='fa fa-eye' style='margin-right:5px'></i> Preview");
 
             // frm.add_custom_button(__('Send Document'), function () {
             //         make_email_dialog(frm)
