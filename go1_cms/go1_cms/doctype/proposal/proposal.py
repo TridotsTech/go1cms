@@ -644,8 +644,8 @@ def get_section_content(section, content_type):
 	# end
 	if section:
 		# 17-10-22
-		# section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension, options from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
-		section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
+		section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension, options from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
+		# section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
 		# end
 		# if section[0].content[0]['css_properties_list']:section[0].content[0]['css_properties_list']=json.loads(section[0].content[0]['css_properties_list'])
 		# if section[0].section_title:
@@ -2320,18 +2320,19 @@ def generate_pdf(page, name):
 	
 	if builder:
 		if builder.header_template:
-
-			# footer_template += f'''<div><div id="header-html" class="visible-pdf">
-			# 	<div class="letter-head-header">
-			# 		\kk	
-			# 	</div>
-			# </div>'''
-
+			# org
 			header_template += '<header id="pspdfkit-header"><div class="header-columns">\n'
-			# header_template += '<div id="pspdfkit-header"><div class="header-columns">\n'
+			header_template += '<div id="pspdfkit-header"><div class="header-columns">\n'
 			header_template += frappe.db.get_value('Header Template', builder.header_template, 'header_content')
 			header_template += '</div>'
 			header_template += '</header>'
+			# end
+		# for giving marginon each pdf page static header added
+		header_template += f'''<div><div id="header-html" class="visible-pdf">
+				<div class="letter-head-header">
+				</div>
+			</div>'''
+		# end
 		page_template += header_template
 			# header_template += '<div class="header">\n'
 			# header_template += frappe.db.get_value('Header Template', builder.header_template, 'header_content')

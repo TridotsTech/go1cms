@@ -71,29 +71,36 @@ frappe.ui.form.on('Proposal', {
         }
         if (!frm.__islocal && frm.doc.published==1) {
 
-        //     frm.add_custom_button(__('Preview'), function () {
-        //         window.open(
-        //           'https://go1-cms.web.app/p/'+frm.doc.route,
-        //           '_blank' // <- This is what makes it open in a new window.
-        //         );
+            // frm.add_custom_button(__('Preview'), function () {
+            //     window.open(
+            //       'https://go1-cms.web.app/p/'+frm.doc.route,
+            //       '_blank' // <- This is what makes it open in a new window.
+            //     );
 
-        //     });
-        //     $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
-        //     $('button[data-label="Preview"]').html("<i class='fa fa-eye' style='margin-right:5px'></i> Preview");
+            // });
+            // $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
+            // $('button[data-label="Preview"]').html("<i class='fa fa-eye' style='margin-right:5px'></i> Preview");
 
-        //     frm.add_custom_button(__('Send Document'), function () {
-        //         frappe.call({
-        //                 method: 'go1_cms.go1_cms.doctype.proposal.proposal.send_document_via_email',
-        //                 args: {
-        //                     page: frm.doc.name,
-        //                     name:frm.doc.quotation
-        //                 },
-        //                 freeze: true,
-        //                 callback: function(r) {
-        //                     console.log("data")
-        //                 }
-        //             })
-        //             });
+            // frm.add_custom_button(__('Send Document'), function () {
+            //     class email extends frappe.views.CommunicationComposer{
+            //         subject = "Gopi"
+            //         recipients='gopi@tridotstech.com,'
+            //         frm = frm 
+            //     }
+            //     new email()
+
+                // frappe.call({
+                //         method: 'go1_cms.go1_cms.doctype.proposal.proposal.send_document_via_email',
+                //         args: {
+                //             page: frm.doc.name,
+                //             name:frm.doc.quotation
+                //         },
+                //         freeze: true,
+                //         callback: function(r) {
+                //             console.log("data")
+                //         }
+                //     })
+                    // });
 
         frm.add_custom_button(__('Preview PDF'), function () {
                     window.open(
@@ -185,11 +192,11 @@ frappe.ui.form.on('Proposal', {
                              colors: ['#ff0000', '#00ff00', '#0000ff'],
                              filebrowser: {
                                  isSuccess: function (resp) {
-                                      console.log(resp)
+                                    //   console.log(resp)
                                         return resp.length !== 0;
                                     },
                                     getMsg: function (resp) {
-                                        console.log(resp)
+                                        // console.log(resp)
                                         return resp;
                                     },
                                     ajax: {
@@ -204,11 +211,11 @@ frappe.ui.form.on('Proposal', {
                                         },
                                         prepareData: function (data) {
                                             data.someparameter++;
-                                             console.log(data)
+                                            //  console.log(data)
                                             return data;
                                         },
                                         process: function (resp) {
-                                            console.log(resp)
+                                            // console.log(resp)
                                             return resp.split('|'); // return items list
                                         },
                                     }
@@ -219,21 +226,21 @@ frappe.ui.form.on('Proposal', {
                                 pathVariableName: 'path',
                                 filesVariableName: 'images',
                                 prepareData: function (data) {
-                                    console.log(data)
+                                    // console.log(data)
                                     return data;
                                 },
                                 isSuccess: function (resp) {
-                                    console.log(resp)
+                                    // console.log(resp)
                                     return !resp.error;
                                 },
                                 getMsg: function (resp) {
-                                    console.log(resp)
+                                    // console.log(resp)
                                     return resp.msg.join !== undefined ? resp.msg.join(' ') : resp.msg;
                                 },
                                 process: function (resp) {
-                                    console.log(resp)
-                                    console.log(this.options.uploader.filesVariableName)
-                                    console.log(resp[this.options.uploader.filesVariableName])
+                                    // console.log(resp)
+                                    // console.log(this.options.uploader.filesVariableName)
+                                    // console.log(resp[this.options.uploader.filesVariableName])
                                     return {
                                         files: resp[this.options.uploader.filesVariableName] || [],
                                         path: resp.path,
@@ -244,12 +251,12 @@ frappe.ui.form.on('Proposal', {
 
                                 },
                                 error: function (e) {
-                                    console.log(e)
+                                    // console.log(e)
                                     this.events.fire('errorPopap', [e.getMessage(), 'error', 4000]);
                                 },
                                 defaultHandlerSuccess: function (data, resp) {
-                                     console.log(resp)
-                                      console.log(data)
+                                    //  console.log(resp)
+                                    //   console.log(data)
                                     var i, field = this.options.uploader.filesVariableName;
                                     if (data[field] && data[field].length) {
                                         for (i = 0; i < data[field].length; i += 1) {
@@ -258,7 +265,7 @@ frappe.ui.form.on('Proposal', {
                                     }
                                 },
                                 defaultHandlerError: function (resp) {
-                                     console.log(resp)
+                                    //  console.log(resp)
                                     this.events.fire('errorPopap', [this.options.uploader.getMsg(resp)]);
                                 }
                             },
@@ -997,7 +1004,7 @@ function bind_layout_data(wrapper){
         args: {},
         freeze: true,
         callback: function (r) {
-            console.log(">> layout api response <<",r)
+            // console.log(">> layout api response <<",r)
             if(r && r.message && r.message.length > 0){
                 bind_layout_data(r.message)
             }
@@ -1037,7 +1044,7 @@ function bind_layout_data(wrapper){
                     </div>`);
                 wrapper.find('#SectionList').find("#sec-right-content").append(item)
                 item.click(() =>{
-                    console.log(">> layout click working <<")
+                    // console.log(">> layout click working <<")
                 })
 			})
     }
@@ -1191,7 +1198,7 @@ var modify_section_data = Class.extend({
             this.check_fieldtype_button();
         }
         if (this.fields && this.fields.section_type == 'Custom Section') {
-            console.log(this.fields)
+            // console.log(this.fields)
             if(this.fields.reference_document !="Blog Category"){
                 if (this.fields.fetch_product == 1) {
                     this.dialog.fields_dict.reference_name.$wrapper.removeClass('hide-control');
@@ -1376,7 +1383,7 @@ var modify_section_data = Class.extend({
                     },
                     async: false,
                     callback: function(r) {
-                        console.log(r)
+                        // console.log(r)
                         me.dialog.$wrapper.find('[data-fieldname="blog_category_html"]').html('');
                         if(r.message){
                                let p_html = me.dialog.fields_dict.blog_category_html.$wrapper.empty();
@@ -1399,7 +1406,7 @@ var modify_section_data = Class.extend({
                                    t_html.append(row)
                                }
                                t_html.appendTo(p_html);
-                               console.log(me.dialog.$wrapper.find('[data-fieldname="blog_category_html"]').parent().parent().parent().parent())
+                            //    console.log(me.dialog.$wrapper.find('[data-fieldname="blog_category_html"]').parent().parent().parent().parent())
                                me.dialog.$wrapper.find('[data-fieldname="blog_category_html"]').parent().parent().parent().parent().show();
                                // me.dialog.$wrapper.find('[data-fieldname="blog_category_html"]').html(p_html);
                                me.categoryblogs = r.message;
@@ -1797,7 +1804,7 @@ var modify_section_data = Class.extend({
                 }
                 
                 field_list.push(field);
-                 console.log(v,"kv")
+                //  console.log(v,"kv")
                 if(v.field_type == 'List' || v.field_type == 'Text Editor'){
                     field_list.push({ 'fieldtype': 'Section Break', 'fieldname': 'sb'})
                 }
@@ -2103,7 +2110,7 @@ var modify_section_data = Class.extend({
                 "fieldtype": "HTML"
             });
         }
-        console.log(field_list)
+        // console.log(field_list)
         return field_list;
     },
     pattern_html: function() {
@@ -2288,7 +2295,7 @@ var modify_section_data = Class.extend({
             results.push({ 'name': "section_css_text", 'content': css_design});
         }
         if (results.length > 0 || me.list_section_data.length > 0) {
-            console.log(results)
+            // console.log(results)
             frappe.call({
                 method: 'go1_cms.go1_cms.doctype.proposal.proposal.update_section_content',
                 args: {
