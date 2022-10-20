@@ -640,7 +640,10 @@ def generate_static_section(section):
 def generate_dynamic_section(section, view_type):	
 	template = ""
 	business=None
-	product_template = frappe.db.get_value("Page Section", section, ["name", "business", "section_title", "web_template", "mobile_view_template", "custom_css", "custom_js"], as_dict=True)	
+	# hide by gopi on 20/10/22
+	# product_template = frappe.db.get_value("Page Section", section, ["name", "business","section_title", "web_template", "mobile_view_template", "custom_css", "custom_js"], as_dict=True)	
+	product_template = frappe.db.get_value("Page Section", section, ["name","section_title", "web_template", "mobile_view_template", "custom_css", "custom_js"], as_dict=True)	
+	# end
 	if product_template:
 		#context={}
 		#content = frappe.db.get_all("Section Content", fields=["*"], filters={"parent":product_template.name})
@@ -659,7 +662,6 @@ def generate_dynamic_section(section, view_type):
 		if product_template.custom_js:
 			template += '\n <script> \n'  + str(product_template.custom_js or '') + '\n </script>\n'
 		temp_path = get_template_folder(business=business)
-		frappe.log
 		html_page = product_template.section_title.lower().replace(' ','-') + "-" + (product_template.name).lower().replace(' ','-')
 		with open(os.path.join(temp_path, (html_page+'.html')), "w") as f:
 			#temp = unescape(encode(template))
