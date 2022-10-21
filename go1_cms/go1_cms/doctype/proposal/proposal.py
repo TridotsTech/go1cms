@@ -85,6 +85,7 @@ class Proposal(WebsiteGenerator):
 			# return {"status":"success","message":"completed successfully"}
 		# frappe.enqueue("ecommerce_business_store.ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.generate_css_file")
 		generate_css_file()
+		generate_email_pdf(self)
 
 	def construct_html(self, view_type, ref_field):
 		# frappe.log_error(ref_field, "ref_field")
@@ -2604,10 +2605,13 @@ def add_attachment(fname, fcontent, content_type=None, parent=None, content_id=N
 	msg_root.attach(part)
 	return msg_root
 
+# by gopi on 20/10/22
 
 @frappe.whitelist(allow_guest=True)
-def generate_email_pdf(page, name):
+def generate_email_pdf(doc_details):
 	try:
+		page = doc_details.name
+		name = doc_details.quotation
 		from go1_cms.go1_cms.doctype.page_section.page_section import get_section_data
 		from frappe.utils.pdf import get_pdf
 		options = {}
@@ -2634,17 +2638,16 @@ def generate_email_pdf(page, name):
 		
 		if builder:
 			if builder.header_template:
-
-				# footer_template += f'''<div><div id="header-html" class="visible-pdf">
-				# 	<div class="letter-head-header">
-				# 		\kk	
-				# 	</div>
-				# </div>'''
-
 				header_template += '<header id="pspdfkit-header"><div class="header-columns">\n'
 				header_template += frappe.db.get_value('Header Template', builder.header_template, 'header_content')
 				header_template += '</div>'
 				header_template += '</header>'
+			# for giving marginon each pdf page static header added
+			header_template += f'''<div><div id="header-html" class="visible-pdf">
+					<div class="letter-head-header">
+					</div>
+				</div>'''
+			# end
 			page_template += header_template
 			component = frappe.db.get_all('Mobile Page Section' ,fields=['section','name', 'section_title', 'section_name', 'section_type', 'content_type', 'route'],filters={'parent':builder.name, 'parentfield':'web_section'},order_by='idx')
 			if len(component)>0:
@@ -2703,20 +2706,55 @@ def generate_email_pdf(page, name):
 		options['footer-html'] = footer_template
 		options['footer-spacing'] = '2'
 		html = page_template
-		# frappe.log_error(html,'final pdf render html')
 		content = get_pdf(html)
-		return content
+		update_pdf_in_file(content,doc_details)
 	except Exception:
 		frappe.log_error(frappe.get_traeback(),'go1_cms.go1_cms.doctype.proposal.proposa.generate_email_pdf')
 
-@frappe.whitelist()
-def send_document_via_email(page,name):
-	try:	
-		attachments = [{
-				'fname': "{name}.pdf".format(name=page.replace(" ", "-").replace("/", "-")),
-				'fcontent': generate_email_pdf(page,name)
-			}]
-		
-		frappe.sendmail(recipients = "gopi@tridotsteh.com",subject = page,message = "message",attachments = attachments)
+def update_pdf_in_file(content,doc_details):
+	try:
+		doc = doc_details
+		from frappe.utils import random_string
+		folder_name = "Proposal Pdf"
+		file_path = "Home/"+folder_name
+		file_name = random_string(10)+".pdf"
+		check_folder_exe = frappe.get_list("File",filters={"file_name":folder_name,"folder":"Home","is_folder": 1},fields=['name'])
+		if not check_folder_exe:
+			frappe.get_doc({
+				"doctype": "File",
+				"folder":"Home",
+				"is_folder": 1,
+				"file_name":folder_name,
+			}).insert(ignore_if_duplicate=True)
+
+		already_exe_file = frappe.db.get_list("File",filters={"attached_to_doctype":doc.doctype,"attached_to_name":doc.name,"folder":file_path},fields=['name'])
+		if already_exe_file:
+			frappe.db.sql(''' DELETE FROM `tabFile` WHERE name=%(id)s ''',{"id":already_exe_file[0].name})
+			frappe.db.commit()
+		new_file = frappe.get_doc({
+					"doctype": "File",
+					"folder":file_path,
+					"file_name":file_name,
+					"content":content,
+					"is_private":0,
+					"attached_to_doctype":doc.doctype,
+					"attached_to_name":doc.name
+				}).insert(ignore_if_duplicate=True)
+		frappe.db.sql("""UPDATE `tabProposal` SET preview_pdf_url='%s' WHERE name='%s'"""%(new_file.file_url,doc.name))
+		frappe.db.commit()
+		doc.reload()
 	except Exception:
-		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.proposal.proposa.send_document_via_email")
+		frappe.log_error(frappe.get_traceback(),"go1cms.go1cms.doctype.proposal.proposal.update_pdf_in_file")
+
+
+
+@frappe.whitelist()
+def get_attachement_email_id(file_url,quotation_id):
+	try:
+		file_id = frappe.db.get_value("File",{"file_url":file_url})
+		if file_id:
+			frappe.local.response.attachement = frappe.get_doc("File",file_id)
+		quotation_to,party_name = frappe.db.get_value("Quotation",quotation_id,["quotation_to","party_name"])
+		frappe.local.response.email = frappe.db.get_value(quotation_to,party_name,"email_id")
+	except Exception:
+		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.proposal.proposa.get_attachement_email_id")

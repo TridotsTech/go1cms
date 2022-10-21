@@ -73,7 +73,8 @@
   "is_converted_to_template",
   "is_location_based",
   "section_break_64",
-  "sample"
+  "sample",
+  "preview_pdf_url"
  ],
  "fields": [
   {
@@ -466,14 +467,21 @@
    "fieldname": "quotation",
    "fieldtype": "Link",
    "label": "Quotation",
-   "options": "Quotation"
+   "options": "Quotation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "preview_pdf_url",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Proposal Pdf URL"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-10-18 10:56:44.470872",
+ "modified": "2022-10-20 17:46:07.836070",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Proposal",
