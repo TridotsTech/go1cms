@@ -39,8 +39,10 @@ def minify_string(html):
 @frappe.whitelist()
 def get_path_name():
 	path = sitename = None
+	# frappe.log_error(frappe.get_installed_apps(),">> installed apps <<")
 	if "go1_cms" in frappe.get_installed_apps():
 		path = frappe.get_app_path("go1_cms")
+		# frappe.log_error(path,">> path <<")
 		sitename = 'go1_cms'
 	return path, sitename
 
@@ -85,14 +87,18 @@ def generate_webtheme_css_file(path,sitename,self):
 		if doc_obj.heading and len(doc_obj.heading) > 0: 
 			for var in doc_obj.heading:
 				if var.css_design:
-					if replace_value_of_globalfonts(var.css_design,doc_obj):
-						var_name_css += replace_value_of_globalfonts(var.css_design,doc_obj)
+					# frappe.log_error(var.name1,">>tag name<<")
+					g_fonts = replace_value_of_globalfonts(var.css_design,doc_obj)
+					if g_fonts:
+						var_name_css += g_fonts
 					# var_name_css += json.loads(var.css_design)
 		if doc_obj.text and len(doc_obj.text) > 0: 
 			for var in doc_obj.text:
 				if var.css_design:
-					if replace_value_of_globalfonts(var.css_design,doc_obj):
-						var_name_css += replace_value_of_globalfonts(var.css_design,doc_obj)
+					# frappe.log_error(var.name1,">>tag name<<")
+					global_fonts = replace_value_of_globalfonts(var.css_design,doc_obj)
+					if global_fonts:
+						var_name_css += global_fonts
 					# var_name_css += json.loads(var.css_design)
 		doc_obj.var_name_css = var_name_css
 		# end
@@ -101,15 +107,18 @@ def generate_webtheme_css_file(path,sitename,self):
 		if doc_obj.buttons_table and len(doc_obj.buttons_table) > 0:
 			for btn in doc_obj.buttons_table:
 				if btn.css_design:
+					# frappe.log_error(btn.name1,">>tag name<<")
 					if replace_value_of_globalfonts(btn.css_design,doc_obj):
 						btn_css += replace_value_of_globalfonts(btn.css_design,doc_obj)
 					# btn_css += json.loads(btn.css_design)
 		doc_obj.btn_var_name_css = btn_css
+		# frappe.log_error(doc_obj.btn_var_name_css,"btn_var_name_css")
 		# end
 		# render the css template
 		template = frappe.get_template("templates/includes/web_themes.css")
 		if doc_obj.default_header:
 			doc_obj.header_settings = frappe.get_doc("Header Component",doc_obj.default_header)
+			# frappe.log_error(doc_obj.header_settings.as_dict(),">> doc_obj.header_settings <<")
 			is_custom_header = 1
 		if doc_obj.default_footer:
 			doc_obj.footer_css = frappe.get_doc("Footer Component",doc_obj.default_footer)
@@ -120,12 +129,34 @@ def generate_webtheme_css_file(path,sitename,self):
 				font_list.append({"font_family_url":x.font_url})
 		doc_obj.font_list = font_list
 		webtheme_css = template.render({'doc':doc_obj})
+		# frappe.log_error(webtheme_css,"theme_css")
 		css_file_name = self.name.lower().replace(' ', '-')+".css"
 		path = get_files_path()
 		pages = frappe.db.get_all("Web Page Builder",filters={"published":1},fields=['route','name','header_component','footer_component','edit_header_style','is_transparent_header','menu_text_color','menu_hover_bg','menu_hover_text_color'])
 		for page in pages:
 			web_sections = frappe.db.sql("""SELECT P.class_name,P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""",{"page_name":page.name},as_dict=1)
 			for x in web_sections:
+				header_settings = None
+				if page.header_component:
+					template = frappe.get_template("templates/includes/header.css")
+					header_settings = frappe.get_doc("Header Component",page.header_component)
+					p_route = page.route
+					if "/" in p_route:
+						p_route = p_route.split('/')[1]
+					# frappe.log_error(header_settings,"<< header_settings >>")
+					# frappe.log_error(p_route,"<< p_route >>")
+					header_css = template.render({'header_settings':header_settings,"page_route":p_route})
+					# frappe.log_error(header_css,"<< header_css >>")
+					webtheme_css+=header_css
+				if page.footer_component:
+					p_route = page.route
+					if "/" in p_route:
+						p_route = p_route.split('/')[1]
+					template = frappe.get_template("templates/includes/footer.css")
+					footer_settings = frappe.get_doc("Footer Component",page.footer_component)
+					footer_css = template.render({'footer_settings':footer_settings,"page_route":p_route})
+					webtheme_css+=footer_css
+
 				if x.css_text:
 					webtheme_css+=x.css_text
 				section_content = frappe.db.get_all("Section Content",filters={"parent":x.name},fields=['css_text'])
@@ -135,23 +166,6 @@ def generate_webtheme_css_file(path,sitename,self):
 				for field in section_content:
 					if field.css_text:
 						webtheme_css+=field.css_text
-			header_settings = None
-			if page.header_component:
-				template = frappe.get_template("templates/includes/header.css")
-				header_settings = frappe.get_doc("Header Component",page.header_component)
-				p_route = page.route
-				if "/" in p_route:
-					p_route = p_route.split('/')[1]
-				header_css = template.render({'header_settings':header_settings,"page_route":p_route})
-				webtheme_css+=header_css
-			if page.footer_component:
-				p_route = page.route
-				if "/" in p_route:
-					p_route = p_route.split('/')[1]
-				template = frappe.get_template("templates/includes/footer.css")
-				footer_settings = frappe.get_doc("Footer Component",page.footer_component)
-				footer_css = template.render({'footer_settings':footer_settings,"page_route":p_route})
-				webtheme_css+=footer_css
 			if page.edit_header_style == 1:
 				if page.is_transparent_header == 1:
 					p_route = page.route
@@ -178,6 +192,7 @@ def generate_webtheme_css_file(path,sitename,self):
 						"file_name": css_file_name,
 						"is_private": 1,
 						})
+		# frappe.log_error(webtheme_css,"<< webtheme_css >>")
 		if webtheme_css:
 			with open(os.path.join(path,(css_file_name)), "w") as f:
 				f.write(minify_string(webtheme_css))
@@ -189,7 +204,9 @@ def generate_webtheme_css_file(path,sitename,self):
 
 def replace_value_of_globalfonts(css_design,doc_obj):
 	api_css_parse_data = json.loads(css_design).split(";")
+	# frappe.log_error(json.loads(css_design),">>Received data<<")
 	del api_css_parse_data[-1]
+	# frappe.log_error(api_css_parse_data,">> splited data <<")
 	for idxx,k in enumerate(api_css_parse_data):
 		each_arr = k.split(":")
 		if each_arr and len(each_arr) ==2:
@@ -235,10 +252,12 @@ def replace_value_of_globalfonts(css_design,doc_obj):
 					api_css_parse_data[idxx] = each_arr[0] +':'+doc_obj.accent_font_weight
 				else:
 					del api_css_parse_data[idxx]
+	# frappe.log_error(";".join(api_css_parse_data)+';',">> after replace global font family<<")
 	return ";".join(api_css_parse_data)+';' if len(api_css_parse_data) > 0 else ""
 
 
 # def get_absolute_path(file_name):
+# 	# frappe.log_error(file_name,">>doc file name<<")
 # 	temp_file_name = ""
 # 	file_path_type =""
 # 	if(file_name.startswith('/files/')):
@@ -250,6 +269,8 @@ def replace_value_of_globalfonts(css_design,doc_obj):
 # 	if(file_name.startswith('/public/')):
 # 		file_path_type ='public'
 # 		temp_file_name = file_name[14:]
+# 	# frappe.log_error(temp_file_name,"file_name")
+# 	# frappe.log_error(file_path_type,"file_path_type")
 # 	if file_name and file_name.endswith(".css") and temp_file_name and file_path_type:
 # 		return frappe.utils.get_bench_path()+ "/sites/" + frappe.utils.get_path(file_path_type,'files', temp_file_name)[2:]
 # 	elif 'http' in file_name:
@@ -280,6 +301,7 @@ def get_cms_json():
 def get_json_render_properties(field_type):
 	try:
 		css_properties = frappe.db.get_all("Field Types Property",filters={"field_type":field_type},fields=['css_properties_list'])
+		# frappe.log_error(css_properties,"css_properties")
 		if css_properties:
 			css_properties[0].class_name = make_random_class_name()
 			if css_properties[0].css_properties_list and len(css_properties[0].css_properties_list) > 0:
@@ -288,6 +310,7 @@ def get_json_render_properties(field_type):
 			fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 			if fonts_list:
 				css_properties[0].fonts_list = fonts_list
+			# frappe.log_error(css_properties,"fields")
 		return css_properties
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.get_json_render_properties")

@@ -16,64 +16,66 @@ from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 
 class WebPageBuilder(WebsiteGenerator):
-	def autoname(self):
-		if check_domain('saas'):
-			naming_series = 'WPB-'
-			if not self.business:
-				self.business = get_business_from_login()
-			if self.business:
-				naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
-			self.name = make_autoname(naming_series + '.#####', doc=self)
-		else:
-			self.name = self.page_title
+    def autoname(self):
+        if check_domain('saas'):
+            naming_series = 'WPB-'
+            if not self.business:
+                self.business = get_business_from_login()
+            if self.business:
+                naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
+            self.name = make_autoname(naming_series + '.#####', doc=self)
+        else:
+            self.name = self.page_title
 
-	def validate(self):
-		if self.is_new():
-			self.file_path=""
-		if self.web_section:
-			self.construct_html('web', 'web_section')
-		if self.mobile_section:
-			self.construct_html('mobile', 'mobile_section')
-		route_prefix = ""
-		r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
-		if r_prefix:
-			route_prefix = r_prefix[0].page_prefix+"/"
-		self.route = route_prefix+self.scrub(self.page_title)
-		if not self.meta_title:
-			self.meta_title = self.page_title
-		if not self.meta_keywords:
-			self.meta_keywords = self.page_title.replace(" ", ", ")
-		if not self.meta_description:
-			self.meta_description="About: "+self.page_title
+    def validate(self):
+        if self.is_new():
+            self.file_path=""
+        if self.web_section:
+            self.construct_html('web', 'web_section')
+        if self.mobile_section:
+            self.construct_html('mobile', 'mobile_section')
+        route_prefix = ""
+        r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
+        frappe.log_error(r_prefix,"<< r_prefix >>")
+        if r_prefix:
+            route_prefix = r_prefix[0].page_prefix+"/"
+        self.route = route_prefix+self.scrub(self.page_title)
+        if not self.meta_title:
+            self.meta_title = self.page_title
+        if not self.meta_keywords:
+            self.meta_keywords = self.page_title.replace(" ", ", ")
+        if not self.meta_description:
+            self.meta_description="About: "+self.page_title
 
-	def on_update(self):
-		#by siva
-		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
-		if enable_generate_html:
-			page_template = generate_page_html(page=self.name, view_type='web')
-			if page_template:
-				temp_path = get_template_folder(business=self.business)
-				html_page = self.route.lower().replace('-','_')
-				with open(os.path.join(temp_path, (html_page+'.html')), "w") as f:
-					f.write(page_template)
-				template_path = get_template_folder(business=self.business, temp=1)
-				if not self.file_path:
-					frappe.db.set_value("Web Page Builder", self.name,"file_path", os.path.join(template_path, (html_page+'.html')))
-					frappe.db.commit()
-			if self.web_section:
-				for item in self.web_section:
-					from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
-					generate_section_html(item.section)
-			if self.mobile_section:
-				for item in self.mobile_section:
-					from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
-					generate_section_html(item.section)
+    def on_update(self):
+        #by siva
+        enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+        if enable_generate_html:
+            page_template = generate_page_html(page=self.name, view_type='web')
+            if page_template:
+                temp_path = get_template_folder(business=self.business)
+                html_page = self.route.lower().replace('-','_')
+                with open(os.path.join(temp_path, (html_page+'.html')), "w") as f:
+                    f.write(page_template)
+                template_path = get_template_folder(business=self.business, temp=1)
+                if not self.file_path:
+                    frappe.db.set_value("Web Page Builder", self.name,"file_path", os.path.join(template_path, (html_page+'.html')))
+                    frappe.db.commit()
+            if self.web_section:
+                for item in self.web_section:
+                    from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
+                    generate_section_html(item.section)
+            if self.mobile_section:
+                for item in self.mobile_section:
+                    from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
+                    generate_section_html(item.section)
 
 
 		# if self.web_section:
 		# 	css_text=""
 		# 	for d in self.web_section:
 		# 		res = frappe.get_list("Page Section",filters={"name":d.section},fields={"css_text"})
+		# 		# frappe.log_error(res,"res")
 		# 		if res and res[0]['css_text']:css_text +=str(res[0]['css_text'])
 		# 	import os
 		# 	from frappe.utils import get_files_path
@@ -83,156 +85,158 @@ class WebPageBuilder(WebsiteGenerator):
 		# 		f.write(content)
 			# return {"status":"success","message":"completed successfully"}
 		# frappe.enqueue("ecommerce_business_store.ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.generate_css_file")
-		generate_css_file()
+        generate_css_file()
 
-	def construct_html(self, view_type, ref_field):
-		result = self.get_json_data(ref_field)
+    def construct_html(self, view_type, ref_field):
+        result = self.get_json_data(ref_field)
 
-		path = get_files_path()
-		if not os.path.exists(os.path.join(path,'data_source')):
-			frappe.create_folder(os.path.join(path,'data_source'))
-		with open(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "w") as f:
-			if view_type == "mobile":
-				content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
-				# f.write(frappe.as_json(result))
-				f.write(content)
-			else:
-				# f.write(frappe.as_json(result))
-				content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
-				# f.write(frappe.as_json(result))
-				f.write(content)
-		# self.file_path = '/files/data_source/{}.json'.format(self.name.lower().replace(' ', '_'))
+        path = get_files_path()
+        if not os.path.exists(os.path.join(path,'data_source')):
+            frappe.create_folder(os.path.join(path,'data_source'))
+        with open(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "w") as f:
+            if view_type == "mobile":
+                content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
+                # f.write(frappe.as_json(result))
+                f.write(content)
+            else:
+                # f.write(frappe.as_json(result))
+                content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
+                # f.write(frappe.as_json(result))
+                f.write(content)
+        # self.file_path = '/files/data_source/{}.json'.format(self.name.lower().replace(' ', '_'))
 
-	def get_json_data(self, ref_field):
-		results = []
-		for item in self.as_dict()[ref_field]:
-			doc = frappe.get_doc('Page Section', item.section)
-			obj = doc.run_method('section_data')
-			results.append(obj)
-		return results
+    def get_json_data(self, ref_field):
+        results = []
+        for item in self.as_dict()[ref_field]:
+            doc = frappe.get_doc('Page Section', item.section)
+            obj = doc.run_method('section_data')
+            results.append(obj)
+        return results
 
-	def get_context(self, context):
-		
+    def get_context(self, context):
+        
 
-		doc = None
-		add_info = {}
-		if frappe.form_dict:
-			add_info = frappe.form_dict
-		if check_domain('saas') and context.get('web_domain'):
-			if self.business and self.business == context.web_domain.business:
-				doc = self
-			else:
-				check_routes = frappe.db.get_all('Web Page Builder', filters={'route': self.route, 'business': context.web_domain.business})
-				if check_routes:
-					doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
-			if not doc:
-				frappe.local.flags.redirect_location = '/404'
-				raise frappe.Redirect
-		if check_domain('multi_store'):
-			multi_store_business = frappe.request.cookies.get('selected_store')
-			if not multi_store_business:
-				all_locations = frappe.db.get_all("Shipping City",fields=['business','core_city'],order_by="is_default desc",limit_page_length=5)
-				if all_locations:
-					multi_store_business = all_locations[0].business
-			else:
-				multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-			if multi_store_business:
-				if self.business:
-					check_routes = frappe.db.get_all('Web Page Builder', filters={'business': multi_store_business,'published':1})
-					if check_routes:
-						doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
-		if not doc:
-			doc = self
-		if not context.get('device_type'):
-			context.device_type = 'Desktop'
-		source_doc, sections, html = get_source_doc(doc, context.device_type)
-		html_list = []
-		if check_domain('restaurant'):
-			preferred_date = frappe.request.cookies.get('order_date')
-			preferred_time = frappe.request.cookies.get('order_time')
-			if not preferred_date and not preferred_time:
-				#hided by boopathy
-				# from ecommerce_business_store.ecommerce_business_store.api import get_today_date
-				#end
-				preferred_date = getdate(get_today_date(replace=True))
-				preferred_time = 'ASAP'
-			context.preferred_date = getdate(preferred_date)
-			context.preferred_time = urllib.parse.unquote(preferred_time)
-			preferred_time_format = frappe.request.cookies.get('order_time_format')
-			if preferred_time_format:
-				if urllib.parse.unquote(preferred_time) == 'ASAP' and preferred_time_format != 'ASAP':
-					preferred_time_format = 'ASAP'
-					frappe.local.cookie_manager.set_cookie("order_time_format", urllib.parse.unquote(preferred_time_format))
-				context.preferred_time_format = urllib.parse.unquote(preferred_time_format)
-			frappe.local.cookie_manager.set_cookie("order_date", str(getdate(preferred_date)))
-			frappe.local.cookie_manager.set_cookie("order_time", urllib.parse.unquote(preferred_time))
-		if source_doc:
-			html_list, js_list = get_page_html(doc, sections, html, source_doc, context.device_type, add_info)
-		context.html_list = html_list
-		context.js_list = js_list
+        doc = None
+        add_info = {}
+        if frappe.form_dict:
+            add_info = frappe.form_dict
+        if check_domain('saas') and context.get('web_domain'):
+            if self.business and self.business == context.web_domain.business:
+                doc = self
+            else:
+                check_routes = frappe.db.get_all('Web Page Builder', filters={'route': self.route, 'business': context.web_domain.business})
+                if check_routes:
+                    doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
+            if not doc:
+                frappe.local.flags.redirect_location = '/404'
+                raise frappe.Redirect
+        if check_domain('multi_store'):
+            multi_store_business = frappe.request.cookies.get('selected_store')
+            if not multi_store_business:
+                all_locations = frappe.db.get_all("Shipping City",fields=['business','core_city'],order_by="is_default desc",limit_page_length=5)
+                if all_locations:
+                    multi_store_business = all_locations[0].business
+            else:
+                multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
+            if multi_store_business:
+                if self.business:
+                    check_routes = frappe.db.get_all('Web Page Builder', filters={'business': multi_store_business,'published':1})
+                    if check_routes:
+                        doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
+        if not doc:
+            doc = self
+        if not context.get('device_type'):
+            context.device_type = 'Desktop'
+        source_doc, sections, html = get_source_doc(doc, context.device_type)
+        html_list = []
+        if check_domain('restaurant'):
+            preferred_date = frappe.request.cookies.get('order_date')
+            preferred_time = frappe.request.cookies.get('order_time')
+            if not preferred_date and not preferred_time:
+                #hided by boopathy
+                # from ecommerce_business_store.ecommerce_business_store.api import get_today_date
+                #end
+                preferred_date = getdate(get_today_date(replace=True))
+                preferred_time = 'ASAP'
+            context.preferred_date = getdate(preferred_date)
+            context.preferred_time = urllib.parse.unquote(preferred_time)
+            preferred_time_format = frappe.request.cookies.get('order_time_format')
+            if preferred_time_format:
+                if urllib.parse.unquote(preferred_time) == 'ASAP' and preferred_time_format != 'ASAP':
+                    preferred_time_format = 'ASAP'
+                    frappe.local.cookie_manager.set_cookie("order_time_format", urllib.parse.unquote(preferred_time_format))
+                context.preferred_time_format = urllib.parse.unquote(preferred_time_format)
+            frappe.local.cookie_manager.set_cookie("order_date", str(getdate(preferred_date)))
+            frappe.local.cookie_manager.set_cookie("order_time", urllib.parse.unquote(preferred_time))
+        if source_doc:
+            html_list, js_list = get_page_html(doc, sections, html, source_doc, context.device_type, add_info)
+        context.html_list = html_list
+        context.js_list = js_list
 
-		if doc.custom_js and doc.custom_js.find('<script') == -1:
-			context.custom_js = '<script>{0}</script>'.format(doc.custom_js)
-		if doc.custom_css and doc.custom_css.find('<style') == -1:
-			context.custom_css = '<style>{0}</style>'.format(doc.custom_css)
+        if doc.custom_js and doc.custom_js.find('<script') == -1:
+            context.custom_js = '<script>{0}</script>'.format(doc.custom_js)
+        if doc.custom_css and doc.custom_css.find('<style') == -1:
+            context.custom_css = '<style>{0}</style>'.format(doc.custom_css)
 
-		# if doc.header_template:
-		# 	context['header_file'] = frappe.db.get_value('Header Template', doc.header_template, 'route')
-		# if doc.footer_template:
-		# 	context['footer_file'] = frappe.db.get_value('Footer Template', doc.footer_template, 'route')
-		if doc.header_component:
-			header = []
-			h_comp = frappe.db.get_all("Header Component",filters={"name":doc.header_component},fields=['*'])
-			if h_comp:
-				header_dict = {}
-				nav_menu = frappe.db.get_all("Menus Item",filters={"parent":h_comp[0]['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-				top_menu = frappe.db.get_all("Menus Item",filters={"parent":doc.header_component},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-				header_dict['nav_menus']=nav_menu[0]
-				header_dict['top_menus'] = top_menu[0]
-				header.append(header_dict)
-			context['header'] = header
-		if doc.footer_component:
-			footer_template = None
-			footer = frappe.db.get_all("Footer Component Item",filters={"parent":doc.footer_component},fields={"title","section_type","column_count","menu"})
-			if footer and len(footer)>0:
-				for z in footer:
-					footer_template[z['section_type']] = frappe.db.get_all("Menus Item",filters={"parent":z['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-			context['footer'] = footer_template
-		
-		context.doc = doc
-		if doc.meta_title:
-			context.meta_title = doc.meta_title
-		if doc.meta_description:
-			context.meta_description = doc.meta_description
-		if doc.meta_keywords:
-			context.meta_keywords = doc.meta_keywords
-		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
-		
-		if enable_generate_html:
-			#by siva
-			page_no=0
-			page_len=3
-			# modified by boopathy
-			# from ecommerce_business_store.cms.api import get_section_data
-			from go1_cms.go1_cms.api import get_section_data
-			#end
-			page_builder = frappe.get_doc('Web Page Builder', self.name)
-			page_sections = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
-			context['section_len']= len(page_sections)
-			page_sections = page_sections[int(page_no):int(page_len)]
-			for item in page_sections:
-				data=get_section_data(item.section, item.parent, context.device_type)
-				if data:
-					#updated by boopathy
-					if data.get('context') != None:
-						context[data['context']]= {}  
-						for key, value in data.items():
-							context[data['context']][key]= value
-			context.template = self.file_path
-		p_route = self.route
-		if "/" in p_route:
-			p_route = p_route.split("/")[1]
-		context.p_route = p_route
+        # if doc.header_template:
+        # 	context['header_file'] = frappe.db.get_value('Header Template', doc.header_template, 'route')
+        # if doc.footer_template:
+        # 	context['footer_file'] = frappe.db.get_value('Footer Template', doc.footer_template, 'route')
+        if doc.header_component:
+            header = []
+            h_comp = frappe.db.get_all("Header Component",filters={"name":doc.header_component},fields=['*'])
+            if h_comp:
+                header_dict = {}
+                nav_menu = frappe.db.get_all("Menus Item",filters={"parent":h_comp[0]['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+                top_menu = frappe.db.get_all("Menus Item",filters={"parent":doc.header_component},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+                header_dict['nav_menus']=nav_menu[0]
+                header_dict['top_menus'] = top_menu[0]
+                header.append(header_dict)
+            context['header'] = header
+        if doc.footer_component:
+            footer_template = None
+            footer = frappe.db.get_all("Footer Component Item",filters={"parent":doc.footer_component},fields={"title","section_type","column_count","menu"})
+            if footer and len(footer)>0:
+                for z in footer:
+                    footer_template[z['section_type']] = frappe.db.get_all("Menus Item",filters={"parent":z['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+            context['footer'] = footer_template
+        
+        # frappe.log_error(doc,"doc111")
+        context.doc = doc
+        # frappe.log_error(context.doc.name,"context.doc")
+        if doc.meta_title:
+            context.meta_title = doc.meta_title
+        if doc.meta_description:
+            context.meta_description = doc.meta_description
+        if doc.meta_keywords:
+            context.meta_keywords = doc.meta_keywords
+        enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+        
+        if enable_generate_html:
+            #by siva
+            page_no=0
+            page_len=3
+            # modified by boopathy
+            # from ecommerce_business_store.cms.api import get_section_data
+            from go1_cms.go1_cms.api import get_section_data
+            #end
+            page_builder = frappe.get_doc('Web Page Builder', self.name)
+            page_sections = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
+            context['section_len']= len(page_sections)
+            page_sections = page_sections[int(page_no):int(page_len)]
+            for item in page_sections:
+                data=get_section_data(item.section, item.parent, context.device_type)
+                if data:
+                    #updated by boopathy
+                    if data.get('context') != None:
+                        context[data['context']]= {}  
+                        for key, value in data.items():
+                            context[data['context']][key]= value
+            context.template = self.file_path
+        p_route = self.route
+        if "/" in p_route:
+            p_route = p_route.split("/")[1]
+        context.p_route = p_route
 def get_product_context(self, context):
 		try:
 			#hided by boopathy on 10/08/2022
@@ -688,11 +692,14 @@ def get_section_content(section, content_type):
 		# if section[0].section_title:
 		# 	style_fields = frappe.get_list("Section Template",filters={"name":section[0].section_title},fields={"css_field_list","allow_update_to_style"})
 		# 	if style_fields:styles = style_fields[0]['css_field_list']
+			# frappe.log_error(styles,"styles")
 	# styles = frappe.db.get_single_value("CMS Settings","styles_to_update")
+	# frappe.log_error(styles)
 	# if styles:
 	# 	section[0].styles =  json.loads((styles))
 	# section[0]['allow_update_to_style']= style_fields[0]['allow_update_to_style']
 	# if section[0]['css_json']:section[0]['css_json']=json.loads(section[0]['css_json'])
+	# frappe.log_error(section[0],"section[0]")
 	fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 	section[0].fonts_list = fonts_list
 	return section[0]
@@ -751,11 +758,14 @@ def get_section_properties(section_name):
 					# style_fields = frappe.get_list("Page Section",filters={"name":section},fields={"css_field_list","allow_update_to_style"})
 					styles = section[0].css_field_list
 					allow_update_to_style = 1
+				# frappe.log_error(styles,"styles")
 		# styles = frappe.db.get_single_value("CMS Settings","styles_to_update")
+		# frappe.log_error(styles)
 		if styles:
 			section[0].styles =  json.loads((styles))
 		section[0]['allow_update_to_style']= allow_update_to_style
 		if section[0]['css_json']:section[0]['css_json']=json.loads(section[0]['css_json'])
+		# frappe.log_error(section[0],"section[0]")
 		fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 		section[0].fonts_list = fonts_list
 		return section[0]
@@ -1030,6 +1040,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 									})
 							ret.insert()
 							return_url = ret.make_thumbnail(set_as_thumbnail=False,width=width,height=height,suffix=str(height))
+							frappe.log_error(return_url,"dm")
 							item["content"] = return_url
 							update_doc(item)
 		else:
@@ -1044,14 +1055,19 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 			elif item.get('name') == 'menu':
 				frappe.db.set_value('Page Section', section, 'menu', item.get('content'))
 			elif item.get('name') == 'section_css_text':
+				# frappe.log_error("css_text",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'css_text', item.get('content'))
 			elif item.get('name') == 'section_css_json':
+				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'css_json', json.dumps(item.get('content')))
 			elif item.get('name') == 'is_full_width':
+				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'is_full_width', item.get('content'))
 			elif item.get('name') == 'dynamic_data':
+				# frappe.log_error("css_json",item.get('content'))
 				frappe.db.set_value('Page Section', section, 'dynamic_data', item.get('content'))
 			elif item.get('name') == 'display_data_randomly':
+				# frappe.log_error("css_json",item.get('content'))
 				check_val = 0
 				if item.get('content'):
 					check_val = item.get('content')
@@ -1089,11 +1105,13 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 							inner join `tabProduct Category` pc on CM.category=pc.name\
 													where p.is_active=1 and p.status='Approved' and  %s group by p.name ORDER BY FIND_IN_SET(p.name,'%s')" \
 							% (conditions,order_by[:-1])
+						# frappe.log_error(query,"query")
 						products = frappe.db.sql(query,as_dict=1)
 						# products = frappe.db.sql(""" SELECT route,name,item,short_description,full_description,price,old_price FROM `tabProduct` WHERE name in (%s) """%(products_filters),as_dict=1)
 						# for x in products:
 							# x.images = frappe.db.sql('''select detail_thumbnail, title, is_primary, image_name, product_image, detail_image,name from `tabProduct Image` where parent = %(parent)s order by is_primary desc, idx''',{'parent': x.name},as_dict=1)
 						result = get_product_details(products)
+						# frappe.log_error(result,'result')
 						frappe.db.set_value('Page Section', section, 'custom_section_data',json.dumps(result, indent=1, sort_keys=False, default=str))
 					else:
 						frappe.db.set_value('Page Section', section, 'custom_section_data',"[]")
@@ -1113,6 +1131,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 						conditions = "  p.name in("+products_filters+")"
 						query = "select distinct * from `tabBlog Post` p where p.published=1 and  %s group by p.name ORDER BY FIND_IN_SET(p.name,'%s')" \
 							% (conditions,order_by[:-1])
+						# frappe.log_error(query,"query")
 						result = frappe.db.sql(query,as_dict=1)
 						# result = get_product_details(products)
 						
@@ -1230,6 +1249,7 @@ def get_page_section(source_doc):
 	path = get_files_path()
 	file_path = os.path.join(path, source_doc)
 	if os.path.exists(file_path):
+		# frappe.log_error(file_path,">> file path <<")
 		with open(file_path) as f:
 			data = json.loads(f.read())
 	return data
@@ -1325,6 +1345,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 			if product_box:
 				data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 			try:
+				# frappe.log_error(section_html,">> section_html <<")
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:
@@ -1374,7 +1395,11 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 @frappe.whitelist(allow_guest=True)
 def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Web Page Builder', page)
+	# frappe.log_error(doc.as_dict(),">> Web page builder data <<")
 	source_doc, sections, html = get_source_doc(doc, device_type)
+	# frappe.log_error(source_doc,">> source_doc data <<")
+	# frappe.log_error(list(sections),">> sections data <<")
+	# frappe.log_error(html,">> hrml Template field name <<")
 	html_list = []
 	start = int(page_no) * int(page_len)
 	if source_doc:
@@ -1598,6 +1623,7 @@ def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Web Page Builder', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
 	context['section_len']= len(page_section)
+	frappe.log_error(len(page_section), "-----context------")
 	page_section = page_section[int(page_no):int(page_len)]
 	for item in page_section:
 		data=get_section_data(item.section, item.parent, context.device_type)

@@ -1,3 +1,4 @@
+
 {%if header.enable_top_menu%}
 <div class="go1-cms-top-bar" >
     <div class="container d__flex">
@@ -185,8 +186,15 @@
 </div>
 {%if theme_settings.enable_page_title%}
 <div class="sub_header">
+    {%if theme_settings.page_title_overlay%}
+    <div class="sub_header-overlay"></div>
+    {% endif %}
     <div class="header-title">
-        <h2  class="white-text_ title">{{theme_settings.sub_header_title}}</h2>
+        {% if theme_settings.page_title_tag %}
+            <{{theme_settings.page_title_tag}}  class="white-text_ title">{{theme_settings.sub_header_title}}</{{theme_settings.page_title_tag}}>
+        {% else %}
+            <h2  class="white-text_ title">{{theme_settings.sub_header_title}}</h2>
+        {% endif %}
          {%if theme_settings.enable_breadcrumbs%}
     <div class="breadcrumb">
         <a href="/">Home</a><i class="fa fa-chevron-right"></i>
@@ -209,9 +217,9 @@
     display:none;
 }
 
-.primary-btn{
+/* .primary-btn{
     padding: 6px 18px;
-}
+} */
     @media only screen and (max-width: 768px){
 
 
@@ -327,6 +335,9 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         align-items: center;
         justify-content: center;
         flex-direction: column;min-height: 100%;
+        {%if theme_settings.page_title_overlay%}
+            position: relative;
+        {%endif%}
     }
     .sub_header{
         background-color: {{theme_settings.page_title_bg}};
@@ -336,15 +347,46 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     {%if theme_settings.page_title_bg_img%}
     background-size: cover;height: 150px;
     {%endif%}
+    {%if theme_settings.container_max_width%}
+        max-width:{{theme_settings.container_max_width}};
+    {%endif%}
+    {%if theme_settings.page_title_padding%}
+        padding:{{theme_settings.page_title_padding}} 0px;
+    {%endif%}
     }
+
+    {%if theme_settings.page_title_overlay%}
+    .sub_header .sub_header-overlay{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: {{theme_settings.page_title_overlay}};
+        opacity: 40%
+    }
+    {%endif%}
+
     .sub_header .header-title h2{
+        width: 100%;
         color: {{theme_settings.page_title_color}};
         margin: 0;
-    text-align: center;
-    padding: 15px 0;
+        {%if theme_settings.title_text_align%}
+            text-align:{{theme_settings.title_text_align}};
+        {%endif%}
+        padding: 15px 0;
+        {%if theme_settings.title_text_transform%}
+            text-transform:{{theme_settings.title_text_transform}};
+        {%endif%}
     }
     .breadcrumb{
-    text-align: center;color: {{theme_settings.page_title_color}};
+        width: 100%;
+        {%if theme_settings.title_text_align%}
+            justify-content:{{theme_settings.title_text_align}};
+        {%endif%}
+        color: {{theme_settings.page_title_color}};
 }
 .breadcrumb a{
  color: {{theme_settings.page_title_color}};
@@ -400,4 +442,30 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             $(".mobile-blackdrop").show();
         }
     }
+
+    {% if header.sticky_on_top %}
+        let anno_height = $('.{{p_route}} .go1-cms-top-bar').outerHeight();
+        // console.log(anno_height,"<<anno_height>>")
+        $(".{{p_route}} .sticky__header .go1-cms-header").css("top",anno_height+'px')
+        $(".{{p_route}} .transparent_sticky .go1-cms-header").css("top",anno_height+'px')
+    {% endif %}
+    {% if header.is_dismissable %}
+    let wrapper = $(".{{p_route}} .go1-cms-top-bar")
+    $(`<div class="close-btn">
+        <button type="button" class="close" aria-label="Close" style="padding: 0 !important;
+    background: none;
+    border: none;
+    position: absolute;
+    right: 2px;
+    top: -9px;
+    height: -4px;
+    font-size: 20px;">
+        <span aria-hidden="true">&times;</span>
+        </button> </div>`).appendTo(wrapper)
+        wrapper.find(".close-btn").click(() =>{
+            $(".{{p_route}} .go1-cms-top-bar").hide();
+            $(".{{p_route}} .sticky__header .go1-cms-header").css("top",'0px')
+            $(".{{p_route}} .transparent_sticky .go1-cms-header").css("top",'0px')
+        })
+    {% endif %}
 </script>

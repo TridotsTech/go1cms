@@ -623,7 +623,7 @@ def update_website_context(context):
 		if context.doc:
 			if context.doc.doctype=="Web Page Builder":
 				if context.doc.edit_header_style:
-					if context.doc.is_transparent_header:
+					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
 				if context.doc.enable_sub_header:
 					context.theme_settings.enable_page_title = 1
@@ -634,6 +634,25 @@ def update_website_context(context):
 					context.theme_settings.sub_header_title = context.doc.page_title
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
+				# frappe.log_error(context.doc.header_component,">>context.doc.header_component<<")
+				if context.doc.header_component or context.doc.footer_component:
+					if context.doc.header_component:
+						default_header = get_header_info(context.doc.header_component)
+						# frappe.log_error(default_header,">>default_header<<")
+						if default_header:
+							if default_header.layout_json:
+								default_header.layout_json = json.loads(default_header.layout_json)
+								context.header = default_header
+								# frappe.log_error(context.header,">>context.header<<")
+					if context.doc.footer_component:
+						default_footer = get_footer_info(context.doc.footer_component)
+						if default_footer:
+							if default_footer.layout_json:
+								default_footer.layout_json = json.loads(default_footer.layout_json)
+								context.footer = default_footer
+				context.p_route = context.doc.route
+				if  context.p_route and "/" in context.doc.route:
+					context.p_route = context.doc.route.split('/')[1]
 		# frappe.log_error(context.theme_settings,">> context theme settings data <<")
 		# frappe.log_error(context,">> context data <<")
 	except Exception as e:

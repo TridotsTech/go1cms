@@ -1,4 +1,4 @@
-/* Custom Header For {{page_route}}*/
+/* Custom Header For {{page_route}} */
 {%if header_settings%}
 .{{page_route}} .go1-cms-header{
     background-color: {{header_settings.header_background}};
@@ -14,6 +14,7 @@
 .{{page_route}} .go1-cms-header .logo{
     height: {{header_settings.logo_height}};
 }
+
     {%if header_settings.enable_top_menu%}
     .{{page_route}} .go1-cms-top-bar{
         background-color: {{header_settings.top_menu_bg}};
@@ -21,8 +22,14 @@
         padding-bottom:{{header_settings.top_bar_padding}};
         color:{{header_settings.top_text_color}};
         font-size:{{header_settings.top_text_size}};
-
+        {% if header_settings.sticky_on_top %}
+            position:sticky;
+            top:0;
+            z-index:999;
+        {% endif %}
     }
+
+
     {%endif%}
     {%if header_settings.sticky_header%}
         .{{page_route}} .sticky__header .go1-cms-header{
