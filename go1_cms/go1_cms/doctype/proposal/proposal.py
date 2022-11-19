@@ -2747,6 +2747,8 @@ def generate_email_pdf(doc_details):
 					# end
 					if product_template:
 						data_source = get_section_data(item.section)
+						if not data_source:
+							data_source = {}
 						data_source['quotation']= quotation
 						template = product_template.web_template
 						if product_template.custom_css:
