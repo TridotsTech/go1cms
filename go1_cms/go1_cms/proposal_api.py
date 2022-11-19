@@ -12,7 +12,11 @@ import json
 from six import iteritems, string_types
 from datetime import datetime
 from frappe.utils import flt, cint, getdate, get_datetime, get_time, make_filter_tuple, get_filter, add_to_date
-from HTMLParser import HTMLParser
+from cryptography.fernet import Fernet, InvalidToken
+try:
+	from HTMLParser import HTMLParser
+except Exception:
+	from html.parser import HTMLParser
 # from content_management_system.content_management_system.utils import get_special_tags
 
 @frappe.whitelist(allow_guest = True)
@@ -629,3 +633,48 @@ def get_doc_list(doctype, fields=None, filters=None, order_by=None, limit_start=
 @frappe.whitelist()
 def string_to_json(json_string):
     return json.loads(json_string)
+
+
+@frappe.whitelist()
+def generate_token():
+	from frappe.utils import random_string, get_url
+	key = random_string(32)
+	return key
+
+@frappe.whitelist()
+def encrypt(url):
+	# if len(url) > 100:
+		# encrypting > 100 chars will lead to truncation
+		# frappe.throw(_('something went wrong during encryption'))
+
+	cipher_suite = Fernet(encode(get_encryption_key()))
+	cipher_text = cstr(cipher_suite.encrypt(encode(url)))
+	return cipher_text
+
+@frappe.whitelist()
+def decrypt(url):
+	try:
+		cipher_suite = Fernet(encode(get_encryption_key()))
+		plain_text = cstr(cipher_suite.decrypt(encode(url)))
+		return plain_text
+	except InvalidToken:
+		# encryption_key in site_config is changed and not valid
+		frappe.throw(_('Encryption key is invalid, Please check site_config.json'))
+
+def get_encryption_key():
+	from frappe.installer import update_site_config
+
+	if 'encryption_key' not in frappe.local.conf:
+		encryption_key = Fernet.generate_key().decode()
+		update_site_config('encryption_key', encryption_key)
+		frappe.local.conf.encryption_key = encryption_key
+
+	return frappe.local.conf.encryption_key
+
+@frappe.whitelist()
+def update_proposal_status(proposal, status):
+	doc = frappe.get_doc("Proposal", proposal)
+	doc.status = status
+	doc.save(ignore_permissions=True)
+	return doc
+

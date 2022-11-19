@@ -1,0 +1,500 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- <img src="/files/shape1ca97b0.png" class="shape1">
+<img src="/files/shape27f15df.png" class="shape2"> -->
+
+<div class="proposal-format-1-4zn">
+   <!-- <div class="auto-group-udvs-J8S">
+      <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
+   </div> -->
+   <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}"/>
+   <div class="auto-group-qqf8-kuY">
+      <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
+        <div>
+         <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
+       </div>
+         <div>
+         <!-- <br/> -->
+         <p class="core-title core-implementation-development-business-proposal-p8i">
+            Core Implementation Development Business Proposal
+         </p>
+         <p class="pro-000001-434">#{{doc.name}}</p>
+       </div>
+      </div>
+      <div class="auto-group-a8e6-mCN" style="position:relative;">
+         <div class="auto-group-cqz4-4hG">
+            {{htmldata}}
+         </div>
+         <div class="auto-group-6bfp-5nr" id="myHeader">
+            <div class="auto-group-p8zn-E9x">
+               <div class="auto-group-xqbc-jsQ">
+                  <span class="span-0">
+                     Prepared for:
+                     <br/>
+                     <!-- <br/>
+                        <br/> -->
+                  </span>
+                  <div>
+                     <!-- <img class="" style="width:20px;" src="/files/favicon.svg"/> -->
+                     <p >{{quotation_data.customer_name}}</p>
+                  </div>
+                  <p class="">
+                     {%if quotation_data.address_display%}
+                     {{quotation_data.address_display}}
+                     {%endif%}
+                  </p>
+                  <br/>
+                  <p style="margin-bottom: 0;padding-bottom: 5px">
+                     <span style="font-size: 18px;">
+                     <strong>
+                     Total
+                     </strong>
+                     </span>
+                  </p>
+                  <p >
+                     {%if quotation_data%}
+                     <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
+                     {%endif%}
+                  </p>
+                  <br/>
+                  <div class="">
+                     <button class="btn btn-sm btn-dec" id="reject-form" style="margin-right:15px;"><i class="fa fa-close"></i>Decline</button>
+                     <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
+                  </div>
+               </div>
+            </div>
+<!--             <div class="auto-group-ey1l-jES" >
+               <div class="auto-group-q65x-4Gi" > -->
+<!--                   <img class="auto-group-gsqi-P46" src="/files/location-b.svg"/> -->
+                  <!-- <img class="iconly-light-outline-call-iMG" src="/files/phone.png" id="1:75"/> -->
+      <!--          </div> -->
+       <!--         <div class="auto-group-knua-qRt" > -->
+             <!--      <p class=""> -->
+                     <!-- Tridots Tech Pvt Ltd,
+                        <br/>
+                        100, Lake View Estate, Kundrathur Road,
+                        
+                        <br/>
+                        Porur, Chennai, India-600116. -->
+                    <!--  {%if quotation_data.company%}
+                     {{quotation_data.address_display}}
+                     {%endif%} -->
+          <!--         </p> -->
+                  <!-- <p class="item-91-98401-35354-GXC" id="1:74">+91 98401 35354</p> -->
+   <!--             </div>
+            </div> -->
+         </div>
+      </div>
+   </div>
+</div>
+
+<div id="myModal" class="modal"><div class="modal-content">
+  <span class="close">&times;</span><p id="model-content">Proposal Accepted!</p>
+</div></div>
+<style type="">
+
+   body{
+   margin: 0; 
+   }
+   .btn-dec{
+     color:#93adc7;
+     border: 1px solid #ddd !important;
+     padding: 10px 30px;
+     background-color: #eee !important;
+   }
+   .btn-default {
+   color: inherit;
+   background-color: #f0f4f7;
+   border-color: transparent;
+   }
+   .btn-success {
+   color: #fff;
+    background-color: #10A60F !important;
+   border-color: #10A60F !important;
+   }
+   .btn-primary {
+   color: #fff;
+   background-color: #10A60F !important;
+   border-color: #10A60F !important;
+   }
+   .btn-sm, .btn-group-sm > .btn {
+   padding: 4px 10px;
+   font-size: 13px !important;
+   line-height: 1.5;
+   border-radius: 0;
+   }
+   .btn {
+   display: inline-block;
+   padding: 10px 30px !important;
+   margin-bottom: 0;
+   font-size: 16px !important;
+   font-weight: normal;
+   line-height: 1.42857143;
+   text-align: center;
+   white-space: nowrap;
+   vertical-align: middle;
+   -ms-touch-action: manipulation;
+   touch-action: manipulation;
+   cursor: pointer;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+   background-image: none;
+   border: 1px solid transparent;
+   border-radius: 4px;
+   font-family: Poppins, 'Source Sans Pro' !important;
+   }
+   p{
+   font-size: 16px !important;
+   font-family: Poppins, 'Source Sans Pro';
+   line-height: 28px;
+   font-weight: 400;
+   padding-bottom: 10px;
+   margin: 0;
+   padding-top: 5px;
+   }
+   .span-0{
+   color: #212121;
+   font-family: Inter, 'Source Sans Pro';
+   /*font-size: 12px;*/
+   font-weight: 700;
+   line-height: 1.6666666667;
+   }
+   .span-1 {
+   color: #212121;
+   font-family: Inter, 'Source Sans Pro';
+   /*font-size: 12px;*/
+   font-weight: 500;
+   line-height: 1.6666666667;
+   }
+   .span-2 {
+   color: #757575;
+   font-family: Inter, 'Source Sans Pro';
+   /*font-size: 12px;*/
+   font-weight: 500;
+   line-height: 1.6666666667;
+   }
+   .proposal-format-1-4zn {
+   align-items: center;
+   /*background-color: #f5f9ff;*/
+   background-color: #f9f9f9;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   position: relative;
+   width: 100%;
+   }
+   .auto-group-udvs-J8S {
+   background-color: #ffffff;
+   box-shadow: 0 0 0 rgba(0, 41, 89, 0.1000000015), -0.2rem 0 0.5rem rgba(0, 41, 89, 0.1000000015), -1rem 0 1rem rgba(0, 41, 89, 0.0900000036), -2.2rem 0 1.3rem rgba(0, 41, 89, 0.0500000007), -3.8rem 0 1.5rem rgba(0, 41, 89, 0.0099999998), -6rem 0 1.7rem rgba(0, 41, 89, 0);
+   box-sizing: border-box;
+   flex-shrink: 0;
+   padding: 15px 100px 15px 100px;
+   width: 100%;
+   }
+   .tridots-1-P9t {
+   height: 5.4rem;
+   object-fit: contain;
+   position: relative;
+   vertical-align: top;
+   }
+   .auto-group-qqf8-kuY {
+   box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   padding: 30px 100px 30px 100px;
+   /* padding: 3.9rem 10.5rem 5.7rem 10.3rem;*/
+   width: 100%;
+   }
+   .auto-group-xtcw-gYJ {
+   flex-shrink: 0;
+   position: relative;
+   }
+   .core-title, .core-implementation-development-business-proposal-p8i {
+   color: #212121;
+   font-family: Poppins, 'Source Sans Pro';
+   font-size: 1.8rem !important;
+   font-weight: 600;
+   line-height: 28px;
+   /*margin: 10px 0px 40px 0;*/
+   }
+   .pro-000001-434 {
+   color: #757575;
+   font-family: Poppins, 'Source Sans Pro';
+   font-size: 1.4rem;
+   font-weight: 500;
+   line-height: 28px;
+   padding: 0;
+   margin: 10px 0 10px 0;
+   }
+   .auto-group-a8e6-mCN {
+   align-items: flex-start;
+   display: flex;
+   flex-shrink: 0;
+   height: auto;
+   margin-left: 0.2rem;
+   width: calc(100% - 0.2rem);
+   }
+   .auto-group-cqz4-4hG {
+   background-color: #ffffff;
+   border: solid 0.1rem #d642164f;
+   border-radius: 0.5rem;
+   box-sizing: border-box;
+   flex-shrink: 0;
+   /*height: 100%;*/
+   margin-right: 1.9rem;
+   position: relative;
+   width: 70%;
+   /* width: 64.4rem;*/
+   }
+   .auto-group-6bfp-5nr {
+   align-items: flex-end;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   width: 30%;
+   position: fixed;
+   top: auto;
+   right: 100px;
+   }
+   .auto-group-6bfp-5nr.sticky{
+    top: 20px;
+   }
+   .auto-group-p8zn-E9x {
+   background-color: #ffffff;
+   border: solid 0.1rem #d642164f;
+   border-radius: 0.5rem;
+   box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   margin-bottom: 3.1rem;
+   padding: 3.6rem 1.6rem 3.6rem 1.6rem;
+   width: 85%;
+   }
+   .auto-group-xqbc-jsQ {
+   flex-shrink: 0;
+   /*height: 34.1rem;*/
+   margin: 0rem;
+   position: relative;
+   }
+   .auto-group-ey1l-jES {
+   align-items: center;
+   display: flex;
+   flex-shrink: 0;
+   height: 14.5rem;
+   margin-left: 0.6rem;
+   width: calc(100% - 0.6rem);
+   }
+   .auto-group-q65x-4Gi {
+   align-items: flex-end;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   height: calc(100% - 1.7rem);
+   margin: 0.7rem 0.2rem 1rem 0rem;
+   }
+   .auto-group-gsqi-P46 {
+   flex-shrink: 0;
+   height: 3rem;
+   margin-bottom: 8.4rem;
+   object-fit: contain;
+   position: relative;
+   vertical-align: top;
+   width: 3rem;
+   }
+   .auto-group-knua-qRt {
+   flex-shrink: 0;
+   height: 100%;
+   position: relative;
+   width: 34.9rem;
+   }
+   .shape1{
+        position: absolute;
+        top: 155px;
+        z-index: 1;
+        right: 120px;
+   }
+   .shape2{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+   }
+   /*css end*/
+   @media only screen and (max-width: 768px) {
+     .auto-group-6bfp-5nr{
+     width: 100%;
+     margin-top: 15px;
+     }
+     .auto-group-cqz4-4hG{
+        width: 100%;
+     }
+     .auto-group-a8e6-mCN{
+        display: block;
+        height: auto;
+     }
+     .page{
+          padding: 20px 10px 20px 10px;
+     }
+     .page .center{
+          text-align: center !important;
+          width: 200px;
+          height: auto;
+     }
+     .auto-group-6bfp-5nr.sticky{
+          top: 0;
+     }
+     .auto-group-qqf8-kuY{
+        padding: 40px 15px !important;
+     }
+     .auto-group-p8zn-E9x{
+            margin-bottom: 0;
+     }
+     .auto-group-a8e6-mCN{
+          display: block;
+     }
+     .auto-group-6bfp-5nr{
+          right: 0;
+              position: relative;
+                  z-index: 2;
+     }
+
+     .auto-group-p8zn-E9x{
+          width: 100%;
+     }
+     .auto-group-udvs-J8S{
+          padding: 15px 15px 15px 15px;
+          text-align: center;
+     }
+     .mobile-hide{
+      display: none;
+     }
+   }
+
+   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;900&display=swap');
+</style>
+<script>
+        window.frappe = {};
+        frappe.ready_events = [];
+        frappe.ready = function(fn) {
+          frappe.ready_events.push(fn);
+        }
+        window.dev_server = {{ dev_server }};
+        window.socketio_port = {{ frappe.socketio_port }};
+        </script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
+  <!-- csrf_token -->
+<script>
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+ $('#accept-form').on("click", function(){
+    console.log("accept")
+    var status="Accepted";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
+
+  })
+  $('#reject-form').on("click", function(){
+    console.log("reject")
+    var status="Rejected";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
+
+  })
+  function update_status(proposal, status){
+  $.ajax({
+    type: 'POST',
+    Accept: 'application/json',
+    ContentType: 'application/json;charset=utf-8',
+    url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_status',
+    data: { 'proposal': proposal, "status":status },
+    dataType: "json",
+    async: false,
+    headers: {
+        'X-Frappe-CSRF-Token': frappe.csrf_token
+    },
+    success: function(r) {
+      var data = r.message;
+      console.log(data)
+  
+      if(data.status=="Accepted"){
+             
+              $('#model-content').html("Proposal Accepted!")
+              $('#myModal').show();
+      }
+       if(data.status=="Rejected"){
+              $('#model-content').html("Proposal Rejected!")
+              $('#myModal').show();
+        
+      }
+    }
+})
+}
+$('.close').on("click", function(){
+   $('#myModal').hide();
+})
+</script>
+
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<style>
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+
+

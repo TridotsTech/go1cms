@@ -15,6 +15,7 @@ from frappe.model.naming import make_autoname
 # from go1_cms.utils.setup import get_settings_from_domain, \
 # 	get_settings_value_from_domain, get_theme_settings
 from go1_cms.go1_cms.api import get_template_folder, unescape
+from go1_cms.go1_cms.proposal_api import generate_token
 from urllib.parse import urljoin, unquote, urlencode
 
 class Proposal(WebsiteGenerator):
@@ -36,15 +37,22 @@ class Proposal(WebsiteGenerator):
 			self.construct_html('web', 'web_section')
 		if self.mobile_section:
 			self.construct_html('mobile', 'mobile_section')
-
+		frappe.log_error("", "----val----")
+		# if not self.route:
+		# 	self.route = "proposal/"+self.scrub(self.page_title)
 		if not self.route:
-			self.route = self.scrub(self.page_title)
+			key = generate_token()
+			self.route = key
+		frappe.log_error("", self.route)
 		if not self.meta_title:
 			self.meta_title = self.page_title
 		if not self.meta_keywords:
 			self.meta_keywords = self.page_title.replace(" ", ", ")
 		if not self.meta_description:
 			self.meta_description="About: "+self.page_title
+		if not self.token:
+			key = generate_token()
+			self.token = key
 
 	def on_update(self):
 		#by siva
@@ -211,6 +219,19 @@ class Proposal(WebsiteGenerator):
 			context['footer'] = footer_template
 		# frappe.log_error(doc,"doc111")
 		context.doc = doc
+		quotation = frappe.db.get_all("Quotation", fields=["*"], filters={"name": doc.quotation})
+		for qt in quotation:
+			qt.items = frappe.db.get_all("Quotation Item", fields=["*"], filters={"parent": qt.name})
+			qt.pricing_rules = frappe.db.get_all("Pricing Rule Detail", fields=["*"], filters={"parent": qt.name})
+			qt.taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": qt.name})
+			qt.payment_schedule = frappe.db.get_all("Payment Schedule", fields=["*"], filters={"parent": qt.name})
+			qt.packed_items = frappe.db.get_all("Packed Item", fields=["*"], filters={"parent": qt.name})
+		if len(quotation)>0:
+			quotation = quotation[0]
+		else:
+			quotation = {}	
+
+		context.quotation_data = quotation
 		# frappe.log_error(context.doc.name,"context.doc")
 		if doc.meta_title:
 			context.meta_title = doc.meta_title
@@ -218,6 +239,10 @@ class Proposal(WebsiteGenerator):
 			context.meta_description = doc.meta_description
 		if doc.meta_keywords:
 			context.meta_keywords = doc.meta_keywords
+		frappe.log_error(context, "context-1")
+		context.htmldata = get_proposal_html(doc.name, doc.quotation)
+		context.template = "templates/pages/proposal.html"
+		frappe.log_error(context, "context")
 		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
 		
 		if enable_generate_html:
@@ -745,7 +770,70 @@ def generate_css_file():
 #end
 
 
+@frappe.whitelist()
+def get_proposal_html(page,name):
+	page_template=''
+	page_template += '<style></style>'
+	from go1_cms.go1_cms.doctype.page_section.page_section import get_section_data
+	options = {}
+	quotation = frappe.db.get_all("Quotation", fields=["*"], filters={"name": name})
+	for qt in quotation:
+		qt.items = frappe.db.get_all("Quotation Item", fields=["*"], filters={"parent": qt.name})
+		qt.pricing_rules = frappe.db.get_all("Pricing Rule Detail", fields=["*"], filters={"parent": qt.name})
+		qt.taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": qt.name})
+		qt.payment_schedule = frappe.db.get_all("Payment Schedule", fields=["*"], filters={"parent": qt.name})
+		qt.packed_items = frappe.db.get_all("Packed Item", fields=["*"], filters={"parent": qt.name})
+	if len(quotation)>0:
+		quotation = quotation[0]
+	else:
+		quotation = {}	
+	builder = frappe.db.get_value("Proposal", page, ["name", "business", "page_type", "route", "published", "custom_js", "custom_css", "document", "header_template", "footer_template"], as_dict=True) 
+	if builder:
+		component = frappe.db.get_all('Mobile Page Section' ,fields=['section','name', 'section_title', 'section_name', 'section_type', 'content_type', 'route'],filters={'parent':builder.name, 'parentfield':'web_section'},order_by='idx')
+		if len(component)>0:
+			page_template += '<style>'
+			page_template += 'h3 {font-size: 18px !important;}h2 {font-size: 20px !important;}'
+			page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
+			page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }.page{font-family: Calibri; padding:20px 50px 20px 50px;}p{font-size:9px}'
+			page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
+			page_template += '</style>'
+			page_template += '<div class="page" style="">\n'
 
+			
+			for item in component:
+				# by gopi 20/10/22
+				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				product_template = frappe.db.get_value("Page Section", item.section, ["name","section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
+				# end
+				if product_template:
+					data_source = get_section_data(item.section)
+					data_source['quotation']= quotation
+					template = product_template.web_template
+					if product_template.custom_css:
+						template += '\n <style> \n'  + product_template.custom_css + '\n </style>\n'
+					if product_template.custom_js:
+						template += '\n <script> \n'  + product_template.custom_js + '\n </script>\n'
+
+					template=frappe.render_template(template, data_source)
+					page_template += '\n'+template+'\n'
+					
+			page_template += '\n</div></div>\n'
+
+		page_template += '<style>\n'
+		if builder.custom_css:
+			context = {}
+			css_template = frappe.render_template(builder.custom_css,context)
+			page_template += css_template
+
+		page_template += '\n</style>\n'
+		if builder.custom_js:
+			page_template += default_page_script
+			context = {}
+			page_template += '<script type="text/javascript">\n'
+			js_template = frappe.render_template(builder.custom_js,context)
+			page_template += js_template
+			page_template += '\n</script>\n'
+	return page_template
 
 
 @frappe.whitelist()

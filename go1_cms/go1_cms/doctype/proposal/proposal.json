@@ -17,6 +17,7 @@
   "footer_component",
   "use_page_builder",
   "column_break_7",
+  "status",
   "published",
   "document",
   "quotation",
@@ -74,7 +75,8 @@
   "is_location_based",
   "section_break_64",
   "sample",
-  "preview_pdf_url"
+  "preview_pdf_url",
+  "token"
  ],
  "fields": [
   {
@@ -475,13 +477,24 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Proposal Pdf URL"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nAccepted\nRejected"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-10-20 17:46:07.836070",
+ "modified": "2022-11-19 09:53:03.641168",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Proposal",
