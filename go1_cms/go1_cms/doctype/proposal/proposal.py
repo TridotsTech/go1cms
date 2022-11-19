@@ -37,13 +37,13 @@ class Proposal(WebsiteGenerator):
 			self.construct_html('web', 'web_section')
 		if self.mobile_section:
 			self.construct_html('mobile', 'mobile_section')
-		frappe.log_error("", "----val----")
+		
 		# if not self.route:
 		# 	self.route = "proposal/"+self.scrub(self.page_title)
 		if not self.route:
 			key = generate_token()
 			self.route = key
-		frappe.log_error("", self.route)
+		
 		if not self.meta_title:
 			self.meta_title = self.page_title
 		if not self.meta_keywords:
@@ -239,10 +239,9 @@ class Proposal(WebsiteGenerator):
 			context.meta_description = doc.meta_description
 		if doc.meta_keywords:
 			context.meta_keywords = doc.meta_keywords
-		frappe.log_error(context, "context-1")
 		context.htmldata = get_proposal_html(doc.name, doc.quotation)
 		context.template = "templates/pages/proposal.html"
-		frappe.log_error(context, "context")
+		
 		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
 		
 		if enable_generate_html:
