@@ -8,7 +8,7 @@
    <!-- <div class="auto-group-udvs-J8S">
       <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
    </div> -->
-   <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}"/>
+<!--    <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}"/> -->
    <div class="auto-group-qqf8-kuY">
       <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
         <div>
@@ -58,41 +58,69 @@
                      {%endif%}
                   </p>
                   <br/>
-                  <div class="">
+                  {%if doc.status=="Pending"%}
+                  <div id="hide-btn" class="">
                      <button class="btn btn-sm btn-dec" id="reject-form" style="margin-right:15px;"><i class="fa fa-close"></i>Decline</button>
                      <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
                   </div>
+                  {%endif%}
                </div>
             </div>
-<!--             <div class="auto-group-ey1l-jES" >
-               <div class="auto-group-q65x-4Gi" > -->
-<!--                   <img class="auto-group-gsqi-P46" src="/files/location-b.svg"/> -->
-                  <!-- <img class="iconly-light-outline-call-iMG" src="/files/phone.png" id="1:75"/> -->
-      <!--          </div> -->
-       <!--         <div class="auto-group-knua-qRt" > -->
-             <!--      <p class=""> -->
-                     <!-- Tridots Tech Pvt Ltd,
+            <div class="auto-group-ey1l-jES" >
+             
+               <div class="auto-group-knua-qRt" >
+                <img class="auto-group-gsqi-P46" src="/files/locatione77d01.png"/>
+                  <p class="">
+                     Triton Innovation,
                         <br/>
-                        100, Lake View Estate, Kundrathur Road,
+                        261 Tillson Ave, Tillsonburg,
                         
                         <br/>
-                        Porur, Chennai, India-600116. -->
-                    <!--  {%if quotation_data.company%}
+                         Ontario, N4G 5X2.
+                     <!-- {%if quotation_data.company%}
                      {{quotation_data.address_display}}
                      {%endif%} -->
-          <!--         </p> -->
-                  <!-- <p class="item-91-98401-35354-GXC" id="1:74">+91 98401 35354</p> -->
-   <!--             </div>
-            </div> -->
+                  </p>
+               </div>
+               <div class="auto-group-knua-qRt" >
+                 <img class="iconly-light-outline-call-iMG" src="/files/phone3b5f8c.png" id="1:75"/>
+                  <p class="item-91-98401-35354-GXC" id="1:74">519-914-4320</p>
+               </div>
+            </div>
          </div>
       </div>
    </div>
 </div>
 
-<div id="myModal" class="modal"><div class="modal-content">
+<!-- <div id="myModal" class="modal"><div class="modal-content">
   <span class="close">&times;</span><p id="model-content">Proposal Accepted!</p>
-</div></div>
+</div></div> -->
+<div class="modal" id="myModal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+       <p id="model-content">Proposal Accepted!</p>
+    </div>
+</div>
+<!--  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+    
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" style="display:none">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p id="model-content">Proposal Accepted!</p>
+        </div>
+       
+      </div>
+      
+    </div>
+  </div> -->
+
 <style type="">
+
 
    body{
    margin: 0; 
@@ -271,9 +299,9 @@
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
-   margin-bottom: 3.1rem;
+   /*margin-bottom: 3.1rem;*/
    padding: 3.6rem 1.6rem 3.6rem 1.6rem;
-   width: 85%;
+   width: 80%;
    }
    .auto-group-xqbc-jsQ {
    flex-shrink: 0;
@@ -283,11 +311,10 @@
    }
    .auto-group-ey1l-jES {
    align-items: center;
-   display: flex;
    flex-shrink: 0;
-   height: 14.5rem;
    margin-left: 0.6rem;
    width: calc(100% - 0.6rem);
+   padding: 3.6rem 1.6rem 3.6rem 1.6rem;
    }
    .auto-group-q65x-4Gi {
    align-items: flex-end;
@@ -299,18 +326,27 @@
    }
    .auto-group-gsqi-P46 {
    flex-shrink: 0;
-   height: 3rem;
-   margin-bottom: 8.4rem;
+   /*height: 3rem;*/
+   margin-right: 0.5rem;
    object-fit: contain;
    position: relative;
    vertical-align: top;
-   width: 3rem;
+   /*width: 3rem;*/
    }
    .auto-group-knua-qRt {
-   flex-shrink: 0;
-   height: 100%;
-   position: relative;
-   width: 34.9rem;
+       flex-shrink: 0;
+       height: 100%;
+       position: relative;
+       display: flex;
+   }
+   .auto-group-knua-qRt img{
+        width: 16px;
+        height: 16px;
+        margin-right: 11px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        top: 10px;
    }
    .shape1{
         position: absolute;
@@ -323,6 +359,9 @@
         right: 0;
         bottom: 0;
         z-index: 1;
+   }
+   .auto-group-ey1l-jES{
+    width: 80%;
    }
    /*css end*/
    @media only screen and (max-width: 768px) {
@@ -436,16 +475,18 @@ function myFunction() {
              
               $('#model-content').html("Proposal Accepted!")
               $('#myModal').show();
+              $('#hide-btn').hide();
       }
        if(data.status=="Rejected"){
               $('#model-content').html("Proposal Rejected!")
               $('#myModal').show();
+               $('#hide-btn').hide()
         
       }
     }
 })
 }
-$('.close').on("click", function(){
+$('.close-button').on("click", function(){
    $('#myModal').hide();
 })
 </script>
@@ -494,6 +535,51 @@ $('.close').on("click", function(){
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /*opacity: 0;*/
+    visibility: visible;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1rem 1.5rem;
+    width: 24rem;
+    border-radius: 0.5rem;
+}
+
+.close-button {
+    float: right;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+
+.close-button:hover {
+    background-color: darkgray;
+}
+
+.show-modal {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }
 </style>
 
