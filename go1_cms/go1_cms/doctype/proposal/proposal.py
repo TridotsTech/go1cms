@@ -807,6 +807,8 @@ def get_proposal_html(page,name):
 				# end
 				if product_template:
 					data_source = get_section_data(item.section)
+					if not data_source:
+						data_source = {}
 					data_source['quotation']= quotation
 					template = product_template.web_template
 					if product_template.custom_css:
@@ -2243,8 +2245,8 @@ def generate_pdf1(page):
 				# end
 				if product_template:
 					data_source = get_section_data(item.section)
-					print("data_source----------------------------------------------------------")
-					print(data_source)
+					if not data_source:
+						data_source = {}
 					template = product_template.web_template
 					if product_template.custom_css:
 						template += '\n <style> \n'  + product_template.custom_css + '\n </style>\n'
@@ -2315,7 +2317,8 @@ def generate_pdf2(page):
 				# end
 				if product_template:
 					data_source = get_section_data(item.section)
-					
+					if not data_source:
+						data_source = {}
 					template = product_template.web_template
 					if product_template.custom_css:
 						template += '\n <style> \n'  + product_template.custom_css + '\n </style>\n'
@@ -2442,6 +2445,8 @@ def generate_pdf(page, name):
 				# end
 				if product_template:
 					data_source = get_section_data(item.section)
+					if not data_source:
+						data_source = {}
 					data_source['quotation']= quotation
 					template = product_template.web_template
 					if product_template.custom_css:
@@ -2571,6 +2576,8 @@ def get_page_pdf(page, name):
 				# end
 				if product_template:
 					data_source = get_section_data(item.section)
+					if not data_source:
+						data_source = {}
 					data_source["quotation"] = quotation
 					template = product_template.web_template
 					if product_template.custom_css:
