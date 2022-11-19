@@ -50,9 +50,9 @@ class Proposal(WebsiteGenerator):
 			self.meta_keywords = self.page_title.replace(" ", ", ")
 		if not self.meta_description:
 			self.meta_description="About: "+self.page_title
-		if not self.token:
-			key = generate_token()
-			self.token = key
+		# if not self.token:
+		# 	key = generate_token()
+		# 	self.token = key
 
 	def on_update(self):
 		#by siva
