@@ -8,7 +8,7 @@
    <!-- <div class="auto-group-udvs-J8S">
       <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
    </div> -->
-<!--    <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}"/> -->
+   <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}" hidden/>
    <div class="auto-group-qqf8-kuY">
       <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
         <div>
@@ -426,7 +426,11 @@
         window.socketio_port = {{ frappe.socketio_port }};
         </script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
+<!-- <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script> -->
+<script type="text/javascript" src="/assets/frappe/js/frappe-web.bundle.js"></script>
+{{ include_script('frappe-web.bundle.js') }}
+     
+
   <!-- csrf_token -->
 <script>
 window.onscroll = function() {myFunction()};
