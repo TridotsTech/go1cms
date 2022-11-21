@@ -36,7 +36,6 @@ class WebPageBuilder(WebsiteGenerator):
             self.construct_html('mobile', 'mobile_section')
         route_prefix = ""
         r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
-        frappe.log_error(r_prefix,"<< r_prefix >>")
         if r_prefix:
             route_prefix = r_prefix[0].page_prefix+"/"
         self.route = route_prefix+self.scrub(self.page_title)
@@ -189,8 +188,10 @@ class WebPageBuilder(WebsiteGenerator):
                 header_dict = {}
                 nav_menu = frappe.db.get_all("Menus Item",filters={"parent":h_comp[0]['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
                 top_menu = frappe.db.get_all("Menus Item",filters={"parent":doc.header_component},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-                header_dict['nav_menus']=nav_menu[0]
-                header_dict['top_menus'] = top_menu[0]
+                if nav_menu:
+                    header_dict['nav_menus']=nav_menu[0]
+                if top_menu:
+                   header_dict['top_menus'] = top_menu[0]
                 header.append(header_dict)
             context['header'] = header
         if doc.footer_component:
@@ -237,6 +238,7 @@ class WebPageBuilder(WebsiteGenerator):
         if "/" in p_route:
             p_route = p_route.split("/")[1]
         context.p_route = p_route
+		
 def get_product_context(self, context):
 		try:
 			#hided by boopathy on 10/08/2022
@@ -1040,7 +1042,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 									})
 							ret.insert()
 							return_url = ret.make_thumbnail(set_as_thumbnail=False,width=width,height=height,suffix=str(height))
-							frappe.log_error(return_url,"dm")
+							# frappe.log_error(return_url,"dm")
 							item["content"] = return_url
 							update_doc(item)
 		else:
@@ -1623,7 +1625,7 @@ def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Web Page Builder', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
 	context['section_len']= len(page_section)
-	frappe.log_error(len(page_section), "-----context------")
+	# frappe.log_error(len(page_section), "-----context------")
 	page_section = page_section[int(page_no):int(page_len)]
 	for item in page_section:
 		data=get_section_data(item.section, item.parent, context.device_type)

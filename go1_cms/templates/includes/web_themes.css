@@ -9,9 +9,9 @@
         @import url('{{k.font_family_url}}');
     {% endfor %}
 {% endif %}
-/* font family url import and css file url import end */
+/* font family url import and css file url import ends */
 :root {
-    /* global fonts variable declare */ 
+    /* global fonts variable declare  */
     {% if doc.primary_font_family %}
         --go1-global-primary-f: {{doc.primary_font_family}};
     {% endif %}

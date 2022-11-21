@@ -353,6 +353,9 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     {%if theme_settings.page_title_padding%}
         padding:{{theme_settings.page_title_padding}} 0px;
     {%endif%}
+    {%if theme_settings.is_transparent%}
+        background: transparent;
+    {%endif%}
     }
 
     {%if theme_settings.page_title_overlay%}
@@ -369,7 +372,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     }
     {%endif%}
 
-    .sub_header .header-title h2{
+    .sub_header .header-title {{theme_settings.page_title_tag}}{
         width: 100%;
         color: {{theme_settings.page_title_color}};
         margin: 0;
@@ -400,6 +403,30 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 
 }
 {%endif%}
+{% if edit_header_style %}
+.drop__down__header.menu-item a{
+    {% if menu_text_color %}
+        color:{{menu_text_color}} !important;
+    {% endif %}
+}
+.drop__down__header.menu-item a:hover{
+    {% if menu_hover_text_color %}
+        color:{{menu_hover_text_color}} !important;
+    {% endif %}
+    {% if menu_hover_bg %}
+        background-color:{{menu_hover_bg}} !important;
+    {% endif %}
+}
+{% if menu_hover_bg %}
+.drop__down__header.menu-item a{
+       padding: 5px !important;
+       border-radius: 5px;
+    }
+.drop__down__header.menu-item{
+    padding: 0 20px;
+}
+    {% endif %}
+{% endif %}
 </style>
 <script type="text/javascript">
     {%if header.sticky_header%}
@@ -444,12 +471,18 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     }
 
     {% if header.sticky_on_top %}
+    {% if p_route %}
         let anno_height = $('.{{p_route}} .go1-cms-top-bar').outerHeight();
+        let header_height = $('.{{p_route}} .go1-cms-header').outerHeight();
         // console.log(anno_height,"<<anno_height>>")
         $(".{{p_route}} .sticky__header .go1-cms-header").css("top",anno_height+'px')
         $(".{{p_route}} .transparent_sticky .go1-cms-header").css("top",anno_height+'px')
+        $(".{{p_route}} .sub_header .header-title").css('position','sticky')
+        $(".{{p_route}} .sub_header .header-title").css("top",String(parseInt(anno_height+header_height))+'px')
+    {% endif %}
     {% endif %}
     {% if header.is_dismissable %}
+    {% if p_route %}
     let wrapper = $(".{{p_route}} .go1-cms-top-bar")
     $(`<div class="close-btn">
         <button type="button" class="close" aria-label="Close" style="padding: 0 !important;
@@ -466,6 +499,8 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             $(".{{p_route}} .go1-cms-top-bar").hide();
             $(".{{p_route}} .sticky__header .go1-cms-header").css("top",'0px')
             $(".{{p_route}} .transparent_sticky .go1-cms-header").css("top",'0px')
+            $(".{{p_route}} .sub_header .header-title").css("top",String(parseInt(header_height))+'px')
         })
+    {% endif %}    
     {% endif %}
 </script>

@@ -591,6 +591,7 @@ def key_func(k):
 
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
+	# frappe.log_error(frappe.ui.misc.about(),">>version<<")
 	try:
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
 		if not theme_list:
@@ -622,16 +623,17 @@ def update_website_context(context):
 		context.page_url = get_url()
 		if context.doc:
 			if context.doc.doctype=="Web Page Builder":
-				if context.doc.edit_header_style:
-					if context.header and context.doc.is_transparent_header:
-						context.header.is_transparent_header = 1
 				if context.doc.enable_sub_header:
 					context.theme_settings.enable_page_title = 1
-					context.theme_settings.page_title_bg = context.doc.sub_header_bg_color
+					context.theme_settings.page_title_bg = context.doc.sub_header_bg_color+" !important" if context.doc.sub_header_bg_color else '' 
 					context.theme_settings.page_title_color = context.doc.text_color
-					context.theme_settings.page_title_bg_img=context.doc.sub_header_bg_img
-					context.theme_settings.enable_breadcrumbs=context.doc.enable_breadcrumbs
+					context.theme_settings.page_title_bg_img = context.doc.sub_header_bg_img+" !important" if context.doc.sub_header_bg_img else '' 
+					context.theme_settings.enable_breadcrumbs = context.doc.enable_breadcrumbs
 					context.theme_settings.sub_header_title = context.doc.page_title
+					context.theme_settings.is_transparent = context.doc.is_transparent_sub_header
+					context.theme_settings.title_text_align = context.doc.title_text_align
+					context.theme_settings.page_title_overlay = context.doc.page_title_overlay
+					context.theme_settings.container_max_width = context.doc.container_max_width
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
 				# frappe.log_error(context.doc.header_component,">>context.doc.header_component<<")
@@ -653,6 +655,9 @@ def update_website_context(context):
 				context.p_route = context.doc.route
 				if  context.p_route and "/" in context.doc.route:
 					context.p_route = context.doc.route.split('/')[1]
+				if context.doc.edit_header_style:
+					if context.header and context.doc.is_transparent_header:
+						context.header.is_transparent_header = 1
 		# frappe.log_error(context.theme_settings,">> context theme settings data <<")
 		# frappe.log_error(context,">> context data <<")
 	except Exception as e:
