@@ -509,7 +509,8 @@ frappe.ui.form.on('Proposal', {
                 update: function(e, ui) {
                     $(cur_frm.$wrapper).find('div[data-fieldname="' + html + '"] table tbody tr').each(function(k, v) {
                         frappe.model.set_value('Mobile Page Section', $(this).attr('data-id'), 'idx', (k + 1))
-                        cur_frm.set_value("route","");
+                        // cur_frm.set_value("route","");
+                        cur_frm.set_value("published",cur_frm.doc.published);
                         refresh_field("mobile_section");
                         refresh_field("web_section");
                         is_row_updated=1;
@@ -686,7 +687,8 @@ frappe.ui.form.on('Proposal', {
                                 args: {"is_full_width":is_full_width,"section_name":name,"css_design":css_design,"style_json":style_json},
                                 async: false,
                                 callback: function(r) {
-                                    cur_frm.set_value("route","");
+                                    cur_frm.set_value("published",cur_frm.doc.published);
+                                    // cur_frm.set_value("route","");
                                     cur_frm.save();
                                     styledialog.hide();
                                     setTimeout(function(){
@@ -2334,8 +2336,7 @@ var modify_section_data = Class.extend({
                 callback: function(r) {
                     if (r.message.status == 'Success') {
                         show_alert('Section updated!', 5);
-                        cur_frm.set_value('published', 0);
-                        cur_frm.set_value('published', 1);
+                       cur_frm.set_value("published",cur_frm.doc.published);
                          // cur_frm.set_value('route', '')
                         // me.dialog.hide();
                         cur_frm.save();
