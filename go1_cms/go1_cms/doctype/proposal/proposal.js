@@ -2334,7 +2334,9 @@ var modify_section_data = Class.extend({
                 callback: function(r) {
                     if (r.message.status == 'Success') {
                         show_alert('Section updated!', 5);
-                         cur_frm.set_value('route', '')
+                        cur_frm.set_value('published', 0);
+                        cur_frm.set_value('published', 1);
+                         // cur_frm.set_value('route', '')
                         // me.dialog.hide();
                         cur_frm.save();
                     }
