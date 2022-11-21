@@ -98,7 +98,13 @@
 </div></div> -->
 <div class="modal" id="myModal">
     <div class="modal-content">
+      <div class="col-md-12">
+     <span class="close-button1" style="
+    float: left !important;
+"></span>
         <span class="close-button">&times;</span>
+    </div>
+        
        <p id="model-content">Proposal Accepted!</p>
     </div>
 </div>
@@ -566,7 +572,16 @@ $('.close-button').on("click", function(){
     border-radius: 0.5rem;
 }
 
-.close-button {
+.close-button1 {
+    float: left;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+ .close-button {
     float: right;
     width: 1.5rem;
     line-height: 1.5rem;
