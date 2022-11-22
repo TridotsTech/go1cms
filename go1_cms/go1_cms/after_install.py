@@ -367,7 +367,6 @@ def insert_sample_pages():
 					frappe.log_error(frappe.get_traceback(), "insert_sample_page") 
 	frappe.publish_realtime('msgprint', 'Sample pages are created.')
 
-
 def update_workspace_v14():
 	try:
 		from frappe.utils.change_log import get_versions
@@ -380,15 +379,17 @@ def update_workspace_v14():
 				if int(frappe_version.split('.')[0]) >= 14:
 					path = frappe.get_module_path("go1_cms")
 					file_path = os.path.join(path,'json_data',"workspacev14.json")
+					frappe.log_error("file_path",file_path)
 					if os.path.exists(file_path):
 						with open(file_path, 'r') as f:
 							out = json.load(f)
 							for i in out:
+								frappe.log_error("json data",i.as_dict())
 								try:
 									frappe.get_doc(i).insert()
 								except frappe.NameError:
 									pass
 								except Exception as e:
-									frappe.log_error(frappe.get_traceback(), "workspacev14.json")   
+									frappe.log_error("workspacev14.json",frappe.get_traceback())   
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"update_workspace_v14")
