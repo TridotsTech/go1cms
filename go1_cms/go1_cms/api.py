@@ -591,7 +591,6 @@ def key_func(k):
 
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
-	# frappe.log_error(frappe.ui.misc.about(),">>version<<")
 	try:
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
 		if not theme_list:
