@@ -371,25 +371,35 @@ def update_workspace_v14():
 	try:
 		from frappe.utils.change_log import get_versions
 		installed_apps_details = get_versions()
-		# frappe.log_error("installed apps",installed_apps_details)
 		if installed_apps_details:
 			if 'frappe' in list(installed_apps_details.keys()):
 				frappe_version = installed_apps_details.get('frappe').get('version')
-				# frappe.log_error("frappe_version",frappe_version)
 				if int(frappe_version.split('.')[0]) >= 14:
 					path = frappe.get_module_path("go1_cms")
 					file_path = os.path.join(path,'json_data',"workspacev14.json")
-					# frappe.log_error("file_path",file_path)
 					if os.path.exists(file_path):
 						with open(file_path, 'r') as f:
 							out = json.load(f)
 							for i in out:
-								# frappe.log_error("json data",i.as_dict())
 								try:
 									frappe.get_doc(i).insert()
 								except frappe.NameError:
 									pass
 								except Exception as e:
 									frappe.log_error(frappe.get_traceback(),"workspacev14.json")   
+									
+				elif int(frappe_version.split('.')[0]) <= 13:
+					path = frappe.get_module_path("go1_cms")
+					file_path = os.path.join(path,'json_data',"workspacev13.json")
+					if os.path.exists(file_path):
+						with open(file_path, 'r') as f:
+							out = json.load(f)
+							for i in out:
+								try:
+									frappe.get_doc(i).insert()
+								except frappe.NameError:
+									pass
+								except Exception as e:
+									frappe.log_error(frappe.get_traceback(),"workspacev13.json")
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"update_workspace_v14")
