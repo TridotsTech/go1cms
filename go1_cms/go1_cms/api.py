@@ -626,15 +626,20 @@ def update_website_context(context):
 					context.theme_settings.enable_page_title = 1
 					context.theme_settings.page_title_bg = context.doc.sub_header_bg_color+" !important" if context.doc.sub_header_bg_color else '' 
 					context.theme_settings.page_title_color = context.doc.text_color
-					context.theme_settings.page_title_bg_img = context.doc.sub_header_bg_img+" !important" if context.doc.sub_header_bg_img else '' 
+					context.theme_settings.page_title_bg_img = context.doc.sub_header_bg_img
 					context.theme_settings.enable_breadcrumbs = context.doc.enable_breadcrumbs
 					context.theme_settings.sub_header_title = context.doc.page_title
 					context.theme_settings.is_transparent = context.doc.is_transparent_sub_header
 					context.theme_settings.title_text_align = context.doc.title_text_align
 					context.theme_settings.page_title_overlay = context.doc.page_title_overlay
 					context.theme_settings.container_max_width = context.doc.container_max_width
+					context.theme_settings.page_title_padding = context.doc.page_title_padding
+					context.theme_settings.title_text_transform = context.doc.title_text_transform
+					context.theme_settings.page_title_tag = context.doc.page_title_tag
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
+				if context.doc.disable_web_theme_subheader:
+					context.theme_settings.enable_page_title = 0
 				# frappe.log_error(context.doc.header_component,">>context.doc.header_component<<")
 				if context.doc.header_component or context.doc.footer_component:
 					if context.doc.header_component:

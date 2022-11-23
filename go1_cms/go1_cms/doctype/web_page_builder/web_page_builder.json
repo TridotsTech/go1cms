@@ -47,6 +47,7 @@
   "menu_hover_text_color",
   "column_break_32",
   "menu_text_color",
+  "sticky_header_text_color",
   "detail_settings_section",
   "choose_detail_style",
   "detail_layout",
@@ -61,17 +62,21 @@
   "recent_records_count",
   "sub_header_section",
   "enable_sub_header",
+  "page_title_padding",
+  "title_text_transform",
   "enable_breadcrumbs",
   "is_transparent_sub_header",
-  "sub_header_bg_color",
   "column_break_21",
+  "enable_web_theme_subheader",
+  "sub_header_bg_color",
   "sub_header_bg_img",
-  "page_title_overlay",
-  "container_max_width",
+  "page_title_tag",
+  "title_text_align",
   "column_break_30",
   "sub_header_title",
+  "page_title_overlay",
   "text_color",
-  "title_text_align",
+  "container_max_width",
   "sec_content",
   "content",
   "jodit_editor",
@@ -491,7 +496,6 @@
   },
   {
    "default": "#FFFFFF",
-   "depends_on": "eval:doc.is_transparent_header==1",
    "fieldname": "menu_text_color",
    "fieldtype": "Color",
    "label": "Menu Text Color"
@@ -609,13 +613,46 @@
   {
    "fieldname": "column_break_74",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sticky_header_text_color",
+   "fieldtype": "Color",
+   "label": "Sticky Header Text Color"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "page_title_padding",
+   "fieldtype": "Data",
+   "label": "Vertical Padding"
+  },
+  {
+   "default": "None",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "title_text_transform",
+   "fieldtype": "Select",
+   "label": "Title Text Transform",
+   "options": "None\nCapitalize\nUppercase\nLowercase"
+  },
+  {
+   "default": "H1",
+   "depends_on": "eval:doc.enable_sub_header==1",
+   "fieldname": "page_title_tag",
+   "fieldtype": "Select",
+   "label": "Title Tag",
+   "options": "H1\nH2\nH3\nH4\nH5\nH6"
+  },
+  {
+   "depends_on": "eval:doc.enable_sub_header==0",
+   "fieldname": "enable_web_theme_subheader",
+   "fieldtype": "Data",
+   "label": "Do Not Use Web Theme Sub Header Settings"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-09-22 20:44:40.555835",
+ "modified": "2022-11-23 17:32:08.884169",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
