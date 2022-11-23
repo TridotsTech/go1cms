@@ -638,7 +638,7 @@ def update_website_context(context):
 					context.theme_settings.page_title_tag = context.doc.page_title_tag
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
-				if context.doc.disable_web_theme_subheader:
+				if context.doc.dis_web_theme_subheader:
 					context.theme_settings.enable_page_title = 0
 				# frappe.log_error(context.doc.header_component,">>context.doc.header_component<<")
 				if context.doc.header_component or context.doc.footer_component:

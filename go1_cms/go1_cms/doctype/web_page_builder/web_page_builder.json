@@ -67,7 +67,7 @@
   "enable_breadcrumbs",
   "is_transparent_sub_header",
   "column_break_21",
-  "enable_web_theme_subheader",
+  "dis_web_theme_subheader",
   "sub_header_bg_color",
   "sub_header_bg_img",
   "page_title_tag",
@@ -642,9 +642,10 @@
    "options": "H1\nH2\nH3\nH4\nH5\nH6"
   },
   {
+   "default": "0",
    "depends_on": "eval:doc.enable_sub_header==0",
-   "fieldname": "enable_web_theme_subheader",
-   "fieldtype": "Data",
+   "fieldname": "dis_web_theme_subheader",
+   "fieldtype": "Check",
    "label": "Do Not Use Web Theme Sub Header Settings"
   }
  ],
@@ -652,7 +653,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-11-23 17:32:08.884169",
+ "modified": "2022-11-23 19:02:32.585676",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
