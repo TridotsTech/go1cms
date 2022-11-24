@@ -664,7 +664,7 @@ def update_website_context(context):
 					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
 		# frappe.log_error(context.footer,">> context.footer <<")
-		frappe.log_error(context,">> context data <<")
+		# frappe.log_error(context,">> context data <<")
 	except Exception as e:
 		print(frappe.get_traceback())
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")
