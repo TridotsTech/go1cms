@@ -13,6 +13,53 @@
                             {%for sec_item in footer.get("items")%}
                                 {%if col_index == (sec_item.column_index+1) %}
                                 	{%for m_sec_item in sec_item.get("items")%}
+									<!-- newly added -->
+									{%if m_sec_item.section_name=="Footer Contact"%}
+										<div class="footer_p_b">
+											<div class="{{m_sec_item.class_name}}">
+												<div class="footer-contact-sub-container" style="display:flex;flex-direction: column;">
+													<div class="title-div" style="display:flex;gap:5px;">
+														{%if m_sec_item.logo%}
+															<img   class="title__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.logo}}" />
+														{% endif %}
+														<span  class="go1-cms-footer-title">{{m_sec_item.title}}</span>
+													</div>
+													<div class="border_line"></div>
+													{%if m_sec_item.address_content%}
+														<div class="address-div" style="display:flex;gap:5px;">
+															{%if m_sec_item.icon%}
+																<img   class="address__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.icon}}" />
+															{% endif %}
+															<p class="address_content">
+																{{m_sec_item.address_content}}
+															</p>
+														</div>
+													{%endif%}
+													{%if m_sec_item.email_id%}
+														<div class="email-div" style="display:flex;gap:5px;">
+															{%if m_sec_item.email_icon%}
+																<img   class="email__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.email_icon}}" />
+															{%endif%}
+															<p class="email_content">
+																{{m_sec_item.email_id}}
+															</p>
+														</div>
+													{%endif%}
+													{%if m_sec_item.phone_no%}
+													<div class="phone-div" style="display:flex;gap:5px;">
+															{%if m_sec_item.phone_icon%}
+																<img   class="phone__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.phone_icon}}" />
+															{%endif%}
+															<p class="phone_content">
+																{{m_sec_item.phone_no}}
+															</p>
+													</div>
+													{%endif%}
+												</div>
+											</div>
+										</div>
+									{%endif%}
+									<!-- end -->
 	                                	 {%if m_sec_item.section_name=="Footer About"%}
 	                                	 <div class="footer_p_b">
 	                                	 	<div class="{{m_sec_item.class_name}}">

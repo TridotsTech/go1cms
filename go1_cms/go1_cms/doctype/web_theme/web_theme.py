@@ -1,8 +1,5 @@
 # Copyright (c) 2022, Tridotstech and contributors
 # For license information, please see license.txt
-
-from dataclasses import fields
-from errno import EXDEV
 import frappe
 import json
 import os
@@ -132,7 +129,7 @@ def generate_webtheme_css_file(path,sitename,self):
 				doc_obj.footer_css.font_family = frappe.db.get_value("CSS Font",doc_obj.footer_css.font_family,"font_family")
 			if doc_obj.footer_css.f_txt_font_family:
 				doc_obj.footer_css.f_txt_font_family = frappe.db.get_value("CSS Font",doc_obj.footer_css.f_txt_font_family,"font_family")
-			# frappe.log_error(doc_obj.footer_css.font_family,'doc_obj.footer_css.font_family')
+			# frappe.log_error(doc_obj.footer_css.as_dict(),'doc_obj.footer_css')
 			# frappe.log_error(doc_obj.footer_css.f_txt_font_family,'doc_obj.footer_css.f_txt_font_family')
 			""" End """
 		font_list = []

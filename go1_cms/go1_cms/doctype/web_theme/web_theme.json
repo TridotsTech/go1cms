@@ -84,6 +84,7 @@
   "title_text_transform",
   "enable_breadcrumbs",
   "is_transparent",
+  "container_max_width",
   "column_break_53",
   "page_title_bg",
   "page_title_bg_img",
@@ -92,8 +93,8 @@
   "column_break_55",
   "sub_header_title",
   "page_title_overlay",
+  "bg_overlay_opacity",
   "page_title_color",
-  "container_max_width",
   "fonts_section",
   "google_fonts",
   "custom_css_section",
@@ -686,10 +687,15 @@
    "fieldname": "sub_header_title",
    "fieldtype": "Data",
    "label": "Sub Header Title"
+  },
+  {
+   "fieldname": "bg_overlay_opacity",
+   "fieldtype": "Data",
+   "label": "Sub Header Background Overlay Opacity"
   }
  ],
  "links": [],
- "modified": "2022-10-31 12:28:33.261694",
+ "modified": "2022-11-24 20:42:44.030885",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

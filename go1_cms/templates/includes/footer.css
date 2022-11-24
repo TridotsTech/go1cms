@@ -9,7 +9,7 @@
         padding:{{footer_settings.footer_vertical_padding}} 0px;
     {% endif %}
     {% if footer_settings.footer_bg_image %}
-        background-image:{{footer_settings.footer_bg_image}};
+        background-image:url('{{footer_settings.footer_bg_image}}');
     {% endif %}
     /* end */
     {% if footer_settings.text_color %}
@@ -109,9 +109,14 @@
     margin: 10px 0;
  }
 {%endif%}
+.{{page_route}} .go1-cms-footer a span:hover{
+    {% if footer_settings.link_hover_color %}
+        color: {{footer_settings.link_hover_color}} !important;
+    {% endif %}  
+}
 .{{page_route}} .go1-cms-footer a:hover{
     {% if footer_settings.link_hover_color %}
-        color: {{footer_settings.link_hover_color}};
+        color: {{footer_settings.link_hover_color}} !important;
     {% endif %}  
 }
 .{{page_route}} .go1-cms-footer-title{

@@ -636,6 +636,7 @@ def update_website_context(context):
 					context.theme_settings.page_title_padding = context.doc.page_title_padding
 					context.theme_settings.title_text_transform = context.doc.title_text_transform
 					context.theme_settings.page_title_tag = context.doc.page_title_tag
+					context.theme_settings.bg_overlay_opacity = context.doc.bg_overlay_opacity
 					if context.doc.sub_header_title:
 						context.theme_settings.sub_header_title = context.doc.sub_header_title
 				if context.doc.dis_web_theme_subheader:
@@ -662,8 +663,8 @@ def update_website_context(context):
 				if context.doc.edit_header_style:
 					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
-		# frappe.log_error(context.theme_settings,">> context theme settings data <<")
-		# frappe.log_error(context,">> context data <<")
+		# frappe.log_error(context.footer,">> context.footer <<")
+		frappe.log_error(context,">> context data <<")
 	except Exception as e:
 		print(frappe.get_traceback())
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")
@@ -913,7 +914,7 @@ def update_web_themes(doc,method):
 	frappe.enqueue(update_website_themes, queue='default',doc=doc)
 def update_website_themes(doc):
 	update_themes = 1
-	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.update_theme == 0:
+	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
 		update_themes = 0
 	if update_themes == 1:
 		themes = frappe.db.get_all("Web Theme")

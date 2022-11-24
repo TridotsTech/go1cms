@@ -37,6 +37,7 @@ class FooterComponent(Document):
 				# f.write(frappe.as_json(result))
 				content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
 				# f.write(frappe.as_json(result))
+				# frappe.log_error(content,'content')
 				f.write(content)
 
 	def get_json_data(self, ref_field):
