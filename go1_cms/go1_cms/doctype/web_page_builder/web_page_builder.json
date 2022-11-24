@@ -496,20 +496,21 @@
   },
   {
    "default": "#FFFFFF",
+   "depends_on": "eval:doc.edit_header_style==1",
    "fieldname": "menu_text_color",
    "fieldtype": "Color",
    "label": "Menu Text Color"
   },
   {
    "default": "#FFFFFF",
-   "depends_on": "eval:doc.is_transparent_header==1",
+   "depends_on": "eval:doc.edit_header_style==1",
    "fieldname": "menu_hover_bg",
    "fieldtype": "Color",
    "label": "Menu Hover Background Color"
   },
   {
    "default": "#222222",
-   "depends_on": "eval:doc.is_transparent_header==1",
+   "depends_on": "eval:doc.edit_header_style==1",
    "fieldname": "menu_hover_text_color",
    "fieldtype": "Color",
    "label": "Menu Hover Text Color"
@@ -615,6 +616,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.edit_header_style==1",
    "fieldname": "sticky_header_text_color",
    "fieldtype": "Color",
    "label": "Sticky Header Text Color"
@@ -653,7 +655,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-11-23 19:02:32.585676",
+ "modified": "2022-11-23 19:44:13.282190",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

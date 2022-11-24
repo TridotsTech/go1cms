@@ -90,6 +90,7 @@
   "page_title_tag",
   "title_text_align",
   "column_break_55",
+  "sub_header_title",
   "page_title_overlay",
   "page_title_color",
   "container_max_width",
@@ -505,6 +506,7 @@
   },
   {
    "default": "1170px",
+   "depends_on": "eval:doc.site_layout == 'Full Width';",
    "fieldname": "container_width",
    "fieldtype": "Data",
    "label": "Container Width"
@@ -678,10 +680,16 @@
    "fieldtype": "Table",
    "label": "Social Links",
    "options": "Social Link"
+  },
+  {
+   "depends_on": "eval:doc.enable_page_title==1",
+   "fieldname": "sub_header_title",
+   "fieldtype": "Data",
+   "label": "Sub Header Title"
   }
  ],
  "links": [],
- "modified": "2022-09-19 20:57:33.198042",
+ "modified": "2022-10-31 12:28:33.261694",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

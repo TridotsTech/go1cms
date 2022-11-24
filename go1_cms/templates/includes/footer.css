@@ -1,16 +1,20 @@
 
 {% if footer_settings %}
 .{{page_route}} .go1-cms-footer{
+    /* footer property */
     {% if footer_settings.background_color %}
         background-color:{{footer_settings.background_color}};
-    {% endif %}
-    {% if footer_settings.text_color %}
-        color:{{footer_settings.text_color}};
     {% endif %}
     {% if footer_settings.footer_vertical_padding %}
         padding:{{footer_settings.footer_vertical_padding}} 0px;
     {% endif %}
-
+    {% if footer_settings.footer_bg_image %}
+        background-image:{{footer_settings.footer_bg_image}};
+    {% endif %}
+    /* end */
+    {% if footer_settings.text_color %}
+        color:{{footer_settings.text_color}};
+    {% endif %}
     {% if footer_settings.f_txt_font_family %}
         font-family: {{footer_settings.f_txt_font_family}};
     {% endif %} 
@@ -51,6 +55,11 @@
     {% endif %} 
     {% if footer_settings.f_txt_color %}
         color: {{footer_settings.f_txt_color}};
+    {% endif %} 
+}
+.{{page_route}} .go1-cms-footer a span{
+    {% if footer_settings.f_txt_font_family %}
+        font-family: {{footer_settings.f_txt_font_family}} !important;
     {% endif %} 
 }
 .{{page_route}} .go1-cms-footer .social_link ul{

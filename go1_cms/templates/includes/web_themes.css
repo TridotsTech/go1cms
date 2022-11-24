@@ -754,17 +754,20 @@ li {
 
 {% if doc.footer_css %}
 .go1-cms-footer{
+    /* footer property */
     {% if doc.footer_css.background_color %}
         background-color:{{doc.footer_css.background_color}};
     {% endif %}
-      {% if doc.footer_css.background_color %}
+      {% if doc.footer_css.footer_bg_image %}
         background-image:{{doc.footer_css.footer_bg_image}};
-    {% endif %}
-    {% if doc.footer_css.text_color %}
-        color:{{doc.footer_css.text_color}};
     {% endif %}
     {% if doc.footer_css.footer_vertical_padding %}
         padding:{{doc.footer_css.footer_vertical_padding}} 0px;
+    {% endif %} 
+    /* end */
+
+    {% if doc.footer_css.text_color %}
+        color:{{doc.footer_css.text_color}};
     {% endif %}
 
     {% if doc.footer_css.f_txt_font_family %}
@@ -807,6 +810,11 @@ li {
     {% endif %} 
     {% if doc.footer_css.f_txt_color %}
         color: {{doc.footer_css.f_txt_color}};
+    {% endif %} 
+}
+.go1-cms-footer a span{
+    {% if doc.footer_css.f_txt_font_family %}
+        font-family: {{doc.footer_css.f_txt_font_family}} !important;
     {% endif %} 
 }
 .go1-cms-footer .social_link ul{

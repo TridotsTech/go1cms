@@ -29,6 +29,10 @@
         {% endif %}
     }
 
+     .go1-cms-top-bar span{
+          color:{{header_settings.top_text_color}};
+          font-size:{{header_settings.top_text_size}};
+    }
 
     {%endif%}
     {%if header_settings.sticky_header%}
@@ -143,4 +147,11 @@
     }
 
      }
+     .go1-cms-menu a:hover{
+        color: {{header_settings.menu_hover_color}};
+
+     }
+     .go1-cms-header .logo{
+        height: {{header_settings.m_logo_height}};
+    }
 {%endif%}

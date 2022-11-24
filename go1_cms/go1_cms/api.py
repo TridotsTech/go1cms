@@ -624,7 +624,7 @@ def update_website_context(context):
 			if context.doc.doctype=="Web Page Builder":
 				if context.doc.enable_sub_header:
 					context.theme_settings.enable_page_title = 1
-					context.theme_settings.page_title_bg = context.doc.sub_header_bg_color+" !important" if context.doc.sub_header_bg_color else '' 
+					context.theme_settings.page_title_bg = context.doc.sub_header_bg_color
 					context.theme_settings.page_title_color = context.doc.text_color
 					context.theme_settings.page_title_bg_img = context.doc.sub_header_bg_img
 					context.theme_settings.enable_breadcrumbs = context.doc.enable_breadcrumbs
@@ -920,3 +920,4 @@ def update_website_themes(doc):
 		for x in themes:
 			theme = frappe.get_doc("Web Theme",x.name)
 			theme.save(ignore_permissions=True)
+			theme.reload()

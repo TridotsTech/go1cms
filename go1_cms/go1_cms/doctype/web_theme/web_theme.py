@@ -78,7 +78,6 @@ def generate_webtheme_css_file(path,sitename,self):
 		# check and append custom css
 		doc_obj.page_css = (self.page_css.replace('\n','')) if self.page_css else ""
 		# check and read css file
-		# hide by gopi on 29/9/22
 		# css_file_data=""
 		
 		# end
@@ -119,9 +118,23 @@ def generate_webtheme_css_file(path,sitename,self):
 		if doc_obj.default_header:
 			doc_obj.header_settings = frappe.get_doc("Header Component",doc_obj.default_header)
 			# frappe.log_error(doc_obj.header_settings.as_dict(),">> doc_obj.header_settings <<")
+			""" for map font family """
+			if doc_obj.header_settings.font_family:
+				doc_obj.header_settings.font_family = frappe.db.get_value("CSS Font",doc_obj.header_settings.font_family,"font_family")
+			if doc_obj.header_settings.m_font_family:
+				doc_obj.header_settings.m_font_family = frappe.db.get_value("CSS Font",doc_obj.header_settings.m_font_family,"font_family")
+			""" End """
 			is_custom_header = 1
 		if doc_obj.default_footer:
 			doc_obj.footer_css = frappe.get_doc("Footer Component",doc_obj.default_footer)
+			""" for map font family """
+			if doc_obj.footer_css.font_family:
+				doc_obj.footer_css.font_family = frappe.db.get_value("CSS Font",doc_obj.footer_css.font_family,"font_family")
+			if doc_obj.footer_css.f_txt_font_family:
+				doc_obj.footer_css.f_txt_font_family = frappe.db.get_value("CSS Font",doc_obj.footer_css.f_txt_font_family,"font_family")
+			# frappe.log_error(doc_obj.footer_css.font_family,'doc_obj.footer_css.font_family')
+			# frappe.log_error(doc_obj.footer_css.f_txt_font_family,'doc_obj.footer_css.f_txt_font_family')
+			""" End """
 		font_list = []
 		css_fonts = frappe.db.get_all("CSS Font",fields=['font_name','font_type','font_url','font_family'])
 		for x in css_fonts:
@@ -140,10 +153,16 @@ def generate_webtheme_css_file(path,sitename,self):
 				if page.header_component:
 					template = frappe.get_template("templates/includes/header.css")
 					header_settings = frappe.get_doc("Header Component",page.header_component)
+					""" for map font family """
+					if header_settings.font_family:
+						header_settings.font_family = frappe.db.get_value("CSS Font",header_settings.font_family,"font_family")
+					if header_settings.m_font_family:
+						header_settings.m_font_family = frappe.db.get_value("CSS Font",header_settings.m_font_family,"font_family")
+					""" End """
 					p_route = page.route
 					if "/" in p_route:
 						p_route = p_route.split('/')[1]
-					# frappe.log_error(header_settings,"<< header_settings >>")
+					# frappe.log_error(header_settings.as_dict(),"<< header_settings >>")
 					# frappe.log_error(p_route,"<< p_route >>")
 					header_css = template.render({'header_settings':header_settings,"page_route":p_route})
 					# frappe.log_error(header_css,"<< header_css >>")
@@ -154,6 +173,12 @@ def generate_webtheme_css_file(path,sitename,self):
 						p_route = p_route.split('/')[1]
 					template = frappe.get_template("templates/includes/footer.css")
 					footer_settings = frappe.get_doc("Footer Component",page.footer_component)
+					""" for map font family """
+					if footer_settings.font_family:
+						footer_settings.font_family = frappe.db.get_value("CSS Font",footer_settings.font_family,"font_family")
+					if footer_settings.f_txt_font_family:
+						footer_settings.f_txt_font_family = frappe.db.get_value("CSS Font",footer_settings.f_txt_font_family,"font_family")
+					""" End """
 					footer_css = template.render({'footer_settings':footer_settings,"page_route":p_route})
 					webtheme_css+=footer_css
 
