@@ -17,6 +17,33 @@
     <link rel="shortcut icon" type="image/png" href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}" />
     <link rel="apple-touch-icon" href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}" />
     <!-- favicon -->
+    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.carousel.min.css" as="style" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" as="style" />
+    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.theme.default.min.css" as="style" />
+    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/bootstrap.min.css" as="style" />
+
+    {% if theme_settings %}
+    {% if theme_settings.css_list %}
+        {%for css in theme_settings.css_list%}
+        <link rel="stylesheet" type="text/css" href="{{css.css_file}}">
+        {%endfor%}
+    {% endif %}
+
+
+    {% if theme_settings.file_path %}
+    <link rel="stylesheet" type="text/css" href="{{theme_settings.file_path.split('/public')[1]}}"> 
+    {% endif %} 
+
+    {% if theme_settings.enable_noindex %}
+    <meta name="robots" content="nofollow, noindex, noarchive,noimageindex, nosnippet"/>
+    {% endif %}
+
+    {% if theme_settings.google_fonts %}
+        {%for font in theme_settings.google_fonts%}
+        <link rel="stylesheet" type="text/css" href="{{font.font_family_url}}">
+        {%endfor%}
+    {% endif %}
+{% endif %}
 
     <!-- assets -->
     <script type="text/javascript"  src="/assets/go1_cms/js/jquery3.6.min.js"></script>
@@ -26,38 +53,14 @@
     <script type="text/javascript"  src="/assets/go1_cms/js/modernizr.min.js"></script>
     <script type="text/javascript"  src="/assets/go1_cms/js/owl.carousel.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.carousel.min.css" as="style" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" as="style" />
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.theme.default.min.css" as="style" />
+   
     <script type="text/javascript"  src="/assets/go1_cms/js/owljquery.min.js"></script>
     <!-- <script type="text/javascript"  src="/assets/go1_cms/js/owl1.carousel.js"></script> -->
     <script type="text/javascript" src="/assets/go1_cms/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/bootstrap.min.css" as="style" />
     <script type="text/javascript" src="/assets/go1_cms/js/owl.carousel.js"></script>
 
 
-    {% if theme_settings %}
-        {% if theme_settings.css_list %}
-            {%for css in theme_settings.css_list%}
-            <link rel="stylesheet" type="text/css" href="{{css.css_file}}">
-            {%endfor%}
-        {% endif %}
-
-
-        {% if theme_settings.file_path %}
-        <link rel="stylesheet" type="text/css" href="{{theme_settings.file_path.split('/public')[1]}}"> 
-        {% endif %} 
-
-        {% if theme_settings.enable_noindex %}
-        <meta name="robots" content="nofollow, noindex, noarchive,noimageindex, nosnippet"/>
-        {% endif %}
-
-        {% if theme_settings.google_fonts %}
-            {%for font in theme_settings.google_fonts%}
-            <link rel="stylesheet" type="text/css" href="{{font.font_family_url}}">
-            {%endfor%}
-        {% endif %}
-    {% endif %}
+   
 
     <title>{% block title %} {{ meta_title | striptags }} {% endblock %}</title>
 

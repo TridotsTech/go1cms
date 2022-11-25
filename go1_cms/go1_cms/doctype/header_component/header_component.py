@@ -25,6 +25,7 @@ class HeaderComponent(Document):
 
 	def construct_html(self, view_type, ref_field):
 		result = self.get_json_data(ref_field)
+		# frappe.log_error(result,"result")
 		path = get_files_path()
 		if not os.path.exists(os.path.join(path,'data_source')):
 			frappe.create_folder(os.path.join(path,'data_source'))

@@ -8,6 +8,10 @@
  "field_order": [
   "menu_label",
   "parent_menu",
+  "is_mega_menu",
+  "no_of_column",
+  "mega_m_col_index",
+  "column_break_4",
   "redirect_url",
   "position",
   "icon"
@@ -22,7 +26,6 @@
   {
    "fieldname": "parent_menu",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Parent Menu"
   },
   {
@@ -42,12 +45,33 @@
    "fieldname": "icon",
    "fieldtype": "Attach Image",
    "label": "Icon"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mega_m_col_index",
+   "fieldtype": "Int",
+   "label": "Mega Menu Column Index"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.parent_menu",
+   "fieldname": "is_mega_menu",
+   "fieldtype": "Check",
+   "label": "Is Mega Menu"
+  },
+  {
+   "fieldname": "no_of_column",
+   "fieldtype": "Int",
+   "label": "Number Of Columns"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-08-11 12:56:45.143407",
+ "modified": "2022-11-25 15:26:35.455337",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menus Item",

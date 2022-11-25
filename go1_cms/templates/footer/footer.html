@@ -3,7 +3,7 @@
 	<div class="f2 footer__container go1-cms-footer">
 		<div class="container">
 		 {%if footer.layout_json_data%}
-            <div class="d__flex" style="align-items: flex-start;">
+            <div class="d__flex enable-mobile-footer" style="align-items: flex-start;">
                 {%for col in footer.layout_json_data%}
              
                   {%if col.columns%}
@@ -204,4 +204,18 @@
 {%endif%}
 <style type="text/css">
 	.go1-cms-copyright-content p{margin-bottom: 0;}
+
+	@media (max-width: 767px){
+		.enable-mobile-footer{
+			align-items: flex-start;
+			flex-wrap: wrap;
+			flex-direction: column;
+			gap: 5px;
+		}
+		.footer_sec{
+			width: unset !important;
+		}
+	}
+
+
 </style>

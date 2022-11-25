@@ -94,28 +94,69 @@
                                         <ul class="default_header d__flex go1-cms-menu">
                                             {% if sec_item.get("menus") %}
                                             {%for menu_item in sec_item.get("menus")%}
-                                             <li class="drop__down__header menu-item" style="position: relative;">
-                                                <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
-                                                {%if menu_item.child_menu%}
-                                                    <ul class="sub-categoryy go1-cms-dropdown">
-                                                        {%for sub_menu_item in menu_item.child_menu%}
-                                                         <li class="drop__down__header sub-menu-item" >
-                                                            <a href="{{sub_menu_item.redirect_url}}" style="float: left">   {{sub_menu_item.menu_label}}</a>
-                                                            {%if sub_menu_item.child_menu%}
-                                                                 <ul class="sub-child sub__children go1-cms-dropdown">
-                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
-                                                         <li class="drop__down__header sub-sub-menu-item">
-                                                            <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                <!-- newly added for mega mennu start-->
+                                                {% if not menu_item.is_mega_menu %}
+                                                <!-- newly added for mega mennu end -->
+                                                        <li class="drop__down__header menu-item" style="position: relative;">
+                                                            <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
+                                                            {%if menu_item.child_menu%}
+                                                                <ul class="sub-categoryy go1-cms-dropdown">
+                                                                    {%for sub_menu_item in menu_item.child_menu%}
+                                                                    <li class="drop__down__header sub-menu-item" >
+                                                                        <a href="{{sub_menu_item.redirect_url}}" style="float: left">   {{sub_menu_item.menu_label}}</a>
+                                                                        {%if sub_menu_item.child_menu%}
+                                                                            <ul class="sub-child sub__children go1-cms-dropdown">
+                                                                    {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                    <li class="drop__down__header sub-sub-menu-item">
+                                                                        <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                                    </li>
+                                                                    {%endfor%}
+                                                                        
+                                                                    </ul>
+                                                                    {%endif%}
+                                                                    </li>
+                                                                    {%endfor%}
+                                                                </ul>
+                                                            {%endif%}
                                                         </li>
-                                                         {%endfor%}
-                                                            
-                                                        </ul>
-                                                        {%endif%}
-                                                        </li>
-                                                        {%endfor%}
-                                                    </ul>
+                                                <!-- newly added for mega mennu start -->
                                                 {%endif%}
-                                             </li>
+                                                {% if menu_item.is_mega_menu %}
+                                                    <li class="drop__down__header menu-item mega-menu-li">
+                                                        <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
+                                                        {%if menu_item.child_menu%}
+                                                            {% set col_count=menu_item.no_of_column %}
+                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;">
+                                                                <li class="row" style="padding:10px;">
+                                                                    <div style="display:flex">
+                                                                    {% for x in range(col_count) %}
+                                                                            <ul>
+                                                                                {%for sub_menu_item in menu_item.child_menu%}
+                                                                                    {% if x+1 == sub_menu_item.mega_m_col_index %}
+                                                                                        <li class="drop__down__header sub-menu-item" >
+                                                                                            <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
+                                                                                            {%if sub_menu_item.child_menu%}
+                                                                                                <ul class="sub-child sub__children go1-cms-dropdown">
+                                                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                                        <li class="drop__down__header sub-sub-menu-item">
+                                                                                            <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                                                        </li>
+                                                                                        {%endfor%}
+                                                                                            
+                                                                                        </ul>
+                                                                                        {%endif%}
+                                                                                        </li>
+                                                                                    {%endif%}
+                                                                                {%endfor%}
+                                                                            </ul>
+                                                                    {%endfor%}
+                                                                </div>
+                                                                </li>
+                                                            </ul>
+                                                        {%endif%}
+                                                    </li>
+                                                {%endif%}
+                                                <!-- newly added for mega mennu end -->
                                             {%endfor%}
                                             {% endif %}
                                         </ul>
@@ -326,6 +367,15 @@ ul.sub-categoryy.go1-cms-dropdown{
     display: none;
     left: 15px;
 }
+
+.mega-menu-li ul.sub-categoryy.go1-cms-dropdown{
+    width: unset !important;
+    top: 70%;
+    display: none;
+    left: 15px;
+    transform: translate(30%, 0%);
+}
+
 li.drop__down__header.menu-item:hover > .sub-categoryy {
     display: block;
 }
