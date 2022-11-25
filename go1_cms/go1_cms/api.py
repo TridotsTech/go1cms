@@ -530,10 +530,10 @@ def get_header_info(header_id):
 						page_section_menu = frappe.get_value("Page Section",item.get('section'),"menu")
 						menu = frappe.db.get_all("Menu",filters={"name":page_section_menu},fields=['is_static_menu','name'])
 						if menu:
-							parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url FROM `tabMenus Item` WHERE parent=%(menu_id)s AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
+							parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url,is_mega_menu,no_of_column FROM `tabMenus Item` WHERE parent=%(menu_id)s AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
 							# parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
 							for x in parent_menus:
-							 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":menu[0].name},as_dict=1)
+							 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon,mega_m_col_index FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":menu[0].name},as_dict=1)
 							 	for sub_menu in x.child_menu:
 							 		sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":menu[0].name},as_dict=1)
 							item["menus"] = parent_menus
@@ -663,7 +663,7 @@ def update_website_context(context):
 				if context.doc.edit_header_style:
 					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
-		# frappe.log_error(context.footer,">> context.footer <<")
+		# frappe.log_error(context.header,">> context.header <<")
 		# frappe.log_error(context,">> context data <<")
 	except Exception as e:
 		print(frappe.get_traceback())
