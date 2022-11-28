@@ -80,7 +80,12 @@ frappe.ui.form.on('Proposal', {
             // });
             // $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
             // $('button[data-label="Preview"]').html("<i class='fa fa-eye' style='margin-right:5px'></i> Preview");
-
+            frm.add_custom_button(__('Preview'), function () {
+                     window.open(
+                  window.location.origin +"/"+frm.doc.route,
+                  '_blank' 
+                );
+            })
             // by gopi on 20/10/22
             frm.add_custom_button(__('Send Document'), function () {
 
