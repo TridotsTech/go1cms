@@ -671,7 +671,7 @@ def get_encryption_key():
 
 	return frappe.local.conf.encryption_key
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def update_proposal_status(proposal, status):
 	doc = frappe.get_doc("Proposal", proposal)
 	doc.status = status

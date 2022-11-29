@@ -689,13 +689,14 @@
    "label": "Sub Header Title"
   },
   {
+   "depends_on": "eval:doc.enable_page_title==1",
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
   }
  ],
  "links": [],
- "modified": "2022-11-24 20:42:44.030885",
+ "modified": "2022-11-28 12:58:55.591025",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

@@ -652,6 +652,7 @@
    "label": "Do Not Use Web Theme Sub Header Settings"
   },
   {
+   "depends_on": "eval:doc.enable_sub_header==1",
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
@@ -661,7 +662,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-11-24 20:42:05.042060",
+ "modified": "2022-11-28 12:59:47.906963",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
