@@ -33,7 +33,6 @@
                   <span class="span-0">
                      Prepared for:
                      <br/>
-                     {{quotation_data}}
                      <!-- <br/>
                         <br/> -->
                   </span>
@@ -47,12 +46,7 @@
                        {%if quotation_data.address_display%}
                      {{quotation_data.address_display}}
                      {%endif%}
-
-
                   </p>
-                  <p> {%if quotation_data.company_address_display%}
-                     {{quotation_data.company_address_display}}
-                     {%endif%}</p>
                   <br/>
                   <p style="margin-bottom: 0;padding-bottom: 5px">
                      <span style="font-size: 18px;">
@@ -76,16 +70,19 @@
                </div>
             </div>
             <div class="auto-group-ey1l-jES" >
-             
+             {{quotation_data}}
                <div class="auto-group-knua-qRt" >
                 <img class="auto-group-gsqi-P46" src="/assets/go1_cms/images/location.png"/>
                   <p class="">
-                     Triton Innovation,
+                     {%if quotation_data.company_address_display%}
+                     {{quotation_data.company_address_display}}
+                     {%endif%}
+                    <!--  Triton Innovation,
                         <br/>
                         261 Tillson Ave, Tillsonburg,
                         
                         <br/>
-                         Ontario, N4G 5X2.
+                         Ontario, N4G 5X2. -->
                      <!-- {%if quotation_data.company%}
                      {{quotation_data.address_display}}
                      {%endif%} -->
