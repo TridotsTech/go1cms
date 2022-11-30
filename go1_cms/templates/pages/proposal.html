@@ -464,22 +464,29 @@ window.onscroll = function() {myFunction()};
 var header = document.getElementById("myHeader");
 var sticky = header.offsetTop;
 function download_pdf() {
-  $.ajax({
-    type: 'POST',
-    Accept: 'application/json',
-    ContentType: 'application/json;charset=utf-8',
-    url: window.location.origin + 'api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf',
-    data: { 'page': "{{doc.name}}", "name":"{{doc.quotation}}", "ptype":"download" },
-    dataType: "json",
-    async: false,
-    headers: {
-        'X-Frappe-CSRF-Token': frappe.csrf_token
-    },
-    success: function(r) {
-      var data = r.message;
-      console.log(data)
-    }
-  })
+   window.open(
+                        window.location.origin + '/api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf?page={{doc.name}}&&name={{doc.quotation}}&&ptype=download',
+                        '_blank' // <- This is what makes it open in a new window.
+                        );
+                        
+            
+
+  // $.ajax({
+  //   type: 'POST',
+  //   Accept: 'application/json',
+  //   ContentType: 'application/json;charset=utf-8',
+  //   url: window.location.origin + 'api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf',
+  //   data: { 'page': "{{doc.name}}", "name":"{{doc.quotation}}", "ptype":"download" },
+  //   dataType: "json",
+  //   async: false,
+  //   headers: {
+  //       'X-Frappe-CSRF-Token': frappe.csrf_token
+  //   },
+  //   success: function(r) {
+  //     var data = r.message;
+  //     console.log(data)
+  //   }
+  // })
 }
 function myFunction() {
   if (window.pageYOffset > sticky) {
