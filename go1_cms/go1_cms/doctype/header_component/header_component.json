@@ -70,6 +70,7 @@
   "m_logo_height",
   "m_font_weight",
   "m_letter_spacing",
+  "menu_padding",
   "column_break_45",
   "mobile_menu_background",
   "m_font_size",
@@ -536,11 +537,16 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Update Theme"
+  },
+  {
+   "fieldname": "menu_padding",
+   "fieldtype": "Data",
+   "label": "Menu Padding"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-26 17:53:15.481412",
+ "modified": "2022-11-29 12:32:49.080681",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",

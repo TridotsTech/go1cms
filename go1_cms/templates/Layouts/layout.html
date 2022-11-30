@@ -59,8 +59,17 @@
     <script type="text/javascript" src="/assets/go1_cms/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/assets/go1_cms/js/owl.carousel.js"></script>
 
-
-   
+    <!-- Mobile menu category menu js newly added -->
+    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/multi_mobile_menu.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.gokommerce.com/CSS/component.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script src="/assets/go1_cms/js/jquery_1.dlmenu.js"></script> 
+    <script>
+        $(function() {
+            $( '#dl-menu' ).dlmenu();
+        });
+        </script>
+   <!-- end -->
 
     <title>{% block title %} {{ meta_title | striptags }} {% endblock %}</title>
 

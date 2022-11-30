@@ -94,9 +94,9 @@
                                         <ul class="default_header d__flex go1-cms-menu">
                                             {% if sec_item.get("menus") %}
                                             {%for menu_item in sec_item.get("menus")%}
-                                                <!-- newly added for mega mennu start-->
+                                                <!-- newly added for mega menu start-->
                                                 {% if not menu_item.is_mega_menu %}
-                                                <!-- newly added for mega mennu end -->
+                                                <!-- newly added for mega menu end -->
                                                         <li class="drop__down__header menu-item" style="position: relative;">
                                                             <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                             {%if menu_item.child_menu%}
@@ -119,14 +119,34 @@
                                                                 </ul>
                                                             {%endif%}
                                                         </li>
-                                                <!-- newly added for mega mennu start -->
+                                                <!-- newly added for mega menu start -->
                                                 {%endif%}
                                                 {% if menu_item.is_mega_menu %}
-                                                    <li class="drop__down__header menu-item mega-menu-li">
+                                                    <li class="drop__down__header menu-item mega-menu-li" style="position: relative;">
                                                         <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                         {%if menu_item.child_menu%}
                                                             {% set col_count=menu_item.no_of_column %}
                                                             <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;">
+                                                                <style>
+                                                                    .mega-dropdown.sub-categoryy.go1-cms-dropdown{
+                                                                    {% if col_count == 1 %}
+                                                                        left:-100%;
+                                                                    {% else %}
+                                                                    {% if col_count == 2 %}
+                                                                        left:-200%;
+                                                                    {% else %}
+                                                                    {% if col_count == 3 %}
+                                                                        left:-300%;
+                                                                    {% else %}
+                                                                    {% if col_count == 4 %}
+                                                                        left:-300%;
+                                                                    {% else %}
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                }
+                                                                </style>
                                                                 <li class="row" style="padding:10px;">
                                                                     <div style="display:flex">
                                                                     {% for x in range(col_count) %}
@@ -156,7 +176,7 @@
                                                         {%endif%}
                                                     </li>
                                                 {%endif%}
-                                                <!-- newly added for mega mennu end -->
+                                                <!-- newly added for mega menu end -->
                                             {%endfor%}
                                             {% endif %}
                                         </ul>
@@ -164,7 +184,7 @@
                                      {%if sec_item.section_name == "Header Button"%}
                                      {%if header.call_to_action_button==1%}
                                      <div class="d__flex custom-button">
-                                        <a href="" class="primary-btn md button button-clear ion-activatable ion-focusable hydrated">
+                                        <a href="{{header.button_link}}" class="primary-btn md button button-clear ion-activatable ion-focusable hydrated" {% if header.link_target == "_blank" %}target="_blank"{%else%}target="_self"{% endif %}>
                                             {{header.button_text}}
                                         </a>
                                     </div>
@@ -184,40 +204,84 @@
 </div>
 </div>
 <div class="mobile__header go1-cms-header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
-    <div class="container">
-        <div class="nav-icon">
-            <i class="fa fa-bars"></i>
+    <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
+        <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
+            <div class="nav-icon">
+                <i class="fa fa-bars"></i>
+            </div>
+            <!-- newly added for logo -->
+            <div class="m-logo">
+                {%for sec_item in header.get("items")%}
+                    {%if sec_item.section_name == "Header Logo"%}
+                        {%if header.sticky_header %}
+                        {% if theme_settings.mobile_logo %}
+                            <a href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.mobile_logo}}"/></a>
+                        {%endif%}    
+                        {%endif%}
+                        {%if header.is_transparent_header %}
+                            {%if theme_settings.secondary_mobile_logo %}
+                            <a href="/{{route}}"> <img class="logo transparent-logo" src="{{theme_settings.secondary_mobile_logo}}"/></a>
+                            {%endif%}
+                        {%endif%}
+                        {%if not header.sticky_header and not header.is_transparent_header%}
+                            {% if theme_settings.mobile_logo %}
+                            <a href="/{{route}}"> <img class="logo" src="{{theme_settings.mobile_logo}}"/></a>
+                            {%endif%}    
+                        {%endif%}
+                    {%endif%}
+                {%endfor%}
+            </div>
         </div>
-        <div class="m-logo">
-            <img src="{{theme_settings.website_logo}}" class="logo"/>
-        </div>
+        <!-- <div class="m-logo">
+            <img src="{{theme_settings.mobile_logo}}" class="logo"/>
+        </div> -->
+
+        <!-- end -->
          {%for sec_item in header.get("items")%}
         {%if sec_item.section_name == "Header Button"%}
              {%if header.call_to_action_button==1%}
              <div class="d__flex custom-button">
-                <a href="" class="btn btn-primary btn-md ">
+                <a href="{{header.button_link}}" class="btn btn-primary btn-md primary-btn" {% if header.link_target == "_blank" %}target="_blank"{%else%}target="_self"{% endif %}>
                     {{header.button_text}}
                 </a>
             </div>
              {%endif%}
              {%endif%}
          {%endfor%}
-        <div class="mobile_menu go1-cms-menu">
+        <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;">
              <div class="m-logo" style="border-bottom: 1px solid #ddd;">
-                <img src="{{theme_settings.website_logo}}" class="logo"/>
+                <img src="{{theme_settings.mobile_logo}}" class="logo"/>
             </div>
              {%for sec_item in header.get("items")%}
               {%if sec_item.section_name == "Header Menu"%}
-              <ul>
+                <!-- newly added for submenu start-->
                 {% if sec_item.get("menus") %}
-                {%for menu_item in sec_item.get("menus")%}
-                    <li>
-                        <a href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right:5px">
-                        </i>{{menu_item.menu_label}}</a>
-                    </li>
-                {%endfor%}
-                {% endif %}
-                </ul>
+                <div id="dl-menu" class="dl-menuwrapper">
+                        <ul class="dl-menu">
+                            {%for menu_item in sec_item.get("menus")%}
+                                <li> <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
+                                    {%if menu_item.child_menu%}
+                                        <ul class="dl-submenu">
+                                            {%for sub_menu_item in menu_item.child_menu%}  
+                                                <li> <a href="{{sub_menu_item.redirect_url}}">{{sub_menu_item.menu_label}}</a>
+                                                    {%if sub_menu_item.child_menu%}
+                                                        <ul class="dl-submenu">
+                                                            {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}">{{sub_sub_menu_item.menu_label}}</a></li>
+                                                            {% endfor %} 
+                                                        </ul>
+                                                    {% endif %}
+                                                </li>  
+                                        {% endfor %} 
+                                    </ul>
+                                    {% endif %}
+                                </li> 
+                            {%endfor%}
+                        </ul>
+                </div>
+                    {%endif%}
+                <!-- newly added for submenu end-->
+
               {%endif%}
              {%endfor%}
         </div>
@@ -247,10 +311,25 @@
  {%endif%}
 
 <style type="text/css">
+    /* dl menu properties */
+.dl-menu{
+    opacity: unset !important;
+    pointer-events: unset !important;
+}
+#dl-menu li{
+    padding:unset !important;
+}
+#dl-menu .dl-menu{
+    margin:unset !important;
+}
+.dl-menuwrapper li.dl-back:after{
+    font-family: unset !important;
+    content: "\2192" !important;
+    margin-top: 14px;
+    font-size: 40px;
+}
 
-
-
-
+/* end */
 .sticky_header {
     position: fixed !important;
     z-index: 99;
@@ -267,18 +346,17 @@
     display:none;
 }
 
-/* .primary-btn{
-    padding: 6px 18px;
-} */
-    @media only screen and (max-width: 768px){
-
-
+@media only screen and (max-width: 768px){
+.mbl-top-bar{
+    z-index: -1 !important;
+}
 .desktop__header {
     display: none;
 }
 .mobile__header {
     display: block;
-    padding: 15px 0;    float: left;
+    padding: 20px 0 15px 0 !important;
+    float: left;
     background: #fff;
     width: 100%;
     box-shadow: 0 0 5px #ddd;
@@ -288,15 +366,18 @@
     margin-right: 15px;
 }
 .mobile_menu{
-       justify-content: flex-start;
+    /* justify-content: flex-start; */
     position: fixed;
-    background-color: #fff;
+    /* background-color: #fff; */
     left: 0;
     top: 0;
-    width: 85%;z-index: 9999;
+    width: 300px;
+    z-index: 9999;
     height: 100%;
-    flex-direction: row;
-    display: block;box-shadow: 0 0 5px #ddd;display: none;
+    /* flex-direction: row; */
+    /* display: block; */
+    /* box-shadow: 0 0 5px #ddd; */
+    display: none;
 }
 .mobile-blackdrop {
     background-color: #000;
@@ -314,16 +395,18 @@
     width: 100%;
     float: left;
     padding: 15px;
+    margin-top: 5px;
 }
-.mobile_menu ul{
+/* .mobile_menu ul{
    margin: 0;
-    flex: 0 0 100%;
+    flex: 0 0 85%;
     float: left;
-    width: 100%;padding: 0;
-}
-.mobile_menu ul li{
+    width: 85%;padding: 0;
+} */
+/* .mobile_menu ul li{
     padding: 10px 5px;
-}
+} */
+
  .mobile_menu.visible{
     display: block;
  }.custom-button {
@@ -335,6 +418,9 @@
 }
 .custom-button .btn{
     font-size: 13px;
+}
+.sub_header{
+    min-height: 160px !important;
 }
 }
  @media only screen and (min-width: 769px){
@@ -370,10 +456,10 @@ ul.sub-categoryy.go1-cms-dropdown{
 
 .mega-menu-li ul.sub-categoryy.go1-cms-dropdown{
     width: unset !important;
-    top: 70%;
+    top: 126%;
     display: none;
-    left: 15px;
-    transform: translate(30%, 0%);
+    /* left: -110%; */
+    /* transform: translate(30%, 0%); */
 }
 
 li.drop__down__header.menu-item:hover > .sub-categoryy {
@@ -390,6 +476,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 }
 {%if theme_settings.enable_page_title%}
     .sub_header .header-title{
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -399,6 +486,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         {%endif%}
     }
     .sub_header{
+        z-index: -99;
         background-color: {{theme_settings.page_title_bg}} !important;
        background-image:url('{{theme_settings.page_title_bg_img}}') !important;
     min-height: 260px;
@@ -509,6 +597,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             if ($(window).scrollTop() > 40) {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").addClass("sticky_header");
+                $(".mobile__header").addClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").removeClass("transparent_header");
                 }
@@ -518,6 +607,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             else {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").removeClass("sticky_header");
+                $(".mobile__header").removeClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").addClass("transparent_header");
                 }
@@ -541,9 +631,11 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             if (hidden.hasClass('visible')) {
                 hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
                 $(".mobile-blackdrop").hide();
+                $(".go1-cms-top-bar").removeClass('mbl-top-bar');
             } else {
                 hidden.animate({ "left": "0px" }, "slow").addClass('visible');
                 $(".mobile-blackdrop").show();
+                $(".go1-cms-top-bar").addClass('mbl-top-bar');
             }
         }
 

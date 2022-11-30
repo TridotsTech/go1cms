@@ -733,7 +733,7 @@ li {
         font-weight: {{doc.header_settings.m_font_weight}};
         color: {{doc.header_settings.m_link_color}};
         {%if doc.header_settings.m_font_family%}
-            font-family:{{doc.header_settings.m_hover_color}};
+            font-family:{{doc.header_settings.m_font_family}};
         {%endif%}
     }
      .go1-cms-menu a:hover{
