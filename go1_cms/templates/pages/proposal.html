@@ -31,6 +31,12 @@
          <div class="auto-group-6bfp-5nr" id="myHeader">
             <div class="auto-group-p8zn-E9x">
                <div class="auto-group-xqbc-jsQ">
+                  {%if doc.status=="Pending"%}
+                  <div id="hide-btn" class="">
+                     <button class="btn btn-sm btn-dec" id="reject-form" style=""><i class="fa fa-close"></i>Decline</button>
+                     <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
+                  </div>
+                  {%endif%}
                   <span class="span-0">
                      Prepared for:
                      <br/>
@@ -72,12 +78,7 @@
                      {%endif%}
                   </p>
                   <br/>
-                  {%if doc.status=="Pending"%}
-                  <div id="hide-btn" class="">
-                     <button class="btn btn-sm btn-dec" id="reject-form" style=""><i class="fa fa-close"></i>Decline</button>
-                     <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
-                  </div>
-                  {%endif%}
+                
                </div>
             </div>
             <div class="auto-group-ey1l-jES" >
