@@ -11,12 +11,12 @@
    </div> -->
    <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}" hidden/>
    <div class="auto-group-qqf8-kuY">
-      <div class="auto-group-xtcw-gYJ 001q" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
+      <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
         <div>
          <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
        </div>
          <div>
-           {{quotation_data}}
+
          <!-- <br/> -->
          <p class="core-title core-implementation-development-business-proposal-p8i">
             Core Implementation Development Business Proposal
@@ -46,6 +46,12 @@
 
                        {%if quotation_data.address_display%}
                      {{quotation_data.address_display}}
+                     {%endif%}
+                  </p>
+                  <br/>
+                  <p>
+                      {%if quotation_data.company_address_display%}
+                     {{quotation_data.company_address_display}}
                      {%endif%}
                   </p>
                   <br/>
