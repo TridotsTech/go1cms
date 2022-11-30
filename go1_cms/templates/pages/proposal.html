@@ -33,7 +33,7 @@
                <div class="auto-group-xqbc-jsQ">
                   {%if doc.status=="Pending"%}
                   <div id="hide-btn" class="" style="margin-bottom: 25px;">
-                     <button class="btn btn-sm btn-dec" id="download-form" style="" onclick="window.location.origin + '/api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf?page={{doc.name}}&&name={{doc.quotation}}&&ptype=download">Download</button>
+                     <button class="btn btn-sm btn-dec" id="download-form" style="" onclick="download_pdf()">Download</button>
                      <button class="btn btn-sm btn-dec" id="reject-form" style=""><i class="fa fa-close"></i>Decline</button>
                      <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
                   </div>
@@ -463,7 +463,24 @@ window.onscroll = function() {myFunction()};
 
 var header = document.getElementById("myHeader");
 var sticky = header.offsetTop;
-
+function download_pdf() {
+  $.ajax({
+    type: 'POST',
+    Accept: 'application/json',
+    ContentType: 'application/json;charset=utf-8',
+    url: window.location.origin + 'api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf',
+    data: { 'page': "{{doc.name}}", "name":"{{doc.quotation}}", "ptype":"download" },
+    dataType: "json",
+    async: false,
+    headers: {
+        'X-Frappe-CSRF-Token': frappe.csrf_token
+    },
+    success: function(r) {
+      var data = r.message;
+      console.log(data)
+    }
+  })
+}
 function myFunction() {
   if (window.pageYOffset > sticky) {
     header.classList.add("sticky");
