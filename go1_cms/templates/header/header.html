@@ -126,7 +126,7 @@
                                                         <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                         {%if menu_item.child_menu%}
                                                             {% set col_count=menu_item.no_of_column %}
-                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;">
+                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
                                                                 <style>
                                                                     .mega-dropdown.sub-categoryy.go1-cms-dropdown{
                                                                     {% if col_count == 1 %}
@@ -147,7 +147,7 @@
                                                                     {% endif %}
                                                                 }
                                                                 </style>
-                                                                <li class="row" style="padding:10px;">
+                                                                <li class="row" style="margin:0;">
                                                                     <div style="display:flex">
                                                                     {% for x in range(col_count) %}
                                                                             <ul>
@@ -214,9 +214,9 @@
                 {%for sec_item in header.get("items")%}
                     {%if sec_item.section_name == "Header Logo"%}
                         {%if header.sticky_header %}
-                        {% if theme_settings.mobile_logo %}
-                            <a href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.mobile_logo}}"/></a>
-                        {%endif%}    
+                            {% if theme_settings.mobile_logo %}
+                                <a href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.mobile_logo}}"/></a>
+                            {%endif%}    
                         {%endif%}
                         {%if header.is_transparent_header %}
                             {%if theme_settings.secondary_mobile_logo %}
@@ -232,10 +232,7 @@
                 {%endfor%}
             </div>
         </div>
-        <!-- <div class="m-logo">
-            <img src="{{theme_settings.mobile_logo}}" class="logo"/>
-        </div> -->
-
+       
         <!-- end -->
          {%for sec_item in header.get("items")%}
         {%if sec_item.section_name == "Header Button"%}
@@ -259,15 +256,15 @@
                 <div id="dl-menu" class="dl-menuwrapper">
                         <ul class="dl-menu">
                             {%for menu_item in sec_item.get("menus")%}
-                                <li> <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
+                                <li> <a href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
                                     {%if menu_item.child_menu%}
                                         <ul class="dl-submenu">
                                             {%for sub_menu_item in menu_item.child_menu%}  
-                                                <li> <a href="{{sub_menu_item.redirect_url}}">{{sub_menu_item.menu_label}}</a>
+                                                <li> <a href="{{sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_menu_item.menu_label}}</a>
                                                     {%if sub_menu_item.child_menu%}
                                                         <ul class="dl-submenu">
                                                             {%for sub_sub_menu_item in sub_menu_item.child_menu%}
-                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}">{{sub_sub_menu_item.menu_label}}</a></li>
+                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_sub_menu_item.menu_label}}</a></li>
                                                             {% endfor %} 
                                                         </ul>
                                                     {% endif %}
@@ -301,7 +298,7 @@
         {% endif %}
          {%if theme_settings.enable_breadcrumbs%}
     <div class="breadcrumb">
-        <a href="/">Home</a><i class="fa fa-chevron-right"></i>
+        <a style="cursor: pointer;" href="/{{route}}">Home</a><i class="fa fa-chevron-right"></i>
         <span>{{theme_settings.sub_header_title}}</span>
     </div>
     {%endif%}
@@ -346,6 +343,15 @@
     display:none;
 }
 
+.mobile__header.go1-cms-header img.logo.sticky-logo{
+    display:block;
+}
+.mobile__header.go1-cms-header.transparent_header .logo.sticky-logo{
+    display:none;
+}
+.mobile__header.go1-cms-header.transparent_sticky .logo.sticky-logo{
+    display:none;
+}
 @media only screen and (max-width: 768px){
 .mbl-top-bar{
     z-index: -1 !important;
@@ -357,7 +363,7 @@
     display: block;
     padding: 20px 0 15px 0 !important;
     float: left;
-    background: #fff;
+    background: #fff !important;
     width: 100%;
     box-shadow: 0 0 5px #ddd;
 }
@@ -534,6 +540,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         {%endif%}
     }
     .breadcrumb{
+        align-items:center;
         width: 100%;
         {%if theme_settings.title_text_align%}
             justify-content:{{theme_settings.title_text_align}};
@@ -554,16 +561,17 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 {%endif%}
 {% if edit_header_style %}
 .drop__down__header.menu-item a{
+    border-radius: 7px;
     {% if menu_text_color %}
-        color:{{menu_text_color}} !important;
+        color:{{menu_text_color}};
     {% endif %}
 }
 .drop__down__header.menu-item a:hover{
     {% if menu_hover_text_color %}
-        color:{{menu_hover_text_color}} !important;
+        color:{{menu_hover_text_color}};
     {% endif %}
     {% if menu_hover_bg %}
-        background-color:{{menu_hover_bg}} !important;
+        background-color:{{menu_hover_bg}};
     {% endif %}
 }
 {% if menu_hover_bg %}
@@ -577,15 +585,15 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     {% endif %}
 .sticky_header .drop__down__header.menu-item a{
     {% if sticky_header_text_color %}
-        color:{{sticky_header_text_color}} !important;
+        color:{{sticky_header_text_color}};
     {% endif %}
 }
 .sticky_header .drop__down__header.menu-item a:hover{
     {% if menu_hover_text_color %}
-        color:{{menu_hover_text_color}} !important;
+        color:{{menu_hover_text_color}};
     {% endif %}
     {% if menu_hover_bg %}
-        background-color:{{menu_hover_bg}} !important;
+        background-color:{{menu_hover_bg}};
     {% endif %}
 }
 {% endif %}

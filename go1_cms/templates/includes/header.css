@@ -146,9 +146,7 @@
      .{{page_route}} .go1-cms-header .logo{
         height: {{header_settings.m_logo_height}} !important;
     }
-    .go1-cms-header .logo{
-        height: {{header_settings.m_logo_height}} !important;
-    }
+    
     {% if header_settings.mobile_menu_background %}
     .mobile_menu.go1-cms-menu{
         background-color: {{header_settings.mobile_menu_background}} !important;

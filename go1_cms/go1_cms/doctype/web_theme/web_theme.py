@@ -143,6 +143,7 @@ def generate_webtheme_css_file(path,sitename,self):
 		css_file_name = self.name.lower().replace(' ', '-')+".css"
 		path = get_files_path()
 		pages = frappe.db.get_all("Web Page Builder",filters={"published":1},fields=['route','name','header_component','footer_component','edit_header_style','is_transparent_header','menu_text_color','menu_hover_bg','menu_hover_text_color'])
+		header_settings = None
 		for page in pages:
 			web_sections = frappe.db.sql("""SELECT P.class_name,P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""",{"page_name":page.name},as_dict=1)
 			for x in web_sections:
