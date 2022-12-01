@@ -678,3 +678,10 @@ def update_proposal_status(proposal, status):
 	doc.save(ignore_permissions=True)
 	return doc
 
+@frappe.whitelist(allow_guest=True)
+def update_proposal_data(viewcount, name):
+	doc = frappe.get_doc("Proposal", name)
+	doc.viewcount = viewcount
+	doc.save(ignore_permissions=True)
+	return doc
+
