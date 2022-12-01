@@ -102,7 +102,7 @@ frappe.ui.form.on('Proposal', {
                         freeze: true,
                         callback: function (r) {
                             var msg = "Dear {{customer}}<br><br>Please find our attached proposal.<br><br>This proposal is valid until: {{valid_till}}<br>"
-                             msg += 'You can view the proposal on the following link: <a href="{{route}}"></a><br><br>Please '
+                             msg += 'You can view the proposal on the following link: <a href="{{route}}" target="_blank">{{name}}</a><br><br>Please '
                              msg += "don't hesitate to comment online if you have any questions.<br><br>We look forward to your communication.<br><br>Kind Regards,<br>{{company}}<br>";
                             frappe.call({
                                 method: 'frappe.client.get_value',
@@ -115,7 +115,7 @@ frappe.ui.form.on('Proposal', {
                                 callback: function(data) {
                                     if (data.message) {
                                        
-                                        msg = frappe.render_template(msg, { "customer": data.message.party_name,"valid_till": data.message.valid_till, "company": data.message.company,"route":window.location.origin +"/" +frm.doc.route})
+                                        msg = frappe.render_template(msg, { "customer": data.message.party_name,"valid_till": data.message.valid_till, "company": data.message.company,"route":window.location.origin +"/" +frm.doc.route, "name":frm.doc.name})
                                         console.log(msg)
                                     }
                                 }
