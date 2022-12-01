@@ -9,6 +9,7 @@
    <!-- <div class="auto-group-udvs-J8S">
       <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
    </div> -->
+   <input type="Data" name="viewcount" id="ViewCount" value="{{doc.viewcount}}" hidden/>
    <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}" hidden/>
    <div class="auto-group-qqf8-kuY">
       <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
@@ -16,8 +17,6 @@
          <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
        </div>
          <div>
-
-         <!-- <br/> -->
          <p class="core-title core-implementation-development-business-proposal-p8i">
             Core Implementation Development Business Proposal
          </p>
@@ -49,6 +48,8 @@
                      <p >{{quotation_data.customer_name}}</p>
                   </div>
                   <p class="">
+                    p
+
                     
 
                        {%if quotation_data.address_display%}
@@ -78,6 +79,9 @@
                      <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
+                   <p >Status: {{doc.status}}</p>
+                   <p>Date: {{quotation_data.transaction_date}}<p>
+                    <p>Open Till: {{quotation_data.valid_till}}</p>
                   <br/>
                 
                </div>
@@ -459,6 +463,11 @@
 
   <!-- csrf_token -->
 <script>
+  $(document).ready( function () {
+    var count = parseInt("{{doc.viewcount}}");
+    count += 1
+    $("#ViewCount").val(count)
+  });
 window.onscroll = function() {myFunction()};
 
 var header = document.getElementById("myHeader");
