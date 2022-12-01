@@ -462,7 +462,9 @@
   <!-- csrf_token -->
 <script>
   $(document).ready( function () {
+    console.log("---------onload----")
     var count = parseInt("{{doc.viewcount}}");
+    console.log(count)
     count += 1
     $("#ViewCount").val(count);
       $.ajax({
