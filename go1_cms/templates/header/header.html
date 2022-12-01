@@ -246,7 +246,7 @@
              {%endif%}
              {%endif%}
          {%endfor%}
-        <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;">
+        <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;z-index: 999;">
              <div class="m-logo" style="border-bottom: 1px solid #ddd;">
                 <img src="{{theme_settings.mobile_logo}}" class="logo"/>
             </div>
@@ -666,10 +666,12 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
                 hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
                 $(".mobile-blackdrop").hide();
                 $(".go1-cms-top-bar").removeClass('mbl-top-bar');
+                $('body').css("overflow","auto")
             } else {
                 hidden.animate({ "left": "0px" }, "slow").addClass('visible');
                 $(".mobile-blackdrop").show();
                 $(".go1-cms-top-bar").addClass('mbl-top-bar');
+                $('body').css("overflow","hidden")
             }
         }
 
