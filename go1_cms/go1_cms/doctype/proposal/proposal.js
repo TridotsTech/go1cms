@@ -113,13 +113,13 @@ frappe.ui.form.on('Proposal', {
                                 },
                                 callback: function(data) {
                                     if (data.message) {
-                                        console.log(msg)
-                                        msg = frappe.render_template(msg, { customer: data.message.customer,valid_till: data.message.valid_till, company: data.message.company,route:frm.doc.route})
+                                       
+                                        msg = frappe.render_template(msg, { "customer": data.message.customer,"valid_till": data.message.valid_till, "company": data.message.company,"route":frm.doc.route})
                                         console.log(msg)
                                     }
                                 }
                             })
-                            
+                            console.log("----------------------")
                            
                             // console.log(r,"data")
                             if(r.attachement){
