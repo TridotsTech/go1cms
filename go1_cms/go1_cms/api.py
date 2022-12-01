@@ -937,8 +937,8 @@ def update_web_themes(doc,method):
 	frappe.enqueue(update_website_themes, queue='default',doc=doc)
 def update_website_themes(doc):
 	update_themes = 1
-	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
-		update_themes = 0
+	# if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
+	# 	update_themes = 0
 	if update_themes == 1:
 		themes = frappe.db.get_all("Web Theme")
 		for x in themes:
