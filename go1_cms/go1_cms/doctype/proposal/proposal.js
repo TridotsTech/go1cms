@@ -101,6 +101,26 @@ frappe.ui.form.on('Proposal', {
                         },
                         freeze: true,
                         callback: function (r) {
+                            var msg = "Dear {{customer}}<br><br>Please find our attached proposal.<br><br>This proposal is valid until: {{valid_till}}<br>"
+                             msg += 'You can view the proposal on the following link: <a href="{{route}}"></a><br><br>Please '
+                             msg += "don't hesitate to comment online if you have any questions.<br><br>We look forward to your communication.<br><br>Kind Regards,<br>{{company}}<br>";
+                            frappe.call({
+                                method: 'frappe.client.get_value',
+                                args: {
+                                    'doctype': 'Quotation',
+                                    'filters': { 'name': frm.doc.quotation },
+                                    'fieldname': ['party_name', 'valid_till','company']
+                                },
+                                callback: function(data) {
+                                    if (data.message) {
+                                        console.log(msg)
+                                        msg = frappe.render_template(msg, { customer: data.message.customer,valid_till: data.message.valid_till, company: data.message.company,route:frm.doc.route})
+                                        console.log(msg)
+                                    }
+                                }
+                            })
+                            
+                           
                             // console.log(r,"data")
                             if(r.attachement){
                                 attachments = r.attachement
@@ -111,12 +131,14 @@ frappe.ui.form.on('Proposal', {
                             if (!r.email){
                                 show_alert('There is no email id found , Please select or type <b>To</b> email from the dialog', 5);
                             }
+                            console.log(msg)
                             class email extends frappe.views.CommunicationComposer { }
                             new email({
                                 frm: frm,
                                 attachments: attachments,
                                 recipients: recipients,
-                                subject:frm.doc.name
+                                subject:frm.doc.name,
+                                message: msg
                             })
                         }
                     })
