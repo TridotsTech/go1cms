@@ -111,7 +111,7 @@ frappe.ui.form.on('Proposal', {
                                     'filters': { 'name': frm.doc.quotation },
                                     'fieldname': ['party_name', 'valid_till','company']
                                 },
-                                async: fasle,
+                                async: false,
                                 callback: function(data) {
                                     if (data.message) {
                                        
