@@ -42,6 +42,7 @@
   "header_section",
   "edit_header_style",
   "menu_hover_bg",
+  "sticky_header_text_hover_color",
   "cl",
   "is_transparent_header",
   "menu_hover_text_color",
@@ -656,13 +657,18 @@
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
+  },
+  {
+   "fieldname": "sticky_header_text_hover_color",
+   "fieldtype": "Color",
+   "label": "Sticky Header Text Hover Color"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-11-28 12:59:47.906963",
+ "modified": "2022-12-01 16:16:18.907523",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

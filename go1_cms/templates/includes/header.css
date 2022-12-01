@@ -166,6 +166,17 @@
             color: {{header_settings.m_link_color}} !important;
         {% endif %}
     }
+    .dl-menuwrapper li.dl-back>a{
+        {% if header_settings.back_button_background %}
+            background:{{header_settings.back_button_background}} !important;
+        {% endif %}
+    }
+    
+    .dl-menuwrapper li.dl-back:after{
+        {% if header_settings.back_button_margin %}
+            margin:{{header_settings.back_button_margin}} !important;
+        {% endif %}
+    }
      }
 
      .go1-cms-menu a:hover{
@@ -210,6 +221,17 @@
    {% if header_settings.m_link_color %}
        color: {{header_settings.m_link_color}} !important;
    {% endif %}
+}
+.dl-menuwrapper li.dl-back>a{
+    {% if header_settings.back_button_background %}
+        background:{{header_settings.back_button_background}} !important;
+    {% endif %}
+}
+
+.dl-menuwrapper li.dl-back:after{
+    {% if header_settings.back_button_margin %}
+        margin:{{header_settings.back_button_margin}} !important;
+    {% endif %}
 }
 }
 

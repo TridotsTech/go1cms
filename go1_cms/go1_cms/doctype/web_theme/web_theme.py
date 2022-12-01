@@ -112,6 +112,7 @@ def generate_webtheme_css_file(path,sitename,self):
 		# end
 		# render the css template
 		template = frappe.get_template("templates/includes/web_themes.css")
+		global_header_css = None
 		if doc_obj.default_header:
 			doc_obj.header_settings = frappe.get_doc("Header Component",doc_obj.default_header)
 			# frappe.log_error(doc_obj.header_settings.as_dict(),">> doc_obj.header_settings <<")
@@ -121,9 +122,9 @@ def generate_webtheme_css_file(path,sitename,self):
 			if doc_obj.header_settings.m_font_family:
 				doc_obj.header_settings.m_font_family = frappe.db.get_value("CSS Font",doc_obj.header_settings.m_font_family,"font_family")
 			""" End """
-			template = frappe.get_template("templates/includes/header.css")
-			header_css = template.render({'header_settings':doc_obj.header_settings})
-			webtheme_css+=header_css
+			header_template = frappe.get_template("templates/includes/header.css")
+			header_css = header_template.render({'header_settings':doc_obj.header_settings})
+			global_header_css = header_css
 			is_custom_header = 1
 		if doc_obj.default_footer:
 			doc_obj.footer_css = frappe.get_doc("Footer Component",doc_obj.default_footer)
@@ -142,7 +143,8 @@ def generate_webtheme_css_file(path,sitename,self):
 				font_list.append({"font_family_url":x.font_url})
 		doc_obj.font_list = font_list
 		webtheme_css = template.render({'doc':doc_obj})
-		# frappe.log_error(webtheme_css,"theme_css")
+		if global_header_css:
+			webtheme_css += global_header_css
 		css_file_name = self.name.lower().replace(' ', '-')+".css"
 		path = get_files_path()
 		pages = frappe.db.get_all("Web Page Builder",filters={"published":1},fields=['route','name','header_component','footer_component','edit_header_style','is_transparent_header','menu_text_color','menu_hover_bg','menu_hover_text_color'])
