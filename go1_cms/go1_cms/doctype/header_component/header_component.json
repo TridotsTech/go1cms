@@ -71,11 +71,12 @@
   "m_font_weight",
   "m_letter_spacing",
   "menu_padding",
+  "back_button_margin",
   "column_break_45",
   "mobile_menu_background",
   "m_font_size",
   "m_link_color",
-  "back_button_margin",
+  "back_button_text_color",
   "column_break_47",
   "m_font_family",
   "m_line_height",
@@ -554,11 +555,16 @@
    "fieldname": "back_button_background",
    "fieldtype": "Color",
    "label": "Back Button Background"
+  },
+  {
+   "fieldname": "back_button_text_color",
+   "fieldtype": "Color",
+   "label": "Back Button Text Color"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-01 15:56:21.976554",
+ "modified": "2022-12-01 18:39:23.066439",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",

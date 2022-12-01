@@ -162,13 +162,16 @@
         {% endif %}
     }
     .dl-menuwrapper li.dl-back:after{
-        {% if header_settings.m_link_color %}
-            color: {{header_settings.m_link_color}} !important;
+        {% if header_settings.back_button_text_color %}
+            color: {{header_settings.back_button_text_color}} !important;
         {% endif %}
     }
     .dl-menuwrapper li.dl-back>a{
         {% if header_settings.back_button_background %}
             background:{{header_settings.back_button_background}} !important;
+        {% endif %}
+        {% if header_settings.back_button_text_color %}
+            color: {{header_settings.back_button_text_color}} !important;
         {% endif %}
     }
     
@@ -218,14 +221,17 @@
    {% endif %}
 }
 .dl-menuwrapper li.dl-back:after{
-   {% if header_settings.m_link_color %}
-       color: {{header_settings.m_link_color}} !important;
+   {% if header_settings.back_button_text_color %}
+       color: {{header_settings.back_button_text_color}} !important;
    {% endif %}
 }
 .dl-menuwrapper li.dl-back>a{
     {% if header_settings.back_button_background %}
         background:{{header_settings.back_button_background}} !important;
     {% endif %}
+    {% if header_settings.back_button_text_color %}
+       color: {{header_settings.back_button_text_color}} !important;
+   {% endif %}
 }
 
 .dl-menuwrapper li.dl-back:after{
