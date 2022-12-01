@@ -203,6 +203,7 @@
      </div>
 </div>
 </div>
+{% if device_type == "Mobile" %}
 <div class="mobile__header go1-cms-header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
         <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
@@ -285,6 +286,8 @@
     </div>
     <div class="mobile-blackdrop" ></div>
 </div>
+{% endif %}
+
 {%if theme_settings.enable_page_title%}
 <div class="sub_header">
     {%if theme_settings.page_title_overlay%}

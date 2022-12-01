@@ -1,5 +1,6 @@
 /* Custom Header For {{page_route}} */
 {%if header_settings%}
+{% if page_route %}
 .{{page_route}} .go1-cms-header{
     background-color: {{header_settings.header_background}};
     padding-top:{{header_settings.header_padding}};
@@ -146,7 +147,7 @@
      .{{page_route}} .go1-cms-header .logo{
         height: {{header_settings.m_logo_height}} !important;
     }
-    
+
     {% if header_settings.mobile_menu_background %}
     .mobile_menu.go1-cms-menu{
         background-color: {{header_settings.mobile_menu_background}} !important;
@@ -170,5 +171,51 @@
      .go1-cms-menu a:hover{
         color: {{header_settings.menu_hover_color}};
      }
-     
+
+{% else %}
+@media (max-width: 767px){
+    .go1-cms-menu a{
+   padding: {{header_settings.menu_padding}} !important;
+   line-height: {{header_settings.m_line_height}} !important;
+   letter-spacing: {{header_settings.m_letter_spacing}} !important;
+   font-size: {{header_settings.m_font_size}} !important;
+   font-weight: {{header_settings.m_font_weight}} !important;
+   color: {{header_settings.m_link_color}} !important;
+   {%if header_settings.m_font_family%}
+       font-family:{{header_settings.m_font_family}} !important;
+   {%endif%}
+}
+.go1-cms-menu a:hover{
+   color: {{header_settings.m_hover_color}} !important;
+
+}
+.go1-cms-header .logo{
+   height: {{header_settings.m_logo_height}} !important;
+}
+
+{% if header_settings.mobile_menu_background %}
+.mobile_menu.go1-cms-menu{
+   background-color: {{header_settings.mobile_menu_background}} !important;
+}   
+#dl-menu ul li{
+   background-color: {{header_settings.mobile_menu_background}} !important;
+}
+{% endif %}
+.dl-menuwrapper li>a:after{
+   {% if header_settings.m_link_color %}
+       color: {{header_settings.m_link_color}} !important;
+   {% endif %}
+}
+.dl-menuwrapper li.dl-back:after{
+   {% if header_settings.m_link_color %}
+       color: {{header_settings.m_link_color}} !important;
+   {% endif %}
+}
+}
+
+.go1-cms-menu a:hover{
+   color: {{header_settings.menu_hover_color}};
+}
+
 {%endif%}
+{%endif%}  

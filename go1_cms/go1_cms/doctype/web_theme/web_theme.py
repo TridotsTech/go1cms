@@ -121,6 +121,9 @@ def generate_webtheme_css_file(path,sitename,self):
 			if doc_obj.header_settings.m_font_family:
 				doc_obj.header_settings.m_font_family = frappe.db.get_value("CSS Font",doc_obj.header_settings.m_font_family,"font_family")
 			""" End """
+			template = frappe.get_template("templates/includes/header.css")
+			header_css = template.render({'header_settings':doc_obj.header_settings})
+			webtheme_css+=header_css
 			is_custom_header = 1
 		if doc_obj.default_footer:
 			doc_obj.footer_css = frappe.get_doc("Footer Component",doc_obj.default_footer)

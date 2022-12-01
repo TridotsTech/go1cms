@@ -464,7 +464,21 @@
   $(document).ready( function () {
     var count = parseInt("{{doc.viewcount}}");
     count += 1
-    $("#ViewCount").val(count)
+    $("#ViewCount").val(count);
+      $.ajax({
+      type: 'POST',
+      Accept: 'application/json',
+      ContentType: 'application/json;charset=utf-8',
+      url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_data',
+      data: { 'viewcount': count, "name":"{{doc.name}}" },
+      dataType: "json",
+      async: false,
+      headers: {
+          'X-Frappe-CSRF-Token': frappe.csrf_token
+      },
+      success: function(r) {
+      }
+    })
   });
 window.onscroll = function() {myFunction()};
 
