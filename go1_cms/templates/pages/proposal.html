@@ -79,9 +79,9 @@
                      <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
-                   <p >Status: {{doc.status}}</p>
-                   <p>Date: {{quotation_data.transaction_date}}<p>
-                    <p>Open Till: {{quotation_data.valid_till}}</p>
+                   <p style="margin-bottom:0px;">Status: {{doc.status}}</p>
+                   <p style="margin-bottom:0px;">Date: {{quotation_data.transaction_date}}<p>
+                    <p style="margin-bottom:0px;">Open Till: {{quotation_data.valid_till}}</p>
                   <br/>
                 
                </div>
