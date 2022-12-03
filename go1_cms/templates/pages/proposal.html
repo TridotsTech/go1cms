@@ -38,6 +38,13 @@
                      <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
                   </div>
                   {%endif%}
+                    <p>
+<strong>{{quotation_data.company}}</strong> <br/>
+                      {%if quotation_data.company_address_display%}
+                     {{quotation_data.company_address_display}}
+                     {%endif%}
+                  </p>
+                  <br/>
                   <span class="span-0">
                      Prepared for:
                      <br/>
@@ -61,13 +68,7 @@
                   
                    
              
-                  <p>
-<strong>{{quotation_data.company}}</strong> <br/>
-                      {%if quotation_data.company_address_display%}
-                     {{quotation_data.company_address_display}}
-                     {%endif%}
-                  </p>
-                  <br/>
+                
                   <p style="margin-bottom: 0;padding-bottom: 5px">
                      <span style="font-size: 18px;">
                      <strong>
@@ -467,16 +468,14 @@
  
         
       
-    
-     console.log(customerip)
-    console.log("---------onload----")
+
     var count = parseInt("{{doc.viewcount}}");
     console.log(count)
     count += 1
     $("#ViewCount").val(count);
        $.getJSON("https://api.ipify.org?format=json", function(data) {
         customerip = data.ip
-         console.log(customerip)
+   
       $.ajax({
       type: 'POST',
       Accept: 'application/json',
