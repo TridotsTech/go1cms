@@ -680,14 +680,14 @@ def update_proposal_status(proposal, status):
 
 @frappe.whitelist(allow_guest=True)
 def update_proposal_data(viewcount, name, customerip=None):
-	frappe.log_error(viewcount,name)
+
 	doc = frappe.get_doc("Proposal", name)
 	doc.viewcount = viewcount
 	doc.save(ignore_permissions=True)
-	frappe.log_error(customerip,"customerip")
+	frappe.log_error("customerip", customerip)
 	if customerip:
 		allow = frappe.db.get_value("Viewed Customer Detail", {"parent":name,"customer_ip":customerip})
-		frappe.log_error(allow,"allow")
+		frappe.log_error("allow", allow)
 		if not allow:
 			items=frappe.new_doc("Viewed Customer Detail")
 			items.customer_ip=customerip
