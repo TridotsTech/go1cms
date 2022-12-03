@@ -64,14 +64,14 @@
 </head>
 <body class="{{p_route}}">
     {% if header %}
-    {% include "go1_cms/templates/header/header.html" %}
+    {% include "templates/header/header.html" %}
     {% endif %}
 
     
     {% block content %} {% endblock %}{% block page_content %} {% endblock %}
 
     {% if footer %}
-    {% include "go1_cms/templates/footer/footer.html" %}
+    {% include "templates/footer/footer.html" %}
     {% endif %}
 
     {% if theme_settings %}
