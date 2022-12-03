@@ -22,7 +22,7 @@
          </p>
          <p class="pro-000001-434">#{{doc.name}}</p>
        </div>
-       <div><span class="label label-success tw-ml-4">{{doc.status}}</span></div>
+       <div><span class="label-status label-success">{{doc.status}}</span></div>
       </div>
       <div class="auto-group-a8e6-mCN" style="position:relative;">
          <div class="auto-group-cqz4-4hG">
@@ -668,6 +668,18 @@ $('.close-button').on("click", function(){
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+.label-success {
+    background-color: #5cb85c;
+}
+.label-status {
+    align-items: center;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    font-size: .75rem;
+    font-weight: 500;
+    line-height: 1rem;
+    padding: 0.25rem 0.625rem;
 }
 </style>
 
