@@ -44,7 +44,7 @@
                      {{quotation_data.company_address_display}}
                      {%endif%}
                   </p>
-                  <br/>
+                 
                   <span class="span-0">
                      Prepared for:
                      <br/>
@@ -53,22 +53,16 @@
                   </span>
                   <div>
                      <!-- <img class="" style="width:20px;" src="/files/favicon.svg"/> -->
-                     <p >{{quotation_data.customer_name}}</p>
-                  </div>
-                  <p class="">
-                    p
-
-                    
-
+                     <p ><strong>{{quotation_data.customer_name}}</strong></p>
+                     <p class="">
+                   
                        {%if quotation_data.address_display%}
                      {{quotation_data.address_display}}
                      {%endif%}
                   </p>
-                  <br/>
+                  </div>
                   
-                   
-             
-                
+                 
                   <p style="margin-bottom: 0;padding-bottom: 5px">
                      <span style="font-size: 18px;">
                      <strong>
@@ -331,8 +325,9 @@
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
+   padding:1.6rem 1.6rem 1.6rem 1.6rem;
    /*margin-bottom: 3.1rem;*/
-   padding: 3.6rem 1.6rem 3.6rem 1.6rem;
+   /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
    width: 80%;
    }
    .auto-group-xqbc-jsQ {
