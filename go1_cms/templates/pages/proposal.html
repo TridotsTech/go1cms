@@ -463,10 +463,11 @@
   <!-- csrf_token -->
 <script>
   $(document).ready( function () {
+    let customerip =""
     $.getJSON("https://api.ipify.org?format=json", function(data) {
          console.log(data.ip)
       
-        // $("#gfg").html(data.ip);
+        customerip = data.ip
     })
     console.log("---------onload----")
     var count = parseInt("{{doc.viewcount}}");
@@ -478,7 +479,7 @@
       Accept: 'application/json',
       ContentType: 'application/json;charset=utf-8',
       url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_data',
-      data: { 'viewcount': count, "name":"{{doc.name}}" },
+      data: { 'viewcount': count, "name":"{{doc.name}}","customerip": customerip},
       dataType: "json",
       async: false,
       headers: {
