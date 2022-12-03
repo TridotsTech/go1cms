@@ -465,10 +465,11 @@
   $(document).ready( function () {
     let customerip =""
     $.getJSON("https://api.ipify.org?format=json", function(data) {
-         console.log(data.ip)
+        
       
         customerip = data.ip
     })
+     console.log(customerip)
     console.log("---------onload----")
     var count = parseInt("{{doc.viewcount}}");
     console.log(count)
