@@ -464,17 +464,19 @@
 <script>
   $(document).ready( function () {
     let customerip =""
-    $.getJSON("https://api.ipify.org?format=json", function(data) {
+ 
         
       
-        customerip = data.ip
-    })
+    
      console.log(customerip)
     console.log("---------onload----")
     var count = parseInt("{{doc.viewcount}}");
     console.log(count)
     count += 1
     $("#ViewCount").val(count);
+       $.getJSON("https://api.ipify.org?format=json", function(data) {
+        customerip = data.ip
+         console.log(customerip)
       $.ajax({
       type: 'POST',
       Accept: 'application/json',
@@ -490,6 +492,7 @@
         console.log(r)
       }
     })
+      })
   });
 window.onscroll = function() {myFunction()};
 
