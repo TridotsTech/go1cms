@@ -2531,7 +2531,6 @@ def generate_pdf(page, name):
 def get_page_pdf(page, name):
 	from go1_cms.go1_cms.doctype.page_section.page_section import get_section_data
 	from frappe.utils.pdf import get_pdf
-	
 	header_template=""
 	footer_template=""
 	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
