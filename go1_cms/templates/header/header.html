@@ -126,7 +126,7 @@
                                                         <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                         {%if menu_item.child_menu%}
                                                             {% set col_count=menu_item.no_of_column %}
-                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
+                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{col_count}}-list" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
                                                                 <style>
                                                                     .mega-dropdown.sub-categoryy.go1-cms-dropdown{
                                                                     {% if col_count == 1 %}
