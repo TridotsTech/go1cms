@@ -9,6 +9,7 @@
    <!-- <div class="auto-group-udvs-J8S">
       <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
    </div> -->
+   <input type="Data" name="viewcount" id="ViewCount" value="{{doc.viewcount}}" hidden/>
    <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}" hidden/>
    <div class="auto-group-qqf8-kuY">
       <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
@@ -16,13 +17,12 @@
          <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
        </div>
          <div>
-
-         <!-- <br/> -->
          <p class="core-title core-implementation-development-business-proposal-p8i">
             Core Implementation Development Business Proposal
          </p>
          <p class="pro-000001-434">#{{doc.name}}</p>
        </div>
+       <div><span class="label-status label-success">{{doc.status}}</span></div>
       </div>
       <div class="auto-group-a8e6-mCN" style="position:relative;">
          <div class="auto-group-cqz4-4hG">
@@ -38,34 +38,32 @@
                      <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
                   </div>
                   {%endif%}
-                  <span class="span-0">
-                     Prepared for:
-                     <br/>
-                     <!-- <br/>
-                        <br/> -->
-                  </span>
-                  <div>
-                     <!-- <img class="" style="width:20px;" src="/files/favicon.svg"/> -->
-                     <p >{{quotation_data.customer_name}}</p>
-                  </div>
-                  <p class="">
-                    
-
-                       {%if quotation_data.address_display%}
-                     {{quotation_data.address_display}}
-                     {%endif%}
-                  </p>
-                  <br/>
-                  
-                   
-             
-                 <!--  <p>
+                    <p>
 <strong>{{quotation_data.company}}</strong> <br/>
                       {%if quotation_data.company_address_display%}
                      {{quotation_data.company_address_display}}
                      {%endif%}
                   </p>
-                  <br/> -->
+                 
+                  <span class="span-0">
+                     Prepared for:
+                     
+                     <br/>
+                        <br/>
+                  </span>
+
+                  <div>
+                     <!-- <img class="" style="width:20px;" src="/files/favicon.svg"/> -->
+                     <p style="margin-bottom: 0px;padding-bottom: 0px;"><strong>{{quotation_data.customer_name}}</strong></p>
+                     <p class="">
+                   
+                       {%if quotation_data.address_display%}
+                     {{quotation_data.address_display}}
+                     {%endif%}
+                  </p>
+                  </div>
+                  
+                 
                   <p style="margin-bottom: 0;padding-bottom: 5px">
                      <span style="font-size: 18px;">
                      <strong>
@@ -78,6 +76,9 @@
                      <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
+                   <p style="margin-bottom:0px;">Status: {{doc.status}}</p>
+                   <p style="margin-bottom:0px;">Date: {{quotation_data.transaction_date.strftime('%m-%d-%Y')}}</p>
+                    <p style="margin-bottom:0px;">Open Till: {{quotation_data.valid_till.strftime('%m-%d-%Y')}}</p>
                   <br/>
                 
                </div>
@@ -180,7 +181,7 @@
    }
    .btn {
    display: inline-block;
-   padding: 10px 30px !important;
+   padding: 8px 15px !important;
    margin-bottom: 0;
    font-size: 16px !important;
    font-weight: normal;
@@ -325,8 +326,9 @@
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
+   padding:1.6rem 1.6rem 1.6rem 1.6rem;
    /*margin-bottom: 3.1rem;*/
-   padding: 3.6rem 1.6rem 3.6rem 1.6rem;
+   /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
    width: 80%;
    }
    .auto-group-xqbc-jsQ {
@@ -455,10 +457,38 @@
 <!-- <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script> -->
 <!-- <script type="text/javascript" src="/assets/frappe/js/frappe-web.bundle.js"></script> -->
 {{ include_script('frappe-web.bundle.js') }}
-     
-
   <!-- csrf_token -->
 <script>
+  $(document).ready( function () {
+    let customerip =""
+ 
+        
+      
+
+    var count = parseInt("{{doc.viewcount}}");
+    console.log(count)
+    count += 1
+    $("#ViewCount").val(count);
+       $.getJSON("https://api.ipify.org?format=json", function(data) {
+        customerip = data.ip
+   
+      $.ajax({
+      type: 'POST',
+      Accept: 'application/json',
+      ContentType: 'application/json;charset=utf-8',
+      url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_data',
+      data: { 'viewcount': count, "name":"{{doc.name}}","customerip": customerip},
+      dataType: "json",
+      async: false,
+      headers: {
+          'X-Frappe-CSRF-Token': frappe.csrf_token
+      },
+      success: function(r) {
+        console.log(r)
+      }
+    })
+      })
+  });
 window.onscroll = function() {myFunction()};
 
 var header = document.getElementById("myHeader");
@@ -466,7 +496,7 @@ var sticky = header.offsetTop;
 function download_pdf() {
    window.open(
                         window.location.origin + '/api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf?page={{doc.name}}&&name={{doc.quotation}}&&ptype=download',
-                        '_blank' // <- This is what makes it open in a new window.
+                        '_blank'
                         );
                         
             
@@ -489,6 +519,9 @@ function download_pdf() {
   // })
 }
 function myFunction() {
+  //   console.log(sticky)
+  //    console.log(window.pageYOffset)
+  // console.log(window)
   if (window.pageYOffset > sticky) {
     header.classList.add("sticky");
   } else {
@@ -643,6 +676,28 @@ $('.close-button').on("click", function(){
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+.label-success {
+    background-color: #5cb85c;
+}
+.label-status {
+    align-items: center;
+    border-radius: 0.5rem;
+    display: inline-flex;
+   font-size: 16px;
+    font-weight: 500;
+    line-height: 1rem;
+    padding: 10px 15px;
+}
+.label-success {
+    --tw-border-opacity: 1;
+    --tw-bg-opacity: 1;
+    --tw-text-opacity: 1;
+    background-color: rgb(240 253 244/1);
+    border-color: rgb(187 247 208/1);
+    border-style: solid;
+    border-width: 1px;
+    color: rgb(22 163 74/1);
 }
 </style>
 

@@ -2385,7 +2385,7 @@ def generate_pdf(page, name):
 		quotation = {}	
 	header_template=""
 	footer_template=""
-	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
+	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600&amp;display=swap" rel="stylesheet"><style>'
 	# page_template += '@font-face {font-family: "Inter";src: url("Inter-Regular.ttf") format("truetype");'
 	# page_template += 'font-weight: 400;font-style: normal;}@font-face { font-family: "Inter";src: url("Inter-Medium.ttf") format("truetype");font-weight: 500;font-style: normal; }'
 	# page_template += '@font-face {font-family: "Inter";src: url("Inter-Bold.ttf") format("truetype");font-weight: 700;font-style: normal;}'
@@ -2531,10 +2531,9 @@ def generate_pdf(page, name):
 def get_page_pdf(page, name):
 	from go1_cms.go1_cms.doctype.page_section.page_section import get_section_data
 	from frappe.utils.pdf import get_pdf
-	
 	header_template=""
 	footer_template=""
-	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
+	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600&amp;display=swap" rel="stylesheet"><style>'
 	page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
 	page_template += 'h2 {font-family: "Space Mono", monospace;font-size: 1.25rem;font-weight: 400;}h4 {font-family: "Space Mono", monospace;font-size: 1rem;font-weight: 400;}'
 	page_template += '.page {margin-left: 5rem;margin-right: 5rem;}'
@@ -2722,7 +2721,7 @@ def generate_email_pdf(doc_details):
 			quotation = {}	
 		header_template=""
 		footer_template=""
-		page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
+		page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600&amp;display=swap" rel="stylesheet"><style>'
 		page_template += 'h3 {font-size: 12px;}h2 {font-size: 14px;}'
 		page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
 		page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }body{font-family: Calibri; padding:-20px;}p{font-size:9px}'

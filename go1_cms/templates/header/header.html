@@ -126,7 +126,7 @@
                                                         <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                         {%if menu_item.child_menu%}
                                                             {% set col_count=menu_item.no_of_column %}
-                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
+                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{col_count}}-list" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
                                                                 <style>
                                                                     .mega-dropdown.sub-categoryy.go1-cms-dropdown{
                                                                     {% if col_count == 1 %}
@@ -153,19 +153,37 @@
                                                                             <ul>
                                                                                 {%for sub_menu_item in menu_item.child_menu%}
                                                                                     {% if x+1 == sub_menu_item.mega_m_col_index %}
-                                                                                        <li class="drop__down__header sub-menu-item" >
-                                                                                            <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
-                                                                                            {%if sub_menu_item.child_menu%}
-                                                                                                <ul class="sub-child sub__children go1-cms-dropdown">
-                                                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
-                                                                                        <li class="drop__down__header sub-sub-menu-item">
-                                                                                            <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                                                       {% if sub_menu_item.icon %}
+                                                                                       <li class="drop__down__header sub-menu-item" >
+                                                                                            <div class="each-menu-content" style="display:flex;align-items: center;">  
+                                                                                                <img class="mega-menu-icon" src="{{sub_menu_item.icon}}" style="height: 22px;">  
+                                                                                                <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
+                                                                                                    {%if sub_menu_item.child_menu%}
+                                                                                                        <ul class="sub-child sub__children go1-cms-dropdown">
+                                                                                                            {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                                                            <li class="drop__down__header sub-sub-menu-item">
+                                                                                                                <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                                                                            </li>
+                                                                                                            {%endfor%}
+                                                                                                        </ul>
+                                                                                                    {%endif%}
+                                                                                            </div>
                                                                                         </li>
-                                                                                        {%endfor%}
-                                                                                            
-                                                                                        </ul>
-                                                                                        {%endif%}
-                                                                                        </li>
+                                                                                        {% else %}
+                                                                                            <li class="drop__down__header sub-menu-item" >
+                                                                                                <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
+                                                                                                {%if sub_menu_item.child_menu%}
+                                                                                                    <ul class="sub-child sub__children go1-cms-dropdown">
+                                                                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                                                        <li class="drop__down__header sub-sub-menu-item">
+                                                                                                            <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
+                                                                                                        </li>
+                                                                                                        {%endfor%}
+                                                                                                    </ul>
+                                                                                                {%endif%}
+                                                                                            </li>
+                                                                                        {%endif%}    
+
                                                                                     {%endif%}
                                                                                 {%endfor%}
                                                                             </ul>
@@ -203,6 +221,7 @@
      </div>
 </div>
 </div>
+{% if device_type == "Mobile" %}
 <div class="mobile__header go1-cms-header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
         <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
@@ -245,7 +264,7 @@
              {%endif%}
              {%endif%}
          {%endfor%}
-        <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;">
+        <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;z-index: 999;">
              <div class="m-logo" style="border-bottom: 1px solid #ddd;">
                 <img src="{{theme_settings.mobile_logo}}" class="logo"/>
             </div>
@@ -285,30 +304,50 @@
     </div>
     <div class="mobile-blackdrop" ></div>
 </div>
+{% endif %}
+
 {%if theme_settings.enable_page_title%}
 <div class="sub_header">
-    {%if theme_settings.page_title_overlay%}
-    <div class="sub_header-overlay"></div>
-    {% endif %}
+    <div class="sub-header-sub-container">
+        {%if theme_settings.page_title_overlay%}
+        <div class="sub_header-overlay"></div>
+        {% endif %}
+    </div>
     <div class="header-title">
         {% if theme_settings.page_title_tag %}
             <{{theme_settings.page_title_tag}}  class="white-text_ title">{{theme_settings.sub_header_title}}</{{theme_settings.page_title_tag}}>
         {% else %}
             <h2  class="white-text_ title">{{theme_settings.sub_header_title}}</h2>
         {% endif %}
-         {%if theme_settings.enable_breadcrumbs%}
+        {%if theme_settings.enable_breadcrumbs%}
     <div class="breadcrumb">
         <a style="cursor: pointer;" href="/{{route}}">Home</a><i class="fa fa-chevron-right"></i>
         <span>{{theme_settings.sub_header_title}}</span>
     </div>
     {%endif%}
     </div>
-   
 </div>
  {%endif%}
 
 <style type="text/css">
-    /* dl menu properties */
+/* top bar mobile view property */
+{%if header.layout == "Two Column"%}
+    {% if device_type == "Mobile" %}
+        .go1-cms-top-bar .container.d__flex{
+            justify-content: space-between;
+        }
+    {% endif %}
+{% endif %}
+{%if header.layout == "One Column"%}
+{% if device_type == "Mobile" %}
+        .go1-cms-top-bar .container.d__flex{
+            justify-content: center;
+        }
+    {% endif %}
+{% endif %}
+/* end */
+
+/* dl menu properties */
 .dl-menu{
     opacity: unset !important;
     pointer-events: unset !important;
@@ -319,6 +358,11 @@
 #dl-menu .dl-menu{
     margin:unset !important;
 }
+
+#dl-menu .dl-menu .dl-submenu{
+    margin:unset !important;
+}
+
 .dl-menuwrapper li.dl-back:after{
     font-family: unset !important;
     content: "\2192" !important;
@@ -353,6 +397,12 @@
     display:none;
 }
 @media only screen and (max-width: 768px){
+
+.dl-menuwrapper li>a:after{
+    top: 50% !important;
+    transform: translateY(-50%);
+}
+
 .mbl-top-bar{
     z-index: -1 !important;
 }
@@ -481,34 +531,34 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     float: left;
 }
 {%if theme_settings.enable_page_title%}
+
+    .sub_header .sub-header-sub-container{
+            position: relative;
+        }
+
     .sub_header .header-title{
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;min-height: 100%;
-        {%if theme_settings.page_title_overlay%}
-            position: relative;
-        {%endif%}
     }
     .sub_header{
-        z-index: -99;
         background-color: {{theme_settings.page_title_bg}} !important;
-       background-image:url('{{theme_settings.page_title_bg_img}}') !important;
-    min-height: 260px;
-    position: relative;
-    {%if theme_settings.page_title_bg_img%}
-    background-size: cover;height: 150px;
-    {%endif%}
-    {%if theme_settings.container_max_width%}
-        max-width:{{theme_settings.container_max_width}};
-    {%endif%}
-    {%if theme_settings.page_title_padding%}
-        padding:{{theme_settings.page_title_padding}} 0px;
-    {%endif%}
-    {%if theme_settings.is_transparent%}
-        background: transparent;
-    {%endif%}
+        background-image:url('{{theme_settings.page_title_bg_img}}') !important;
+        min-height: 260px;
+        {%if theme_settings.page_title_bg_img%}
+        background-size: cover;height: 150px;
+        {%endif%}
+        {%if theme_settings.container_max_width%}
+            max-width:{{theme_settings.container_max_width}};
+        {%endif%}
+        {%if theme_settings.page_title_padding%}
+            padding:{{theme_settings.page_title_padding}} 0px;
+        {%endif%}
+        {%if theme_settings.is_transparent%}
+            background: transparent;
+        {%endif%}
     }
 
     {%if theme_settings.page_title_overlay%}
@@ -589,8 +639,8 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
     {% endif %}
 }
 .sticky_header .drop__down__header.menu-item a:hover{
-    {% if menu_hover_text_color %}
-        color:{{menu_hover_text_color}};
+    {% if sticky_header_text_hover_color %}
+        color:{{sticky_header_text_hover_color}};
     {% endif %}
     {% if menu_hover_bg %}
         background-color:{{menu_hover_bg}};
@@ -640,10 +690,12 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
                 hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
                 $(".mobile-blackdrop").hide();
                 $(".go1-cms-top-bar").removeClass('mbl-top-bar');
+                $('body').css("overflow","auto")
             } else {
                 hidden.animate({ "left": "0px" }, "slow").addClass('visible');
                 $(".mobile-blackdrop").show();
                 $(".go1-cms-top-bar").addClass('mbl-top-bar');
+                $('body').css("overflow","hidden")
             }
         }
 

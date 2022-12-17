@@ -101,6 +101,27 @@ frappe.ui.form.on('Proposal', {
                         },
                         freeze: true,
                         callback: function (r) {
+                            var msg = "Dear {{customer}}<br><br>Please find our attached proposal.<br><br>This proposal is valid until: {{valid_till}}<br>"
+                             msg += 'You can view the proposal on the following link: <a href="{{route}}" target="_blank">{{name}}</a><br><br>Please '
+                             msg += "don't hesitate to comment online if you have any questions.<br><br>We look forward to your communication.<br><br>Kind Regards,<br>{{company}}<br>";
+                            frappe.call({
+                                method: 'frappe.client.get_value',
+                                args: {
+                                    'doctype': 'Quotation',
+                                    'filters': { 'name': frm.doc.quotation },
+                                    'fieldname': ['party_name', 'valid_till','company']
+                                },
+                                async: false,
+                                callback: function(data) {
+                                    if (data.message) {
+                                       
+                                        msg = frappe.render_template(msg, { "customer": data.message.party_name,"valid_till": data.message.valid_till, "company": data.message.company,"route":window.location.origin +"/" +frm.doc.route, "name":frm.doc.name})
+                                        console.log(msg)
+                                    }
+                                }
+                            })
+                            console.log("----------------------")
+                           
                             // console.log(r,"data")
                             if(r.attachement){
                                 attachments = r.attachement
@@ -111,12 +132,14 @@ frappe.ui.form.on('Proposal', {
                             if (!r.email){
                                 show_alert('There is no email id found , Please select or type <b>To</b> email from the dialog', 5);
                             }
+                            console.log(msg)
                             class email extends frappe.views.CommunicationComposer { }
                             new email({
                                 frm: frm,
                                 attachments: attachments,
                                 recipients: recipients,
-                                subject:frm.doc.name
+                                subject:frm.doc.name,
+                                message: msg
                             })
                         }
                     })
@@ -389,7 +412,7 @@ frappe.ui.form.on('Proposal', {
             frm.doc[field].map(f => {
                 let section_data = '';
                 if (has_common(frappe.user_roles, ['System Manager'])) {
-                    section_data = `<a href="/desk#Form/Page Section/${f.section}">${f.section}</a>`;
+                    section_data = `<a href="/app/page-section/${f.section}">${f.section}</a>`;
                     if (f.section != f.section_title) {
 
                         if (f.custom_title!=undefined) {

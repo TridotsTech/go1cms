@@ -678,3 +678,25 @@ def update_proposal_status(proposal, status):
 	doc.save(ignore_permissions=True)
 	return doc
 
+@frappe.whitelist(allow_guest=True)
+def update_proposal_data(viewcount, name, customerip=None):
+
+	doc = frappe.get_doc("Proposal", name)
+	doc.viewcount = viewcount
+	doc.save(ignore_permissions=True)
+	frappe.log_error("customerip", customerip)
+	if customerip:
+		allow = frappe.db.get_value("Viewed Customer Detail", {"parent":name,"customer_ip":customerip})
+		frappe.log_error("allow", allow)
+		if not allow:
+			items=frappe.new_doc("Viewed Customer Detail")
+			items.customer_ip=customerip
+			items.parenttype="Proposal"
+			items.parentfield="customer_ip"
+			items.parent=name
+			items.idx=1
+			items.flags.ignore_mandatory = True
+			items.save(ignore_permissions=True)
+		
+	return doc
+

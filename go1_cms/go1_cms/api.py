@@ -663,15 +663,38 @@ def update_website_context(context):
 				if context.doc.edit_header_style:
 					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
+		get_device_type(context)
 		# frappe.log_error(context.header,">> context.header <<")
 		# frappe.log_error(context,">> context data <<")
 	except Exception as e:
-		print(frappe.get_traceback())
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")
 
+def get_device_type(context):
+	try:
+		from go1_cms.go1_cms.device_detect.detect import detect_mobile_browser
+		from go1_cms.go1_cms.device_detect.utilities import get_user_agent	
+		ua=None
+		try:
+			req = frappe.local.request
+			ua = get_user_agent(req)
+		except:
+			pass
+		if ua:
+			context.user_agent = ua
+			if detect_mobile_browser(ua):
+				if "iPad" in ua:
+					context.device_type="Desktop"
+
+				else:
+					context.device_type="Mobile"
+			else:
+				context.device_type="Desktop"
+		else:
+			context.device_type="Desktop"
+	except Exception as e:
+		context.device_type="Desktop"
+		frappe.log_error(frappe.get_traceback(), "go1_cms.go1_cms.api.get_device_type") 	
  
-
-
 @frappe.whitelist(allow_guest=True)
 def get_all_website_settings():
 	# theme = frappe.get_doc("Theme Settings")
@@ -914,8 +937,8 @@ def update_web_themes(doc,method):
 	frappe.enqueue(update_website_themes, queue='default',doc=doc)
 def update_website_themes(doc):
 	update_themes = 1
-	if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
-		update_themes = 0
+	# if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
+	# 	update_themes = 0
 	if update_themes == 1:
 		themes = frappe.db.get_all("Web Theme")
 		for x in themes:
