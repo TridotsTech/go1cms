@@ -2395,7 +2395,7 @@ def generate_pdf(page, name):
 	# page_template += '.header-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
 	# page_template +='@font-face { font-family: Consolas,monaco,monospace; }body{font-family: Consolas,monaco,monospace; padding:-20px;}'
 	# page_template += 'p {font-size: 10px;}'
-	page_template += 'h3 {font-size: 12px;}h2 {font-size: 14px;}'
+	page_template += "h3 {font-size: 12px;}h2 {font-size: 14px;}.page{padding: 60px;}.page{font-family: Poppins, 'Source Sans Pro' !important;}p{font-size:16px;}"
 	page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
 	page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }body{font-family: Calibri; padding:-20px;}p{font-size:9px}'
 	# page_template += 'h2 {font-family: "Space Mono", monospace;font-size: 1.25rem;font-weight: 400;}h4 {font-family: "Space Mono", monospace;font-size: 1rem;font-weight: 400;}'
