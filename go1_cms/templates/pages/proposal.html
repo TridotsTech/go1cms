@@ -22,7 +22,7 @@
          </p>
 	 <!--<p class="pro-000001-434">#{{doc.name}}</p> -->
        </div>
-       <div><span class="label-status label-success">{{doc.status}}</span></div>
+       <div><span class="label-status label-success" id="proposal-status-title">{{doc.status}}</span></div>
       </div>
       <div class="auto-group-a8e6-mCN" style="position:relative;">
          <div class="auto-group-cqz4-4hG">
@@ -76,7 +76,7 @@
                      <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
-                   <p style="margin-bottom:0px;">Status: {{doc.status}}</p>
+                   <p style="margin-bottom:0px;" id="proposal-status">Status: {{doc.status}}</p>
                    <p style="margin-bottom:0px;">Date: {{quotation_data.transaction_date.strftime('%m-%d-%Y')}}</p>
                     <p style="margin-bottom:0px;">Open Till: {{quotation_data.valid_till.strftime('%m-%d-%Y')}}</p>
                   <br/>
@@ -563,11 +563,15 @@ function myFunction() {
               $('#model-content').html("Proposal Accepted!")
               $('#myModal').show();
               $('#hide-btn').hide();
+              $("#proposal-status").text(data.status);
+              $("#proposal-status-title").text(data.status);
       }
        if(data.status=="Rejected"){
               $('#model-content').html("Proposal Rejected!")
               $('#myModal').show();
-               $('#hide-btn').hide()
+              $('#hide-btn').hide();
+              $("#proposal-status").text(data.status);
+              $("#proposal-status-title").text(data.status);
         
       }
     }
