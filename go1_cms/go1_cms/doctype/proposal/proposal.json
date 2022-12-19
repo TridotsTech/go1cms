@@ -77,6 +77,7 @@
   "sample",
   "preview_pdf_url",
   "token",
+  "viewcount",
   "customer_ip"
  ],
  "fields": [
@@ -496,13 +497,19 @@
    "fieldtype": "Table",
    "label": "Customer IP",
    "options": "Viewed Customer Detail"
+  },
+  {
+   "fieldname": "viewcount",
+   "fieldtype": "Int",
+   "label": "View Count",
+   "read_only": 1
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-12-19 13:26:02.925566",
+ "modified": "2022-12-19 14:46:17.929879",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Proposal",
