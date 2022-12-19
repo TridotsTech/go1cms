@@ -76,7 +76,8 @@
   "section_break_64",
   "sample",
   "preview_pdf_url",
-  "token"
+  "token",
+  "customer_ip"
  ],
  "fields": [
   {
@@ -488,16 +489,23 @@
    "fieldname": "token",
    "fieldtype": "Data",
    "label": "Token"
+  },
+  {
+   "fieldname": "customer_ip",
+   "fieldtype": "Table",
+   "label": "Customer IP",
+   "options": "Viewed Customer Detail"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-11-19 09:53:03.641168",
+ "modified": "2022-12-19 01:53:15.968200",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Proposal",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -515,5 +523,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
