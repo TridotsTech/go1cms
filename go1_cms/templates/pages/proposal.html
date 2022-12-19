@@ -563,14 +563,14 @@ function myFunction() {
               $('#model-content').html("Proposal Accepted!")
               $('#myModal').show();
               $('#hide-btn').hide();
-              $("#proposal-status").text(data.status);
+              $("#proposal-status").text("Status: "+data.status);
               $("#proposal-status-title").text(data.status);
       }
        if(data.status=="Rejected"){
               $('#model-content').html("Proposal Rejected!")
               $('#myModal').show();
               $('#hide-btn').hide();
-              $("#proposal-status").text(data.status);
+              $("#proposal-status").text("Status: "+data.status);
               $("#proposal-status-title").text(data.status);
         
       }
