@@ -687,8 +687,7 @@ def update_proposal_data(viewcount, name, customerip=None):
 	frappe.log_error("customerip", customerip)
 	if customerip:
 		allow = frappe.db.get_value("Viewed Customer Detail", {"parent":name,"customer_ip":customerip})
-		total = frappe.db.get_all("Viewed Customer Detail", filters={"parent":name}, fields=["name"])
-		frappe.log_error("total", len(total))
+		
 		if not allow:
 			total = frappe.db.get_all("Viewed Customer Detail", filters={"parent":name}, fields=["name"])
 			items=frappe.new_doc("Viewed Customer Detail")
