@@ -1907,7 +1907,8 @@ def generate_pdf(page, name):
 	# page_template += '.table-box table tr.item td, .summary-box table tr.item td {border-bottom: 1px solid #D7DCE4;height: 1.5rem;}.summary-box table tr.no-border-item td {border-bottom: none;height: 1.5rem;}.summary-box table tr.total td {border-top: 1px solid #000000;border-bottom: 1px solid #000000; height: 1.5rem;}'
 	# page_template += '.summary-box table tr.item td:first-child, .summary-box table tr.total td:first-child {border: none; height: 1.5rem; }'
 	# page_template += '#pspdfkit-footer {font-size: 0.5rem;text-transform: uppercase;letter-spacing: 1px;font-weight: 500;color: #717885;margin-top: 2.5rem;bottom: 2.5rem;position: absolute;width: 100%;}'
-	page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
+	# page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
+	page_template += '.footer-columns {display: flex;justify-content: space-between;}'
 	page_template += '</style></head><body>'
 	builder = frappe.db.get_value("Proposal", page, ["name", "business", "page_type", "route", "published", "custom_js", "custom_css", "document", "header_template", "footer_template"], as_dict=True) 
 	
