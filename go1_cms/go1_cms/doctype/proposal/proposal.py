@@ -1893,7 +1893,7 @@ def generate_pdf(page, name):
 	# page_template += 'p {font-size: 10px;}'
 	page_template += "h3 {font-size: 12px;}h2 {font-size: 14px;}.page{padding: 60px;}.page{font-family: Poppins, 'Source Sans Pro' !important;}p{font-size:16px;}"
 	page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
-	page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }body{font-family: Calibri; padding:-20px;}p{font-size:9px}'
+	page_template += 'hr{border-width: thin;}body{padding:-20px;}'
 	# page_template += 'h2 {font-family: "Space Mono", monospace;font-size: 1.25rem;font-weight: 400;}h4 {font-family: "Space Mono", monospace;font-size: 1rem;font-weight: 400;}'
 	# page_template += '.page {margin-left: 5rem;margin-right: 5rem;}'
 	# page_template += '.intro-table {display: flex;justify-content: space-between;margin: 3rem 0 5rem 0;border-top: 1px solid #000000;border-bottom: 1px solid #000000;}'
