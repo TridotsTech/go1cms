@@ -1804,7 +1804,7 @@ var modify_section_data = Class.extend({
                 
             }
 
-        
+        console.log(fields)
             $(fields).each(function(k, v) {
                 let field = {};
                 field.fieldname = v.name;
@@ -1836,9 +1836,7 @@ var modify_section_data = Class.extend({
                 else if (v.field_type == 'Select') {
                     field.fieldtype = 'Select';
                     var str = v.options;
-                    console.log(str)
                     var result1 = str.split(/\n/);
-                    console.log(result1)
                     field.options = result1;
                 } 
                 else if (v.field_type == 'Check') {
@@ -2594,7 +2592,9 @@ var modify_section_data = Class.extend({
                 obj.fieldtype = 'Text Editor';
             else if(v.field_type == 'Attach Video')
                 obj.fieldtype = 'Attach';
-            else
+            else if(v.field_type == 'Check')
+                obj.fieldtype = 'Check';
+            else 
                 obj.fieldtype = 'HTML Editor';
             fields.push(obj);
         });
