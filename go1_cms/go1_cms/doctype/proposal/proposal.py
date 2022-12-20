@@ -2385,7 +2385,7 @@ def generate_pdf(page, name):
 		quotation = {}	
 	header_template=""
 	footer_template=""
-	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
+	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> <style>'
 	# page_template += '@font-face {font-family: "Inter";src: url("Inter-Regular.ttf") format("truetype");'
 	# page_template += 'font-weight: 400;font-style: normal;}@font-face { font-family: "Inter";src: url("Inter-Medium.ttf") format("truetype");font-weight: 500;font-style: normal; }'
 	# page_template += '@font-face {font-family: "Inter";src: url("Inter-Bold.ttf") format("truetype");font-weight: 700;font-style: normal;}'
