@@ -793,7 +793,7 @@ def get_proposal_html(page,name):
 			page_template += '<style>'
 			page_template += 'h3 {font-size: 18px !important;}h2 {font-size: 20px !important;}'
 			page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
-			page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }.page{font-family: Calibri; padding:20px 50px 20px 50px;}p{font-size:9px}'
+			page_template += 'hr{border-width: thin;}.page{ padding:20px 50px 20px 50px;}p{font-size:9px}'
 			page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
 			page_template += '</style>'
 			page_template += '<div class="page" style="">\n'
@@ -2009,11 +2009,11 @@ def get_page_pdf(page, name):
 	footer_template=""
 	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
 	page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
-	page_template += 'h2 {font-family: "Space Mono", monospace;font-size: 1.25rem;font-weight: 400;}h4 {font-family: "Space Mono", monospace;font-size: 1rem;font-weight: 400;}'
+	page_template += 'h2 {font-size: 1.25rem;font-weight: 400;}h4 {font-size: 1rem;font-weight: 400;}'
 	page_template += '.page {margin-left: 5rem;margin-right: 5rem;}'
 	page_template += '.intro-table {display: flex;justify-content: space-between;margin: 3rem 0 5rem 0;border-top: 1px solid #000000;border-bottom: 1px solid #000000;}'
 	page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
-	page_template	+= 'hr{border-width: thin;}@font-face { font-family: Calibri; }body{font-family: Calibri; padding:-20px;}p{font-size:9px;}'
+	page_template	+= 'hr{border-width: thin;}body{ padding:-20px;}p{font-size:9px;}'
 	page_template += '</style></head><body>'
 	builder = frappe.db.get_value("Proposal", page, ["name", "business", "page_type", "route", "published", "custom_js", "custom_css", "document", "header_template", "footer_template"], as_dict=True) 
 	quotation = frappe.db.get_all("Quotation", fields=["*"], filters={"name": name})
@@ -2198,7 +2198,7 @@ def generate_email_pdf(doc_details):
 		page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>'
 		page_template += 'h3 {font-size: 12px;}h2 {font-size: 14px;}'
 		page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
-		page_template += 'hr{border-width: thin;}@font-face { font-family: Calibri; }body{font-family: Calibri; padding:-20px;}p{font-size:9px}'
+		page_template += 'hr{border-width: thin;}body{ padding:-20px;}p{font-size:9px}'
 		page_template += '.footer-columns {display: flex;justify-content: space-between;padding-left: 2.5rem;padding-right: 2.5rem;}'
 		page_template += '</style></head><body>'
 		builder = frappe.db.get_value("Proposal", page, ["name", "business", "page_type", "route", "published", "custom_js", "custom_css", "document", "header_template", "footer_template"], as_dict=True) 
