@@ -1964,9 +1964,7 @@ def generate_pdf(page, name):
 						</div>
 					</footer>	
 				</div>
-				<p class="text-center small page-number visible-pdf">
-					 Page <span class="page"></span> of <span class="topage"></span>
-				</p>
+				
 			</div>'''
 		
 			# org content hide 17/10/22
