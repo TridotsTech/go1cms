@@ -1992,7 +1992,7 @@ def generate_pdf(page, name):
 	options['footer-html'] = footer_template
 	options['footer-spacing'] = '2'
 	html = page_template
-	# frappe.log_error(html,'final pdf render html')
+	frappe.log_error(str(html),'final pdf render html')
 	content = get_pdf(html)
 	frappe.local.response.filename = "{name}.pdf".format(
 		name=page.replace(" ", "-").replace("/", "-")
