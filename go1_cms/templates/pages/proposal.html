@@ -314,8 +314,8 @@
   flex: 0 0 30%;
    }
    .auto-group-6bfp-5nr.sticky{
-    top: 20px; position: fixed;
-   top: auto;
+     position: fixed;
+   top: 0;
    right: 100px;
    }
    .auto-group-p8zn-E9x {
@@ -329,11 +329,18 @@
    padding:1.6rem 1.6rem 1.6rem 1.6rem;
    /*margin-bottom: 3.1rem;*/
    /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
-/*   width: 80%;*/
+   width: 100%;
    }
    .auto-group-6bfp-5nr.sticky{
     width: 24%;
    }
+   .auto-group-6bfp-5nr.sticky-bt{
+       position: fixed;
+        bottom: 0;
+        right: 100px;
+        width: 24%;
+        top:auto;
+    }
    .auto-group-xqbc-jsQ {
    flex-shrink: 0;
    /*height: 34.1rem;*/
@@ -538,7 +545,16 @@ function myFunction() {
   
     var curentScroll = $(window).scrollTop()+200;
     var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
-    item.toggleClass('sticky', isSticky);
+    if(isSticky){
+        $("#myHeader").removeClass("sticky-bt");
+        $("#myHeader").addClass("sticky");
+
+    }
+    else{
+        $("#myHeader").removeClass("sticky");
+        $("#myHeader").addClass("sticky-bt");
+    }
+    // item.toggleClass('sticky', isSticky);
 }
  $('#accept-form').on("click", function(){
     console.log("accept")
