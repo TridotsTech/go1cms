@@ -329,7 +329,10 @@
    padding:1.6rem 1.6rem 1.6rem 1.6rem;
    /*margin-bottom: 3.1rem;*/
    /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
-   width: 80%;
+/*   width: 80%;*/
+   }
+   .auto-group-6bfp-5nr.sticky{
+    width: 24%;
    }
    .auto-group-xqbc-jsQ {
    flex-shrink: 0;
@@ -489,6 +492,10 @@
     })
       })
   });
+  var triggerTop = $(".auto-group-cqz4-4hG").offset().top;
+    var triggerBottom = triggerTop + $(".auto-group-cqz4-4hG").height();
+    var item = $('#myHeader');
+
 window.onscroll = function() {myFunction()};
 
 var header = document.getElementById("myHeader");
@@ -528,11 +535,8 @@ function myFunction() {
   //   header.classList.remove("sticky");
   // }
 
-    var triggerTop = $(".auto-group-cqz4-4hG").offset().top;
-    var triggerBottom = triggerTop + $(".auto-group-cqz4-4hG").height();
-    var item = $('#myHeader');
-
-    var curentScroll = $(window).scrollTop();
+  
+    var curentScroll = $(window).scrollTop()+200;
     var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
     item.toggleClass('sticky', isSticky);
 }
