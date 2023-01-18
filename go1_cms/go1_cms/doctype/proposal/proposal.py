@@ -1883,7 +1883,7 @@ def generate_pdf(page, name):
 	footer_template=""
 	page_template = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> <style>'
 	
-	page_template += "h3 {font-size: 12px;}h2 {font-size: 14px;}.page{padding: 60px 30px !important;}.page{font-family: Poppins, 'Source Sans Pro' !important;}p{font-size:16px;}"
+	page_template += "h3 {font-size: 12px;}h2 {font-size: 14px;}.page{padding: 60px 0px !important;}.page{font-family: Poppins, 'Source Sans Pro' !important;}p{font-size:16px;}"
 	page_template += '.logo {height: 1.5rem;width: auto;margin-right: 1rem;}.logotype {display: flex;align-items: center;font-weight: 700;}'
 	page_template += 'hr{border-width: thin;}body{padding:-20px;}'
 	page_template += '.footer-columns {display: flex;justify-content: space-between;}'
@@ -1911,7 +1911,7 @@ def generate_pdf(page, name):
 			# header_template += '<br></header>\n'
 		component = frappe.db.get_all('Mobile Page Section' ,fields=['section','name', 'section_title', 'section_name', 'section_type', 'content_type', 'route'],filters={'parent':builder.name, 'parentfield':'web_section'},order_by='idx')
 		if len(component)>0:
-			page_template += '<div class="page" style=""><div>\n'
+			page_template += '<div class="page" style="padding: 60px 40px !important;"><div>\n'
 			for item in component:
 				# by gopi 20/10/22
 				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
