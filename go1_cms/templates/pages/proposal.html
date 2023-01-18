@@ -522,11 +522,19 @@ function myFunction() {
   //   console.log(sticky)
   //    console.log(window.pageYOffset)
   // console.log(window)
-  if (window.pageYOffset > sticky) {
-    header.classList.add("sticky");
-  } else {
-    header.classList.remove("sticky");
-  }
+  // if (window.pageYOffset > sticky) {
+  //   header.classList.add("sticky");
+  // } else {
+  //   header.classList.remove("sticky");
+  // }
+
+    var triggerTop = $("body").offset().top;
+    var triggerBottom = triggerTop + $("body").height();
+    var item = $('#myHeader');
+
+    var curentScroll = $(window).scrollTop();
+    var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
+    item.toggleClass('sticky', isSticky);
 }
  $('#accept-form').on("click", function(){
     console.log("accept")
