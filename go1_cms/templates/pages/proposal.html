@@ -399,7 +399,7 @@
         z-index: 1;
    }
    .auto-group-ey1l-jES{
-    width: 80%;
+    width: 100%;
    }
    /*css end*/
    @media only screen and (max-width: 768px) {
@@ -545,14 +545,20 @@ function myFunction() {
   
     var curentScroll = $(window).scrollTop()+200;
     var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
-    if(isSticky){
+    if(curentScroll<=420){
         $("#myHeader").removeClass("sticky-bt");
-        $("#myHeader").addClass("sticky");
-
+         $("#myHeader").removeClass("sticky");
     }
     else{
-        $("#myHeader").removeClass("sticky");
-        $("#myHeader").addClass("sticky-bt");
+        if(isSticky){
+            $("#myHeader").removeClass("sticky-bt");
+            $("#myHeader").addClass("sticky");
+
+        }
+        else{
+            $("#myHeader").removeClass("sticky");
+            $("#myHeader").addClass("sticky-bt");
+        }
     }
     // item.toggleClass('sticky', isSticky);
 }
