@@ -316,7 +316,7 @@
    .auto-group-6bfp-5nr.sticky{
      position: fixed;
    top: 0;
-   right: 100px;
+   
    }
    .auto-group-p8zn-E9x {
    background-color: #ffffff;
@@ -332,7 +332,8 @@
    width: 100%;
    }
    .auto-group-6bfp-5nr.sticky{
-    width: 24%;
+    width: 25.5%;
+    right: 75px;
    }
    .auto-group-6bfp-5nr.sticky-bt{
        position: fixed;
@@ -499,7 +500,7 @@
     })
       })
   });
-  var triggerTop = $(".auto-group-cqz4-4hG").offset().top;
+  var triggerTop = $(".auto-group-a8e6-mCN").offset().top;
     var triggerBottom = triggerTop + $(".auto-group-cqz4-4hG").height();
     var item = $('#myHeader');
 
@@ -543,7 +544,7 @@ function myFunction() {
   // }
 
   
-    var curentScroll = $(window).scrollTop()+200;
+    var curentScroll = $(window).scrollTop()+500;
     var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
     if(curentScroll<=420){
         $("#myHeader").removeClass("sticky-bt");
@@ -736,6 +737,19 @@ $('.close-button').on("click", function(){
     border-style: solid;
     border-width: 1px;
     color: rgb(22 163 74/1);
+}
+div#hide-btn .btn {
+    font-size: 14px !important;
+    padding: 5px 10px !important;
+    float: left;
+    margin-right: 5px;
+    text-transform: capitalize;
+}
+div#hide-btn
+{
+        width: 100%;
+    float: left;
+
 }
 </style>
 
