@@ -336,7 +336,7 @@
    width: 100%;
    }
    .auto-group-6bfp-5nr.sticky{
-    width: 25.5%;
+    width: 25%;
     right: 75px;
    }
    .auto-group-6bfp-5nr.sticky-bt{
@@ -550,6 +550,11 @@ function myFunction() {
   
     var curentScroll = $(window).scrollTop()+500;
     var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
+     if ($(window).scrollTop() >= $(
+              '.auto-group-a8e6-mCN').offset().top + $('.auto-group-a8e6-mCN').
+                outerHeight() - window.innerHeight) {
+                isSticky = false;
+            }
     if(curentScroll<=720){
         $("#myHeader").removeClass("sticky-bt");
          $("#myHeader").removeClass("sticky");
