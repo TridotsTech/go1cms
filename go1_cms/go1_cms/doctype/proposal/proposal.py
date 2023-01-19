@@ -1911,7 +1911,7 @@ def generate_pdf(page, name):
 			# header_template += '<br></header>\n'
 		component = frappe.db.get_all('Mobile Page Section' ,fields=['section','name', 'section_title', 'section_name', 'section_type', 'content_type', 'route'],filters={'parent':builder.name, 'parentfield':'web_section'},order_by='idx')
 		if len(component)>0:
-			page_template += '<div class="page" style="padding: 60px 40px !important;"><div>\n'
+			page_template += '<div class="page" style="padding: 60px 0px !important;"><div>\n'
 			for item in component:
 				# by gopi 20/10/22
 				# product_template = frappe.db.get_value("Page Section", item.section, ["name", "business", "section_title", "web_template", "custom_css", "custom_js"], as_dict=True)    
