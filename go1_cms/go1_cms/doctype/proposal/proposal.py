@@ -818,7 +818,7 @@ def get_proposal_html(page,name):
 					template=frappe.render_template(template, data_source)
 					page_template += '\n'+template+'\n'
 					
-			page_template += '\n</div></div>\n'
+			page_template += '\n</div>\n'
 
 		page_template += '<style>\n'
 		if builder.custom_css:
