@@ -49,7 +49,7 @@
                      Prepared for:
                      
                      <br/>
-                        <br/>
+                      
                   </span>
 
                   <div>
@@ -65,7 +65,7 @@
                   
                  
                   <p style="margin-bottom: 0;padding-bottom: 5px">
-                     <span style="font-size: 18px;">
+                     <span style="font-size: 16px;">
                      <strong>
                      Total
                      </strong>
@@ -73,7 +73,7 @@
                   </p>
                   <p >
                      {%if quotation_data%}
-                     <span style="font-size: 24px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
+                     <span style="font-size: 18px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
                    <p style="margin-bottom:0px;" id="proposal-status">Status: {{doc.status}}</p>
@@ -202,7 +202,7 @@
    font-family: Poppins, 'Source Sans Pro' !important;
    }
    #myHeader p{
-   font-size: 16px !important;
+   font-size: 14px !important;
    font-family: Poppins, 'Source Sans Pro';
    line-height: 28px;
    font-weight: 400;
