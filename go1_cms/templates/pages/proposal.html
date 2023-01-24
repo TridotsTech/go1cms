@@ -76,8 +76,8 @@
                      <span style="font-size: 18px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
                      {%endif%}
                   </p>
-                   <p style="margin-bottom:0px;" id="proposal-status">Status: {{doc.status}}</p>
-                   <p style="margin-bottom:0px;">Date: {{quotation_data.transaction_date.strftime('%m-%d-%Y')}}</p>
+                   <p style="margin-bottom:0px;padding-bottom: 0;" id="proposal-status">Status: {{doc.status}}</p>
+                   <p style="margin-bottom:0px;padding-bottom: 0;">Date: {{quotation_data.transaction_date.strftime('%m-%d-%Y')}}</p>
                     <p style="margin-bottom:0px;">Open Till: {{quotation_data.valid_till.strftime('%m-%d-%Y')}}</p>
                   <br/>
                 
@@ -334,6 +334,7 @@
    /*margin-bottom: 3.1rem;*/
    /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
    width: 100%;
+   padding-bottom: 0;
    }
    .auto-group-6bfp-5nr.sticky{
     width: 25%;
