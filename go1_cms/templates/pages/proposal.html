@@ -130,13 +130,31 @@
     </div>
 </div>
 <div id="acceptconfirm" class="modal">
-  <div class="modal-body">
+  <div class="modal-dialog">
+    <div class="modal-content" style="
+    padding: 0;
+">
+  <div class="modal-body" style="
+    padding: 25px 15px;
+">
     Are you sure want to accept this proposal?
   </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept">Accept</button>
-    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
-  </div>
+  <div class="modal-footer" style="
+   
+    padding: 5px;
+">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="confirm_accept()">Accept</button>
+    <button type="button" data-dismiss="modal" class="btn btn-danger" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="hide_modal()">Cancel</button>
+  
+    </div>
+    </div>
+</div>
 </div>
 <div id="rejectconfirm" class="modal">
   <div class="modal-body">
@@ -592,11 +610,23 @@ function myFunction() {
     }
     // item.toggleClass('sticky', isSticky);
 }
- $('#accept-form').on("click", function(){
-    // console.log("accept")
-    var status="Accepted";
+function hide_modal(){
+    $(".modal-backdrop").remove();
+    $("#acceptconfirm").hide();
+    $("#rejectconfirm").hide();
+}
+function confirm_accept(){
+     var status="Accepted";
     var proposal = $('#ProposalName').val();
     update_status(proposal, status)
+    hide_modal();
+}
+ $('#accept-form').on("click", function(){
+    // console.log("accept")
+    // var status="Accepted";
+    // var proposal = $('#ProposalName').val();
+    // update_status(proposal, status)
+    $("#acceptconfirm").modal('show');
 
   })
   $('#reject-form').on("click", function(){
