@@ -125,8 +125,26 @@
         <span class="close-button">&times;</span>
     </div>
         
-       <p id="model-content">Proposal Accepted!</p>
+       <p id="model-content">Thank you for your response.We will check and our team will connect soon!</p>
     </div>
+</div>
+<div id="acceptconfirm" class="modal">
+  <div class="modal-body">
+    Are you sure want to accept this proposal?
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept">Accept</button>
+    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+  </div>
+</div>
+<div id="rejectconfirm" class="modal">
+  <div class="modal-body">
+    Are you sure want to decline this proposal?
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="decline">Decline</button>
+    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+  </div>
 </div>
 <!--  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
@@ -574,17 +592,20 @@ function myFunction() {
     // item.toggleClass('sticky', isSticky);
 }
  $('#accept-form').on("click", function(){
-    console.log("accept")
-    frappe.confirm('Are you sure you want to accept this proposal?',
-    () => {
-        var status="Accepted";
-        var proposal = $('#ProposalName').val();
-        update_status(proposal, status)
-        
-    }, () => {
-        
+    // console.log("accept")
+    // var status="Accepted";
+    // var proposal = $('#ProposalName').val();
+    // update_status(proposal, status)
+    $('#acceptconfirm').modal({
+          backdrop: 'static',
+          keyboard: false
+      })
+      .on('click', '#accept', function(e) {
+            var status="Accepted";
+            var proposal = $('#ProposalName').val();
+            update_status(proposal, status)
     });
-    
+      
 
   })
   $('#reject-form').on("click", function(){
