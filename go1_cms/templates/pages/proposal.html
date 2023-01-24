@@ -156,14 +156,33 @@
     </div>
 </div>
 </div>
+
 <div id="rejectconfirm" class="modal">
-  <div class="modal-body">
+    <div class="modal-dialog">
+    <div class="modal-content" style="
+    padding: 0;
+">
+  <div class="modal-body" style="
+    padding: 25px 15px;
+">
     Are you sure want to decline this proposal?
   </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-primary" id="decline">Decline</button>
-    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
-  </div>
+  <div class="modal-footer" style="
+   
+    padding: 5px;
+">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="confirm_reject()">Decline</button>
+    <button type="button" data-dismiss="modal" class="btn btn-danger" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="hide_modal()">Cancel</button>
+  
+    </div>
+    </div>
+</div>
 </div>
 <!--  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
@@ -621,6 +640,12 @@ function confirm_accept(){
     update_status(proposal, status)
     hide_modal();
 }
+function confirm_reject(){
+     var status="Rejected";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
+    hide_modal();
+}
  $('#accept-form').on("click", function(){
     // console.log("accept")
     // var status="Accepted";
@@ -631,10 +656,10 @@ function confirm_accept(){
   })
   $('#reject-form').on("click", function(){
     console.log("reject")
-    var status="Rejected";
-    var proposal = $('#ProposalName').val();
-    update_status(proposal, status)
-
+    // var status="Rejected";
+    // var proposal = $('#ProposalName').val();
+    // update_status(proposal, status)
+    $("#rejectconfirm").modal('show');
   })
   function update_status(proposal, status){
   $.ajax({
@@ -654,14 +679,14 @@ function confirm_accept(){
   
       if(data.status=="Accepted"){
              
-              $('#model-content').html("Proposal Accepted!")
+              $('#model-content').html("Thank you for your response.We will check and our team will connect soon!")
               $('#myModal').show();
               $('#hide-btn').hide();
               $("#proposal-status").text("Status: "+data.status);
               $("#proposal-status-title").text(data.status);
       }
        if(data.status=="Rejected"){
-              $('#model-content').html("Proposal Rejected!")
+              $('#model-content').html("Thank you for your response.We will check and our team will connect soon!")
               $('#myModal').show();
               $('#hide-btn').hide();
               $("#proposal-status").text("Status: "+data.status);
@@ -813,6 +838,9 @@ div#hide-btn
 p#model-content {
     font-size: 15px;
     margin-top: 15px;
+}
+.modal-backdrop.show {
+    display: none;
 }
 </style>
 
