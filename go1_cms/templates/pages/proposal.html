@@ -651,7 +651,7 @@ function confirm_reject(){
     // var status="Accepted";
     // var proposal = $('#ProposalName').val();
     // update_status(proposal, status)
-    $("#acceptconfirm").modal('show');
+    $("#acceptconfirm").attr('style',"display:block");
 
   })
   $('#reject-form').on("click", function(){
@@ -659,7 +659,7 @@ function confirm_reject(){
     // var status="Rejected";
     // var proposal = $('#ProposalName').val();
     // update_status(proposal, status)
-    $("#rejectconfirm").modal('show');
+    $("#rejectconfirm").attr('style',"display:block");
   })
   function update_status(proposal, status){
   $.ajax({
