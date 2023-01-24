@@ -631,8 +631,8 @@ function myFunction() {
 }
 function hide_modal(){
     $(".modal-backdrop").remove();
-    $("#acceptconfirm").hide();
-    $("#rejectconfirm").hide();
+    $("#acceptconfirm").removeAttr("style");
+    $("#rejectconfirm").removeAttr("style");
 }
 function confirm_accept(){
      var status="Accepted";
