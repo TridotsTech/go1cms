@@ -593,19 +593,9 @@ function myFunction() {
 }
  $('#accept-form').on("click", function(){
     // console.log("accept")
-    // var status="Accepted";
-    // var proposal = $('#ProposalName').val();
-    // update_status(proposal, status)
-    $('#acceptconfirm').modal({
-          backdrop: 'static',
-          keyboard: false
-      })
-      .on('click', '#accept', function(e) {
-            var status="Accepted";
-            var proposal = $('#ProposalName').val();
-            update_status(proposal, status)
-    });
-      
+    var status="Accepted";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
 
   })
   $('#reject-form').on("click", function(){
