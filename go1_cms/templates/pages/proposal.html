@@ -574,9 +574,16 @@ function myFunction() {
 }
  $('#accept-form').on("click", function(){
     console.log("accept")
-    var status="Accepted";
-    var proposal = $('#ProposalName').val();
-    update_status(proposal, status)
+    frappe.confirm('Are you sure you want to accept this proposal?',
+    () => {
+        var status="Accepted";
+        var proposal = $('#ProposalName').val();
+        update_status(proposal, status)
+        
+    }, () => {
+        
+    });
+    
 
   })
   $('#reject-form').on("click", function(){
@@ -759,6 +766,10 @@ div#hide-btn
         width: 100%;
     float: left;
 
+}
+p#model-content {
+    font-size: 15px;
+    margin-top: 15px;
 }
 </style>
 
