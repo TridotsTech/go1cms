@@ -2910,7 +2910,7 @@ var modify_section_data = Class.extend({
                 "fieldtype": "Select",
                 "options": dt_options,
                 "label": __("Reference Document"),
-                "depends_on": "eval: {{doc.image_type == 'Random image from linked document' || doc.image_type =='Pick image from linked document'}}"
+                "depends_on": "eval: doc.image_type == 'Random image from linked document' || doc.image_type =='Pick image from linked document'"
             });
             field_list.push({ "fieldtype": "HTML", "fieldname": "img" });
             field_list.push({ "fieldtype": "HTML", "fieldname": "save_record" });
