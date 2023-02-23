@@ -16,58 +16,58 @@ from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 
 class WebPageBuilder(WebsiteGenerator):
-    def autoname(self):
-        if check_domain('saas'):
-            naming_series = 'WPB-'
-            if not self.business:
-                self.business = get_business_from_login()
-            if self.business:
-                naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
-            self.name = make_autoname(naming_series + '.#####', doc=self)
-        else:
-            self.name = self.page_title
+	def autoname(self):
+		if check_domain('saas'):
+			naming_series = 'WPB-'
+			if not self.business:
+				self.business = get_business_from_login()
+			if self.business:
+				naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
+			self.name = make_autoname(naming_series + '.#####', doc=self)
+		else:
+			self.name = self.page_title
 
-    def validate(self):
-        if self.is_new():
-            self.file_path=""
-        if self.web_section:
-            self.construct_html('web', 'web_section')
-        if self.mobile_section:
-            self.construct_html('mobile', 'mobile_section')
-        route_prefix = ""
-        r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
-        if r_prefix:
-            route_prefix = r_prefix[0].page_prefix+"/"
-        self.route = route_prefix+self.scrub(self.page_title)
-        if not self.meta_title:
-            self.meta_title = self.page_title
-        if not self.meta_keywords:
-            self.meta_keywords = self.page_title.replace(" ", ", ")
-        if not self.meta_description:
-            self.meta_description="About: "+self.page_title
+	def validate(self):
+		if self.is_new():
+			self.file_path=""
+		if self.web_section:
+			self.construct_html('web', 'web_section')
+		if self.mobile_section:
+			self.construct_html('mobile', 'mobile_section')
+		route_prefix = ""
+		r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
+		if r_prefix:
+			route_prefix = r_prefix[0].page_prefix+"/"
+		self.route = route_prefix+self.scrub(self.page_title)
+		if not self.meta_title:
+			self.meta_title = self.page_title
+		if not self.meta_keywords:
+			self.meta_keywords = self.page_title.replace(" ", ", ")
+		if not self.meta_description:
+			self.meta_description="About: "+self.page_title
 
-    def on_update(self):
-        #by siva
-        enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
-        if enable_generate_html:
-            page_template = generate_page_html(page=self.name, view_type='web')
-            if page_template:
-                temp_path = get_template_folder(business=self.business)
-                html_page = self.route.lower().replace('-','_')
-                with open(os.path.join(temp_path, (html_page+'.html')), "w") as f:
-                    f.write(page_template)
-                template_path = get_template_folder(business=self.business, temp=1)
-                if not self.file_path:
-                    frappe.db.set_value("Web Page Builder", self.name,"file_path", os.path.join(template_path, (html_page+'.html')))
-                    frappe.db.commit()
-            if self.web_section:
-                for item in self.web_section:
-                    from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
-                    generate_section_html(item.section)
-            if self.mobile_section:
-                for item in self.mobile_section:
-                    from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
-                    generate_section_html(item.section)
+	def on_update(self):
+		#by siva
+		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+		if enable_generate_html:
+			page_template = generate_page_html(page=self.name, view_type='web')
+			if page_template:
+				temp_path = get_template_folder(business=self.business)
+				html_page = self.route.lower().replace('-','_')
+				with open(os.path.join(temp_path, (html_page+'.html')), "w") as f:
+					f.write(page_template)
+				template_path = get_template_folder(business=self.business, temp=1)
+				if not self.file_path:
+					frappe.db.set_value("Web Page Builder", self.name,"file_path", os.path.join(template_path, (html_page+'.html')))
+					frappe.db.commit()
+			if self.web_section:
+				for item in self.web_section:
+					from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
+					generate_section_html(item.section)
+			if self.mobile_section:
+				for item in self.mobile_section:
+					from go1_cms.go1_cms.doctype.page_section.page_section import generate_section_html
+					generate_section_html(item.section)
 
 
 		# if self.web_section:
@@ -84,160 +84,160 @@ class WebPageBuilder(WebsiteGenerator):
 		# 		f.write(content)
 			# return {"status":"success","message":"completed successfully"}
 		# frappe.enqueue("ecommerce_business_store.ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.generate_css_file")
-        generate_css_file()
+		generate_css_file()
 
-    def construct_html(self, view_type, ref_field):
-        result = self.get_json_data(ref_field)
+	def construct_html(self, view_type, ref_field):
+		result = self.get_json_data(ref_field)
 
-        path = get_files_path()
-        if not os.path.exists(os.path.join(path,'data_source')):
-            frappe.create_folder(os.path.join(path,'data_source'))
-        with open(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "w") as f:
-            if view_type == "mobile":
-                content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
-                # f.write(frappe.as_json(result))
-                f.write(content)
-            else:
-                # f.write(frappe.as_json(result))
-                content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
-                # f.write(frappe.as_json(result))
-                f.write(content)
-        # self.file_path = '/files/data_source/{}.json'.format(self.name.lower().replace(' ', '_'))
+		path = get_files_path()
+		if not os.path.exists(os.path.join(path,'data_source')):
+			frappe.create_folder(os.path.join(path,'data_source'))
+		with open(os.path.join(path,'data_source', (self.name.lower().replace(' ', '_')+ '_' + view_type + '.json')), "w") as f:
+			if view_type == "mobile":
+				content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
+				# f.write(frappe.as_json(result))
+				f.write(content)
+			else:
+				# f.write(frappe.as_json(result))
+				content = json.dumps(json.loads(frappe.as_json(result)), separators=(',', ':'))
+				# f.write(frappe.as_json(result))
+				f.write(content)
+		# self.file_path = '/files/data_source/{}.json'.format(self.name.lower().replace(' ', '_'))
 
-    def get_json_data(self, ref_field):
-        results = []
-        for item in self.as_dict()[ref_field]:
-            doc = frappe.get_doc('Page Section', item.section)
-            obj = doc.run_method('section_data')
-            results.append(obj)
-        return results
+	def get_json_data(self, ref_field):
+		results = []
+		for item in self.as_dict()[ref_field]:
+			doc = frappe.get_doc('Page Section', item.section)
+			obj = doc.run_method('section_data')
+			results.append(obj)
+		return results
 
-    def get_context(self, context):
-        
+	def get_context(self, context):
+		
 
-        doc = None
-        add_info = {}
-        if frappe.form_dict:
-            add_info = frappe.form_dict
-        if check_domain('saas') and context.get('web_domain'):
-            if self.business and self.business == context.web_domain.business:
-                doc = self
-            else:
-                check_routes = frappe.db.get_all('Web Page Builder', filters={'route': self.route, 'business': context.web_domain.business})
-                if check_routes:
-                    doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
-            if not doc:
-                frappe.local.flags.redirect_location = '/404'
-                raise frappe.Redirect
-        if check_domain('multi_store'):
-            multi_store_business = frappe.request.cookies.get('selected_store')
-            if not multi_store_business:
-                all_locations = frappe.db.get_all("Shipping City",fields=['business','core_city'],order_by="is_default desc",limit_page_length=5)
-                if all_locations:
-                    multi_store_business = all_locations[0].business
-            else:
-                multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-            if multi_store_business:
-                if self.business:
-                    check_routes = frappe.db.get_all('Web Page Builder', filters={'business': multi_store_business,'published':1})
-                    if check_routes:
-                        doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
-        if not doc:
-            doc = self
-        if not context.get('device_type'):
-            context.device_type = 'Desktop'
-        source_doc, sections, html = get_source_doc(doc, context.device_type)
-        html_list = []
-        if check_domain('restaurant'):
-            preferred_date = frappe.request.cookies.get('order_date')
-            preferred_time = frappe.request.cookies.get('order_time')
-            if not preferred_date and not preferred_time:
-                #hided by boopathy
-                # from ecommerce_business_store.ecommerce_business_store.api import get_today_date
-                #end
-                preferred_date = getdate(get_today_date(replace=True))
-                preferred_time = 'ASAP'
-            context.preferred_date = getdate(preferred_date)
-            context.preferred_time = urllib.parse.unquote(preferred_time)
-            preferred_time_format = frappe.request.cookies.get('order_time_format')
-            if preferred_time_format:
-                if urllib.parse.unquote(preferred_time) == 'ASAP' and preferred_time_format != 'ASAP':
-                    preferred_time_format = 'ASAP'
-                    frappe.local.cookie_manager.set_cookie("order_time_format", urllib.parse.unquote(preferred_time_format))
-                context.preferred_time_format = urllib.parse.unquote(preferred_time_format)
-            frappe.local.cookie_manager.set_cookie("order_date", str(getdate(preferred_date)))
-            frappe.local.cookie_manager.set_cookie("order_time", urllib.parse.unquote(preferred_time))
-        if source_doc:
-            html_list, js_list = get_page_html(doc, sections, html, source_doc, context.device_type, add_info)
-        context.html_list = html_list
-        context.js_list = js_list
+		doc = None
+		add_info = {}
+		if frappe.form_dict:
+			add_info = frappe.form_dict
+		if check_domain('saas') and context.get('web_domain'):
+			if self.business and self.business == context.web_domain.business:
+				doc = self
+			else:
+				check_routes = frappe.db.get_all('Web Page Builder', filters={'route': self.route, 'business': context.web_domain.business})
+				if check_routes:
+					doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
+			if not doc:
+				frappe.local.flags.redirect_location = '/404'
+				raise frappe.Redirect
+		if check_domain('multi_store'):
+			multi_store_business = frappe.request.cookies.get('selected_store')
+			if not multi_store_business:
+				all_locations = frappe.db.get_all("Shipping City",fields=['business','core_city'],order_by="is_default desc",limit_page_length=5)
+				if all_locations:
+					multi_store_business = all_locations[0].business
+			else:
+				multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
+			if multi_store_business:
+				if self.business:
+					check_routes = frappe.db.get_all('Web Page Builder', filters={'business': multi_store_business,'published':1})
+					if check_routes:
+						doc = frappe.get_doc('Web Page Builder', check_routes[0].name)
+		if not doc:
+			doc = self
+		if not context.get('device_type'):
+			context.device_type = 'Desktop'
+		source_doc, sections, html = get_source_doc(doc, context.device_type)
+		html_list = []
+		if check_domain('restaurant'):
+			preferred_date = frappe.request.cookies.get('order_date')
+			preferred_time = frappe.request.cookies.get('order_time')
+			if not preferred_date and not preferred_time:
+				#hided by boopathy
+				# from ecommerce_business_store.ecommerce_business_store.api import get_today_date
+				#end
+				preferred_date = getdate(get_today_date(replace=True))
+				preferred_time = 'ASAP'
+			context.preferred_date = getdate(preferred_date)
+			context.preferred_time = urllib.parse.unquote(preferred_time)
+			preferred_time_format = frappe.request.cookies.get('order_time_format')
+			if preferred_time_format:
+				if urllib.parse.unquote(preferred_time) == 'ASAP' and preferred_time_format != 'ASAP':
+					preferred_time_format = 'ASAP'
+					frappe.local.cookie_manager.set_cookie("order_time_format", urllib.parse.unquote(preferred_time_format))
+				context.preferred_time_format = urllib.parse.unquote(preferred_time_format)
+			frappe.local.cookie_manager.set_cookie("order_date", str(getdate(preferred_date)))
+			frappe.local.cookie_manager.set_cookie("order_time", urllib.parse.unquote(preferred_time))
+		if source_doc:
+			html_list, js_list = get_page_html(doc, sections, html, source_doc, context.device_type, add_info)
+		context.html_list = html_list
+		context.js_list = js_list
 
-        if doc.custom_js and doc.custom_js.find('<script') == -1:
-            context.custom_js = '<script>{0}</script>'.format(doc.custom_js)
-        if doc.custom_css and doc.custom_css.find('<style') == -1:
-            context.custom_css = '<style>{0}</style>'.format(doc.custom_css)
+		if doc.custom_js and doc.custom_js.find('<script') == -1:
+			context.custom_js = '<script>{0}</script>'.format(doc.custom_js)
+		if doc.custom_css and doc.custom_css.find('<style') == -1:
+			context.custom_css = '<style>{0}</style>'.format(doc.custom_css)
 
-        # if doc.header_template:
-        # 	context['header_file'] = frappe.db.get_value('Header Template', doc.header_template, 'route')
-        # if doc.footer_template:
-        # 	context['footer_file'] = frappe.db.get_value('Footer Template', doc.footer_template, 'route')
-        if doc.header_component:
-            header = []
-            h_comp = frappe.db.get_all("Header Component",filters={"name":doc.header_component},fields=['*'])
-            if h_comp:
-                header_dict = {}
-                nav_menu = frappe.db.get_all("Menus Item",filters={"parent":h_comp[0]['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-                top_menu = frappe.db.get_all("Menus Item",filters={"parent":doc.header_component},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-                if nav_menu:
-                    header_dict['nav_menus']=nav_menu[0]
-                if top_menu:
-                   header_dict['top_menus'] = top_menu[0]
-                header.append(header_dict)
-            context['header'] = header
-        if doc.footer_component:
-            footer_template = None
-            footer = frappe.db.get_all("Footer Component Item",filters={"parent":doc.footer_component},fields={"title","section_type","column_count","menu"})
-            if footer and len(footer)>0:
-                for z in footer:
-                    footer_template[z['section_type']] = frappe.db.get_all("Menus Item",filters={"parent":z['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
-            context['footer'] = footer_template
-        
-        # frappe.log_error(doc,"doc111")
-        context.doc = doc
-        # frappe.log_error(context.doc.name,"context.doc")
-        if doc.meta_title:
-            context.meta_title = doc.meta_title
-        if doc.meta_description:
-            context.meta_description = doc.meta_description
-        if doc.meta_keywords:
-            context.meta_keywords = doc.meta_keywords
-        enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
-        
-        if enable_generate_html:
-            #by siva
-            page_no=0
-            page_len=3
-            # modified by boopathy
-            # from ecommerce_business_store.cms.api import get_section_data
-            from go1_cms.go1_cms.api import get_section_data
-            #end
-            page_builder = frappe.get_doc('Web Page Builder', self.name)
-            page_sections = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
-            context['section_len']= len(page_sections)
-            page_sections = page_sections[int(page_no):int(page_len)]
-            for item in page_sections:
-                data=get_section_data(item.section, item.parent, context.device_type)
-                if data:
-                    #updated by boopathy
-                    if data.get('context') != None:
-                        context[data['context']]= {}  
-                        for key, value in data.items():
-                            context[data['context']][key]= value
-            context.template = self.file_path
-        p_route = self.route
-        if "/" in p_route:
-            p_route = p_route.split("/")[1]
-        context.p_route = p_route
+		# if doc.header_template:
+		# 	context['header_file'] = frappe.db.get_value('Header Template', doc.header_template, 'route')
+		# if doc.footer_template:
+		# 	context['footer_file'] = frappe.db.get_value('Footer Template', doc.footer_template, 'route')
+		if doc.header_component:
+			header = []
+			h_comp = frappe.db.get_all("Header Component",filters={"name":doc.header_component},fields=['*'])
+			if h_comp:
+				header_dict = {}
+				nav_menu = frappe.db.get_all("Menus Item",filters={"parent":h_comp[0]['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+				top_menu = frappe.db.get_all("Menus Item",filters={"parent":doc.header_component},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+				if nav_menu:
+					header_dict['nav_menus']=nav_menu[0]
+				if top_menu:
+				   header_dict['top_menus'] = top_menu[0]
+				header.append(header_dict)
+			context['header'] = header
+		if doc.footer_component:
+			footer_template = None
+			footer = frappe.db.get_all("Footer Component Item",filters={"parent":doc.footer_component},fields={"title","section_type","column_count","menu"})
+			if footer and len(footer)>0:
+				for z in footer:
+					footer_template[z['section_type']] = frappe.db.get_all("Menus Item",filters={"parent":z['menu']},fields={"menu_label","parent_menu","redirect_url","position","icon"})
+			context['footer'] = footer_template
+		
+		# frappe.log_error(doc,"doc111")
+		context.doc = doc
+		# frappe.log_error(context.doc.name,"context.doc")
+		if doc.meta_title:
+			context.meta_title = doc.meta_title
+		if doc.meta_description:
+			context.meta_description = doc.meta_description
+		if doc.meta_keywords:
+			context.meta_keywords = doc.meta_keywords
+		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+		
+		if enable_generate_html:
+			#by siva
+			page_no=0
+			page_len=3
+			# modified by boopathy
+			# from ecommerce_business_store.cms.api import get_section_data
+			from go1_cms.go1_cms.api import get_section_data
+			#end
+			page_builder = frappe.get_doc('Web Page Builder', self.name)
+			page_sections = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
+			context['section_len']= len(page_sections)
+			page_sections = page_sections[int(page_no):int(page_len)]
+			for item in page_sections:
+				data=get_section_data(item.section, item.parent, context.device_type)
+				if data:
+					#updated by boopathy
+					if data.get('context') != None:
+						context[data['context']]= {}  
+						for key, value in data.items():
+							context[data['context']][key]= value
+			context.template = self.file_path
+		p_route = self.route
+		if "/" in p_route:
+			p_route = p_route.split("/")[1]
+		context.p_route = p_route
 		
 def get_product_context(self, context):
 		try:
@@ -545,7 +545,7 @@ def bind_customer_cart():
 									c.attribute_description,c.attribute_ids,c.special_instruction,i.old_price, i.minimum_order_qty, i.maximum_order_qty, i.inventory_method,i.enable_shipping,i.free_shipping, i.route,ifnull((select mini_cart from `tabProduct Image` where 
 									parent=i.name order by is_primary desc limit 1), '') as image,i.product_type from `tabCart Items` c,`tabProduct` 
 									i where i.name=c.product and c.parent=%(parent)s order by c.creation desc''',
-								  	{'parent': item.name}, as_dict=1)
+									{'parent': item.name}, as_dict=1)
 						else:
 							budget_list = frappe.db.sql('''select name, delivery_week, delivery_days, 
 								 party, order_reference from `tabSubscription` where party = %(customer)s 
@@ -559,7 +559,7 @@ def bind_customer_cart():
 									c.attribute_description,c.attribute_ids,i.old_price, i.minimum_order_qty, i.maximum_order_qty, i.inventory_method,i.enable_shipping,i.free_shipping, i.route,ifnull((select mini_cart from `tabProduct Image` where 
 									parent=i.name order by is_primary desc limit 1), '') as image,i.product_type from `tabSubscription Item` c,`tabProduct` 
 									i where i.name=c.item and c.parent=%(parent)s order by c.creation desc''',
-								  	{'parent': item.name}, as_dict=1)
+									{'parent': item.name}, as_dict=1)
 						my_boxes = budget_list
 	return {"cart_items":cart_items,"my_boxes":my_boxes}
 
@@ -845,19 +845,19 @@ def get_page_layout_json(page_route):
 	pages = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 	if pages:
 		 page_sections = frappe.db.sql(""" SELECT P.name as page_section ,P.layout_json,P.layout_id,P.layout_type,MP.section_title FROM `tabMobile Page Section` MP 
-		 							   INNER JOIN `tabPage Section` P ON MP.section= P.name
-		 							   WHERE MP.parent = %(page_id)s ORDER BY MP.idx""",{"page_id":pages[0].name},as_dict=1)
+									   INNER JOIN `tabPage Section` P ON MP.section= P.name
+									   WHERE MP.parent = %(page_id)s ORDER BY MP.idx""",{"page_id":pages[0].name},as_dict=1)
 		 for x in page_sections:
-		 	if x.layout_json:
-		 		x.layout_json = json.loads(x.layout_json)
+			if x.layout_json:
+				x.layout_json = json.loads(x.layout_json)
 		 cid = 0
 		 cid_list = frappe.db.sql(""" SELECT CAST(cid AS UNSIGNED) as cid FROM `tabSection Content` SC
-		 							  INNER JOIN `tabPage Section` PS ON SC.parent = PS.name
-		 							  INNER JOIN `tabMobile Page Section` MP ON MP.section = PS.name
-		 							  INNER JOIN `tabWeb Page Builder` PB ON PB.name = MP.parent  
-		 							  WHERE  PB.route=%(pb_route)s order by cid  desc limit 1""",{'pb_route':page_route},as_dict=1)
+									  INNER JOIN `tabPage Section` PS ON SC.parent = PS.name
+									  INNER JOIN `tabMobile Page Section` MP ON MP.section = PS.name
+									  INNER JOIN `tabWeb Page Builder` PB ON PB.name = MP.parent  
+									  WHERE  PB.route=%(pb_route)s order by cid  desc limit 1""",{'pb_route':page_route},as_dict=1)
 		 if cid_list:
-		 	cid = cid_list[0].cid
+			cid = cid_list[0].cid
 		 pb_list = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 		 return {"page_sections":page_sections,'cid':cid,'title':pb_list[0].name}
 	return []
@@ -867,19 +867,19 @@ def get_builder_data(page_route):
 	pages = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 	if pages:
 		 page_sections = frappe.db.sql(""" SELECT P.name as page_section ,P.layout_json,P.layout_id,P.layout_type,MP.section_title FROM `tabMobile Page Section` MP 
-		 							   INNER JOIN `tabPage Section` P ON MP.section= P.name
-		 							   WHERE MP.parent = %(page_id)s ORDER BY MP.idx""",{"page_id":pages[0].name},as_dict=1)
+									   INNER JOIN `tabPage Section` P ON MP.section= P.name
+									   WHERE MP.parent = %(page_id)s ORDER BY MP.idx""",{"page_id":pages[0].name},as_dict=1)
 		 for x in page_sections:
-		 	if x.layout_json:
-		 		x.layout_json = json.loads(x.layout_json)
+			if x.layout_json:
+				x.layout_json = json.loads(x.layout_json)
 		 cid = 0
 		 cid_list = frappe.db.sql(""" SELECT CAST(cid AS UNSIGNED) as cid FROM `tabSection Content` SC
-		 							  INNER JOIN `tabPage Section` PS ON SC.parent = PS.name
-		 							  INNER JOIN `tabMobile Page Section` MP ON MP.section = PS.name
-		 							  INNER JOIN `tabWeb Page Builder` PB ON PB.name = MP.parent  
-		 							  WHERE  PB.route=%(pb_route)s order by cid  desc limit 1""",{'pb_route':page_route},as_dict=1)
+									  INNER JOIN `tabPage Section` PS ON SC.parent = PS.name
+									  INNER JOIN `tabMobile Page Section` MP ON MP.section = PS.name
+									  INNER JOIN `tabWeb Page Builder` PB ON PB.name = MP.parent  
+									  WHERE  PB.route=%(pb_route)s order by cid  desc limit 1""",{'pb_route':page_route},as_dict=1)
 		 if cid_list:
-		 	cid = cid_list[0].cid
+			cid = cid_list[0].cid
 		 pb_list = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 		 pages_list = frappe.db.sql(""" SELECT name , route FROM `tabWeb Page Builder` WHERE published=1 AND (w_page_type IS NULL OR w_page_type ='Regular') """,as_dict=1)
 		 return {"page_sections":page_sections,'cid':cid,'title':pb_list[0].name,"pages_list":pages_list}
@@ -1480,7 +1480,9 @@ def get_random_images(dt, dn, business=None, ref_doc=None, image_option=None, im
 				if res and res[0].image:
 					return res[0].image
 
-	return get_settings_value_from_domain('Media Settings', 'default_image')
+	media_settings = frappe.db.get_all("Media Settings",fields=['default_image'])
+	if media_settings:
+		return media_settings[0].default_image
 
 @frappe.whitelist()
 def get_document_image(dt, dn, business=None):
@@ -1936,366 +1938,6 @@ def get_today_date(time_zone=None, replace=False):
 	else:
 		return currentdatezone
 
-# @frappe.whitelist(allow_guest=True)
-# def get_bestsellers(business=None, limit=None, isMobile=0):
-# 	try:
-# 		if not limit:
-# 			limit = catalog_settings.no_of_best_sellers
-# 		if catalog_settings.display_best_seller_products:
-
-# 			# updated by kartheek for getting author and publisher on 19-08-2019
-
-# 			books_join_query = ''
-# 			books_columns_query = ''
-# 			installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
-# 			if len(installed_apps) > 0:
-# 				books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
-# 				books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
-# 			condition = ''
-# 			if business:
-# 				condition += ' and p.restaurant = "{0}"'.format(business)
-# 			query = "select p.item,p.tax_category,p.price,p.old_price,p.short_description,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.minimum_order_qty,p.maximum_order_qty,p.stock,p.disable_add_to_cart_button,p.restaurant,\
-# 				(select list_image from `tabProduct Image` i where parent=p.name order by is_primary desc\
-# 				limit 1) as product_image, (select detail_thumbnail from `tabProduct Image` i where parent=p.name order by is_primary desc\
-# 				limit 1) as detail_thumbnail,(select brand_name from `tabProduct Brand Mapping` where parent=p.name\
-# 				limit 1) as product_brand,\
-# 				(select B.route from `tabProduct Brand Mapping` MP\
-# 									inner join `tabProduct Brand` B on MP.brand=B.name\
-# 									where MP.parent=p.name and B.published=1 limit 1) as brand_route,\
-# 				sum(oi.quantity) as qty " + books_columns_query + " from `tabProduct` p inner join `tabOrder Item` oi\
-# 				on oi.item=p.name " + books_join_query + ' where p.is_active=1 ' + condition \
-# 				+ ' group by p.name order by qty desc limit ' + str(limit)
-# 			Items = frappe.db.sql(query, as_dict=True)
-
-# 			# Items=frappe.db.sql('''select p.item,p.tax_category,p.price,p.old_price,p.short_description,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.minimum_order_qty,p.maximum_order_qty,p.stock,
-# 			#   (select list_image from `tabProduct Image` i where parent=p.name order by is_primary desc
-# 			#   limit 1) as product_image, (select detail_thumbnail from `tabProduct Image` i where parent=p.name order by is_primary desc
-# 			#   limit 1) as detail_thumbnail,(select brand_name from `tabProduct Brand Mapping` where parent=p.name
-# 			#   limit 1) as product_brand,
-# 			#   (select B.route from `tabProduct Brand Mapping` MP
-# 			#                       inner join `tabProduct Brand` B on MP.brand=B.name
-# 			#                       where MP.parent=p.name and B.published=1 limit 1) as brand_route,
-# 			#   sum(oi.quantity) as qty %(books_columns_query)s from `tabProduct` p inner join `tabOrder Item` oi
-# 			#   on oi.item=p.name %(books_join_query)s where p.is_active=1 group by p.name order by qty desc limit %(limit)s''',{'limit':limit,'books_columns_query':books_columns_query,'books_join_query':books_join_query},as_dict=1)
-# 			# updated by kartheek for getting author and publisher on 19-08-2019
-
-# 			if Items:
-# 				Items = get_product_details(Items, isMobile)
-# 			return Items
-# 		else:
-# 			return []
-# 	except Exception:
-# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_bestsellers')
-
-
-# def get_product_price(product, qty=1, rate=None,attribute_id=None, customer=None):
-# 	try:
-# 		web_type = None
-# 		try:
-# 			domain = frappe.get_request_header('host')
-# 			if domain and check_domain('saas'):
-# 				business = get_business_from_web_domain(domain)
-# 				web_type = 'Website' if business else 'Marketplace'
-# 		except Exception as e:
-# 			pass
-# 		if isinstance(attribute_id, list):
-# 			if len(attribute_id)==1:
-# 				attribute_id = attribute_id[0]
-# 		# price = product.price
-# 		cust = customer
-# 		if frappe.request:
-# 			cust = frappe.request.cookies.get('customer_id')
-# 		# price=price-get_product_discount_amount(product)
-# 		cart_items=None
-# 		if cust:
-# 			cart = frappe.db.exists("Shopping Cart", {"customer": cust})
-# 			if cart:
-# 				doc = frappe.get_doc("Shopping Cart", cart)
-# 				cart_items = ','.join('"{0}"'.format(r.product) for r in doc.items)
-# 		#hide it by boopathy - 10/08/22
-# 		# from ecommerce_business_store.ecommerce_business_store.doctype.discounts.discounts import get_product_discount
-# 		#end
-# 		res = get_product_discount(product, qty, rate, customer_id=customer, website_type=web_type, attribute_id=attribute_id, product_array=cart_items)
-# 		return res
-# 	except Exception:
-# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_product_price')
-
-
-
-# @frappe.whitelist(allow_guest=True)
-# def get_category_products(category=None, sort_by=None, page_no=1, page_size=no_of_records_per_page,
-# 	brands=None, rating=None, min_price=None, max_price=None, attributes=None, as_html=None,
-# 	productsid=None, view_by=None, isMobile=0, domain=None, models=None, onlybrand_finder=0, customer=None,route=None,business_id=None):
-# 	try:
-# 		if route:
-# 			categories = frappe.db.get_all("Product Category",filters={"route":route})
-# 			if categories:
-# 				category = categories[0].name
-# 		catalog_settings = get_settings_from_domain('Catalog Settings', domain=domain)
-# 		default_sort_order = get_settings_value_from_domain('Catalog Settings',	'default_product_sort_order', domain=domain)
-# 		sort_order = get_sorted_columns(default_sort_order)
-# 		if sort_by:
-# 			sort_order = sort_by
-# 		category_products = get_sorted_category_products(category, sort_order, page_no, page_size,
-# 			brands, rating, min_price, max_price, attributes, productsid, domain=domain, models=models, onlybrand_finder=onlybrand_finder,business_id=business_id)
-# 		if category_products:
-# 			category_products = get_product_details(category_products, isMobile, customer=customer, current_category=category)
-# 			theme = get_theme_settings(domain)
-# 			product_box = None
-# 			if theme:
-# 				product_box = frappe.db.get_value('Web Theme', theme, 'grid_product_box')
-# 			if not product_box:
-# 				product_box = catalog_settings.product_boxes
-# 			if as_html and product_box:
-# 				product_box_view = frappe.db.get_value('Product Category',category,'default_view')
-# 				category_product_box = frappe.db.get_value('Product Category',category,'product_box_for_list_view')
-# 				if product_box_view and product_box_view == "List View":
-# 					if theme and frappe.db.get_value('Web Theme', theme, 'list_product_box'):
-# 						product_box = frappe.db.get_value('Web Theme', theme, 'list_product_box')
-# 					elif catalog_settings.list_view_product_box:
-# 						product_box = catalog_settings.list_view_product_box
-# 				if category_product_box:
-# 					product_box = category_product_box
-# 				file_name = frappe.db.get_value('Product Box', product_box, 'route')
-# 				template = frappe.get_template(file_name)
-# 				currency = frappe.cache().hget('currency', 'symbol')
-# 				return template.render({'products': category_products, 'currency': currency, 'catalog_settings': catalog_settings})
-# 		return category_products
-# 	except Exception:
-# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_category_products')
-
-
-
-# @frappe.whitelist(allow_guest=True)
-# def get_category_detail(product_name):
-# 	cur_category = frappe.db.sql('''select PC.category from `tabProduct`p inner join `tabProduct Category Mapping`PC  where p.name=%(name)s and PC.parent=p.name'''
-# 					  , {'name': product_name}, as_dict=1)
-# 	if cur_category:
-# 		for cat in cur_category:
-# 			get_cat = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''', {'name': cat.category}, as_dict=1)
-# 			if get_cat[0]['product_info'] != '':
-# 				return get_cat[0]['product_info']
-# 			else:
-# 				if get_cat[0]['parent_product_category']:
-# 					get_cat1 = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''', {'name': get_cat[0]['parent_product_category']}, as_dict=1)
-# 					if get_cat1[0]['product_info'] != '':
-# 						return get_cat1[0]['product_info']
-# 					else:
-# 						if get_cat1[0]['parent_product_category']:
-# 							get_cat2 = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''',{'name': get_cat1[0]['parent_product_category']}, as_dict=1)
-# 							if get_cat2[0]['product_info'] != '':
-# 								return get_cat2[0]['product_info']
-
-
-# @frappe.whitelist(allow_guest=True)
-# def get_enquiry_product_detail(product_id):
-# 	cur_category = frappe.db.sql('''select PC.category from `tabProduct`p inner join `tabProduct Category Mapping`PC  where p.name=%(name)s and PC.parent=p.name''', {'name': product_id}, as_dict=1)
-# 	if cur_category:
-# 		for cat in cur_category:
-# 			get_cat = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''', {'name': cat.category}, as_dict=1)
-# 			if get_cat[0]['type_of_category'] == 'Enquiry Product':
-# 				return get_cat[0]['type_of_category']
-# 			else:
-# 				if get_cat[0]['parent_product_category']:
-# 					get_cat1 = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''',{'name': get_cat[0]['parent_product_category']}, as_dict=1)
-# 					if get_cat1[0]['type_of_category'] == 'Enquiry Product':
-# 						return get_cat1[0]['type_of_category']
-# 					else:
-# 						if get_cat1[0]['parent_product_category']:
-# 							get_cat2 = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''',{'name': get_cat1[0]['parent_product_category']}, as_dict=1)
-# 							if get_cat2[0]['type_of_category'] == 'Enquiry Product':
-# 								return get_cat2[0]['type_of_category']
-# 							else:
-# 								return get_cat2[0]['type_of_category']
-# 						else:
-# 							return get_cat1[0]['type_of_category']
-# 				else:
-# 					return get_cat[0]['type_of_category']
-
-
-# @frappe.whitelist(allow_guest=True)
-# def get_customer_recently_viewed_products(customer=None, domain=None, isMobile=0,business=None):
-# 	products = []
-# 	if not customer:
-# 		if frappe.request.cookies.get('customer_id'):
-# 			customer = unquote(frappe.request.cookies.get('customer_id'))
-# 	catalog_settings = get_settings_from_domain('Catalog Settings')
-# 	if customer and catalog_settings.enable_recetly_viewed_products:
-# 		cond = ''
-# 		if domain:
-# 			business = get_business_from_web_domain(domain)
-# 			if business:
-# 				cond = ' and p.restaurant = "{0}"'.format(business)
-# 		if business:
-# 			cond = ' and p.restaurant = "{0}"'.format(business)
-
-# 		# recently_viewed_products = frappe.get_all("Customer Viewed Product",fields=['product'],filters={'parent':customer},order_by="viewed_date desc")
-
-# 		recently_viewed_products = frappe.db.sql('''select c.product from `tabCustomer Viewed Product` c inner join tabProduct p on p.name = c.product where c.parent = %(parent)s {cond} order by viewed_date desc'''.format(cond=cond),{'parent': customer}, as_dict=1)
-# 		books_join_query = ''
-# 		books_columns_query = ''
-# 		conditions = ''
-# 		if recently_viewed_products:
-# 			conditions += ' and p.name in('
-# 		installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
-# 		for x in recently_viewed_products:
-# 			conditions += "'" + x.product + "',"
-# 		if recently_viewed_products:
-# 			conditions = conditions[:-1]
-# 			conditions += ' )'
-# 		if cond:
-# 			conditions += cond
-# 		if len(installed_apps) > 0:
-# 			books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
-# 			books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
-
-# 		query = "select p.item,p.restaurant,p.price,p.old_price,p.short_description,p.tax_category,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.stock,p.minimum_order_qty,p.maximum_order_qty,p.disable_add_to_cart_button,CM.category,\
-# 									(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,\
-# 									(select brand_name from `tabProduct Brand Mapping` where parent=p.name limit 1) as product_brand,\
-# 									(select B.route from `tabProduct Brand Mapping` MP\
-# 									inner join `tabProduct Brand` B on MP.brand=B.name\
-# 									where MP.parent=p.name and B.published=1 limit 1) as brand_route" \
-# 			+ books_columns_query + ' from `tabProduct` p ' \
-# 			+ books_join_query \
-# 			+ " inner join `tabProduct Category Mapping` CM on CM.parent=p.name\
-# 									where p.is_Active=1 and p.status='Approved'  %s group by p.name limit %d" \
-# 			% (conditions, 12)
-# 		products = frappe.db.sql(query, as_dict=True)
-
-# 		# for thumbnails by Rajeshwari on 13-12-19
-
-# 		if products:
-# 			products = get_product_details(products, isMobile=isMobile)
-			
-# 	return products
-
-
-
-# @frappe.whitelist(allow_guest=True)
-# def get_product_other_info(item, domain=None, isMobile=0, business=None,customer=None):
-# 	'''
-# 		To get additional product information to show in product detail page
-
-# 		param: item: product id
-# 	'''
-# 	if domain:
-# 		business = None
-# 		business = get_business_from_web_domain(domain)
-
-# 	customer_bought = best_sellers = related_products = related_categories = cross_selling_products= []
-# 	categories_list = frappe.db.sql('''select category, category_name, (select route from `tabProduct Category` c where c.name = pcm.category) as route from `tabProduct Category Mapping` pcm where parent = %(parent)s order by idx limit 1''', {'parent': item}, as_dict=1)
-# 	catalog_settings = get_settings_from_domain('Catalog Settings')
-# 	recently_viewed_products =[]
-# 	if catalog_settings.customers_who_bought:
-# 		customer_bought = get_products_bought_together(item, business=business, isMobile=isMobile)
-# 	if catalog_settings.enable_best_sellers:
-# 		if categories_list and categories_list[0].category:
-# 			best_sellers = get_category_based_best_sellers(categories_list[0].category, item, business=business, isMobile=isMobile)
-# 	mapped_related_categories = frappe.db.get_all("Related Product Category",filters={"parent":item},fields=['category'])
-# 	# frappe.log_error(mapped_related_categories,'mapped_related_categories')
-# 	if catalog_settings.enable_related_products:
-# 		if categories_list:
-# 			mapped_related_products = frappe.db.get_all("Related Product",filters={"parent":item},fields=['product'])
-# 			if not mapped_related_products:
-# 				related_products = get_category_products(categories_list[0].category, productsid=item, page_size=18, domain=domain, isMobile=isMobile,customer=customer)
-# 			else:
-# 				if mapped_related_products:
-# 					check_related_products = []
-# 					for x in mapped_related_products:
-# 						product = frappe.db.get_all("Product",filters={"name":x.product},fields=['*'])
-# 						if product:
-# 							product_images = frappe.db.sql("""select list_image from `tabProduct Image` where parent=%(product_id)s order by is_primary desc limit 1""",{"product_id":x.product},as_dict=1)
-# 							if product_images:
-# 								product[0].product_image = product_images[0].list_image
-# 							check_related_products.append(product[0])
-# 					related_products = get_product_details(check_related_products)
-# 	# if  mapped_related_categories:
-# 		# related_categories = get_multiple_category_products(mapped_related_categories,page_size=18)
-# 	related_categories = get_related_categories(mapped_related_categories)
-# 	#updated by boopathy
-# 	if catalog_settings.enable_cross_selling_products:
-# 		cross_selling_items = frappe.get_list("Cross Selling Products",fields={"product"},filters={"parent":item})
-# 		if cross_selling_items:
-# 			for o in cross_selling_items:
-# 				product = frappe.get_list("Product",filters={"name":o['product']},fields=['*'])
-# 				res_data = get_product_details(product)
-# 				if res_data:
-# 					cross_selling_products.append(res_data[0])		
-# 	recommended_products = []
-# 	# if catalog_settings.enable_recommended_products:
-		
-# 	# 	viewed_items = []
-# 	# 	if customer:
-# 	# 		cond = " where o.customer='{customer}'""".format(customer=customer)
-# 	# 		viewed_query = """select distinct product from `tabCustomer Viewed Product` where parent ='{customer}'""".format(customer=customer)
-# 	# 		viewed_items = frappe.db.sql(viewed_query, as_dict=True)
-# 	# 	else:
-# 	# 		cond = ""
-# 	# 	orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
-# 	# 	order_items = frappe.db.sql(orderquery, as_dict=True)
-# 	# 	for s in order_items:
-# 	# 		s.price = frappe.db.get_value("Product", s.product, "price")
-# 	# 	cartquery = """select i.product, i.price from `tabShopping Cart` o inner join `tabCart Items` i ON i.parent=o.name  {cond}""".format(cond=cond)
-# 	# 	cart_items = frappe.db.sql(cartquery, as_dict=True)
-		
-# 	# 	for n in cart_items:
-# 	# 		order_items.append(n)
-
-# 	# 	for s in viewed_items:
-# 	# 		order_items.append(s)
-			
-# 	# 	recommended_item_list = []
-# 	# 	recommended_item_list=",".join(['"' + x.product + '"' for x in order_items])
-# 	# 	catquery = """select distinct category from `tabProduct Category Mapping` where parent in ({lists})""".format(lists=recommended_item_list)
-# 	# 	cat_items = frappe.db.sql(catquery, as_dict=True)
-# 	# 	max_val = max(flt(node.price) for node in order_items)
-# 	# 	min_val = min(flt(node.price) for node in order_items)
-# 	# 	category_list = []
-# 	# 	category_list=",".join(['"' + x.category + '"' for x in cat_items])
-# 	# 	if category_list:
-# 	# 		ord_query = """select p.* from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where pc.category in ({category_list}) and p.price >='{min_val}' and p.price <='{max_val}'""".format(lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
-# 	# 	else:
-# 	# 		ord_query = """select p.* from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where  p.price >='{min_val}' and p.price <='{max_val}'""".format(lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
-# 	# 	products =  frappe.db.sql(ord_query, as_dict=True)	
-# 	# 	res_data = get_product_details(products)
-# 	# 	if res_data:
-# 	# 		recommended_products.append(res_data[0])
-
-# 		# s = """select p.item, p.tax_category, p.price, p.old_price, p.short_description, p.full_description, p.sku, p.name ,p.route, 
-# 		# p.inventory_method, p.minimum_order_qty, p.maximum_order_qty, p.stock, p.disable_add_to_cart_button,
-# 		# (select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,
-# 		# (select brand_name from `tabProduct Brand Mapping` where parent=p.name  limit 1) as product_brand,
-# 		# (select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand=B.name where MP.parent=p.name and 
-# 		# B.published=1 limit 1) as brand_route
-# 		#   from `tabProduct` p where p.is_active =1 and p.display_home_page = 1 """	
-# 	if catalog_settings.enable_recetly_viewed_products and customer:
-# 		recently_viewed_products = get_customer_recently_viewed_products(customer, domain, isMobile,business)
-# 	you_may_like = get_bought_together(business=business, isMobile=isMobile)
-# 	return {
-# 		'best_seller_category': best_sellers,
-# 		'related_products': related_products,
-# 		'cross_selling_products':cross_selling_products,
-# 		'products_purchased_together': customer_bought,
-# 		'recommended_products':recommended_products,
-# 		'product_category': (categories_list[0] if categories_list else {}),
-# 		'recently_viewed_products': recently_viewed_products,
-# 		'you_may_like':you_may_like,
-# 		'related_categories':related_categories
-# 		}
-
-
-
-# def get_parent_categorie(category):
-# 	try:
-# 		count = frappe.db.get_value('Product Category', category, ['lft', 'rgt'], as_dict=True)
-# 		if count:
-# 			query = 'select name from `tabProduct Category` where is_active = 1 and disable_in_website = 0 and lft <= {lft} and rgt >= {rgt}'.format(lft=count.lft, rgt=count.rgt)
-# 			return frappe.db.sql('''{query}'''.format(query=query), as_dict=1)
-# 		else:
-# 			return []
-# 		# return frappe.db.get_all('Product Category', fields=['name'], filters={'is_active': 1, 'parent_product_category': category}, limit_page_length=100)
-# 	except Exception:
-# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_parent_categorie')
 
 @frappe.whitelist(allow_guest=True)
 def get_uploaded_file_content(filedata):
