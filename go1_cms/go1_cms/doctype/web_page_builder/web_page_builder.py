@@ -1662,36 +1662,39 @@ def get_shuffled_category_products(category,no_of_records):
 	#hided by boopathy-10/08/2022
 	# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
 	#end
-	catalog_settings = get_settings_from_domain('Catalog Settings')
-	category_filter = ""
-	sort= "ORDER BY RAND()"
-	conditions=""
-	if category:
-		category_filter = "'" + category + "'"
-	if catalog_settings.include_products_from_subcategories == 1:
-		child_categories = get_child_categories(category)
-		if child_categories:
-			category_filter = ','.join(['"' + x.name + '"' for x in child_categories])
-	books_join_query = ''
-	books_columns_query = ''
-	installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
-	if len(installed_apps) > 0:
-		books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
-		books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
-	query = "select distinct p.item,p.restaurant,p.price,p.old_price,p.short_description,p.tax_category,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.is_gift_card,(case when inventory_method ='Track Inventory' then p.stock else  10000 end) as stock,p.minimum_order_qty,p.maximum_order_qty,p.disable_add_to_cart_button,p.enable_preorder_product,p.weight,p.gross_weight,p.approved_total_reviews,CM.category,\
-	pc.show_attributes_inlist,pc.products_per_row_for_mobile_app,\
-								(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,\
-								(select brand_name from `tabProduct Brand Mapping` where parent=p.name limit 1) as product_brand,\
-								(select B.route from `tabProduct Brand Mapping` MP\
-								inner join `tabProduct Brand` B on MP.brand=B.name\
-								where MP.parent=p.name and B.published=1 limit 1) as brand_route" \
-		+ books_columns_query + ' from `tabProduct` p ' + books_join_query \
-		+ " inner join `tabProduct Category Mapping` CM on CM.parent=p.name\
-		inner join `tabProduct Category` pc on CM.category=pc.name\
-								where p.is_active=1 and p.status='Approved' and CM.category in(%s) %s group by p.name %s limit %d,%d " \
-		% (category_filter, conditions, sort, 0, int(no_of_records))
-	# update by kartheek for getting author and publisher on 19-08-2019
-	result = frappe.db.sql(query, as_dict=True)
+	result = []
+	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
+		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
+		catalog_settings = get_settings_from_domain('Catalog Settings')
+		category_filter = ""
+		sort= "ORDER BY RAND()"
+		conditions=""
+		if category:
+			category_filter = "'" + category + "'"
+		if catalog_settings.include_products_from_subcategories == 1:
+			child_categories = get_child_categories(category)
+			if child_categories:
+				category_filter = ','.join(['"' + x.name + '"' for x in child_categories])
+		books_join_query = ''
+		books_columns_query = ''
+		installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
+		if len(installed_apps) > 0:
+			books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
+			books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
+		query = "select distinct p.item,p.restaurant,p.price,p.old_price,p.short_description,p.tax_category,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.is_gift_card,(case when inventory_method ='Track Inventory' then p.stock else  10000 end) as stock,p.minimum_order_qty,p.maximum_order_qty,p.disable_add_to_cart_button,p.enable_preorder_product,p.weight,p.gross_weight,p.approved_total_reviews,CM.category,\
+		pc.show_attributes_inlist,pc.products_per_row_for_mobile_app,\
+									(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,\
+									(select brand_name from `tabProduct Brand Mapping` where parent=p.name limit 1) as product_brand,\
+									(select B.route from `tabProduct Brand Mapping` MP\
+									inner join `tabProduct Brand` B on MP.brand=B.name\
+									where MP.parent=p.name and B.published=1 limit 1) as brand_route" \
+			+ books_columns_query + ' from `tabProduct` p ' + books_join_query \
+			+ " inner join `tabProduct Category Mapping` CM on CM.parent=p.name\
+			inner join `tabProduct Category` pc on CM.category=pc.name\
+									where p.is_active=1 and p.status='Approved' and CM.category in(%s) %s group by p.name %s limit %d,%d " \
+			% (category_filter, conditions, sort, 0, int(no_of_records))
+		# update by kartheek for getting author and publisher on 19-08-2019
+		result = frappe.db.sql(query, as_dict=True)
 	return result
 @frappe.whitelist()
 def import_sections_from_template(page_id):
