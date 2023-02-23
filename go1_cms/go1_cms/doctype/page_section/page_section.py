@@ -177,7 +177,7 @@ class PageSection(Document):
 
 		elif self.section_type == 'Lists':
 			if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
-				from erp_ecommerce_business_store.erp_ecommerce_business_store.api import get_list_data
+				from erp_ecommerce_business_store.erp_ecommerce_business_store.page_section import get_list_data
 				json_obj['data'] = get_list_data(self, customer=None, add_info=None,store_business=None)
 
 		
