@@ -1176,8 +1176,8 @@ def get_random_records(dt, records, business=None):
 		if business:
 			condition += ' and restaurant = "{0}"'.format(business)
 	if fields and fields != '':
-		if not limit:
-			limit = 10
+		if not records:
+			records = 10
 		random_query = '''select d.*, "Random images from associated products" as image_type, 
 			(@row_number:=@row_number + 1) AS idx from (select {fields} from `tab{dt}`, (SELECT @row_number:=0) AS t  order by rand() limit {limit}) d order by idx'''.format(fields=fields, dt=dt, cond=condition, limit=records)
 		return frappe.db.sql(random_query, as_dict=1)
