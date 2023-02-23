@@ -1938,6 +1938,366 @@ def get_today_date(time_zone=None, replace=False):
 	else:
 		return currentdatezone
 
+# @frappe.whitelist(allow_guest=True)
+# def get_bestsellers(business=None, limit=None, isMobile=0):
+# 	try:
+# 		if not limit:
+# 			limit = catalog_settings.no_of_best_sellers
+# 		if catalog_settings.display_best_seller_products:
+
+# 			# updated by kartheek for getting author and publisher on 19-08-2019
+
+# 			books_join_query = ''
+# 			books_columns_query = ''
+# 			installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
+# 			if len(installed_apps) > 0:
+# 				books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
+# 				books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
+# 			condition = ''
+# 			if business:
+# 				condition += ' and p.restaurant = "{0}"'.format(business)
+# 			query = "select p.item,p.tax_category,p.price,p.old_price,p.short_description,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.minimum_order_qty,p.maximum_order_qty,p.stock,p.disable_add_to_cart_button,p.restaurant,\
+# 				(select list_image from `tabProduct Image` i where parent=p.name order by is_primary desc\
+# 				limit 1) as product_image, (select detail_thumbnail from `tabProduct Image` i where parent=p.name order by is_primary desc\
+# 				limit 1) as detail_thumbnail,(select brand_name from `tabProduct Brand Mapping` where parent=p.name\
+# 				limit 1) as product_brand,\
+# 				(select B.route from `tabProduct Brand Mapping` MP\
+# 									inner join `tabProduct Brand` B on MP.brand=B.name\
+# 									where MP.parent=p.name and B.published=1 limit 1) as brand_route,\
+# 				sum(oi.quantity) as qty " + books_columns_query + " from `tabProduct` p inner join `tabOrder Item` oi\
+# 				on oi.item=p.name " + books_join_query + ' where p.is_active=1 ' + condition \
+# 				+ ' group by p.name order by qty desc limit ' + str(limit)
+# 			Items = frappe.db.sql(query, as_dict=True)
+
+# 			# Items=frappe.db.sql('''select p.item,p.tax_category,p.price,p.old_price,p.short_description,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.minimum_order_qty,p.maximum_order_qty,p.stock,
+# 			#   (select list_image from `tabProduct Image` i where parent=p.name order by is_primary desc
+# 			#   limit 1) as product_image, (select detail_thumbnail from `tabProduct Image` i where parent=p.name order by is_primary desc
+# 			#   limit 1) as detail_thumbnail,(select brand_name from `tabProduct Brand Mapping` where parent=p.name
+# 			#   limit 1) as product_brand,
+# 			#   (select B.route from `tabProduct Brand Mapping` MP
+# 			#                       inner join `tabProduct Brand` B on MP.brand=B.name
+# 			#                       where MP.parent=p.name and B.published=1 limit 1) as brand_route,
+# 			#   sum(oi.quantity) as qty %(books_columns_query)s from `tabProduct` p inner join `tabOrder Item` oi
+# 			#   on oi.item=p.name %(books_join_query)s where p.is_active=1 group by p.name order by qty desc limit %(limit)s''',{'limit':limit,'books_columns_query':books_columns_query,'books_join_query':books_join_query},as_dict=1)
+# 			# updated by kartheek for getting author and publisher on 19-08-2019
+
+# 			if Items:
+# 				Items = get_product_details(Items, isMobile)
+# 			return Items
+# 		else:
+# 			return []
+# 	except Exception:
+# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_bestsellers')
+
+
+# def get_product_price(product, qty=1, rate=None,attribute_id=None, customer=None):
+# 	try:
+# 		web_type = None
+# 		try:
+# 			domain = frappe.get_request_header('host')
+# 			if domain and check_domain('saas'):
+# 				business = get_business_from_web_domain(domain)
+# 				web_type = 'Website' if business else 'Marketplace'
+# 		except Exception as e:
+# 			pass
+# 		if isinstance(attribute_id, list):
+# 			if len(attribute_id)==1:
+# 				attribute_id = attribute_id[0]
+# 		# price = product.price
+# 		cust = customer
+# 		if frappe.request:
+# 			cust = frappe.request.cookies.get('customer_id')
+# 		# price=price-get_product_discount_amount(product)
+# 		cart_items=None
+# 		if cust:
+# 			cart = frappe.db.exists("Shopping Cart", {"customer": cust})
+# 			if cart:
+# 				doc = frappe.get_doc("Shopping Cart", cart)
+# 				cart_items = ','.join('"{0}"'.format(r.product) for r in doc.items)
+# 		#hide it by boopathy - 10/08/22
+# 		# from ecommerce_business_store.ecommerce_business_store.doctype.discounts.discounts import get_product_discount
+# 		#end
+# 		res = get_product_discount(product, qty, rate, customer_id=customer, website_type=web_type, attribute_id=attribute_id, product_array=cart_items)
+# 		return res
+# 	except Exception:
+# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_product_price')
+
+
+
+# @frappe.whitelist(allow_guest=True)
+# def get_category_products(category=None, sort_by=None, page_no=1, page_size=no_of_records_per_page,
+# 	brands=None, rating=None, min_price=None, max_price=None, attributes=None, as_html=None,
+# 	productsid=None, view_by=None, isMobile=0, domain=None, models=None, onlybrand_finder=0, customer=None,route=None,business_id=None):
+# 	try:
+# 		if route:
+# 			categories = frappe.db.get_all("Product Category",filters={"route":route})
+# 			if categories:
+# 				category = categories[0].name
+# 		catalog_settings = get_settings_from_domain('Catalog Settings', domain=domain)
+# 		default_sort_order = get_settings_value_from_domain('Catalog Settings',	'default_product_sort_order', domain=domain)
+# 		sort_order = get_sorted_columns(default_sort_order)
+# 		if sort_by:
+# 			sort_order = sort_by
+# 		category_products = get_sorted_category_products(category, sort_order, page_no, page_size,
+# 			brands, rating, min_price, max_price, attributes, productsid, domain=domain, models=models, onlybrand_finder=onlybrand_finder,business_id=business_id)
+# 		if category_products:
+# 			category_products = get_product_details(category_products, isMobile, customer=customer, current_category=category)
+# 			theme = get_theme_settings(domain)
+# 			product_box = None
+# 			if theme:
+# 				product_box = frappe.db.get_value('Web Theme', theme, 'grid_product_box')
+# 			if not product_box:
+# 				product_box = catalog_settings.product_boxes
+# 			if as_html and product_box:
+# 				product_box_view = frappe.db.get_value('Product Category',category,'default_view')
+# 				category_product_box = frappe.db.get_value('Product Category',category,'product_box_for_list_view')
+# 				if product_box_view and product_box_view == "List View":
+# 					if theme and frappe.db.get_value('Web Theme', theme, 'list_product_box'):
+# 						product_box = frappe.db.get_value('Web Theme', theme, 'list_product_box')
+# 					elif catalog_settings.list_view_product_box:
+# 						product_box = catalog_settings.list_view_product_box
+# 				if category_product_box:
+# 					product_box = category_product_box
+# 				file_name = frappe.db.get_value('Product Box', product_box, 'route')
+# 				template = frappe.get_template(file_name)
+# 				currency = frappe.cache().hget('currency', 'symbol')
+# 				return template.render({'products': category_products, 'currency': currency, 'catalog_settings': catalog_settings})
+# 		return category_products
+# 	except Exception:
+# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_category_products')
+
+
+
+# @frappe.whitelist(allow_guest=True)
+# def get_category_detail(product_name):
+# 	cur_category = frappe.db.sql('''select PC.category from `tabProduct`p inner join `tabProduct Category Mapping`PC  where p.name=%(name)s and PC.parent=p.name'''
+# 					  , {'name': product_name}, as_dict=1)
+# 	if cur_category:
+# 		for cat in cur_category:
+# 			get_cat = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''', {'name': cat.category}, as_dict=1)
+# 			if get_cat[0]['product_info'] != '':
+# 				return get_cat[0]['product_info']
+# 			else:
+# 				if get_cat[0]['parent_product_category']:
+# 					get_cat1 = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''', {'name': get_cat[0]['parent_product_category']}, as_dict=1)
+# 					if get_cat1[0]['product_info'] != '':
+# 						return get_cat1[0]['product_info']
+# 					else:
+# 						if get_cat1[0]['parent_product_category']:
+# 							get_cat2 = frappe.db.sql('''select parent_product_category,product_info from `tabProduct Category` where name=%(name)s''',{'name': get_cat1[0]['parent_product_category']}, as_dict=1)
+# 							if get_cat2[0]['product_info'] != '':
+# 								return get_cat2[0]['product_info']
+
+
+# @frappe.whitelist(allow_guest=True)
+# def get_enquiry_product_detail(product_id):
+# 	cur_category = frappe.db.sql('''select PC.category from `tabProduct`p inner join `tabProduct Category Mapping`PC  where p.name=%(name)s and PC.parent=p.name''', {'name': product_id}, as_dict=1)
+# 	if cur_category:
+# 		for cat in cur_category:
+# 			get_cat = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''', {'name': cat.category}, as_dict=1)
+# 			if get_cat[0]['type_of_category'] == 'Enquiry Product':
+# 				return get_cat[0]['type_of_category']
+# 			else:
+# 				if get_cat[0]['parent_product_category']:
+# 					get_cat1 = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''',{'name': get_cat[0]['parent_product_category']}, as_dict=1)
+# 					if get_cat1[0]['type_of_category'] == 'Enquiry Product':
+# 						return get_cat1[0]['type_of_category']
+# 					else:
+# 						if get_cat1[0]['parent_product_category']:
+# 							get_cat2 = frappe.db.sql('''select parent_product_category,type_of_category from `tabProduct Category` where name=%(name)s''',{'name': get_cat1[0]['parent_product_category']}, as_dict=1)
+# 							if get_cat2[0]['type_of_category'] == 'Enquiry Product':
+# 								return get_cat2[0]['type_of_category']
+# 							else:
+# 								return get_cat2[0]['type_of_category']
+# 						else:
+# 							return get_cat1[0]['type_of_category']
+# 				else:
+# 					return get_cat[0]['type_of_category']
+
+
+# @frappe.whitelist(allow_guest=True)
+# def get_customer_recently_viewed_products(customer=None, domain=None, isMobile=0,business=None):
+# 	products = []
+# 	if not customer:
+# 		if frappe.request.cookies.get('customer_id'):
+# 			customer = unquote(frappe.request.cookies.get('customer_id'))
+# 	catalog_settings = get_settings_from_domain('Catalog Settings')
+# 	if customer and catalog_settings.enable_recetly_viewed_products:
+# 		cond = ''
+# 		if domain:
+# 			business = get_business_from_web_domain(domain)
+# 			if business:
+# 				cond = ' and p.restaurant = "{0}"'.format(business)
+# 		if business:
+# 			cond = ' and p.restaurant = "{0}"'.format(business)
+
+# 		# recently_viewed_products = frappe.get_all("Customer Viewed Product",fields=['product'],filters={'parent':customer},order_by="viewed_date desc")
+
+# 		recently_viewed_products = frappe.db.sql('''select c.product from `tabCustomer Viewed Product` c inner join tabProduct p on p.name = c.product where c.parent = %(parent)s {cond} order by viewed_date desc'''.format(cond=cond),{'parent': customer}, as_dict=1)
+# 		books_join_query = ''
+# 		books_columns_query = ''
+# 		conditions = ''
+# 		if recently_viewed_products:
+# 			conditions += ' and p.name in('
+# 		installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
+# 		for x in recently_viewed_products:
+# 			conditions += "'" + x.product + "',"
+# 		if recently_viewed_products:
+# 			conditions = conditions[:-1]
+# 			conditions += ' )'
+# 		if cond:
+# 			conditions += cond
+# 		if len(installed_apps) > 0:
+# 			books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
+# 			books_join_query = '  left join `tabAuthor` AU on AU.name=p.author left join `tabPublisher` PU on PU.name=p.publisher'
+
+# 		query = "select p.item,p.restaurant,p.price,p.old_price,p.short_description,p.tax_category,p.full_description,p.sku,p.name,p.route,p.inventory_method,p.stock,p.minimum_order_qty,p.maximum_order_qty,p.disable_add_to_cart_button,CM.category,\
+# 									(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,\
+# 									(select brand_name from `tabProduct Brand Mapping` where parent=p.name limit 1) as product_brand,\
+# 									(select B.route from `tabProduct Brand Mapping` MP\
+# 									inner join `tabProduct Brand` B on MP.brand=B.name\
+# 									where MP.parent=p.name and B.published=1 limit 1) as brand_route" \
+# 			+ books_columns_query + ' from `tabProduct` p ' \
+# 			+ books_join_query \
+# 			+ " inner join `tabProduct Category Mapping` CM on CM.parent=p.name\
+# 									where p.is_Active=1 and p.status='Approved'  %s group by p.name limit %d" \
+# 			% (conditions, 12)
+# 		products = frappe.db.sql(query, as_dict=True)
+
+# 		# for thumbnails by Rajeshwari on 13-12-19
+
+# 		if products:
+# 			products = get_product_details(products, isMobile=isMobile)
+			
+# 	return products
+
+
+
+# @frappe.whitelist(allow_guest=True)
+# def get_product_other_info(item, domain=None, isMobile=0, business=None,customer=None):
+# 	'''
+# 		To get additional product information to show in product detail page
+
+# 		param: item: product id
+# 	'''
+# 	if domain:
+# 		business = None
+# 		business = get_business_from_web_domain(domain)
+
+# 	customer_bought = best_sellers = related_products = related_categories = cross_selling_products= []
+# 	categories_list = frappe.db.sql('''select category, category_name, (select route from `tabProduct Category` c where c.name = pcm.category) as route from `tabProduct Category Mapping` pcm where parent = %(parent)s order by idx limit 1''', {'parent': item}, as_dict=1)
+# 	catalog_settings = get_settings_from_domain('Catalog Settings')
+# 	recently_viewed_products =[]
+# 	if catalog_settings.customers_who_bought:
+# 		customer_bought = get_products_bought_together(item, business=business, isMobile=isMobile)
+# 	if catalog_settings.enable_best_sellers:
+# 		if categories_list and categories_list[0].category:
+# 			best_sellers = get_category_based_best_sellers(categories_list[0].category, item, business=business, isMobile=isMobile)
+# 	mapped_related_categories = frappe.db.get_all("Related Product Category",filters={"parent":item},fields=['category'])
+# 	# frappe.log_error(mapped_related_categories,'mapped_related_categories')
+# 	if catalog_settings.enable_related_products:
+# 		if categories_list:
+# 			mapped_related_products = frappe.db.get_all("Related Product",filters={"parent":item},fields=['product'])
+# 			if not mapped_related_products:
+# 				related_products = get_category_products(categories_list[0].category, productsid=item, page_size=18, domain=domain, isMobile=isMobile,customer=customer)
+# 			else:
+# 				if mapped_related_products:
+# 					check_related_products = []
+# 					for x in mapped_related_products:
+# 						product = frappe.db.get_all("Product",filters={"name":x.product},fields=['*'])
+# 						if product:
+# 							product_images = frappe.db.sql("""select list_image from `tabProduct Image` where parent=%(product_id)s order by is_primary desc limit 1""",{"product_id":x.product},as_dict=1)
+# 							if product_images:
+# 								product[0].product_image = product_images[0].list_image
+# 							check_related_products.append(product[0])
+# 					related_products = get_product_details(check_related_products)
+# 	# if  mapped_related_categories:
+# 		# related_categories = get_multiple_category_products(mapped_related_categories,page_size=18)
+# 	related_categories = get_related_categories(mapped_related_categories)
+# 	#updated by boopathy
+# 	if catalog_settings.enable_cross_selling_products:
+# 		cross_selling_items = frappe.get_list("Cross Selling Products",fields={"product"},filters={"parent":item})
+# 		if cross_selling_items:
+# 			for o in cross_selling_items:
+# 				product = frappe.get_list("Product",filters={"name":o['product']},fields=['*'])
+# 				res_data = get_product_details(product)
+# 				if res_data:
+# 					cross_selling_products.append(res_data[0])		
+# 	recommended_products = []
+# 	# if catalog_settings.enable_recommended_products:
+		
+# 	# 	viewed_items = []
+# 	# 	if customer:
+# 	# 		cond = " where o.customer='{customer}'""".format(customer=customer)
+# 	# 		viewed_query = """select distinct product from `tabCustomer Viewed Product` where parent ='{customer}'""".format(customer=customer)
+# 	# 		viewed_items = frappe.db.sql(viewed_query, as_dict=True)
+# 	# 	else:
+# 	# 		cond = ""
+# 	# 	orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
+# 	# 	order_items = frappe.db.sql(orderquery, as_dict=True)
+# 	# 	for s in order_items:
+# 	# 		s.price = frappe.db.get_value("Product", s.product, "price")
+# 	# 	cartquery = """select i.product, i.price from `tabShopping Cart` o inner join `tabCart Items` i ON i.parent=o.name  {cond}""".format(cond=cond)
+# 	# 	cart_items = frappe.db.sql(cartquery, as_dict=True)
+		
+# 	# 	for n in cart_items:
+# 	# 		order_items.append(n)
+
+# 	# 	for s in viewed_items:
+# 	# 		order_items.append(s)
+			
+# 	# 	recommended_item_list = []
+# 	# 	recommended_item_list=",".join(['"' + x.product + '"' for x in order_items])
+# 	# 	catquery = """select distinct category from `tabProduct Category Mapping` where parent in ({lists})""".format(lists=recommended_item_list)
+# 	# 	cat_items = frappe.db.sql(catquery, as_dict=True)
+# 	# 	max_val = max(flt(node.price) for node in order_items)
+# 	# 	min_val = min(flt(node.price) for node in order_items)
+# 	# 	category_list = []
+# 	# 	category_list=",".join(['"' + x.category + '"' for x in cat_items])
+# 	# 	if category_list:
+# 	# 		ord_query = """select p.* from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where pc.category in ({category_list}) and p.price >='{min_val}' and p.price <='{max_val}'""".format(lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
+# 	# 	else:
+# 	# 		ord_query = """select p.* from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where  p.price >='{min_val}' and p.price <='{max_val}'""".format(lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
+# 	# 	products =  frappe.db.sql(ord_query, as_dict=True)	
+# 	# 	res_data = get_product_details(products)
+# 	# 	if res_data:
+# 	# 		recommended_products.append(res_data[0])
+
+# 		# s = """select p.item, p.tax_category, p.price, p.old_price, p.short_description, p.full_description, p.sku, p.name ,p.route, 
+# 		# p.inventory_method, p.minimum_order_qty, p.maximum_order_qty, p.stock, p.disable_add_to_cart_button,
+# 		# (select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image,
+# 		# (select brand_name from `tabProduct Brand Mapping` where parent=p.name  limit 1) as product_brand,
+# 		# (select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand=B.name where MP.parent=p.name and 
+# 		# B.published=1 limit 1) as brand_route
+# 		#   from `tabProduct` p where p.is_active =1 and p.display_home_page = 1 """	
+# 	if catalog_settings.enable_recetly_viewed_products and customer:
+# 		recently_viewed_products = get_customer_recently_viewed_products(customer, domain, isMobile,business)
+# 	you_may_like = get_bought_together(business=business, isMobile=isMobile)
+# 	return {
+# 		'best_seller_category': best_sellers,
+# 		'related_products': related_products,
+# 		'cross_selling_products':cross_selling_products,
+# 		'products_purchased_together': customer_bought,
+# 		'recommended_products':recommended_products,
+# 		'product_category': (categories_list[0] if categories_list else {}),
+# 		'recently_viewed_products': recently_viewed_products,
+# 		'you_may_like':you_may_like,
+# 		'related_categories':related_categories
+# 		}
+
+
+
+# def get_parent_categorie(category):
+# 	try:
+# 		count = frappe.db.get_value('Product Category', category, ['lft', 'rgt'], as_dict=True)
+# 		if count:
+# 			query = 'select name from `tabProduct Category` where is_active = 1 and disable_in_website = 0 and lft <= {lft} and rgt >= {rgt}'.format(lft=count.lft, rgt=count.rgt)
+# 			return frappe.db.sql('''{query}'''.format(query=query), as_dict=1)
+# 		else:
+# 			return []
+# 		# return frappe.db.get_all('Product Category', fields=['name'], filters={'is_active': 1, 'parent_product_category': category}, limit_page_length=100)
+# 	except Exception:
+# 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_parent_categorie')
 
 @frappe.whitelist(allow_guest=True)
 def get_uploaded_file_content(filedata):
