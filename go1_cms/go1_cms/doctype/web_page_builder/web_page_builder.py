@@ -1482,8 +1482,8 @@ def get_random_images(dt, dn, business=None, ref_doc=None, image_option=None, im
 					return res[0].image
 
 	media_settings = frappe.db.get_all("Media Settings",fields=['default_image'])
-    if media_settings:
-        return media_settings[0].default_image
+	if media_settings:
+		return media_settings[0].default_image
 
 @frappe.whitelist()
 def get_document_image(dt, dn, business=None):
