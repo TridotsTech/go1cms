@@ -2533,26 +2533,26 @@ var modify_section_data = Class.extend({
              no_of_records_val = this.fields.no_of_records;
              is_dynamic_data_val = this.fields.dynamic_data;
  
-            // field_list.push({
-            //     "fieldname": "fetch_product",
-            //     "fieldtype": "Check",
-            //     "default": (this.fields.fetch_product),
-            //     "label": __("Get Data From Products")
-            // })
-            // field_list.push({
-            //     "fieldname": "reference_name",
-            //     "fieldtype": "Link",
-            //     "label": __(this.fields.reference_document),
-            //     "options": this.fields.reference_document,
-            //     "reqd": 1,
-            //     "default": (this.fields.reference_name || ""),
-            //     "depends_on": "eval: doc.fetch_product == 1",
-            //     onchange:function(){
-            //         reference_name_val = this.get_value();
-            //         me.get_category_products('shuffle');
-            //     }
-            // });
-            // field_list.push({ 'fieldtype': 'Column Break', 'fieldname': 'col_br' })
+            field_list.push({
+                "fieldname": "fetch_product",
+                "fieldtype": "Check",
+                "default": (this.fields.fetch_product),
+                "label": __("Get Data From Products")
+            })
+            field_list.push({
+                "fieldname": "reference_name",
+                "fieldtype": "Link",
+                "label": __(this.fields.reference_document),
+                "options": this.fields.reference_document,
+                "reqd": 1,
+                "default": (this.fields.reference_name || ""),
+                "depends_on": "eval: doc.fetch_product == 1",
+                onchange:function(){
+                    reference_name_val = this.get_value();
+                    me.get_category_products('shuffle');
+                }
+            });
+            field_list.push({ 'fieldtype': 'Column Break', 'fieldname': 'col_br' })
             field_list.push({
                 "fieldname": "no_of_records",
                 "fieldtype": "Int",
