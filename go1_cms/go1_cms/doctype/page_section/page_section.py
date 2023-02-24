@@ -357,66 +357,69 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 
 def get_recommended_products(query=None, dt=None, no_of_records=0, login_required=0, customer=None, user=None, business=None, 
 	latitude=None, longitude=None, order_type=None, page_no=0, add_info=None,store_business=None):
-	catalog_settings = get_settings_from_domain('Catalog Settings')
-	recommended_products = []
-	recommended_item_list = ""
-	if catalog_settings.enable_recommended_products:
-		viewed_items = []
-		# frappe.log_error(customer, "---customer--rec-")
-		if customer:
-			cond = " where o.customer='{customer}'""".format(customer=customer)
-			viewed_query = """select distinct product from `tabCustomer Viewed Product` where parent ='{customer}'""".format(customer=customer)
-			viewed_items = frappe.db.sql(viewed_query, as_dict=True)
-			# frappe.log_error(viewed_items, "viewed_items")
-		
-			orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
-			order_items = frappe.db.sql(orderquery, as_dict=True)
-			# frappe.log_error(order_items, "order_items")
+	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
+		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
+		catalog_settings = get_settings_from_domain('Catalog Settings')
+		recommended_products = []
+		recommended_item_list = ""
+		if catalog_settings.enable_recommended_products:
+			viewed_items = []
+			# frappe.log_error(customer, "---customer--rec-")
+			if customer:
+				cond = " where o.customer='{customer}'""".format(customer=customer)
+				viewed_query = """select distinct product from `tabCustomer Viewed Product` where parent ='{customer}'""".format(customer=customer)
+				viewed_items = frappe.db.sql(viewed_query, as_dict=True)
+				# frappe.log_error(viewed_items, "viewed_items")
 			
-			cartquery = """select i.product, i.price from `tabShopping Cart` o inner join `tabCart Items` i ON i.parent=o.name  {cond}""".format(cond=cond)
-			cart_items = frappe.db.sql(cartquery, as_dict=True)
-			# frappe.log_error(cart_items, "cart_items")
-			for n in cart_items:
-				order_items.append(n)
-			for s in viewed_items:
-				order_items.append(s)
-			for s in order_items:
-				s.price = frappe.db.get_value("Product", s.product, "price")
-			if not order_items:
-				order_items = []
+				orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
+				order_items = frappe.db.sql(orderquery, as_dict=True)
+				# frappe.log_error(order_items, "order_items")
+				
+				cartquery = """select i.product, i.price from `tabShopping Cart` o inner join `tabCart Items` i ON i.parent=o.name  {cond}""".format(cond=cond)
+				cart_items = frappe.db.sql(cartquery, as_dict=True)
+				# frappe.log_error(cart_items, "cart_items")
+				for n in cart_items:
+					order_items.append(n)
+				for s in viewed_items:
+					order_items.append(s)
+				for s in order_items:
+					s.price = frappe.db.get_value("Product", s.product, "price")
+				if not order_items:
+					order_items = []
+				
+			else:
+				cond = ""
 			
-		else:
-			cond = ""
-		
-			orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
-			order_items = frappe.db.sql(orderquery, as_dict=True)
+				orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
+				order_items = frappe.db.sql(orderquery, as_dict=True)
+				# frappe.log_error(order_items, "order_items")
+				for s in order_items:
+					s.price = frappe.db.get_value("Product", s.product, "price")
+				if not order_items:
+					order_items = []
 			# frappe.log_error(order_items, "order_items")
-			for s in order_items:
-				s.price = frappe.db.get_value("Product", s.product, "price")
-			if not order_items:
-				order_items = []
-		# frappe.log_error(order_items, "order_items")
-		recommended_item_list=",".join(['"' + x.product + '"' for x in order_items if x.product])
-		catquery = """select distinct category from `tabProduct Category Mapping`"""
-		if recommended_item_list:
-			catquery = """select distinct category from `tabProduct Category Mapping` where parent in ({lists})""".format(lists=recommended_item_list)
-		# frappe.log_error(catquery, "cat_items")
-		cat_items = frappe.db.sql(catquery, as_dict=True)
-		max_val = max(flt(node.price) for node in order_items)
-		min_val = min(flt(node.price) for node in order_items)
-		category_list = []
-		category_list=",".join(['"' + x.category + '"' for x in cat_items])
-		if category_list:
-			ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where pc.category in ({category_list}) and p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
-		else:
-			ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where  p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
-		products =  frappe.db.sql(ord_query, as_dict=True)	
-		# frappe.log_error(products, "products")
-		res_data = get_product_details(products)
-		# frappe.log_error(res_data, "res_data")
-		if res_data:
-			recommended_products = res_data
-	return recommended_products
+			recommended_item_list=",".join(['"' + x.product + '"' for x in order_items if x.product])
+			catquery = """select distinct category from `tabProduct Category Mapping`"""
+			if recommended_item_list:
+				catquery = """select distinct category from `tabProduct Category Mapping` where parent in ({lists})""".format(lists=recommended_item_list)
+			# frappe.log_error(catquery, "cat_items")
+			cat_items = frappe.db.sql(catquery, as_dict=True)
+			max_val = max(flt(node.price) for node in order_items)
+			min_val = min(flt(node.price) for node in order_items)
+			category_list = []
+			category_list=",".join(['"' + x.category + '"' for x in cat_items])
+			if category_list:
+				ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where pc.category in ({category_list}) and p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
+			else:
+				ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where  p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
+			products =  frappe.db.sql(ord_query, as_dict=True)	
+			# frappe.log_error(products, "products")
+			res_data = get_product_details(products)
+			# frappe.log_error(res_data, "res_data")
+			if res_data:
+				recommended_products = res_data
+		return recommended_products
+	return []
 
 
 def get_dynamic_data_source(doc, customer=None,store_business=None):
@@ -687,288 +690,9 @@ def get_class_name():
 
 #added by boopathy from ecommerce business store api on 10/08/2022
 def get_product_details(product, isMobile=0, customer=None, current_category=None):
-	media_settings = get_settings_from_domain('Media Settings')
-	catalog_settings = get_settings_from_domain('Catalog Settings')
-	if product:
-		today_date = get_today_date(replace=True)
-		discount_list = frappe.db.sql(""" SELECT name FROM `tabDiscounts` WHERE 
-									  (discount_type = 'Assigned to Products' OR discount_type = 'Assigned to Categories' OR discount_type = 'Assigned to Business')
-									  AND 
-									  (CASE 
-									  	WHEN start_date is not null then start_date <= "{today}"
-		    							ELSE 1 = 1 end) 
-		    						  AND (
-		    						  CASE 
-		    						  	WHEN end_date is not null then end_date >= "{today}"
-		    						  	ELSE 1 = 1 end)
-		    						  """.format(today=today_date),as_dict=1)
-		for x in product:
-			x.actual_price = x.price
-			x.actual_old_price = x.old_price
-			x.item_title = x.item
-			x.role_based_price = 0
-			# code inserted by shankar on 21-04-2020 for Product Price rule
-			if check_domain('b2b'):
-				role = frappe.get_roles(frappe.session.user)
-				roles = ','.join('"{0}"'.format(r) for r in role)
-				query = '''SELECT price FROM `tabProduct Pricing Rule` WHERE parent="{product}" AND parentfield="pricing_rule" AND role IN ({roles}) ORDER BY creation DESC'''.format(roles=roles,product=x.name)
-				product_pricing_rule = frappe.db.sql('''{query}'''.format(query=query),as_dict=1)
-				if product_pricing_rule:
-					x.price = product_pricing_rule[0].price
-					x.role_based_price = 1
-			#end of code insertion by shankar
-			price_details = None
-			if discount_list:
-				price_details = get_product_price(x, customer=customer)
-			product_price = x.price
-			if price_details:
-				if price_details.get('discount_amount'):
-					product_price = price_details.get('rate')
-				x.discount_rule = price_details.get('discount_rule')
-				x.discount_label = price_details.get('discount_label')
-			
-			if x.price != product_price:
-				x.old_price = x.price
-				x.price = product_price
-			if check_domain('b2b'):
-				if x.role_based_price == 1:
-					x.old_price = x.actual_price
-			if float(x.old_price) > 0 and float(x.price) < float(x.old_price):
-				x.discount_percentage = int(round((x.old_price - x.price) / x.old_price * 100, 0))
-			# updated by kartheek for price in lakhs on 9 dec 2019
-
-			if isMobile == 0:
-				if float(x.price) > 100000:
-					short_amt = float(x.price) / 100000
-					x.price = str('%.2f' % short_amt) + 'L'
-				else:
-					x.price = str('%.2f' % x.price)
-				if x.old_price > 0:
-					if x.old_price > 100000:
-						short_amt = float(x.old_price) / 100000
-						x.old_price = str('%.2f' % short_amt) + 'L'
-					else:
-						x.old_price = str('%.2f' % x.old_price)
-				else:
-					x.old_price = str('%.2f' % x.old_price)
-			# updated by kartheek for price in lakhs on 9 dec 2019
-			# if x.image and not x.product_image:
-			# 	x.product_image = x.image
-			if not x.product_image:
-				# for thumbnails by Rajeshwari on 13-12-19
-				if media_settings.list_thumbnail:
-					x.product_image = media_settings.list_thumbnail
-			show_attributes = 0
-			mapped_category = frappe.db.get_all('Product Category Mapping', filters={'parent':x.name}, fields=['category'],order_by="idx desc")
-			
-			x.category_mapping = mapped_category
-			if mapped_category:
-				product_category=frappe.db.get_all('Product Category',fields=["name","route","category_name"], filters={"name":mapped_category[0].category},order_by="display_order",limit_page_length=1)
-				if product_category:
-					x.item_categories=product_category[0]
-			if mapped_category and len(mapped_category) > 0:
-				for category in mapped_category:
-					child_categories = get_parent_categorie(category.category)
-					if child_categories and len(child_categories) > 0:
-						for cat in child_categories:
-							item_category = frappe.get_doc('Product Category', cat.name)
-							if item_category and item_category.show_attributes_inlist==1:
-								if show_attributes==0:
-									show_attributes += item_category.show_attributes_inlist
-			product_attributes = frappe.db.get_all('Product Attribute Mapping', fields=['*'],
-								  filters={'parent': x.name},  order_by='idx', limit_page_length=50)
-			check_stock = False
-			has_attr_stock = True
-			if len(product_attributes) > 0:
-				if x.inventory_method == 'Track Inventory By Product Attributes' and len(product_attributes) == 1:
-					check_stock = True
-					combination = frappe.db.get_all('Product Variant Combination', filters={'parent': x.name}, limit_page_length=500)
-					# check_stock = next((x for x in combination if x.stock > 0), None)
-					# if check_stock:
-					# 	has_attr_stock = True
-				attribute_ids = ''
-				attribute_ids1 = ''
-				attribute = ''
-				attribute_price=0
-				attribute_old_price = 0
-				for attribute in product_attributes:
-					attribute.options = frappe.db.get_all('Product Attribute Option',
-							fields=['option_value', 'price_adjustment', 'display_order', 'name','image_list','is_pre_selected','attribute_color','product_title'], 
-							filters={'parent': x.name, 'attribute': attribute.product_attribute, 'attribute_id': attribute.name},
-							order_by='display_order', limit_page_length=500)
-					if attribute.options:
-						count = 1
-						for op in attribute.options:
-							# if show_attributes==1:
-							if x.inventory_method == 'Track Inventory' or x.inventory_method == 'Dont Track Inventory':
-								op.attr_itemprice = float(op.price_adjustment) + float(x.actual_price)
-								x.price = op.attr_itemprice
-								if op.is_pre_selected==1:
-									attribute_ids+=op.name+'\n'
-									attribute_price=float(op.attr_itemprice)
-									if type(x.old_price) != str:
-										attribute_old_price = float(op.price_adjustment) + float(x.old_price)
-								else:
-									if count == 1:
-										attribute_ids+=op.name+'\n'
-										attribute_price=float(op.attr_itemprice)
-										if type(x.old_price) != str:
-											attribute_old_price = float(op.price_adjustment) + float(x.old_price)
-								price_detail = get_product_price(x, customer=customer)
-								if price_detail and price_detail.get('discount_amount'):
-									
-									product_price1 = price_detail.get('rate')
-									if x.price != product_price1:
-										x.old_price = x.actual_price
-										x.price = product_price1
-										op.attr_itemprice = product_price1
-										if op.is_pre_selected==1:
-											# attribute_price = 0
-											attribute_price=float(product_price1)
-											attribute_old_price = float(op.price_adjustment) + float(x.old_price)
-										else:
-											if count == 1:
-												# attribute_price = 0
-												attribute_price=float(product_price1)
-												attribute_old_price = float(op.price_adjustment) + float(x.old_price)
-								count+=1
-								if  type(x.old_price) != str and float(x.old_price) > 0:
-									op.attr_oldprice = float(op.price_adjustment) + float(x.old_price)
-									# attribute_old_price = op.attr_oldprice
-							if x.inventory_method == 'Track Inventory By Product Attributes':
-								attribute_ids=op.name+'\n'
-								variant_comb = validate_attributes_stock(x.name,attribute_ids,attribute,x.minimum_order_qty,add_qty=None)
-								if variant_comb:
-									op.attr_itemprice = float(variant_comb['price'])
-									op.attr_oldprice = float(variant_comb['old_price'])
-									if variant_comb.get('discount'):
-										if 'rate' in variant_comb['discount']:
-											op.attr_itemprice = float(variant_comb['discount']['rate'])
-											op.attr_oldprice = float(variant_comb['price'])
-									op.status = variant_comb['status']
-									# op['stock'] = variant_comb['stock']
-									if variant_comb['status'] =="Success":
-										if op.stock and int(op.stock) > 0:
-											op.has_attr_stock = True
-										else:
-											op.has_attr_stock = False
-									else:
-										op.has_attr_stock = False
-									if op.is_pre_selected == 1:
-										if op.has_attr_stock  == False:
-											has_attr_stock = False
-							# Inserted by suguna on 05/08/20
-							# if op.is_pre_selected==1:
-							# 	attribute_ids+=op.name+'\n'
-							# 	attribute_price+=float(op.price_adjustment)
-							# End
-							# op.videos = frappe.get_all('Product Attribute Option Video',filters={"option_id":op.name},fields=["youtube_video_id"])
-							op.videos = frappe.get_all('Product Attribute Option Video',filters={"option_id":op.name},fields=["youtube_video_id","video_type"])
-							if op.image_list:
-								op.images = json.loads(op.image_list)
-							else:
-								op.images = []
-							# if check_stock:
-
-								# check = next((x for x in combination if x.attribute_id == '{0}\n'.format(op.name)), None)
-								# if check:
-								# 	op.stock = (check.stock or 0)
-								# 	if op.stock and int(op.stock) > 0:
-								# 		has_attr_stock = True
-				# Inserted by suguna on 05/08/20
-				if show_attributes==1:
-					x.variant_price = validate_attributes_stock(x.name,attribute_ids,attribute,x.minimum_order_qty,add_qty=None)
-					x.attribute_price = attribute_price
-					x.attribute_old_price = attribute_old_price
-				# End
-				x.have_attribute = 1
-				x.product_attributes = product_attributes
-			else:
-				x.have_attribute = 0
-				x.product_attributes = product_attributes
-			x.has_attr_stock = has_attr_stock
-			product_variant = frappe.db.sql('''select * from `tabProduct Variant Combination` where parent = %(parent)s''',{'parent': x.name}, as_dict=1)
-			for v_comb in product_variant:
-				v_comb.video_list = frappe.db.sql("""select * from `tabProduct Attribute Option Video` where option_id = %(option_id)s""", {"option_id": v_comb.name},as_dict = 1)
-			x.product_variant = product_variant
-			# product_specification = frappe.db.get_all('Product Specification Attribute Mapping',
-			# 					  fields=['specification_attribute', 'options', 'name'],
-			# 					  filters={'parent': x.name}, limit_page_length=50)
-
-			# x.product_specification = product_specification
-			specification_group = []
-			specification_attribute = frappe.db.sql_list('''select distinct sam.spec_group_name,sg.display_order from `tabSpecification Group` sg inner join `tabProduct Specification Attribute Mapping` sam on sg.name=sam.spec_group_name1 where sam.parent=%(name)s order by sg.display_order''',{'name':x.name})
-			if specification_attribute:
-				for item in specification_attribute:
-					groups = frappe.db.get_all('Product Specification Attribute Mapping',fields=['specification_attribute','options'], filters={"parent":x.name,'spec_group_name':item},order_by='idx')
-					specification_group.append({"name":item, "groups":groups})
-			else:
-				groups = frappe.db.get_all('Product Specification Attribute Mapping',fields=['specification_attribute','options'], filters={"parent":x.name},order_by='idx')
-				if groups:
-					specification_group.append({"name":"", "groups":groups})
-					
-			x.product_specification = specification_group
-			if not x.product_brand:
-				x.product_brand = ''
-			else:
-				if len(x.product_brand) > 30:
-					x.product_brand = x.product_brand[:15] + '...'
-			highlights = frappe.db.get_all('Highlights', fields=['highlights'], filters={'parent': x.name})
-			x.highlights = highlights
-			if x.return_description:
-				x.return_policy = x.return_description
-			if x.tax_category:
-				tax_template = frappe.get_doc('Product Tax Template', x.tax_category)
-				x.tax_template = tax_template
-			if current_category:
-				x.products_per_row = frappe.db.get_value('Product Category', current_category, 'products_per_row_in_list')
-			if x.category:
-				category1 = frappe.get_doc('Product Category', x.category)
-				if category1:
-					x.category1 = category1.type_of_category
-					x.show_attributes_inlist = show_attributes
-			product_reviews = frappe.db.sql('''select ifnull(count(*), 0) as review_count,ifnull(avg(rating), 0) as rating from `tabProduct Review` where product=%(product)s''', {'product': x.name}, as_dict=1)
-			if product_reviews:
-				x.rating = product_reviews[0].rating
-				x.review_count = product_reviews[0].review_count
-			# product_video = frappe.db.get_all('Product Video', fields=['display_order', 'video_link', 'name'], filters={'parent': x.name}, order_by='display_order')
-			product_video = frappe.db.get_all('Product Video', fields=['display_order', 'video_link', 'name', 'video_type'], filters={'parent': x.name}, order_by='display_order')
-			x.product_video = product_video
-			x.product_tag = frappe.db.get_value('Product', x.name, 'product_tag')
-			if x.product_tag:
-				tags = json.loads(x.product_tag)
-				x.product_tags = frappe.db.get_all('Product Tag', filters={'name': ('in', tags)}, fields=['title', 'icon'])
-			if x.restaurant:
-				business = frappe.get_doc('Business', x.restaurant)
-				x.business_route = business.route
-				x.business_logo = business.restaurant_logo
-			installed_apps=frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''',as_dict=True)
-			if len(installed_apps)>0:
-				x.book_type=x.book_type
-				x.published_year=x.published_year
-				x.number_of_pages=x.number_of_pages
-				x.author_name=x.author_name
-				x.author_route=x.author_route
-				x.publisher_name=x.publisher_name
-				x.publisher_route=x.publisher_route
-			# By kartheek for getting custom fields
-			custom_values = None
-			if catalog_settings.display_custom_fields == 1:
-				if frappe.db.get_all("Custom Field",filters={"dt":"Product"}):
-					custom_fields = frappe.db.sql('''SELECT fieldname FROM `tabCustom Field` WHERE dt = "Product" AND fieldtype<> "Table" AND fieldtype<> "Section Break" AND fieldtype<> "Column Break" AND fieldtype<> "HTML"  AND fieldtype<> "Check" AND fieldtype<> "Text Editor" ''',as_dict=1)
-					query = "SELECT "
-					for field in custom_fields:
-						query += field.fieldname+","
-					query = query[:-1]
-					query += " FROM `tabProduct` WHERE name='{0}'".format(x.name)
-					columns = ','.join([str(field.fieldname) for field in custom_fields])
-					custom_values = frappe.db.sql(query,as_dict=1)
-					if custom_values:
-						custom_values = custom_values[0]
-			x.custom_values = custom_values
-			
-			# By kartheek for getting custom fields
-	return product
+	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
+		from erp_ecommerce_business_store.erp_ecommerce_business_store.api import get_product_details as get_product_details_list
+	 	return get_product_details_list(product, isMobile, customer, current_category)
 
 
 def get_child_categories(category):
