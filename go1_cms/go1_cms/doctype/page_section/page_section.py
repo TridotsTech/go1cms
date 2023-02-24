@@ -692,7 +692,7 @@ def get_class_name():
 def get_product_details(product, isMobile=0, customer=None, current_category=None):
 	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
 		from erp_ecommerce_business_store.erp_ecommerce_business_store.api import get_product_details as get_product_details_list
-	 	return get_product_details_list(product, isMobile, customer, current_category)
+		return get_product_details_list(product, isMobile, customer, current_category)
 
 
 def get_child_categories(category):
