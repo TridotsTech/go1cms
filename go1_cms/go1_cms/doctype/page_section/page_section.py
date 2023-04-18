@@ -362,7 +362,7 @@ def get_recommended_products(query=None, dt=None, no_of_records=0, login_require
 		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
 	if 'ecommerce_business_store' in frappe.get_installed_apps():
-		 from ecommerce_business_store.utils.setup import get_settings_from_domain
+		from ecommerce_business_store.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
 	if catalog_settings:
 		recommended_products = []
