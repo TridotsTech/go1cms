@@ -210,12 +210,12 @@ def get_products_json(data):
 			for option in x.get("options"):
 				options.append({
 					"attr_itemprice": option.get("attr_itemprice"),
-       				"attr_oldprice":option.get("attr_oldprice"),
-       				"is_pre_selected": option.get("is_pre_selected"),
-			        "name": option.get("name"),
-			        "option_value": option.get("option_value"),
-			        "price_adjustment": option.get("price_adjustment"),
-			        "product_title": option.get("product_title"),
+					"attr_oldprice":option.get("attr_oldprice"),
+					"is_pre_selected": option.get("is_pre_selected"),
+					"name": option.get("name"),
+					"option_value": option.get("option_value"),
+					"price_adjustment": option.get("price_adjustment"),
+					"product_title": option.get("product_title"),
 					})
 			product_attributes.append({
 				"attribute":x.get("attribute"),
@@ -228,38 +228,38 @@ def get_products_json(data):
 		org_datas.append({
 			"image": product.get("image"),
 			"image_type":product.get("image_type"),
-		    "actual_old_price":product.get("actual_old_price"),
-		    "actual_price": product.get("actual_price"),
-		    "attribute_old_price": product.get("attribute_old_price"),
-		    "attribute_price":product.get("attribute_price"),
-		    "brand_route": product.get("brand_route"),
-		    "disable_add_to_cart_button": product.get("disable_add_to_cart_button"),
-		    "discount_percentage": product.get("discount_percentage"),
-		    "enable_preorder_product": product.get("enable_preorder_product"),
-		    "has_attr_stock": product.get("has_attr_stock"),
-		    "have_attribute": product.get("have_attribute"),
-		    "inventory_method":product.get("inventory_method"),
-		    "item": product.get("item"),
-		    "item_title": product.get("item_title"),
-		    "maximum_order_qty": product.get("maximum_order_qty"),
-		    "minimum_order_qty": product.get("minimum_order_qty"),
-		    "name": product.get("name"),
-		    "old_price": product.get("old_price"),
-		    "price":product.get("price"),
-		    "product_attributes":product_attributes,
-		    "product_brand": product.get("product_brand"),
-		    "product_image": product.get("product_image"),
-		    "rating":product.get("rating"),
-		    "review_count": product.get("review_count"),
-		    "route": product.get("route"),
-		    "short_description":product.get("short_description"),
-		    "sku": product.get("sku"),
-		    "stock": product.get("stock"),
-		    "thumbnail": product.get("thumbnail"),
-		    "weight": product.get("weight"),
-		    "gross_weight": product.get("gross_weight"),
-		    "show_attributes_inlist":product.get("show_attributes_inlist"),
-		    "variant_price": product.get("variant_price")
+			"actual_old_price":product.get("actual_old_price"),
+			"actual_price": product.get("actual_price"),
+			"attribute_old_price": product.get("attribute_old_price"),
+			"attribute_price":product.get("attribute_price"),
+			"brand_route": product.get("brand_route"),
+			"disable_add_to_cart_button": product.get("disable_add_to_cart_button"),
+			"discount_percentage": product.get("discount_percentage"),
+			"enable_preorder_product": product.get("enable_preorder_product"),
+			"has_attr_stock": product.get("has_attr_stock"),
+			"have_attribute": product.get("have_attribute"),
+			"inventory_method":product.get("inventory_method"),
+			"item": product.get("item"),
+			"item_title": product.get("item_title"),
+			"maximum_order_qty": product.get("maximum_order_qty"),
+			"minimum_order_qty": product.get("minimum_order_qty"),
+			"name": product.get("name"),
+			"old_price": product.get("old_price"),
+			"price":product.get("price"),
+			"product_attributes":product_attributes,
+			"product_brand": product.get("product_brand"),
+			"product_image": product.get("product_image"),
+			"rating":product.get("rating"),
+			"review_count": product.get("review_count"),
+			"route": product.get("route"),
+			"short_description":product.get("short_description"),
+			"sku": product.get("sku"),
+			"stock": product.get("stock"),
+			"thumbnail": product.get("thumbnail"),
+			"weight": product.get("weight"),
+			"gross_weight": product.get("gross_weight"),
+			"show_attributes_inlist":product.get("show_attributes_inlist"),
+			"variant_price": product.get("variant_price")
 
 		})
 	return org_datas
@@ -359,7 +359,7 @@ def get_recommended_products(query=None, dt=None, no_of_records=0, login_require
 	latitude=None, longitude=None, order_type=None, page_no=0, add_info=None,store_business=None):
 	catalog_settings = None
 	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
-	    from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
+		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
 	if 'ecommerce_business_store' in frappe.get_installed_apps():
 		 from ecommerce_business_store.utils.setup import get_settings_from_domain
