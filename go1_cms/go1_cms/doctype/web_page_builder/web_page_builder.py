@@ -1663,9 +1663,14 @@ def get_shuffled_category_products(category,no_of_records):
 	# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
 	#end
 	result = []
+    catalog_settings = None
 	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
 		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
+    if 'ecommerce_business_store' in frappe.get_installed_apps():
+        from ecommerce_business_store.utils.setup import get_settings_from_domain
+        catalog_settings = get_settings_from_domain('Catalog Settings')
+    if catalog_settings:
 		category_filter = ""
 		sort= "ORDER BY RAND()"
 		conditions=""

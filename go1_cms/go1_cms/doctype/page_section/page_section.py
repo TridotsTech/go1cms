@@ -357,9 +357,14 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 
 def get_recommended_products(query=None, dt=None, no_of_records=0, login_required=0, customer=None, user=None, business=None, 
 	latitude=None, longitude=None, order_type=None, page_no=0, add_info=None,store_business=None):
+	catalog_settings = None
 	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
 		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
+	if 'ecommerce_business_store' in frappe.get_installed_apps():
+		from ecommerce_business_store.utils.setup import get_settings_from_domain
+		catalog_settings = get_settings_from_domain('Catalog Settings')
+	if catalog_settings:
 		recommended_products = []
 		recommended_item_list = ""
 		if catalog_settings.enable_recommended_products:
