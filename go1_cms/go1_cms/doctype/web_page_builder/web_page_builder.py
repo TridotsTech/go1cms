@@ -863,6 +863,7 @@ def get_page_layout_json(page_route):
 		 return {"page_sections":page_sections,'cid':cid,'title':pb_list[0].name}
 	return []
 
+
 @frappe.whitelist()
 def get_builder_data(page_route):
 	pages = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
