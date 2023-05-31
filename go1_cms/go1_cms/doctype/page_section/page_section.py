@@ -699,8 +699,8 @@ def get_product_details(product, isMobile=0, customer=None, current_category=Non
 		from erp_ecommerce_business_store.erp_ecommerce_business_store.api import get_product_details as get_product_details_list
 		return get_product_details_list(product, isMobile, customer, current_category)
 	if 'ecommerce_business_store' in frappe.get_installed_apps():
-		from ecommerce_business_store.ecommerce_business_store.v2.product import get_product_details as get_product_details_list
-		return get_product_details_list(product, isMobile, customer, current_category)
+		from ecommerce_business_store.ecommerce_business_store.v2.product import get_list_product_details as get_product_details_list
+		return get_product_details_list(product)
 
 def get_child_categories(category):
 	try:
