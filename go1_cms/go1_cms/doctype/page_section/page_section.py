@@ -128,17 +128,20 @@ class PageSection(Document):
 					slider_cond = ' and business = "{0}"'.format(store_business)
 			json_obj['data'] = frappe.db.sql('''select business,mobile_app_image,mobile_app_videoyoutube_id,mobile_image,mobile_videoyoutube_id,redirect_url,slider_type,upload_video_for_mobile,upload_video_for_mobile_app,upload_video_for_web,video_type,web_image,web_videoyoutube_id from `tabSlider` where published = 1 {cond} order by display_order'''.format(cond=slider_cond), as_dict=1)
 		elif self.section_type == 'Custom Section':
+			frappe.log_error("--1--", self.content_type)
 			if self.content_type == 'Static':
 				if self.reference_document == 'Product Category':
 					json_obj['route'] = frappe.db.get_value(self.reference_document, self.reference_name, "route")
 				json_obj['data'] = json.loads(self.custom_section_data)
 			else:
+				frappe.log_error("--2--", self.reference_document)
 				if self.reference_document == 'Product Category' and self.dynamic_data==0:
 					json_obj['data'] = json.loads(self.custom_section_data)
 				else:
 					json_obj['reference_document'] = self.reference_document
 					json_obj['reference_name'] = self.reference_name
 					json_obj['data'] = get_dynamic_data_source(self, customer=customer,store_business=store_business)
+					frappe.log_error("--3--", json_obj['data'])
 					json_obj['fetch_product'] = self.fetch_product
 					if len(json_obj['data']) > 0 and self.reference_name:
 						field = None
