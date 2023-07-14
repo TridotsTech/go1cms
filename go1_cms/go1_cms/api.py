@@ -592,6 +592,10 @@ def key_func(k):
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
 	try:
+		if frappe.local.session.data.csrf_token:
+			context.csrf_token=frappe.local.session.data.csrf_token
+		else:
+			context.csrf_token=''
 		theme_list = frappe.get_all("Web Theme",filters={"is_active":1},fields=['*'])
 		if not theme_list:
 			theme_list = frappe.get_all("Web Theme",fields=['*'],order_by='creation desc')
