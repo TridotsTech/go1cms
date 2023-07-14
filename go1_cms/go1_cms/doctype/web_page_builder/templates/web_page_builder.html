@@ -97,6 +97,7 @@ $(window).scroll(function() {
         }
         allow_scroll = false;
         page = page + 1;
+        console.log('{{csrf_token}}')
         $.ajax({
 
             type: 'POST',

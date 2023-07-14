@@ -239,6 +239,10 @@ class WebPageBuilder(WebsiteGenerator):
         if "/" in p_route:
             p_route = p_route.split("/")[1]
         context.p_route = p_route
+        if frappe.local.session.data.csrf_token:
+            context.csrf_token=frappe.local.session.data.csrf_token
+        else:
+            context.csrf_token=''
 		
 def get_product_context(self, context):
 		try:
