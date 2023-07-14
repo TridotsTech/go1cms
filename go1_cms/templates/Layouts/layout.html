@@ -161,9 +161,9 @@ $(window).scroll(function() {
             url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
             data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
             dataType: "json",
-            // headers: {
-            //     'X-Frappe-CSRF-Token': '{{csrf_token}}'
-            // },
+            headers: {
+                'X-Frappe-CSRF-Token': '{{csrf_token}}'
+            },
             success: function(data) {
                 $('.page-loader').hide();
                 if (data.message && data.message.length > 0) {
@@ -209,9 +209,9 @@ $('body').scroll(function(){
             url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
             data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
             dataType: "json",
-            // headers: {
-            //     'X-Frappe-CSRF-Token': '{{csrf_token}}'
-            // },
+            headers: {
+                'X-Frappe-CSRF-Token': '{{csrf_token}}'
+            },
             success: function(data) {
                
                 $('.page-loader').hide();
