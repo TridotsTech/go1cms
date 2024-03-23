@@ -254,25 +254,25 @@
                 {%endfor%}
             </div>
         </div>
-       
+
         <!-- end -->
-         {%for sec_item in header.get("items")%}
+            {%for sec_item in header.get("items")%}
         {%if sec_item.section_name == "Header Button"%}
-             {%if header.call_to_action_button==1%}
-             <div class="d__flex custom-button">
+                {%if header.call_to_action_button==1%}
+                <div class="d__flex custom-button">
                 <a href="{{header.button_link}}" class="btn btn-primary btn-md primary-btn" {% if header.link_target == "_blank" %}target="_blank"{%else%}target="_self"{% endif %}>
                     {{header.button_text}}
                 </a>
             </div>
-             {%endif%}
-             {%endif%}
-         {%endfor%}
+                {%endif%}
+                {%endif%}
+            {%endfor%}
         <div class="mobile_menu go1-cms-menu" style="left:-1000px;overflow: auto;z-index: 999;">
-             <div class="m-logo" style="border-bottom: 1px solid #ddd;">
+                <div class="m-logo" style="border-bottom: 1px solid #ddd;">
                 <img src="{{theme_settings.mobile_logo}}" class="logo"/>
             </div>
-             {%for sec_item in header.get("items")%}
-              {%if sec_item.section_name == "Header Menu"%}
+                {%for sec_item in header.get("items")%}
+                {%if sec_item.section_name == "Header Menu"%}
                 <!-- newly added for submenu start-->
                 {% if sec_item.get("menus") %}
                 <div id="dl-menu" class="dl-menuwrapper">
@@ -301,8 +301,8 @@
                     {%endif%}
                 <!-- newly added for submenu end-->
 
-              {%endif%}
-             {%endfor%}
+                {%endif%}
+                {%endfor%}
         </div>
     </div>
     <div class="mobile-blackdrop"></div>
@@ -390,6 +390,11 @@
     display:none;
 }
 
+.mobile__header.go1-cms-header {
+    position: relative;
+    z-index: 99;
+    width: 100%;
+}
 .mobile__header.go1-cms-header img.logo.sticky-logo{
     display:block;
 }
@@ -653,12 +658,11 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 </style>
 <script type="text/javascript">
     {%if header.sticky_header %}
-        console.log('---');
         $(window).scroll(function () {
             if ($(window).scrollTop() > 40) {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").addClass("sticky_header");
-                // $(".mobile__header").addClass("sticky_header");
+                $(".mobile__header").addClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").removeClass("transparent_header");
                 }
@@ -668,7 +672,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             else {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").removeClass("sticky_header");
-                // $(".mobile__header").removeClass("sticky_header");
+                $(".mobile__header").removeClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").addClass("transparent_header");
                 }
@@ -757,7 +761,6 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
                 if (scroll_height > 40) {
                     $(".{{p_route}} .sticky__header .go1-cms-header").css("top", '0px')
                     $(".{{p_route}} .transparent_sticky .go1-cms-header").css("top", '0px')
-
                 }
                 else {
                     let anno_height = $('.{{p_route}} .go1-cms-top-bar').outerHeight();
