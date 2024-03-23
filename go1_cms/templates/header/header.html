@@ -221,11 +221,14 @@
      </div>
 </div>
 </div>
+<!-- responsive divice mobile -->
 {% if device_type == "Mobile" %}
+{% endif %}
+<!-- responsive divice mobile -->
 <div class="mobile__header go1-cms-header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
         <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
-            <div class="nav-icon">
+            <div class="nav-icon" role="button">
                 <i class="fa fa-bars"></i>
             </div>
             <!-- newly added for logo -->
@@ -302,9 +305,9 @@
              {%endfor%}
         </div>
     </div>
-    <div class="mobile-blackdrop" ></div>
+    <div class="mobile-blackdrop"></div>
 </div>
-{% endif %}
+
 
 {%if theme_settings.enable_page_title%}
 <div class="sub_header">
@@ -650,12 +653,12 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 </style>
 <script type="text/javascript">
     {%if header.sticky_header %}
-
+        console.log('---');
         $(window).scroll(function () {
             if ($(window).scrollTop() > 40) {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").addClass("sticky_header");
-                $(".mobile__header").addClass("sticky_header");
+                // $(".mobile__header").addClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").removeClass("transparent_header");
                 }
@@ -665,7 +668,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
             else {
                 adjust_header_height($(window).scrollTop())
                 $(".desktop__header").removeClass("sticky_header");
-                $(".mobile__header").removeClass("sticky_header");
+                // $(".mobile__header").removeClass("sticky_header");
                 if ("{{header.is_transparent_header}}" == "1") {
                     $(".go1-cms-header").addClass("transparent_header");
                 }

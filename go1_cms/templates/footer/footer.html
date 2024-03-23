@@ -11,8 +11,8 @@
                     {%set col_index = loop.index %}
                         <div style="width: {{each_col.width}}" class="footer_sec">
                             {%for sec_item in footer.get("items")%}
-                                {%if col_index == (sec_item.column_index+1) %}
-                                	{%for m_sec_item in sec_item.get("items")%}
+							{%if col_index == (sec_item.column_index+1) %}
+							{%for m_sec_item in sec_item.get("items")%}
 									<!-- newly added -->
 									{%if m_sec_item.section_name=="Footer Contact"%}
 										<div class="footer_p_b">
@@ -84,7 +84,8 @@
 	                                	 	</div>
 	                                	 {%endif%}
 	                                	 {%if m_sec_item.section_name=="Social Links"%}
-	                                	 	<span  class="go1-cms-footer-title">Social Media</span>
+	                                	 	<!-- <span  class="go1-cms-footer-title">Social Media</span> -->
+	                                	 	<span  class="go1-cms-footer-title"></span>
 		                                	 		<ul  class="d__flex" style="gap:10px">
 
 	                                	 	{%for menu_item in theme_settings.social_links%}
