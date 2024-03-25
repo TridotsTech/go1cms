@@ -126,7 +126,7 @@
                                                         <a href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                                         {%if menu_item.child_menu%}
                                                             {% set col_count=menu_item.no_of_column %}
-                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{col_count}}-list" style="border-radius: 7px;padding: 0;height: 100vh;padding-top:2px;padding-bottom:2px;">
+                                                            <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{col_count}}-list" style="padding: 0;height: 100vh;">
                                                                 <style>
                                                                     .mega-dropdown.sub-categoryy.go1-cms-dropdown{
                                                                     {% if col_count == 1 %}
@@ -147,34 +147,34 @@
                                                                     {% endif %}
                                                                 }
                                                                 </style>
-                                                                <li class="row" style="margin:0;">
-                                                                    <div style="display:flex">
+                                                                <li class="row" style="margin:0; ">
+                                                                    <div style="display:flex; padding: 0;">
                                                                     {% for x in range(col_count) %}
-                                                                            <ul>
-                                                                                {%for sub_menu_item in menu_item.child_menu%}
-                                                                                    {% if x+1 == sub_menu_item.mega_m_col_index %}
-                                                                                       {% if sub_menu_item.icon %}
-                                                                                       <li class="drop__down__header sub-menu-item" >
-                                                                                            <div class="each-menu-content" style="display:flex;align-items: center;">  
-                                                                                                <img class="mega-menu-icon" src="{{sub_menu_item.icon}}" style="height: 22px;">  
-                                                                                                <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
-                                                                                                    {%if sub_menu_item.child_menu%}
+                                        <ul>
+                                            {%for sub_menu_item in menu_item.child_menu%}
+                                                {% if x+1 == sub_menu_item.mega_m_col_index %}
+                                                    {% if sub_menu_item.icon %}
+                                                    <li class="drop__down__header sub-menu-item" >
+                                                        <div class="each-menu-content" style="display:flex;align-items: center;">  
+                                                            <img class="mega-menu-icon" src="{{sub_menu_item.icon}}" style="height: 22px;">  
+                                                            <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
+                                                                {%if sub_menu_item.child_menu%}
                                                                                                         <ul class="sub-child sub__children go1-cms-dropdown">
                                                                                                             {%for sub_sub_menu_item in sub_menu_item.child_menu%}
                                                                                                             <li class="drop__down__header sub-sub-menu-item">
                                                                                                                 <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
                                                                                                             </li>
                                                                                                             {%endfor%}
-                                                                                                        </ul>
-                                                                                                    {%endif%}
-                                                                                            </div>
-                                                                                        </li>
-                                                                                        {% else %}
-                                                                                            <li class="drop__down__header sub-menu-item" >
-                                                                                                <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
-                                                                                                {%if sub_menu_item.child_menu%}
-                                                                                                    <ul class="sub-child sub__children go1-cms-dropdown">
-                                                                                                        {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                        </ul>
+                                    {%endif%}
+                            </div>
+                        </li>
+                        {% else %}
+                                <li class="drop__down__header sub-menu-item" >
+                                    <a href="{{sub_menu_item.redirect_url}}" style="float: left">{{sub_menu_item.menu_label}}</a>
+                                    {%if sub_menu_item.child_menu%}
+                                        <ul class="sub-child sub__children go1-cms-dropdown">
+                                            {%for sub_sub_menu_item in sub_menu_item.child_menu%}
                                                                                                         <li class="drop__down__header sub-sub-menu-item">
                                                                                                             <a href="{{sub_sub_menu_item.redirect_url}}">   {{sub_sub_menu_item.menu_label}}</a>
                                                                                                         </li>
@@ -538,6 +538,11 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
 .sub-sub-menu-item a{
     float: left;
 }
+.drop__down__header.sub-menu-item{
+    position: relative;
+    display: inline-block;
+}
+
 {%if theme_settings.enable_page_title%}
 
     .sub_header .sub-header-sub-container{
