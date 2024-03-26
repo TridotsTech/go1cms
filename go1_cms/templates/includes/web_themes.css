@@ -692,12 +692,12 @@ li {
      }
       .go1-cms-dropdown{
         background-color: {{doc.header_settings.dropdown_background_color}} !important;
-    position: absolute;
-    transition: all 0.25s ease 0s;
-    z-index: 999;
-    box-shadow: rgb(0 0 0 / 10%) 0px 10px 15px -3px, rgb(0 0 0 / 5%) 0px 4px 6px -2px;
+        position: absolute;
+        transition: all 0.25s ease 0s;
+        z-index: 999;
+        box-shadow: rgb(0 0 0 / 10%) 0px 10px 15px -3px, rgb(0 0 0 / 5%) 0px 4px 6px -2px;
    
-      max-height:300px;
+        /* max-height:100vh; */
 
     }
      .go1-cms-dropdown a{

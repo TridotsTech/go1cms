@@ -1,283 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="{{_(meta_description)}}">
-    <meta name="keywords" content="{{_(meta_keywords)}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="{% if theme_settings %}{{theme_settings.body_theme_color}}{% endif %}">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="{{_(meta_description)}}" />
+    <meta name="keywords" content="{{_(meta_keywords)}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="theme-color"
+      content="{% if theme_settings %}{{theme_settings.body_theme_color}}{% endif %}"
+    />
     <meta property="og:url" content="{{page_url}}" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="{{_(meta_title)}}" />
     <meta property="og:description" content="{{_(meta_description)}}" />
-    <meta property="og:image" content="{% if theme_settings %}{{theme_settings.website_logo}}{% endif %}" />
+    <meta
+      property="og:image"
+      content="{% if theme_settings %}{{theme_settings.website_logo}}{% endif %}"
+    />
     <!-- favicon -->
-    <link rel="apple-touch-icon-precomposed" href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}">
-    <link rel="shortcut icon" type="image/png" href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}" />
-    <link rel="apple-touch-icon" href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="{% if theme_settings %}{{theme_settings.favicon}}{% endif %}"
+    />
     <!-- favicon -->
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.carousel.min.css" as="style" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" as="style" />
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/owl.theme.default.min.css" as="style" />
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/bootstrap.min.css" as="style" />
-    {% if theme_settings %}
-    {% if theme_settings.css_list %}
-        {%for css in theme_settings.css_list%}
-        <link rel="stylesheet" type="text/css" href="{{css.css_file}}">
-        {%endfor%}
-    {% endif %}
-    {% if theme_settings.file_path %}
-    <link rel="stylesheet" type="text/css" href="{{theme_settings.file_path.split('/public')[1]}}"> 
-    {% endif %} 
-    {% if theme_settings.enable_noindex %}
-    <meta name="robots" content="nofollow, noindex, noarchive,noimageindex, nosnippet"/>
-    {% endif %}
-    {% if theme_settings.google_fonts %}
-        {%for font in theme_settings.google_fonts%}
-        <link rel="stylesheet" type="text/css" href="{{font.font_family_url}}">
-        {%endfor%}
-    {% endif %}
-{% endif %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/go1_cms/css/owl.carousel.min.css"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/go1_cms/css/owl.theme.default.min.css"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/go1_cms/css/bootstrap.min.css"
+      as="style"
+    />
+    {% if theme_settings %} {% if theme_settings.css_list %} {%for css in
+    theme_settings.css_list%}
+    <link rel="stylesheet" type="text/css" href="{{css.css_file}}" />
+    {%endfor%} {% endif %} {% if theme_settings.file_path %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{theme_settings.file_path.split('/public')[1]}}"
+    />
+    {% endif %} {% if theme_settings.enable_noindex %}
+    <meta
+      name="robots"
+      content="nofollow, noindex, noarchive,noimageindex, nosnippet"
+    />
+    {% endif %} {% if theme_settings.google_fonts %} {%for font in
+    theme_settings.google_fonts%}
+    <link rel="stylesheet" type="text/css" href="{{font.font_family_url}}" />
+    {%endfor%} {% endif %} {% endif %}
     <!-- assets -->
-    <script type="text/javascript"  src="/assets/go1_cms/js/jquery3.6.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/jquery.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/jquery-migrate.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/jquery-ui.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/modernizr.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/owl.carousel.min.js"></script>
-    <script type="text/javascript"  src="/assets/go1_cms/js/owljquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/jquery3.6.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/jquery-migrate.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/jquery-ui.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/modernizr.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/owl.carousel.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/owljquery.min.js"
+    ></script>
     <!-- <script type="text/javascript"  src="/assets/go1_cms/js/owl1.carousel.js"></script> -->
-    <script type="text/javascript" src="/assets/go1_cms/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="/assets/go1_cms/js/owl.carousel.js"></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/bootstrap.bundle.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/owl.carousel.js"
+    ></script>
     <!-- Mobile menu category menu js newly added -->
-    <link rel="stylesheet" type="text/css" href="/assets/go1_cms/css/multi_mobile_menu.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.gokommerce.com/CSS/component.min.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
-    <script src="/assets/go1_cms/js/jquery_1.dlmenu.js"></script> 
-    <script>$(function() {$( '#dl-menu' ).dlmenu();});</script>
-   <!-- end -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/go1_cms/css/multi_mobile_menu.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.gokommerce.com/CSS/component.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/assets/go1_cms/js/jquery_1.dlmenu.js"></script>
+    <script>
+      $(function () {
+        $("#dl-menu").dlmenu();
+      });
+    </script>
+    <!-- end -->
     <title>{% block title %} {{ meta_title | striptags }} {% endblock %}</title>
-    {%if header_script%}
-    {{header_script}}
-    {%endif%}
-</head>
-<body class="{{p_route}}">
-    {% if header %}
-    {% include "templates/header/header.html" %}
-    {% endif %}
+    {%if header_script%} {{header_script}} {%endif%}
+  </head>
+  <body class="{{p_route}}">
+    {% if header %} {% include "templates/header/header.html" %} {% endif %} {%
+    block content %} {% endblock %}{% block page_content %} {% endblock %} {% if
+    footer %} {% include "templates/footer/footer.html" %} {% endif %} {% if
+    theme_settings %} {% if theme_settings.js_list %} {%for js in
+    theme_settings.js_list %}
+    <script type="text/javascript" src="{{js.js_file}}"></script>
+    {%endfor%} {% endif %} {%if theme_settings.page_js%}
+    <script type="text/javascript">
+      {
+        {
+          theme_settings.page_js;
+        }
+      }
+    </script>
+    {%endif%} {% endif %}
 
-    
-    {% block content %} {% endblock %}{% block page_content %} {% endblock %}
-
-    {% if footer %}
-    {% include "templates/footer/footer.html" %}
-    {% endif %}
-
-    {% if theme_settings %}
-       
-        {% if theme_settings.js_list %}
-            {%for js in theme_settings.js_list %}
-            <script type="text/javascript" src="{{js.js_file}}"></script>
-            {%endfor%}
-        {% endif %}
-
-
-        {%if theme_settings.page_js%}
-        <script type="text/javascript">
-            {{theme_settings.page_js}}
-        </script>
-        {%endif%}
-        
-    {% endif %}
-
-    <script type="text/javascript"  src="/assets/go1_cms/js/owl1.carousel.js"></script>
-    
-    </body>
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/owl1.carousel.js"
+    ></script>
+  </body>
 </html>
 
 <script type="text/javascript">
-    var owl = $('.owl-carousel');
-    owl.owlCarousel({
-        items:3, 
-        loop:true,
-        margin:10,
-        autoplay:true,
-        autoplayTimeout:1000,
-        autoplayHoverPause:true
-    });
-      $(document).ready(function() {
-      $("#testimonial-slider").owlCarousel({
-        items: 3,
-        itemsDesktop:[1000,3],
-        itemsDesktopSmall:[979,2],
-        itemsTablet:[768, 2],
-        itemsMobile:[650, 1],
-        pagination: true,
-        autoPlay: true
+      var owl = $('.owl-carousel');
+      owl.owlCarousel({
+          items:3,
+          loop:true,
+          margin:10,
+          autoplay:true,
+          autoplayTimeout:1000,
+          autoplayHoverPause:true
       });
-    });
+        $(document).ready(function() {
+        $("#testimonial-slider").owlCarousel({
+          items: 3,
+          itemsDesktop:[1000,3],
+          itemsDesktopSmall:[979,2],
+          itemsTablet:[768, 2],
+          itemsMobile:[650, 1],
+          pagination: true,
+          autoPlay: true
+        });
+      });
 
 
-var page = 0;
-var page_len = 3;
-var allow_scroll = true;
-let stop_scroll = false;
-let query_params = window.location.href.split('?')[1];
-let add_info = {};
-if(query_params && query_params != "") {
-    let query_splits = query_params.split('&');
-    $(query_splits).each(function(k, v) {
-        add_info[v.split('=')[0]] = v.split('=')[1];
-    })
-}
-var body_scroll = true
-$(window).scroll(function() {
-    scrollFunction()
-   body_scroll = false
-    if (allow_scroll == true) {
-        //  console.log(allow_scroll,"allow_scroll")
-        var hT = $('.page-sections-main').offset().top,
-            hH = $('.page-sections-main').outerHeight(),
-            wH = $(window).height(),
-            wS = $(this).scrollTop();
-        if (wS > ((hT + hH - wH) - 500)) {
-            if (stop_scroll == false) {
-                $('.page-loader').show();
-            } else {
-                return;
-            }
-        } else {
-            return;
-        }
-        allow_scroll = false;
-        page = page + 1;
-        // page_len = page_len + 3
-        $.ajax({
+  var page = 0;
+  var page_len = 3;
+  var allow_scroll = true;
+  let stop_scroll = false;
+  let query_params = window.location.href.split('?')[1];
+  let add_info = {};
+  if(query_params && query_params != "") {
+      let query_splits = query_params.split('&');
+      $(query_splits).each(function(k, v) {
+          add_info[v.split('=')[0]] = v.split('=')[1];
+      })
+  }
+  var body_scroll = true
+  $(window).scroll(function() {
+      scrollFunction()
+     body_scroll = false
+      if (allow_scroll == true) {
+          //  console.log(allow_scroll,"allow_scroll")
+          var hT = $('.page-sections-main').offset().top,
+              hH = $('.page-sections-main').outerHeight(),
+              wH = $(window).height(),
+              wS = $(this).scrollTop();
+          if (wS > ((hT + hH - wH) - 500)) {
+              if (stop_scroll == false) {
+                  $('.page-loader').show();
+              } else {
+                  return;
+              }
+          } else {
+              return;
+          }
+          allow_scroll = false;
+          page = page + 1;
+          // page_len = page_len + 3
+          $.ajax({
 
-            type: 'POST',
-            Accept: 'application/json',
-            ContentType: 'application/json;charset=utf-8',
-            url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-            data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
-            dataType: "json",
-            headers: {
-                'X-Frappe-CSRF-Token': '{{csrf_token}}'
-            },
-            success: function(data) {
-                $('.page-loader').hide();
-                if (data.message && data.message.length > 0) {
-                    allow_scroll = true;
-                    $(data.message).each(function(k, v) {
-                        $('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
-                    })
-                } else {
-                    allow_scroll = false;
-                    stop_scroll = true;
-                }
-            }
-        })
-    }
-})
-if(body_scroll){
-$('body').scroll(function(){
-    if (allow_scroll == true) {
-       
-        var hT = $('.page-sections-main').offset().top,
-            hH = $('.page-sections-main').outerHeight(),
-            wH = $(window).height(),
-            wS = $(this).scrollTop();
-             
-           
-        if (wS > ((hT + hH - wH) - 500)) {
-            if (stop_scroll == false) {
-                $('.page-loader').show();
-            } else {
-                return;
-            }
-        } else {
-            return;
-        }
-        allow_scroll = false;
-        page = page + 1;
-         // page_len = page_len + 3
-       
-        $.ajax({
-            type: 'POST',
-            Accept: 'application/json',
-            ContentType: 'application/json;charset=utf-8',
-            url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-            data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
-            dataType: "json",
-            headers: {
-                'X-Frappe-CSRF-Token': '{{csrf_token}}'
-            },
-            success: function(data) {
-               
-                $('.page-loader').hide();
-                if (data.message && data.message.length > 0) {
-                    allow_scroll = true;
-                    $(data.message).each(function(k, v) {
-                        $('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
-                    })
-                } else {
-                    allow_scroll = false;
-                    stop_scroll = true;
-                }
-            }
-        })
-    }
-})
-}
+              type: 'POST',
+              Accept: 'application/json',
+              ContentType: 'application/json;charset=utf-8',
+              url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+              data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+              dataType: "json",
+              headers: {
+                  'X-Frappe-CSRF-Token': '{{csrf_token}}'
+              },
+              success: function(data) {
+                  $('.page-loader').hide();
+                  if (data.message && data.message.length > 0) {
+                      allow_scroll = true;
+                      $(data.message).each(function(k, v) {
+                          $('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+                      })
+                  } else {
+                      allow_scroll = false;
+                      stop_scroll = true;
+                  }
+              }
+          })
+      }
+  })
+  if(body_scroll){
+  $('body').scroll(function(){
+      if (allow_scroll == true) {
 
-    function scrollFunction() {
-        // console.log("working")
-        {% if p_route %}
-        {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
-        if (!(typeof (document.getElementById('btn-back-to-top')) == "object") || !document.getElementById('btn-back-to-top')) {
-            $(".{{p_route}}").append(`<button type="button"
-                class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
-                <i class="fas fa-arrow-up"></i>
-                </button>`)
-                $("#btn-back-to-top").css({"position": "fixed","bottom":"20px","right":"20px","display":"none","height":"30px",
-                "width": "30px",
-                "align-items": "center",
-                "justify-content":"center"})
-        }
-        // console.log(typeof (document.getElementById('btn-back-to-top')) == "object", "document.getElementById('btn-back-to-top')")
-        let mybutton = document.getElementById("btn-back-to-top");
-        if (mybutton) {
-            {% if theme_settings.back_to_top %}
-                if(document.documentElement.clientWidth >= 768){
-                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                        mybutton.style.display = "flex";
-                    }
-                    else {
-                        mybutton.style.display = "none";
-                    }
-                    // When the user clicks on the button, scroll to the top of the document
-                    mybutton.addEventListener("click", backToTop);
-                }
-            {% endif %}
-            {% if theme_settings.back_to_top_mobile %}
-            if(document.documentElement.clientWidth <= 768){
-                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                        mybutton.style.display = "flex";
-                    }
-                    else {
-                        mybutton.style.display = "none";
-                    }
-                    // When the user clicks on the button, scroll to the top of the document
-                    mybutton.addEventListener("click", backToTop);
-                }
-            {% endif %}
-        }
-        {% endif %}
-        {% endif %}
-    }
-    function backToTop() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
-    var csrf_token='{{csrf_token}}';
+          var hT = $('.page-sections-main').offset().top,
+              hH = $('.page-sections-main').outerHeight(),
+              wH = $(window).height(),
+              wS = $(this).scrollTop();
+
+
+          if (wS > ((hT + hH - wH) - 500)) {
+              if (stop_scroll == false) {
+                  $('.page-loader').show();
+              } else {
+                  return;
+              }
+          } else {
+              return;
+          }
+          allow_scroll = false;
+          page = page + 1;
+           // page_len = page_len + 3
+
+          $.ajax({
+              type: 'POST',
+              Accept: 'application/json',
+              ContentType: 'application/json;charset=utf-8',
+              url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+              data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+              dataType: "json",
+              headers: {
+                  'X-Frappe-CSRF-Token': '{{csrf_token}}'
+              },
+              success: function(data) {
+
+                  $('.page-loader').hide();
+                  if (data.message && data.message.length > 0) {
+                      allow_scroll = true;
+                      $(data.message).each(function(k, v) {
+                          $('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+                      })
+                  } else {
+                      allow_scroll = false;
+                      stop_scroll = true;
+                  }
+              }
+          })
+      }
+  })
+  }
+
+      function scrollFunction() {
+          // console.log("working")
+          {% if p_route %}
+          {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
+          if (!(typeof (document.getElementById('btn-back-to-top')) == "object") || !document.getElementById('btn-back-to-top')) {
+              $(".{{p_route}}").append(`<button type="button"
+                  class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+                  <i class="fas fa-arrow-up"></i>
+                  </button>`)
+                  $("#btn-back-to-top").css({"position": "fixed","bottom":"20px","right":"20px","display":"none","height":"30px",
+                  "width": "30px",
+                  "align-items": "center",
+                  "justify-content":"center"})
+          }
+          // console.log(typeof (document.getElementById('btn-back-to-top')) == "object", "document.getElementById('btn-back-to-top')")
+          let mybutton = document.getElementById("btn-back-to-top");
+          if (mybutton) {
+              {% if theme_settings.back_to_top %}
+                  if(document.documentElement.clientWidth >= 768){
+                      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                          mybutton.style.display = "flex";
+                      }
+                      else {
+                          mybutton.style.display = "none";
+                      }
+                      // When the user clicks on the button, scroll to the top of the document
+                      mybutton.addEventListener("click", backToTop);
+                  }
+              {% endif %}
+              {% if theme_settings.back_to_top_mobile %}
+              if(document.documentElement.clientWidth <= 768){
+                      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                          mybutton.style.display = "flex";
+                      }
+                      else {
+                          mybutton.style.display = "none";
+                      }
+                      // When the user clicks on the button, scroll to the top of the document
+                      mybutton.addEventListener("click", backToTop);
+                  }
+              {% endif %}
+          }
+          {% endif %}
+          {% endif %}
+      }
+      function backToTop() {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+      }
+      var csrf_token='{{csrf_token}}';
 </script>
