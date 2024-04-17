@@ -17,10 +17,8 @@ app_include_css = "/assets/go1_cms/css/cms.css"
 app_include_js = "/assets/go1_cms/js/cms.js"
 
 
-
-
 update_website_context = [
-	"go1_cms.go1_cms.api.update_website_context",
+    "go1_cms.go1_cms.api.update_website_context",
 ]
 
 # include js, css files in header of web template
@@ -43,6 +41,10 @@ update_website_context = [
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
+website_route_rules = [
+    {"from_route": "/cms/<path:app_path>", "to_route": "cms"},
+]
+
 # Home Pages
 # ----------
 
@@ -51,7 +53,7 @@ update_website_context = [
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# "Role": "home_page"
 # }
 
 # Generators
@@ -104,18 +106,18 @@ after_install = "go1_cms.go1_cms.after_install.after_install"
 # Hook on document methods and events
 
 doc_events = {
-	"Header Component": {
-		"on_update": "go1_cms.go1_cms.api.update_web_themes",
-	},
-	"Footer Component": {
-		"on_update": "go1_cms.go1_cms.api.update_web_themes",
-	},
-	"Web Page Builder": {
-		"on_update": "go1_cms.go1_cms.api.update_web_themes",
-	},
-	"Color Palette": {
-		"on_update": "go1_cms.go1_cms.api.update_web_themes",
-	}	
+    "Header Component": {
+        "on_update": "go1_cms.go1_cms.api.update_web_themes",
+    },
+    "Footer Component": {
+        "on_update": "go1_cms.go1_cms.api.update_web_themes",
+    },
+    "Web Page Builder": {
+        "on_update": "go1_cms.go1_cms.api.update_web_themes",
+    },
+    "Color Palette": {
+        "on_update": "go1_cms.go1_cms.api.update_web_themes",
+    }
 
 }
 
@@ -168,24 +170,24 @@ doc_events = {
 # --------------------
 
 user_data_fields = [
-	{
-		"doctype": "{doctype_1}",
-		"filter_by": "{filter_by}",
-		"redact_fields": ["{field_1}", "{field_2}"],
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_2}",
-		"filter_by": "{filter_by}",
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_3}",
-		"strict": False,
-	},
-	{
-		"doctype": "{doctype_4}"
-	}
+    {
+        "doctype": "{doctype_1}",
+        "filter_by": "{filter_by}",
+        "redact_fields": ["{field_1}", "{field_2}"],
+        "partial": 1,
+    },
+    {
+        "doctype": "{doctype_2}",
+        "filter_by": "{filter_by}",
+        "partial": 1,
+    },
+    {
+        "doctype": "{doctype_3}",
+        "strict": False,
+    },
+    {
+        "doctype": "{doctype_4}"
+    }
 ]
 
 # Authentication and authorization
@@ -195,5 +197,9 @@ user_data_fields = [
 # 	"go1_cms.auth.validate"
 # ]
 get_translated_dict = {
-	("doctype", "Global Defaults"): "frappe.geo.country_info.get_translated_dict"
+    ("doctype", "Global Defaults"): "frappe.geo.country_info.get_translated_dict"
 }
+
+fixtures = [
+    "Web Theme",
+]

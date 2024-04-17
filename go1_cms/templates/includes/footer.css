@@ -80,7 +80,7 @@
 .{{page_route}} .go1-cms-footer .about_content {
   
     margin-top: 10px;
-    float: left;width: 85%;
+    float: left;width: 100%;
 }
 .{{page_route}} .go1-cms-footer a{
     padding: 8px 0;

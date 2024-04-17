@@ -1,11 +1,12 @@
 // Copyright (c) 2019, Tridots Tech and contributors
 // For license information, please see license.txt
-// frappe.require("assets/ecommerce_business_store/js/jquery.ui.min.js");
-// frappe.require("assets/ecommerce_business_store/js/uppy.min.css");
-// frappe.require("assets/ecommerce_business_store/js/uppy.min.js");
-// // $.getScript('https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.js');
-// frappe.require("assets/ecommerce_business_store/css/ui/jodit.min.css");
-// frappe.require("assets/ecommerce_business_store/js/ui/jodit.min.js");
+frappe.require("assets/go1_cms/js/jquery.ui.min.js");
+frappe.require("assets/go1_cms/js/uppy.min.css");
+frappe.require("assets/go1_cms/js/uppy.min.js");
+frappe.require("assets/go1_cms/css/jodit.min.css");
+frappe.require("assets/go1_cms/js/jodit.min.js");
+frappe.require("assets/go1_cms/js/jquery.slimscroll.min.js");
+var is_row_updated = 0;
 frappe.ui.form.on("Footer Component", {
   refresh: function (frm) {
     frm.r___id = Math.floor(Math.random() * 100);
@@ -13,6 +14,10 @@ frappe.ui.form.on("Footer Component", {
       frm.trigger("web_section_html");
       if (frm.doc.page_type == "Adaptive") {
         frm.trigger("mobile_section_html");
+      }
+      if (is_row_updated == 1) {
+        $('[data-label="Reload"]').parent().click();
+        is_row_updated = 0;
       }
     }
     frm.trigger("render_image_preview");
@@ -181,6 +186,9 @@ frappe.ui.form.on("Footer Component", {
                   "idx",
                   k + 1
                 );
+                refresh_field("mobile_section");
+                refresh_field("web_section");
+                is_row_updated = 1;
               });
           },
         });
@@ -445,7 +453,7 @@ var add_new_section = Class.extend({
       .attr("style", "margin-bottom: 0;");
     this.dialog.$wrapper.find(".modal-dialog").css("width", "90%");
     this.dialog.$wrapper.find(".modal-dialog").css("max-width", "1000px");
-    this.dialog.$wrapper.find(".modal-content").css("height", "600px");
+    this.dialog.$wrapper.find(".modal-content").css("height", "auto");
   },
 
   section_html: function () {

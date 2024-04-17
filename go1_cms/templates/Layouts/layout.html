@@ -75,6 +75,12 @@
     theme_settings.google_fonts%}
     <link rel="stylesheet" type="text/css" href="{{font.font_family_url}}" />
     {%endfor%} {% endif %} {% endif %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/go1_cms/css/custom.css"
+      as="style"
+    />
     <!-- assets -->
     <script
       type="text/javascript"
@@ -104,7 +110,6 @@
       type="text/javascript"
       src="/assets/go1_cms/js/owljquery.min.js"
     ></script>
-    <!-- <script type="text/javascript"  src="/assets/go1_cms/js/owl1.carousel.js"></script> -->
     <script
       type="text/javascript"
       src="/assets/go1_cms/js/bootstrap.bundle.min.js"
@@ -134,13 +139,16 @@
     <!-- end -->
     <title>{% block title %} {{ meta_title | striptags }} {% endblock %}</title>
     {%if header_script%} {{header_script}} {%endif%}
+    <script
+      type="text/javascript"
+      src="/assets/go1_cms/js/owl1.carousel.js"
+    ></script>
   </head>
   <body class="{{p_route}}">
-    {% if header %} {% include "templates/header/header.html" %} {% endif %} {%
-    block content %} {% endblock %}{% block page_content %} {% endblock %} {% if
-    footer %} {% include "templates/footer/footer.html" %} {% endif %} {% if
-    theme_settings %} {% if theme_settings.js_list %} {%for js in
-    theme_settings.js_list %}
+    {% if header %} {% include template_header %} {% endif %} {% block content
+    %} {% endblock %}{% block page_content %} {% endblock %} {% if footer %} {%
+    include "templates/footer/footer.html" %} {% endif %} {% if theme_settings
+    %} {% if theme_settings.js_list %} {%for js in theme_settings.js_list %}
     <script type="text/javascript" src="{{js.js_file}}"></script>
     {%endfor%} {% endif %} {%if theme_settings.page_js%}
     <script type="text/javascript">
@@ -299,10 +307,10 @@
           {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
           if (!(typeof (document.getElementById('btn-back-to-top')) == "object") || !document.getElementById('btn-back-to-top')) {
               $(".{{p_route}}").append(`<button type="button"
-                  class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+                  class="btn btn-danger btn-floating btn-lg p-5" id="btn-back-to-top">
                   <i class="fas fa-arrow-up"></i>
                   </button>`)
-                  $("#btn-back-to-top").css({"position": "fixed","bottom":"20px","right":"20px","display":"none","height":"30px",
+                  $("#btn-back-to-top").css({"z-index": "9999","position": "fixed","bottom":"20px","right":"20px","display":"none","height":"30px",
                   "width": "30px",
                   "align-items": "center",
                   "justify-content":"center"})

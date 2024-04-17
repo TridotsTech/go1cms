@@ -688,7 +688,6 @@ li {
     }
      .go1-cms-menu li a:hover{
         color: {{doc.header_settings.menu_hover_color}};
-
      }
       .go1-cms-dropdown{
         background-color: {{doc.header_settings.dropdown_background_color}} !important;
@@ -853,7 +852,7 @@ li {
 .go1-cms-footer .about_content {
  
     margin-top: 10px;
-    float: left;width: 85%;
+    float: left;width: 100%;
 }
 .go1-cms-footer a{
     padding: 8px 0;

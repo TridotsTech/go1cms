@@ -2,5 +2,9 @@
 *.pyc
 *.egg-info
 *.swp
+__pycache__
 tags
-go1_cms/docs/current
+node_modules
+go1_cms/public/frontend
+go1_cms/www/cms.html
+build

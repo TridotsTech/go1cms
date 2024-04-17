@@ -1,12 +1,22 @@
 // Copyright (c) 2022, Tridotstech and contributors
 // For license information, please see license.txt
-
+frappe.require("assets/go1_cms/js/jquery.ui.min.js");
+frappe.require("assets/go1_cms/js/uppy.min.css");
+frappe.require("assets/go1_cms/js/uppy.min.js");
+frappe.require("assets/go1_cms/css/jodit.min.css");
+frappe.require("assets/go1_cms/js/jodit.min.js");
+frappe.require("assets/go1_cms/js/jquery.slimscroll.min.js");
+var is_row_updated = 0;
 frappe.ui.form.on("Header Component", {
   refresh: function (frm) {
     if (!frm.__islocal) {
       frm.trigger("web_section_html");
       if (frm.doc.page_type == "Adaptive") {
         frm.trigger("mobile_section_html");
+      }
+      if (is_row_updated == 1) {
+        $('[data-label="Reload"]').parent().click();
+        is_row_updated = 0;
       }
     }
     frm.trigger("render_image_preview");
@@ -167,6 +177,9 @@ frappe.ui.form.on("Header Component", {
                   "idx",
                   k + 1
                 );
+                refresh_field("mobile_section");
+                refresh_field("web_section");
+                is_row_updated = 1;
               });
           },
         });

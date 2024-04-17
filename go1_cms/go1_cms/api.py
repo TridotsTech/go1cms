@@ -583,6 +583,10 @@ def get_page_builder_data(page, customer=None, application_type="mobile", busine
 
 
 def get_header_info(header_id):
+    print("=========================")
+    print('id::', header_id)
+    print("=========================")
+
     header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=['is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top',
                                     'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button', 'button_text', 'button_link', 'link_target', 'is_transparent_header', 'sticky_header_background', 'menu_text_color'])
     if header_list:
@@ -594,8 +598,10 @@ def get_header_info(header_id):
                 lists = []
                 for item in data:
                     if item.get('section_type') == "Menu":
-                        page_section_menu = frappe.get_value(
-                            "Page Section", item.get('section'), "menu")
+                        page_st = frappe.get_value(
+                            "Page Section", item.get('section'), ['menu', 'custom_css'], as_dict=1)
+                        item["custom_css"] = page_st['custom_css']
+                        page_section_menu = page_st['menu']
                         menu = frappe.db.get_all("Menu", filters={"name": page_section_menu}, fields=[
                                                  'is_static_menu', 'name'])
                         if menu:
@@ -767,6 +773,7 @@ def update_website_context(context):
                     if context.header and context.doc.is_transparent_header:
                         context.header.is_transparent_header = 1
         get_device_type(context)
+        context.template_header = "templates/header/header.html"
         # frappe.log_error(context.header,">> context.header <<")
         # frappe.log_error(context,">> context data <<")
     except Exception as e:

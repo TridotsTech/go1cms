@@ -1,0 +1,27 @@
+{
+  "name": "frappe-ui-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "vite build --base=/assets/go1_cms/frontend/ && yarn copy-html-entry",
+    "copy-html-entry": "cp ../go1_cms/public/frontend/index.html ../go1_cms/www/cms.html",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "feather-icons": "^4.28.0",
+    "frappe-ui": "^0.1.45",
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.7.5",
+    "tailwindcss": "^3.4.3",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.5",
+    "vite": "^5.2.8"
+  }
+}

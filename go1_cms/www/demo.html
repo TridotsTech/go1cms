@@ -1,0 +1,303 @@
+<!-- Slider MBW -->
+<div class="{{class_name}}">
+	<div class="relative mb-20 lg:mb-40">
+		<div class="relative mb-8">
+		  <img
+		  	class="w-full min-h-96"
+			src="{{bg_img}}"
+			alt="..."
+		  />
+		  <div class="absolute inset-0 flex items-center justify-center">
+			<div class="text-center">
+				<h2 class="text-white">{{title}}</h2>
+				<p class="text-white">{{content}}</p>
+				<div>
+				  <a href="{{btn_1.btn_redirect_url}}" class="btn_1 mx-2">{{btn_1.btn_text}}</a>
+				  <a href="{{btn_2.btn_redirect_url}}" class="btn_2 mx-2">{{btn_2.btn_text}}</a>
+				</div>
+			</div>
+		  </div>
+		</div>
+		<div class="lg:absolute w-full -bottom-24">
+		  <div class="container m-auto">
+			<div class="w-full lg:grid lg:grid-cols-3 lg:space-x-5">
+				<div class="flex min-h-44 bg-white rounded-xl mt-5 shadow-2xl p-8">
+					<div>
+					  <div class="flex p-5 rounded-2xl bg-gray-200">
+						<img
+						  class="w-8 h-8"
+						  src="{{icon_1}}"
+                                                  alt="..."
+						></img>
+					  </div>
+					</div>
+					<div class="ml-2">
+					  <div class="mb-2 font-bold text-lg">{{title_1}}</div>
+					  <div class="text-sm">{{content_1}}</div>
+					</div>
+				  </div>
+				  <div class="flex min-h-44 bg-white rounded-xl mt-5 shadow-2xl p-8">
+					<div>
+					  <div class="flex p-5 rounded-2xl bg-gray-200">
+						<img
+						  class="w-8 h-8"
+						  src="{{icon_2}}"
+								alt="..."
+						></img>
+					  </div>
+					</div>
+					<div class="ml-2">
+					  <div class="mb-2 font-bold text-lg">{{title_2}}</div>
+					  <div class="text-sm">{{content_2}}</div>
+					</div>
+				  </div>
+				  <div class="flex min-h-44 bg-white rounded-xl mt-5 shadow-2xl p-8">
+					<div>
+					  <div class="flex p-5 rounded-2xl bg-gray-200">
+						<img
+						  class="w-8 h-8"
+						  src="{{icon_3}}"
+                                                  alt="..."
+						></img>
+					  </div>
+					</div>
+					<div class="ml-2">
+					  <div class="mb-2 font-bold text-lg">{{title_3}}</div>
+					  <div class="text-sm">{{content_3}}</div>
+					</div>
+				  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<!-- Slider MBW 1 -->
+<div class="{{class_name}}">
+	<div class="container m-auto mb-16">
+		<div class="grid lg:grid-cols-2 lg:gap-16">
+		  <div class="mb-4">
+			<img
+			  class="rounded-xl w-full lg:w-[715px]"
+			  src="{{img_left}}"
+			  alt="..."
+			/>
+		  </div>
+		  <div class="flex items-center">
+			<div class="pr-20">
+			  <div class="font-bold text-4xl mb-6">{{title_right}}</div>
+			  <p class="text-gray-800">
+				{{content_right}}
+			  </p>
+			</div>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<!-- Slider MBW 2 -->
+<div class="{{class_name}}">
+	<div class="container m-auto mb-16 lg:mb-40">
+		<div class="grid lg:grid-cols-2 lg:gap-16">
+		  <div class="flex items-center lg:pr-16">
+			<div>
+			  <div class="font-bold text-4xl mb-6">{{ title_left }}</div>
+			  <p class="text-gray-800">
+				{{ content_left }}
+				Convallis turpis erat tempus, viverra aliquet. Nullam viverra
+				nam auctor sit ipsum malesuada duis volutpat.Convallis turpis
+				erat tempus, viverra aliquet. Nullam viverra nam auctor sit
+				ipsum malesuada a, duis volutpat.
+			  </p>
+			</div>
+		  </div>
+		  <div class="mb-4 relative">
+			<img
+			  class="rounded-xl w-full lg:max-w-[360px] xl:max-w-[435px]"
+			  src="{{ img_right_1 }}"
+			  alt="..."
+			/>
+			<div class="lg:absolute lg:-bottom-24 right-0 mt-8">
+			  <img
+				class="rounded-xl w-full lg:max-w-[290px] xl:max-w-[380px]"
+				src="{{ img_right_2 }}"
+				alt="..."
+			  />
+			</div>
+		  </div>
+		</div>
+	  </div>
+</div>
+
+<!-- Slider MBW 3 -->
+<div class="{{class_name}}">
+	<div class="container m-auto mb-16">
+		<div class="relative">
+		  <img
+			class="h-80 rounded-xl w-full"
+			src="{{ img_banner }}"
+			alt="..."
+		  />
+		  <div class="absolute flex inset-0 items-center">
+			<h1 class="text-4xl font-bold p-20">{{ banner }}</h1>
+		  </div>
+		</div>
+	  </div>
+</div>
+
+<!-- Slider MBW 4 -->
+<section class="section-go {{class_name}}">
+	<div class="container">
+	   <div class="row">
+		  <div class="col-md-12 text-center">
+			 <h2 class="title text-black">{{title}}<span class="spantitle spantitle-color">{{spantitle}}</span></h2>
+			 <p class="subtitle text-center text-gray-700">{{subtitle}}</p>
+		  </div>
+	   </div>
+	   <div class="row">
+		  <div class="col-md-12 d-inline-flex flex-wrap">
+			 {% for item in logos %}
+				<div class="col-6 col-md-2 p-2">
+					<div class="rounded-sm border border-solid border-gray-300">
+						<img src="{{item.logo}}" class="img-fluid width rounded-sm" alt="Go1cms">
+					</div>
+				</div>
+			 {% endfor %}
+		  </div>
+	   </div>
+	</div>
+ </section>
+
+<!-- Contact Form MBW -->
+<div class="mb-14 bg-gray-100 {{class_name}}">
+	<div class="container m-auto py-28">
+	  <div class="grid lg:grid-cols-2 lg:gap-16 ">
+		<div class="flex items-center mb-6">
+		  <div>
+			<div class="font-bold text-4xl mb-6">
+			  Are you looking for sercivce?
+			</div>
+			<p class="text-gray-800">
+			  Convallis turpis erat tempus, viverra aliquet. Nullam
+			  viverra nam auctor sit ipsum malesuada duis
+			  volutpat.Convallis turpis erat tempus, viverra aliquet.
+			  Nullam viverra nam auctor sit ipsum malesuada a, duis
+			  volutpat.
+			</p>
+		  </div>
+		</div>
+		<div>
+		  <form
+			action="#"
+			class="bg-white p-8 rounded-md w-full lg:max-w-[500px]"
+		  >
+			<div class="grid grid-cols-2 gap-5">
+			  <input
+				class="w-full px-5 bg-gray-100 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+				placeholder="Full name"
+				required
+			  ></input>
+			  <input
+				class="w-full px-5 bg-gray-100 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+				placeholder="Phone number"
+				required
+			  ></input>
+			</div>
+			<input
+			  class="w-full px-5 bg-gray-100 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+			  placeholder="Email"
+			  required
+			></input>
+			<input
+			  class="w-full px-5 bg-gray-100 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+			  placeholder="Address location"
+			  required
+			></input>
+			<button class="p-2 w-full bg-red-700 rounded-lg hover:bg-red-600 text-white">
+			  Request
+			</button>
+		  </form>
+		</div>
+	  </div>
+	</div>
+</div>
+
+<!-- Testimonials -->
+<div class="row">
+	<div class="col-md-12 text-center mb-30">
+		<div class="col-md-12">
+			<h2 class="title text-5xl text-black font-bold">title</h2>
+		</div>
+	</div>
+</div>
+
+<!-- Contact -->
+<div class="{{class_name}} relative mb-10 bg-cover bg-center h-96" style="background-image: url('{{background}}');">
+	<div class="absolute inset-0 bg-black opacity-70"></div>
+	<div class="container relative z-10 h-full flex flex-col justify-center">
+		<h2 class="text-7xl text-white font-bold">{{title}}</h2>
+		<div class="breadcrumb items-center">
+			{% for brc in breadcrumb %}
+			{% if not loop.last %}
+			<a class="text-gray-300" style="cursor: pointer;" href="{{brc.route}}">{{ brc.menu }}</a>
+            <div class="text-white px-2">/</div>
+			{% else %}
+			<a class="text-white" style="cursor: pointer;" href="{{brc.route}}">{{ brc.menu }}</a>
+			{% endif %}
+			{% endfor %}
+        </div>
+	</div>
+</div>
+
+<!-- contact 1 -->
+<div class="{{class_name}} container m-auto pb-16 pt-4">
+	{{gg_embed}}
+	<div class="grid lg:grid-cols-2 lg:gap-16 ">
+	  <div class="flex mb-6">
+		<div>
+		  <div class="font-bold text-4xl mb-10">Heading</div>
+		  {% for item in list_contact %}
+			<div class="mb-2">
+				<div class="" style="display:flex;gap:5px;">
+					{%if item.icon%}
+						<img class="rounded-sm p-1" style="max-height: 30px;width: 24px;max-width: 24px" src="{{item.icon}}" />
+					{%endif%}
+					<p class="text-base m-0">
+						{{item.content}}
+					</p>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	  </div>
+	  <div>
+		<div class="font-bold text-4xl mb-10">Heading</div>
+		<form action="#" class="bg-white rounded-md w-full">
+		  <input
+			class="w-full px-5 border border-gray-300 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+			placeholder="Name"
+			required
+		  ></input>
+		  <input
+			class="w-full px-5 border border-gray-300 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+			placeholder="Email"
+			required
+		  ></input>
+		  <input
+			class="w-full px-5 border border-gray-300 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
+			placeholder="Subject"
+			required
+		  ></input>
+		  <textarea
+			rows="4"
+			class="w-full px-5 py-4 border border-gray-300 focus:outline-none focus:ring focus:ring-red-500 rounded-lg mb-5 ring-inset"
+			placeholder="Enter your message here"
+			required
+		  ></textarea>
+		  <button class="p-3 bg-red-700 rounded-lg hover:bg-red-600 text-white font-bold">
+			Submit Now
+		  </button>
+		</form>
+	  </div>
+	</div>
+  </div>

@@ -92,7 +92,9 @@
 }
      .{{page_route}} .go1-cms-menu li a:hover{
         color: {{header_settings.menu_hover_color}};
-
+     }
+     .{{page_route}} .go1-cms-menu li a.menu_after::after{
+        background-color: {{header_settings.menu_hover_color}};
      }
       .{{page_route}} .go1-cms-dropdown{
         background-color: {{header_settings.dropdown_background_color}} !important;

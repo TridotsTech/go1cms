@@ -208,11 +208,14 @@ class PageSection(Document):
 
         if self.content:
             for item in self.content:
-                if item.field_type != 'List':
-                    json_obj[item.field_key] = item.content
-                else:
+                if item.field_type == 'Button':
+                    json_obj[item.field_key] = json.loads(
+                        item.content) if item.content else {}
+                elif item.field_type == 'List':
                     json_obj[item.field_key] = json.loads(
                         item.content) if item.content else []
+                else:
+                    json_obj[item.field_key] = item.content
 
         return json_obj
 

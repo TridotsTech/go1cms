@@ -1314,15 +1314,15 @@ frappe.ui.form.on("Web Page Builder", {
                       fonts_media_query_data[e_res].split("-").join("") +
                       " !important;"
                     }}}`;
-                  } else if (e_res == "mbl-font-size") {
-                    font_size_css_design += `@media (max-width: 767px){.${
+                  } else if (e_res == "tab-font-size") {
+                    font_size_css_design += `@media (min-width: 768px){.${
                       r.message.class_name
                     }{font-size:${
                       fonts_media_query_data[e_res].split("-").join("") +
                       " !important;"
                     }}}`;
-                  } else if (e_res == "tab-font-size") {
-                    font_size_css_design += `@media (max-width: 992px){.${
+                  } else if (e_res == "mbl-font-size") {
+                    font_size_css_design += `@media (max-width: 575px){.${
                       r.message.class_name
                     }{font-size:${
                       fonts_media_query_data[e_res].split("-").join("") +
