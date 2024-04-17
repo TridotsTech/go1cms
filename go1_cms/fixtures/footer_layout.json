@@ -1,0 +1,162 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"50%\",\r\n            \"margin\": \"0px auto\",\r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.490967",
+  "name": "FCl-0001",
+  "preview": "/files/footer-one-column-01.svg",
+  "title": "One Column Layout"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n         {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.500607",
+  "name": "FCl-0003",
+  "preview": "/files/footer-four-columns-left-2-01.svg",
+  "title": "4 Columns Alt. 2 Left"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.504093",
+  "name": "FCl-0004",
+  "preview": "/files/footer-three-columns-right-01.svg",
+  "title": "3 Columns Alt. Right"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.507463",
+  "name": "FCl-0005",
+  "preview": "/files/footer-three-columns-center-01.svg",
+  "title": "3 Columns Alt. Center"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.510818",
+  "name": "FCl-0006",
+  "preview": "/files/footer-three-columns-left-01.svg",
+  "title": "3 Columns Alt. Left"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"33.33%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"33.33%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"33.33%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.514116",
+  "name": "FCl-0007",
+  "preview": "/files/footer-three-columns-01.svg",
+  "title": "3 Columns"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"30%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"70%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]\r\n",
+  "modified": "2024-04-04 09:13:47.517514",
+  "name": "FCl-0008",
+  "preview": "/files/footer-two-columns-right-01.svg",
+  "title": "2 Columns Alt. Right"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.520937",
+  "name": "FCl-0009",
+  "preview": "/files/footer-two-columns-01.svg",
+  "title": "Two Column Layout"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"70%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"30%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]\r\n",
+  "modified": "2024-04-04 09:13:47.524508",
+  "name": "FCl-0010",
+  "preview": "/files/footer-two-columns-left-01.svg",
+  "title": "2 Columns Alt. Left"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.528267",
+  "name": "FCl-0011",
+  "preview": "/files/footer-four-columns-01.svg",
+  "title": "4 Columns"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"33.33%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.532003",
+  "name": "FCl-0012",
+  "preview": "/files/footer-four-columns-left-01.svg",
+  "title": "4 Columns Alt. Left"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n         {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"22.22%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"33.33%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.535655",
+  "name": "FCl-0013",
+  "preview": "/files/footer-four-columns-right-01.svg",
+  "title": "4 Columns Alt. Right"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n         {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"16.66%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"50%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]\r\n",
+  "modified": "2024-04-04 09:13:47.496790",
+  "name": "FCl-0002",
+  "preview": "/files/footer-four-columns-right-2-01.svg",
+  "title": "4 Columns Alt. 2 Right"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n         {\r\n            \"width\": \"20%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"20%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"20%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"20%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"20%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.546856",
+  "name": "FCl-0016",
+  "preview": "/files/footer-five-columns-01.svg",
+  "title": "5 Columns"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.539434",
+  "name": "FCl-0014",
+  "preview": "/files/footer-five-columns-right-01.svg",
+  "title": "5 Columns Alt. Right"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Footer Layout",
+  "is_active": 1,
+  "layout_json": "[\r\n    {\r\n        \"fullwidth\": true,\r\n       \r\n        \"columns\": [\r\n         {\r\n            \"width\": \"25%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        },\r\n        {\r\n            \"width\": \"18.75%\",                 \r\n            \"rows\": []\r\n        }\r\n        ]\r\n    }\r\n\r\n]",
+  "modified": "2024-04-04 09:13:47.543093",
+  "name": "FCl-0015",
+  "preview": "/files/footer-five-columns-left-01.svg",
+  "title": "5 Columns Alt. Left"
+ }
+]
