@@ -583,10 +583,6 @@ def get_page_builder_data(page, customer=None, application_type="mobile", busine
 
 
 def get_header_info(header_id):
-    print("=========================")
-    print('id::', header_id)
-    print("=========================")
-
     header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=['is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top',
                                     'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button', 'button_text', 'button_link', 'link_target', 'is_transparent_header', 'sticky_header_background', 'menu_text_color'])
     if header_list:

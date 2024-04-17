@@ -236,6 +236,9 @@
 .h-14 {
   height: 3.5rem /* 56px */;
 }
+.h-52 {
+  height: 13rem /* 208px */;
+}
 .h-80 {
   height: 20rem /* 320px */;
 }
@@ -1183,6 +1186,9 @@
   }
 }
 @media (min-width: 768px) {
+  .md\:h-96 {
+    height: 24rem /* 384px */;
+  }
   .md\:-left-1\/2 {
     left: -50%;
   }

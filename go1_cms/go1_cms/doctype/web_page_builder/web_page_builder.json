@@ -93,6 +93,7 @@
   "file_path",
   "seo_section",
   "meta_title",
+  "is_converted_to_template",
   "column_break_24",
   "meta_description",
   "column_break_26",
@@ -100,7 +101,6 @@
   "section_break_28",
   "web_section",
   "mobile_section",
-  "is_converted_to_template",
   "is_location_based",
   "layout_json"
  ],
@@ -668,10 +668,11 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-12-01 16:16:18.907523",
+ "modified": "2024-04-17 16:36:22.734249",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -689,5 +690,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

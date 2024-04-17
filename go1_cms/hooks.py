@@ -64,6 +64,8 @@ website_route_rules = [
 
 # Installation
 # ------------
+# before_migrate = "go1_cms.go1_cms.after_install.after_install"
+
 
 # before_install = "go1_cms.install.before_install"
 # after_install = "go1_cms.install.after_install"
@@ -201,30 +203,25 @@ get_translated_dict = {
 }
 
 fixtures = [
-    "Web Theme",
-    "Header Component",
-    "Header Layout",
-    "Header Template",
-    "Footer Component",
-    "Footer Layout",
-    "Footer Template",
-    "Section Content",
-    "Page Section",
-    "Section Component",
-    "Section Template",
-    "Web Page Builder",
-    "Typography Text",
-    "Testimonial",
-    "Section Template Group",
-    "Section Component Group",
-    "Menu",
-    "Menus Item",
-    "FAQ",
-    "Custom Query",
-    "CSS Font",
-    "Color Palette",
-    "Typography Default Color",
-    "Background Mask",
-    "Background Gradient",
-    # "CMS Settings"
+    # "Web Theme",
+    # "Header Component",
+    # "Header Layout",
+    # "Header Template",
+    # "Footer Component",
+    # "Footer Layout",
+    # "Footer Template",
+    # "Page Section",
+    # "Section Component",
+    # "Section Template",
+    # "Web Page Builder",
+    # "Testimonial",
+    # "Section Template Group",
+    # "Section Component Group",
+    # "Menu",
+    # "FAQ",
+    # "Custom Query",
+    # "CSS Font",
+    # "Color Palette",
+    # "Background Mask",
+    # "Background Gradient",
 ]

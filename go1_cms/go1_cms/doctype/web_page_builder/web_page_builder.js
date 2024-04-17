@@ -176,7 +176,10 @@ frappe.ui.form.on("Web Page Builder", {
     if (has_common(frappe.user_roles, ["Vendor"])) {
       frm.set_df_property("business", "hidden", 1);
     }
-    let editor = Jodit.instances.jeditor_webform;
+    let editor = undefined;
+    frappe.require("assets/go1_cms/js/jodit.min.js", () => {
+      editor = Jodit.instances.jeditor_webform;
+    });
     if (editor) {
       editor.value = frm.doc.content || "";
     }
@@ -267,113 +270,117 @@ frappe.ui.form.on("Web Page Builder", {
     });
   },
   load_custom_editor: function (frm) {
-    if (!Jodit.instances.jeditor_webpage) {
-      $(frm.get_field("jodit_editor").wrapper).empty();
-      $(
-        '<div class="clearfix"><label class="control-label" style="padding-right: 0px;">Content</label></div><textarea id="jeditor_webpage"></textarea>'
-      ).appendTo(frm.fields_dict.jodit_editor.wrapper);
-      var ele = document.getElementById("jeditor_webpage");
-      //var editor = new Jodit(ele);
+    frappe.require("assets/go1_cms/js/jodit.min.js", () => {
+      if (!Jodit.instances.jeditor_webpage) {
+        $(frm.get_field("jodit_editor").wrapper).empty();
+        $(
+          '<div class="clearfix"><label class="control-label" style="padding-right: 0px;">Content</label></div><textarea id="jeditor_webpage"></textarea>'
+        ).appendTo(frm.fields_dict.jodit_editor.wrapper);
+        var ele = document.getElementById("jeditor_webpage");
+        //var editor = new Jodit(ele);
 
-      var editor = new Jodit(ele, {
-        colorPickerDefaultTab: "color",
-        colors: ["#ff0000", "#00ff00", "#0000ff"],
-        filebrowser: {
-          isSuccess: function (resp) {
-            // console.log(resp);
-            return resp.length !== 0;
-          },
-          getMsg: function (resp) {
-            // console.log(resp);
-            return resp;
-          },
-          ajax: {
-            url: "ajax.php",
-            method: "GET",
-            dataType: "text",
-            headers: {
-              "X-CSRF-Token": frappe.csrf_token,
+        var editor = new Jodit(ele, {
+          colorPickerDefaultTab: "color",
+          colors: ["#ff0000", "#00ff00", "#0000ff"],
+          filebrowser: {
+            isSuccess: function (resp) {
+              // console.log(resp);
+              return resp.length !== 0;
             },
-            data: {
-              someparameter: 1,
+            getMsg: function (resp) {
+              // console.log(resp);
+              return resp;
             },
+            ajax: {
+              url: "ajax.php",
+              method: "GET",
+              dataType: "text",
+              headers: {
+                "X-CSRF-Token": frappe.csrf_token,
+              },
+              data: {
+                someparameter: 1,
+              },
+              prepareData: function (data) {
+                data.someparameter++;
+                // console.log(data);
+                return data;
+              },
+              process: function (resp) {
+                // console.log(resp);
+                return resp.split("|"); // return items list
+              },
+            },
+          },
+          uploader: {
+            url: window.location.origin + "/api/method/uploadfile",
+            format: "json",
+            pathVariableName: "path",
+            filesVariableName: "images",
             prepareData: function (data) {
-              data.someparameter++;
               // console.log(data);
               return data;
             },
+            isSuccess: function (resp) {
+              // console.log(resp);
+              return !resp.error;
+            },
+            getMsg: function (resp) {
+              // console.log(resp);
+              return resp.msg.join !== undefined
+                ? resp.msg.join(" ")
+                : resp.msg;
+            },
             process: function (resp) {
               // console.log(resp);
-              return resp.split("|"); // return items list
+              // console.log(this.options.uploader.filesVariableName);
+              // console.log(resp[this.options.uploader.filesVariableName]);
+              return {
+                files: resp[this.options.uploader.filesVariableName] || [],
+                path: resp.path,
+                baseurl: resp.baseurl,
+                error: resp.error,
+                msg: resp.msg,
+              };
+            },
+            error: function (e) {
+              // console.log(e);
+              this.events.fire("errorPopap", [e.getMessage(), "error", 4000]);
+            },
+            defaultHandlerSuccess: function (data, resp) {
+              // console.log(resp);
+              // console.log(data);
+              var i,
+                field = this.options.uploader.filesVariableName;
+              if (data[field] && data[field].length) {
+                for (i = 0; i < data[field].length; i += 1) {
+                  this.selection.insertImage(data.baseurl + data[field][i]);
+                }
+              }
+            },
+            defaultHandlerError: function (resp) {
+              // console.log(resp);
+              this.events.fire("errorPopap", [
+                this.options.uploader.getMsg(resp),
+              ]);
             },
           },
-        },
-        uploader: {
-          url: window.location.origin + "/api/method/uploadfile",
-          format: "json",
-          pathVariableName: "path",
-          filesVariableName: "images",
-          prepareData: function (data) {
-            // console.log(data);
-            return data;
+          filebrowser: {
+            ajax: {
+              url: window.location.origin + "/api/method/uploadfile",
+            },
           },
-          isSuccess: function (resp) {
-            // console.log(resp);
-            return !resp.error;
-          },
-          getMsg: function (resp) {
-            // console.log(resp);
-            return resp.msg.join !== undefined ? resp.msg.join(" ") : resp.msg;
-          },
-          process: function (resp) {
-            // console.log(resp);
-            // console.log(this.options.uploader.filesVariableName);
-            // console.log(resp[this.options.uploader.filesVariableName]);
-            return {
-              files: resp[this.options.uploader.filesVariableName] || [],
-              path: resp.path,
-              baseurl: resp.baseurl,
-              error: resp.error,
-              msg: resp.msg,
-            };
-          },
-          error: function (e) {
-            // console.log(e);
-            this.events.fire("errorPopap", [e.getMessage(), "error", 4000]);
-          },
-          defaultHandlerSuccess: function (data, resp) {
-            // console.log(resp);
-            // console.log(data);
-            var i,
-              field = this.options.uploader.filesVariableName;
-            if (data[field] && data[field].length) {
-              for (i = 0; i < data[field].length; i += 1) {
-                this.selection.insertImage(data.baseurl + data[field][i]);
-              }
-            }
-          },
-          defaultHandlerError: function (resp) {
-            // console.log(resp);
-            this.events.fire("errorPopap", [
-              this.options.uploader.getMsg(resp),
-            ]);
-          },
-        },
-        filebrowser: {
-          ajax: {
-            url: window.location.origin + "/api/method/uploadfile",
-          },
-        },
-      });
-      editor.setEditorValue("<p>start</p>");
+        });
+        editor.setEditorValue("<p>start</p>");
 
-      editor.value = frm.doc.content || " ";
-      // editor.value = check_doc.field || " ";
-      ele.addEventListener("change", function () {
-        frm.set_value("content", this.value);
-      });
-      $(".jodit_toolbar_btn-fullsize").hide();
-    }
+        editor.value = frm.doc.content || " ";
+        // editor.value = check_doc.field || " ";
+        ele.addEventListener("change", function () {
+          frm.set_value("content", this.value);
+        });
+        $(".jodit_toolbar_btn-fullsize").hide();
+      }
+    });
   },
   choose_list_style: function (frm) {
     new add_list_template({
