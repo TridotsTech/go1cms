@@ -5,13 +5,44 @@ import { sessionStore } from '@/stores/session'
 const routes = [
   {
     path: '/',
-    redirect: { name: 'Dashboard' },
+    redirect: { name: 'My Website' },
     name: 'Home',
+  },
+  {
+    path: '/my-website',
+    name: 'My Website',
+    component: () => import('@/pages/MyWebsite.vue'),
+  },
+  {
+    path: '/interface-repository',
+    name: 'Interface Repository',
+    component: () => import('@/pages/InterfaceRepository.vue'),
+  },
+  {
+    path: '/interface-repository/:interfaceId',
+    name: 'Interface Template',
+    component: () => import('@/pages/InterfaceTemplate.vue'),
+    props: true,
+  },
+  {
+    path: '/interface',
+    name: 'Interface',
+    component: () => import('@/pages/Interface.vue'),
+  },
+  {
+    path: '/domain',
+    name: 'Domain',
+    component: () => import('@/pages/Domain.vue'),
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/pages/Dashboard.vue'),
+  },
+  {
+    path: '/:invalidpath',
+    name: 'Invalid Page',
+    component: () => import('@/pages/InvalidPage.vue'),
   },
   {
     path: '/login',

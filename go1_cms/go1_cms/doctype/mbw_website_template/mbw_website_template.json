@@ -8,32 +8,45 @@
  "field_order": [
   "template_name",
   "image_preview",
-  "page_template"
+  "type_template",
+  "page_template",
+  "content"
  ],
  "fields": [
   {
    "fieldname": "template_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Template Name",
+   "label": "T\u00ean m\u1eabu",
    "reqd": 1,
    "unique": 1
   },
   {
    "fieldname": "image_preview",
    "fieldtype": "Attach Image",
-   "label": "Image Preview"
+   "label": "\u1ea2nh trang m\u1eabu"
   },
   {
    "fieldname": "page_template",
    "fieldtype": "Table",
-   "label": "Page Template",
+   "label": "C\u00e1c trang m\u1eabu",
    "options": "MBW Website Template Item"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "N\u1ed9i dung chi ti\u1ebft"
+  },
+  {
+   "fieldname": "type_template",
+   "fieldtype": "Select",
+   "label": "Lo\u1ea1i m\u1eabu",
+   "options": "Website c\u00f4ng ty\nWebsite b\u00e1n h\u00e0ng\nWebsite tuy\u1ec3n d\u1ee5ng"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-17 10:25:39.952145",
+ "modified": "2024-04-23 16:31:11.577534",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

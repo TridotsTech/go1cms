@@ -5,8 +5,8 @@
     @click="handleClick"
   >
     <div
-      class="flex w-full items-center justify-between duration-300 ease-in-out"
-      :class="isCollapsed ? 'p-1' : 'px-2 py-1'"
+      class="flex w-full items-center duration-300 ease-in-out"
+      :class="isCollapsed ? 'p-1 justify-center' : 'px-2 py-1 justify-between'"
     >
       <div class="flex items-center">
         <Tooltip :text="label" placement="right">
@@ -25,7 +25,7 @@
           class="flex-1 flex-shrink-0 text-sm duration-300 ease-in-out"
           :class="
             isCollapsed
-              ? 'ml-0 w-0 overflow-hidden opacity-0'
+              ? 'ml-0 w-0 h-0 overflow-hidden opacity-0'
               : 'ml-2 w-auto opacity-100'
           "
         >

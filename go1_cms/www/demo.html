@@ -27,7 +27,7 @@
 						<img
 						  class="w-8 h-8"
 						  src="{{icon_1}}"
-                                                  alt="..."
+                            alt="..."
 						></img>
 					  </div>
 					</div>
@@ -42,7 +42,7 @@
 						<img
 						  class="w-8 h-8"
 						  src="{{icon_2}}"
-								alt="..."
+							alt="..."
 						></img>
 					  </div>
 					</div>
@@ -57,7 +57,7 @@
 						<img
 						  class="w-8 h-8"
 						  src="{{icon_3}}"
-                                                  alt="..."
+                        alt="..."
 						></img>
 					  </div>
 					</div>
@@ -74,7 +74,7 @@
 
 <!-- Slider MBW 1 -->
 <div class="{{class_name}}">
-	<div class="container m-auto mb-16">
+	<div class="container m-auto my-8 mt-16">
 		<div class="grid lg:grid-cols-2 lg:gap-16">
 		  <div class="mb-4">
 			<img
@@ -97,7 +97,7 @@
 
 <!-- Slider MBW 2 -->
 <div class="{{class_name}}">
-	<div class="container m-auto mb-16 lg:mb-40">
+	<div class="container m-auto my-8 mt-16 lg:mb-40">
 		<div class="grid lg:grid-cols-2 lg:gap-16">
 		  <div class="flex items-center lg:pr-16">
 			<div>
@@ -131,7 +131,7 @@
 
 <!-- Slider MBW 3 -->
 <div class="{{class_name}}">
-	<div class="container m-auto mb-16">
+	<div class="container m-auto my-8 mt-16">
 		<div class="relative">
 		  <img
 			class="h-80 rounded-xl w-full"
@@ -145,28 +145,127 @@
 	  </div>
 </div>
 
-<!-- Slider MBW 4 -->
-<section class="section-go {{class_name}}">
-	<div class="container">
-	   <div class="row">
-		  <div class="col-md-12 text-center">
-			 <h2 class="title text-black">{{title}}<span class="spantitle spantitle-color">{{spantitle}}</span></h2>
-			 <p class="subtitle text-center text-gray-700">{{subtitle}}</p>
-		  </div>
+ <!-- Slider MBW 4 -->
+ <div class="{{class_name}}">
+	<div class="container m-auto my-8 mt-16">
+	   <div class="grid lg:grid-cols-3 lg:gap-16">
+		 <div class="lg:col-span-2 flex items-center">
+		   <div>
+			 <div class="font-bold text-5xl mb-4 mt-2">{{title}}</div>
+			 <p class="text-2xl text-gray-800">
+			   {{content}}
+			 </p>
+			 <div class="py-10">
+			   <a
+				 href="{{btn.btn_redirect_url}}"
+				 class="p-4 bg-slate-900 rounded-lg hover:bg-slate-800 text-white hover:text-white text-lg"
+			   >
+				 {{btn.btn_text}}
+			   </a>
+			 </div>
+		   </div>
+		 </div>
+		 <div class="col-span-1 flex justify-end">
+		   <img
+			 class="rounded-xl w-full lg:max-w-[400px]"
+			 src="{{img}}"
+			 alt="..."
+		   />
+		 </div>
 	   </div>
-	   <div class="row">
-		  <div class="col-md-12 d-inline-flex flex-wrap">
-			 {% for item in logos %}
-				<div class="col-6 col-md-2 p-2">
-					<div class="rounded-sm border border-solid border-gray-300">
-						<img src="{{item.logo}}" class="img-fluid width rounded-sm" alt="Go1cms">
+	 </div>
+</div>
+
+ <!-- Slider MBW 5 -->
+ <div class="{{class_name}}">
+	<div class="container m-auto my-8 mt-16">
+	   <div class="grid lg:grid-cols-3 lg:gap-16">
+		<div class="col-span-1 flex justify-start">
+			<img
+			  class="rounded-xl w-full lg:max-w-[400px]"
+			  src="{{img}}"
+			  alt="..."
+			/>
+		  </div>
+		 <div class="lg:col-span-2 flex items-center">
+		   <div>
+			 <div class="font-bold text-5xl mb-4 mt-2">{{title}}</div>
+			 <p class="text-2xl text-gray-800">
+			   {{content}}
+			 </p>
+			 <div class="py-10">
+			   <a
+				 href="{{btn.btn_redirect_url}}"
+				 class="p-4 bg-slate-900 rounded-lg hover:bg-slate-800 text-white hover:text-white text-lg"
+			   >
+				 {{btn.btn_text}}
+			   </a>
+			 </div>
+		   </div>
+		 </div>
+	   </div>
+	 </div>
+</div>
+
+ <!-- Slider MBW 6 -->
+ <div class="{{class_name}}">
+	<div class="container m-auto my-8 mt-16">
+	   	<div class="grid lg:grid-cols-3 lg:gap-16">
+			<div class="col-span-1 flex justify-start">
+				<img
+				class="rounded-xl w-full lg:max-w-[400px]"
+				src="{{img}}"
+				alt="..."
+				/>
+			</div>
+			<div class="lg:col-span-2 flex items-center">
+				<div>
+					<div class="font-bold text-5xl mb-4 mt-2">{{title}}</div>
+					<p class="text-2xl text-gray-800">
+					{{content}}
+					</p>
+					<div class="py-10 space-x-8">
+					<a
+						href="{{btn_1.btn_redirect_url}}"
+						class="p-4 bg-slate-900 rounded-lg hover:bg-slate-800 text-white hover:text-white text-lg"
+					>
+						{{btn_1.btn_text}}
+					</a>
+					<a
+						href="{{btn_2.btn_redirect_url}}"
+						class="p-4 rounded-lg border border-solid border-slate-900 hover:border-slate-800 text-slate-900 hover:text-slate-800 text-lg"
+					>
+						{{btn_2.btn_text}}
+					</a>
 					</div>
 				</div>
-			 {% endfor %}
-		  </div>
-	   </div>
+			</div>
+	   	</div>
 	</div>
- </section>
+</div>
+
+<!-- Slider MBW 7 -->
+<div class="{{class_name}}">
+	<div class="container m-auto my-8 mt-16">
+	   <div class="grid lg:grid-cols-3 lg:gap-16">
+		<div class="col-span-1 flex justify-start">
+			<img
+			  class="rounded-xl w-full lg:max-w-[400px]"
+			  src="{{img}}"
+			  alt="..."
+			/>
+		  </div>
+		 <div class="lg:col-span-2 flex items-center">
+		   <div>
+			 <div class="font-bold text-5xl mb-4 mt-2">{{title}}</div>
+			 <p class="text-2xl text-gray-800">
+			   {{content}}
+			 </p>
+		   </div>
+		 </div>
+	   </div>
+	 </div>
+</div>
 
 <!-- Contact Form MBW -->
 <div class="mb-14 bg-gray-100 {{class_name}}">
@@ -255,7 +354,7 @@
 	<div class="grid lg:grid-cols-2 lg:gap-16 ">
 	  <div class="flex mb-6">
 		<div>
-		  <div class="font-bold text-4xl mb-10">Heading</div>
+		  <div class="font-bold text-4xl mb-10">{{heading_1}}</div>
 		  {% for item in list_contact %}
 			<div class="mb-2">
 				<div class="" style="display:flex;gap:5px;">
@@ -271,7 +370,7 @@
 		</div>
 	  </div>
 	  <div>
-		<div class="font-bold text-4xl mb-10">Heading</div>
+		<div class="font-bold text-4xl mb-10">{{heading_2}}</div>
 		<form action="#" class="bg-white rounded-md w-full">
 		  <input
 			class="w-full px-5 border border-gray-300 focus:outline-none focus:ring focus:ring-red-500 rounded-lg h-14 mb-5 ring-inset"
@@ -301,3 +400,139 @@
 	  </div>
 	</div>
   </div>
+  <!-- client 1 -->
+  <section class="{{class_name}} my-8 mt-16">
+	<div class="row">
+	   <div class="col-md-12 text-center" >
+		  <h2 class="title text-black">{{title}}</h2>
+		  <p class="subtitle text-center text-2xl">{{subtitle}}</p>
+	   </div>
+	</div>
+	<div class="row">
+	   <div class="col-md-12">
+		  <div class="logo_slider_1">
+		  <div class="slider">
+			   <div class="logos">
+				   {% for item in logos %}
+					  <div class="mx-6 item-slider-1 rounded-sm border border-solid border-gray-300">
+						 <img src="{{item.logo}}" class="img-fluid width" alt="Go1cms">
+					  </div>
+				   {% endfor %}
+			   </div>
+		  </div>
+		   </div>
+	   </div>
+	</div>
+</section>
+<!-- client 2 -->
+<section class="section-go {{class_name}}">
+	<div class="container">
+	   <div class="row">
+		  <div class="col-md-12 text-center">
+			 <h2 class="title text-black">{{title}}</h2>
+			 <p class="subtitle text-center text-gray-700">{{subtitle}}</p>
+		  </div>
+	   </div>
+	   <div class="row">
+		  <div class="col-md-12 d-inline-flex flex-wrap">
+			 {% for item in logos %}
+				<div class="col-6 col-md-2 p-2">
+					<div class="rounded-sm border border-solid border-gray-300">
+						<img src="{{item.logo}}" class="img-fluid width rounded-sm" alt="Go1cms">
+					</div>
+				</div>
+			 {% endfor %}
+		  </div>
+	   </div>
+	</div>
+ </section>
+
+ <!-- Our Team Mbw -->
+ <section class="section-go {{class_name}}">
+	<div class="container">
+	   <div class="flex justify-center">
+			<div class="text-center">
+				<div class="max-w-[630px]">
+					<p class="subtitle text-center text-xs font-bold text-gray-700">{{heading}}</p>
+					<h2 class="title text-5xl text-black font-bold">{{title}}</h2>
+					<p class="subtitle text-center text-base text-gray-700">{{subtitle}}</p>
+				</div>
+			</div>
+	   </div>
+	   <div class="row">
+		  <div class="col-md-12 d-inline-flex flex-wrap text-left">
+			 <div class="owl-carousel owl-theme" id="ourteam_mbw">
+			 {% for item in list %}
+			 <div class="p-2 item testimonial_item">
+				<div class="h-full card rounded-xl p-8 pt-12">
+				   <div class="card-body pb-0">
+					  <div>
+						<div class="text-center mb-4">
+							<h2 class="text-base font-semibold">Name</h2>
+							<p class="text-sm text-gray-800">Position</p>
+						</div>
+						<div>
+							<img
+							class="rounded-md w-full h-80"
+							src=""
+							alt="Go1Cms"
+							/>
+						</div>
+						<div class="flex justify-center mt-4">
+							<div class=" p-2 ">
+							<div class="h-5 w-5 bg-slate-600"></div>
+							</div>
+							<div class=" p-2 ">
+							<div class="h-5 w-5 bg-slate-600"></div>
+							</div>
+							<div class=" p-2 ">
+							<div class="h-5 w-5 bg-slate-600"></div>
+							</div>
+							<div class=" p-2 ">
+							<div class="h-5 w-5 bg-slate-600"></div>
+							</div>
+						</div>
+						</div>
+				   </div>
+				</div>
+			 </div>
+			 {% endfor %}
+		   </div>
+		  </div>
+	   </div>
+	</div>
+ </section>
+
+ <!-- With feature grid list MBW -->
+ <section class="section-go {{class_name}}">
+	<div class="container">
+	   <div class="flex justify-center">
+		  <div class="text-center max-w-[630px]">
+				<p class="subtitle text-center text-xs font-bold text-gray-700">{{heading}}</p>
+				<h2 class="title text-5xl text-black font-bold">{{title}}</h2>
+				<p class="subtitle text-center text-base text-gray-700">{{subtitle}}</p>
+		  </div>
+	   </div>
+	   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+			 {% for item in cardsection4 %}
+			  <div class="p-2">
+					 <div class="flex min-h-44 bg-white rounded-xl shadow-2xl p-8">
+					 <div>
+					   <div class="flex p-5 rounded-2xl bg-gray-200">
+						 <img
+						   class="w-8 h-8"
+						   src="{{item.icon1}}"
+												   alt="Go1cms"
+						 ></img>
+					   </div>
+					 </div>
+					 <div class="ml-2">
+					 <div class="mb-2 font-bold text-xl">{{item.title1}}</div>
+					 <div class="text-lg text-gray-700">{{item.content1}}</div>
+			 </div>
+			</div>
+			 </div>
+			 {% endfor %}
+	   </div>
+	</div>
+ </section>

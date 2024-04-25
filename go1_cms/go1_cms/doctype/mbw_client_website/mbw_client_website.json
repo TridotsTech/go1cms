@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-24 10:31:57.949124",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "name_web",
+  "status_web",
+  "column_break_uzqk",
+  "edit",
+  "published",
+  "section_break_smuv",
+  "websites"
+ ],
+ "fields": [
+  {
+   "fieldname": "websites",
+   "fieldtype": "Table",
+   "label": "C\u00e1c trang website",
+   "options": "MBW Client Website Item"
+  },
+  {
+   "default": "B\u1ea3n nh\u00e1p",
+   "fieldname": "status_web",
+   "fieldtype": "Select",
+   "label": "Tr\u1ea1ng th\u00e1i",
+   "options": "B\u1ea3n nh\u00e1p\nB\u1ea3n ch\u00ednh"
+  },
+  {
+   "default": "0",
+   "fieldname": "edit",
+   "fieldtype": "Check",
+   "label": "Ch\u1ec9nh s\u1eeda"
+  },
+  {
+   "fieldname": "name_web",
+   "fieldtype": "Data",
+   "label": "T\u00ean Website"
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "label": "Published"
+  },
+  {
+   "fieldname": "column_break_uzqk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_smuv",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-04-25 08:17:02.412972",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "MBW Client Website",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

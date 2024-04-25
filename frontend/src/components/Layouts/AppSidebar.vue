@@ -1,9 +1,9 @@
 <template>
   <div
     class="relative flex h-full flex-col justify-between transition-all duration-300 ease-in-out"
-    :class="isSidebarCollapsed ? 'w-12' : 'w-56'"
+    :class="isSidebarCollapsed ? 'w-15' : 'w-56'"
   >
-    <div>
+    <div class="flex justify-center">
       <UserDropdown class="p-2" :isCollapsed="isSidebarCollapsed" />
     </div>
     <div class="flex-1 overflow-y-auto">
@@ -114,6 +114,21 @@ import PolicyIcon from '@/components/Icons/PolicyIcon.vue'
 import NewsIcon from '@/components/Icons/NewsIcon.vue'
 import ProductIcon from '@/components/Icons/ProductIcon.vue'
 import TemplateWebsiteIcon from '@/components/Icons/TemplateWebsiteIcon.vue'
+import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
+import DomainIcon from '@/components/Icons/DomainIcon.vue'
+import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
+import HeaderIcon from '@/components/Icons/HeaderIcon.vue'
+import FooterIcon from '@/components/Icons/FooterIcon.vue'
+import HomeIcon from '@/components/Icons/HomeIcon.vue'
+import ServiceIcon from '@/components/Icons/ServiceIcon.vue'
+import NewPageIcon from '@/components/Icons/NewPageIcon.vue'
+import PostIcon from '@/components/Icons/PostIcon.vue'
+import FormIcon from '@/components/Icons/FormIcon.vue'
+import DescriptionIcon from '@/components/Icons/DescriptionIcon.vue'
+import Favicon from '@/components/Icons/Favicon.vue'
+import IntegrationIcon from '@/components/Icons/IntegrationIcon.vue'
+import StatusWebsiteIcon from '@/components/Icons/StatusWebsiteIcon.vue'
+import AccountIcon from '@/components/Icons/AccountIcon.vue'
 import ArrowUpRightIcon from '@/components/Icons/ArrowUpRightIcon.vue'
 import PinIcon from '@/components/Icons/PinIcon.vue'
 import ChartIcon from '@/components/Icons/ChartIcon.vue'
@@ -135,102 +150,158 @@ import { FeatherIcon } from 'frappe-ui'
 import { useStorage } from '@vueuse/core'
 import { computed } from 'vue'
 
-const { getPinnedViews, getPublicViews } = viewsStore()
-const { toggle: toggleNotificationPanel } = notificationsStore()
+const { views } = viewsStore()
 
 const isSidebarCollapsed = useStorage('isSidebarCollapsed', false)
 
 const links = [
   {
-    label: 'Dashboard',
-    icon: ChartIcon,
-    to: 'Dashboard',
+    label: 'Website của tôi',
+    icon: MyWebsiteIcon,
+    to: 'My Website',
+  },
+  {
+    label: 'Kho giao diện',
+    icon: DisplayIcon,
+    to: 'Interface Repository',
   },
 ]
 
 const allViews = computed(() => {
   let _views = [
     {
-      name: 'All Views',
+      name: 'Publish',
       hideLabel: true,
       opened: true,
       views: links,
     },
   ]
 
-  //
-  _views.push({
-    name: 'Cấu hình',
-    opened: true,
-    icon: SettingsIcon,
-    views: [
-      {
-        label: 'Chọn mẫu website',
-        icon: TemplateWebsiteIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Cấu hình website',
-        icon: ArrowUpRightIcon,
-        to: 'Email Templates',
-      },
-    ],
-  })
-
-  //
-  _views.push({
-    name: 'Danh sách trang',
-    opened: true,
-    icon: InboxIcon,
-    views: [
-      {
-        label: 'Trang chủ',
-        icon: DashboardIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Giới thiệu công ty',
-        icon: OrganizationsIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Tin tức',
-        icon: NewsIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Chính sách bán hàng',
-        icon: PolicyIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Sản phẩm bán hàng',
-        icon: ProductIcon,
-        to: 'Email Templates',
-      },
-      {
-        label: 'Tuyển dụng',
-        icon: DealsIcon,
-        to: 'Email Templates',
-      },
-    ],
-  })
-
-  if (getPublicViews().length) {
+  if (views.data?.website_primary == 1) {
+    //
     _views.push({
-      name: 'Public views',
+      name: 'Bảng chính',
       opened: true,
-      views: parseView(getPublicViews()),
+      views: [
+        {
+          label: 'Dashboard',
+          icon: ChartIcon,
+          to: 'Dashboard',
+        },
+      ],
+    })
+
+    //
+    _views.push({
+      name: 'Cấu hình chung',
+      opened: true,
+      // icon: SettingsIcon,
+      views: [
+        {
+          label: 'Domain',
+          icon: DomainIcon,
+          to: 'Domain',
+        },
+        {
+          label: 'Giao diện',
+          icon: DisplayIcon,
+          to: 'Interface',
+        },
+      ],
+    })
+    //
+    _views.push({
+      name: 'Danh sách trang',
+      opened: true,
+      // icon: InboxIcon,
+      views: [
+        {
+          label: 'Header',
+          icon: HeaderIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Footer',
+          icon: FooterIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Trang chủ',
+          icon: HomeIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Trang giới thiệu công ty',
+          icon: OrganizationsIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Trang dịch vụ',
+          icon: ServiceIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Trang tin tức',
+          icon: NewsIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Trang liên hệ',
+          icon: ContactsIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Thêm trang mới',
+          icon: NewPageIcon,
+          to: 'Email Templates',
+        },
+      ],
+    })
+
+    //
+    _views.push({
+      name: 'Blog & biểu mẫu',
+      opened: true,
+      // icon: InboxIcon,
+      views: [
+        {
+          label: 'Quản lý bài viết',
+          icon: PostIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Quản lý biểu mẫu',
+          icon: FormIcon,
+          to: 'Email Templates',
+        },
+      ],
+    })
+
+    //
+    _views.push({
+      name: 'Thiết lập website',
+      opened: true,
+      // icon: InboxIcon,
+      views: [
+        {
+          label: 'Tên & mô tả website',
+          icon: DescriptionIcon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Cài favicon',
+          icon: Favicon,
+          to: 'Email Templates',
+        },
+        {
+          label: 'Tích hợp',
+          icon: IntegrationIcon,
+          to: 'Email Templates',
+        },
+      ],
     })
   }
 
-  if (getPinnedViews().length) {
-    _views.push({
-      name: 'Pinned views',
-      opened: true,
-      views: parseView(getPinnedViews()),
-    })
-  }
   return _views
 })
 

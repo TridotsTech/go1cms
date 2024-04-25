@@ -23,3 +23,27 @@
 		prose-th:relative;
   }
 }
+
+@keyframes scaleHeightToTop {
+  from {
+    background-position: 0 100%;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes scaleHeightToBottom {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 100%;
+  }
+}
+
+.img-bg .img-skin:hover {
+  animation: scaleHeightToBottom 7s ease-in-out 0s forwards;
+}

@@ -5,7 +5,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "page_template"
+  "page_template",
+  "name_template"
  ],
  "fields": [
   {
@@ -15,12 +16,18 @@
    "label": "Page Template",
    "options": "Page Template",
    "reqd": 1
+  },
+  {
+   "fetch_from": "page_template.page_title",
+   "fieldname": "name_template",
+   "fieldtype": "Data",
+   "label": "T\u00ean m\u1eabu"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-17 10:25:18.258689",
+ "modified": "2024-04-23 15:56:03.829174",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Item",

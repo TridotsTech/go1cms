@@ -22,7 +22,7 @@ export const sessionStore = defineStore('cms-session', () => {
   const login = createResource({
     url: 'login',
     onError(err) {
-      console.log(err.messages)
+      // console.log(err.messages)
       throw new Error('Invalid email or password')
     },
     onSuccess() {

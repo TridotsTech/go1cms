@@ -42,7 +42,7 @@ let pinia = createPinia()
 let app = createApp(App)
 
 setConfig('resourceFetcher', frappeRequest)
-app.use(FrappeUI)
+// app.use(FrappeUI)
 app.use(pinia)
 app.use(router)
 for (let key in globalComponents) {
