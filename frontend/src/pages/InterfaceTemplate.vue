@@ -35,29 +35,37 @@ import { ref, computed, onMounted } from 'vue'
 import { createToast, errorMessage } from '@/utils'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { globalStore } from '@/stores/global'
+const { changeLoadingValue } = globalStore()
 
 // get detail
 const template = createResource({
   url: 'go1_cms.api.mbw_website_template.get_web_template',
+  method: 'GET',
   params: { name: props.interfaceId },
   cache: ['template', props.interfaceId],
   auto: true,
-  transform: (data) => {
-    return data
-  },
 })
 
 // add web template
 async function addWebTemplate() {
+  changeLoadingValue(true, 'Đang tải giao diện...')
   try {
     await call('go1_cms.api.mbw_website_template.add_web_template', {
       name: props.interfaceId,
     }).then((d) => {
       if (d) {
+        createToast({
+          title: 'Tải giao diện thành công',
+          icon: 'check',
+          iconClasses: 'text-green-600',
+        })
+        changeLoadingValue(false)
         router.push({ name: 'My Website' })
       }
     })
   } catch (err) {
+    changeLoadingValue(false)
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
     }
@@ -66,7 +74,7 @@ async function addWebTemplate() {
 
 const breadcrumbs = computed(() => {
   let items = [
-    { label: 'Interface Repository', route: { name: 'Interface Repository' } },
+    { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
   ]
   items.push({
     label: template.data?.name,

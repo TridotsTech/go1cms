@@ -7376,10 +7376,10 @@ fieldset:disabled .btn {
   margin-top: 1rem !important;
   margin-bottom: 1rem !important;
 }
-.my-4 {
+/* .my-4 {
   margin-top: 1.5rem !important;
   margin-bottom: 1.5rem !important;
-}
+} */
 .my-5 {
   margin-top: 3rem !important;
   margin-bottom: 3rem !important;
@@ -7400,12 +7400,12 @@ fieldset:disabled .btn {
 .mt-3 {
   margin-top: 1rem !important;
 }
-.mt-4 {
+/* .mt-4 {
   margin-top: 1.5rem !important;
-}
-.mt-5 {
+} */
+/* .mt-5 {
   margin-top: 3rem !important;
-}
+} */
 .mt-auto {
   margin-top: auto !important;
 }

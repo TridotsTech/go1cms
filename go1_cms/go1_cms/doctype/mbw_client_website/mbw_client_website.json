@@ -7,19 +7,15 @@
  "field_order": [
   "name_web",
   "status_web",
+  "type_template",
   "column_break_uzqk",
   "edit",
   "published",
+  "route_web",
   "section_break_smuv",
-  "websites"
+  "page_websites"
  ],
  "fields": [
-  {
-   "fieldname": "websites",
-   "fieldtype": "Table",
-   "label": "C\u00e1c trang website",
-   "options": "MBW Client Website Item"
-  },
   {
    "default": "B\u1ea3n nh\u00e1p",
    "fieldname": "status_web",
@@ -51,11 +47,27 @@
   {
    "fieldname": "section_break_smuv",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "page_websites",
+   "fieldtype": "Table",
+   "label": "C\u00e1c trang website",
+   "options": "MBW Client Website Item"
+  },
+  {
+   "fieldname": "route_web",
+   "fieldtype": "Data",
+   "label": "Route Website"
+  },
+  {
+   "fieldname": "type_template",
+   "fieldtype": "Data",
+   "label": "Lo\u1ea1i m\u1eabu"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-25 08:17:02.412972",
+ "modified": "2024-05-03 09:50:49.656429",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

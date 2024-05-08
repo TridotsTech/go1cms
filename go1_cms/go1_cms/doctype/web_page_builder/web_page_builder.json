@@ -94,6 +94,8 @@
   "seo_section",
   "meta_title",
   "is_converted_to_template",
+  "route_template",
+  "route_prefix",
   "column_break_24",
   "meta_description",
   "column_break_26",
@@ -662,13 +664,23 @@
    "fieldname": "sticky_header_text_hover_color",
    "fieldtype": "Color",
    "label": "Sticky Header Text Hover Color"
+  },
+  {
+   "fieldname": "route_template",
+   "fieldtype": "Data",
+   "label": "Route template"
+  },
+  {
+   "fieldname": "route_prefix",
+   "fieldtype": "Data",
+   "label": "Route Prefix"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2024-04-17 16:36:22.734249",
+ "modified": "2024-05-08 08:43:06.982776",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

@@ -24,6 +24,10 @@ class FooterComponent(Document):
     def on_update(self):
         self.construct_html('web', 'web_section')
 
+    def after_delete(self):
+        for item in self.web_section:
+            frappe.delete_doc('Page Section', item.section)
+
     def construct_html(self, view_type, ref_field):
         result = self.get_json_data(ref_field)
         path = get_files_path()

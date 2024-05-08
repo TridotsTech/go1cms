@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen w-screen">
+  <div class="flex h-screen w-screen relative">
     <div class="h-full border-r bg-gray-50">
       <AppSidebar />
     </div>
@@ -7,9 +7,11 @@
       <AppHeader />
       <slot />
     </div>
+    <LoadingFullScreen></LoadingFullScreen>
   </div>
 </template>
 <script setup>
+import LoadingFullScreen from '@/components/Loading.vue'
 import AppSidebar from '@/components/Layouts/AppSidebar.vue'
 import AppHeader from '@/components/Layouts/AppHeader.vue'
 </script>

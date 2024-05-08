@@ -197,10 +197,10 @@
   let query_params = window.location.href.split('?')[1];
   let add_info = {};
   if(query_params && query_params != "") {
-      let query_splits = query_params.split('&');
-      $(query_splits).each(function(k, v) {
-          add_info[v.split('=')[0]] = v.split('=')[1];
-      })
+    let query_splits = query_params.split('&');
+    $(query_splits).each(function(k, v) {
+      add_info[v.split('=')[0]] = v.split('=')[1];
+    })
   }
   var body_scroll = true
   $(window).scroll(function() {
@@ -225,7 +225,6 @@
           page = page + 1;
           // page_len = page_len + 3
           $.ajax({
-
               type: 'POST',
               Accept: 'application/json',
               ContentType: 'application/json;charset=utf-8',

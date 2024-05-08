@@ -28,6 +28,13 @@
 .flex-col {
   flex-direction: column;
 }
+.transition {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
 .transition-colors {
   transition-property: color, background-color, border-color,
     text-decoration-color, fill, stroke;
@@ -71,6 +78,10 @@
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
 }
+.text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(82 82 82 / var(--tw-text-opacity));
@@ -86,6 +97,12 @@
 .text-slate-900 {
   --tw-text-opacity: 1;
   color: rgb(15 23 42 / var(--tw-text-opacity));
+}
+.hover\:opacity-80:hover {
+  opacity: 0.8;
+}
+.hover\:opacity-85:hover {
+  opacity: 0.85;
 }
 .hover\:text-slate-800:hover {
   --tw-text-opacity: 1;
@@ -105,6 +122,9 @@
 }
 .gap-5 {
   gap: 1.25rem /* 20px */;
+}
+.gap-8 {
+  gap: 2rem /* 32px */;
 }
 .gap-16 {
   gap: 4rem /* 64px */;
@@ -142,8 +162,26 @@
 .absolute {
   position: absolute;
 }
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.duration-150 {
+  transition-duration: 150ms;
+}
+.underline {
+  text-decoration-line: underline;
+}
+.inline-block {
+  display: inline-block;
+}
 .inset-0 {
   inset: 0px;
+}
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 .min-h-44 {
   min-height: 11rem /* 176px */;
@@ -157,6 +195,10 @@
 .m-auto {
   margin: auto;
 }
+.my-4 {
+  margin-top: 1rem /* 16px */;
+  margin-bottom: 1rem /* 16px */;
+}
 .my-8 {
   margin-top: 2rem /* 32px */;
   margin-bottom: 2rem /* 32px */;
@@ -164,6 +206,9 @@
 .my-16 {
   margin-top: 4rem /* 64px */;
   margin-bottom: 4rem /* 64px */;
+}
+.mt-4 {
+  margin-top: 1rem /* 16px */;
 }
 .mt-5 {
   margin-top: 1.25rem /* 20px */;
@@ -231,6 +276,12 @@
 .bottom-0 {
   bottom: 0px;
 }
+.w-3 {
+  width: 0.75rem /* 12px */;
+}
+.w-4 {
+  width: 1rem /* 16px */;
+}
 .w-5 {
   width: 1.25rem /* 20px */;
 }
@@ -245,6 +296,12 @@
 }
 .w-full {
   width: 100%;
+}
+.h-3 {
+  height: 0.75rem /* 12px */;
+}
+.h-4 {
+  height: 1rem /* 16px */;
 }
 .h-5 {
   height: 1.25rem /* 20px */;
@@ -261,6 +318,9 @@
 .h-52 {
   height: 13rem /* 208px */;
 }
+.h-56 {
+  height: 14rem /* 224px */;
+}
 .h-80 {
   height: 20rem /* 320px */;
 }
@@ -269,6 +329,9 @@
 }
 .h-full {
   height: 100%;
+}
+.hidden {
+  display: none;
 }
 .grid {
   display: grid;
@@ -281,6 +344,12 @@
 }
 .col-span-1 {
   grid-column: span 1 / span 1;
+}
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+.col-span-4 {
+  grid-column: span 4 / span 4;
 }
 .text-white {
   --tw-text-opacity: 1;
@@ -310,6 +379,10 @@
   font-size: 1.5rem /* 24px */;
   line-height: 2rem /* 32px */;
 }
+.text-3xl {
+  font-size: 1.875rem /* 30px */;
+  line-height: 2.25rem /* 36px */;
+}
 .text-4xl {
   font-size: 2.25rem /* 36px */;
   line-height: 2.5rem /* 40px */;
@@ -333,6 +406,9 @@
 }
 .font-bold {
   font-weight: 700;
+}
+.mr-2 {
+  margin-right: 0.5rem /* 8px */;
 }
 .mr-4 {
   margin-right: 1rem /* 16px */;
@@ -394,6 +470,9 @@
 .bg-cover {
   background-size: cover;
 }
+.bg-inherit {
+  background-color: inherit;
+}
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -410,6 +489,10 @@
   --tw-bg-opacity: 1;
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
 }
+.hover\:text-gray-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity));
+}
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -421,6 +504,10 @@
 .hover\:bg-slate-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+}
+.hover\:bg-gray-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 .bg-slate-400 {
   background-color: rgb(148 163 184);
@@ -448,6 +535,10 @@
 .px-3 {
   padding-left: 0.75rem; /* 12px */
   padding-right: 0.75rem; /* 12px */
+}
+.px-4 {
+  padding-left: 1rem /* 16px */;
+  padding-right: 1rem /* 16px */;
 }
 .px-5 {
   padding-left: 1.25rem /* 20px */;

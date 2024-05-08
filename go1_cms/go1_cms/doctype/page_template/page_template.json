@@ -224,10 +224,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-18 19:00:29.907881",
+ "modified": "2024-04-25 09:43:18.425316",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Template",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -243,7 +244,10 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
+ "title_field": "page_title",
  "track_changes": 1
 }

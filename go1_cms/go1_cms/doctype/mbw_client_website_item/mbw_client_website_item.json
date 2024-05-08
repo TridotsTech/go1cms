@@ -6,7 +6,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "page_id"
+  "page_id",
+  "name_page",
+  "column_break_gzkg",
+  "route_template",
+  "icon"
  ],
  "fields": [
   {
@@ -14,12 +18,31 @@
    "fieldtype": "Link",
    "label": "M\u00e3 trang",
    "options": "Web Page Builder"
+  },
+  {
+   "fieldname": "column_break_gzkg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "route_template",
+   "fieldtype": "Data",
+   "label": "Route template"
+  },
+  {
+   "fieldname": "name_page",
+   "fieldtype": "Data",
+   "label": "T\u00ean trang"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-24 10:35:41.469232",
+ "modified": "2024-05-03 09:54:33.067402",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website Item",

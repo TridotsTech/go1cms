@@ -63,7 +63,6 @@
   "column_break_42",
   "sub_title",
   "column_break_44",
-  "banners_section",
   "section_break_46",
   "query",
   "section_break_48",
@@ -407,13 +406,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.section_type == \"Banner\" ",
-   "fieldname": "banners_section",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Banners"
-  },
-  {
    "fieldname": "section_break_46",
    "fieldtype": "Section Break",
    "hidden": 1
@@ -591,10 +583,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-17 17:56:58.695140",
+ "modified": "2024-05-07 11:36:52.062537",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -612,5 +605,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

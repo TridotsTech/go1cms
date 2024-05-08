@@ -5,15 +5,72 @@
     </template>
   </LayoutHeader>
   <div class="p-6">
-    <MyWebsitesListView
-      :rows="dataRows"
-      :columns="dataColums"
-      :options="{
-        selectable: false,
-        showTooltip: false,
-        resizeColumn: true,
-      }"
-    />
+    <div class="border-b border-gray-300 pb-2">
+      <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 gap-4">
+        <FormControl
+          :type="'text'"
+          size="sm"
+          variant="subtle"
+          placeholder=""
+          :disabled="false"
+          label="Tên website"
+          v-model="inputNameWeb"
+        />
+        <FormControl
+          type="select"
+          :options="[
+            {
+              label: 'Tất cả',
+              value: 'all',
+            },
+            {
+              label: 'Bản chính',
+              value: 'Bản chính',
+            },
+            {
+              label: 'Bản nháp',
+              value: 'Bản nháp',
+            },
+          ]"
+          size="sm"
+          variant="subtle"
+          :disabled="false"
+          label="Loại"
+          v-model="selectStatus"
+        />
+      </div>
+    </div>
+    <div class="py-4">
+      <MyWebsitesListView
+        class="min-h-[250px] max-h-[80vh]"
+        v-model:loading="loading"
+        :rows="dataRows"
+        :columns="dataColums"
+        :options="{
+          selectable: false,
+          showTooltip: false,
+          resizeColumn: true,
+          emptyState: {
+            title: 'Bạn chưa có website nào',
+            description: 'Chọn một mẫu website từ kho giao diện để bắt đầu',
+            button: {
+              label: 'Đến kho giao diện',
+              variant: 'solid',
+              onClick: () => {
+                router.push({
+                  name: 'Interface Repository',
+                })
+              },
+            },
+          },
+        }"
+        @reFresh="
+          () => {
+            reFresh = !reFresh
+          }
+        "
+      />
+    </div>
   </div>
 </template>
 
@@ -22,12 +79,16 @@ import MyWebsitesListView from '@/components/ListViews/MyWebsitesListView.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, createResource } from 'frappe-ui'
 import { createToast, errorMessage } from '@/utils'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const breadcrumbs = [{ label: 'My Website', route: { name: 'My Website' } }]
+const breadcrumbs = [
+  { label: 'Website của tôi', route: { name: 'My Website' } },
+]
 
+const loading = ref(true)
+const reFresh = ref(true)
 const dataRows = ref([])
 const dataColums = ref([
   {
@@ -40,15 +101,15 @@ const dataColums = ref([
     key: 'name_web',
   },
   {
-    label: 'Trang thái',
+    label: 'Loại',
     key: 'status_web',
   },
   {
-    label: 'Phát hành',
+    label: 'Trang thái',
     key: 'published',
   },
   {
-    label: 'Chỉnh sửa',
+    label: 'Website chỉnh sửa',
     key: 'edit',
   },
   {
@@ -56,22 +117,34 @@ const dataColums = ref([
     key: 'action',
   },
 ])
+const selectStatus = ref('all')
+const inputNameWeb = ref()
 
-createResource({
+const client_websites = createResource({
   url: 'go1_cms.api.client_website.get_client_websites',
+  method: 'GET',
   auto: true,
   onSuccess: (data) => {
+    let dtRows = []
     data.forEach((el, idx) => {
-      dataRows.value.push({
+      dtRows.push({
         stt: idx + 1,
         name_web: el.name_web,
         status_web: el.status_web,
         published: el.published,
         edit: el.edit,
-        action: null,
+        action: {
+          id: el.name,
+          name_web: el.name_web,
+          route_web: el.route_web,
+          published: el.published,
+          status_web: el.status_web,
+          edit: el.edit,
+        },
       })
     })
-    return data
+    dataRows.value = dtRows
+    loading.value = false
   },
   onError: (err) => {
     createToast({
@@ -81,5 +154,9 @@ createResource({
       iconClasses: 'text-red-600',
     })
   },
+})
+
+watch(reFresh, (val, old_value) => {
+  client_websites.reload()
 })
 </script>

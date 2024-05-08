@@ -35,9 +35,44 @@ const routes = [
     component: () => import('@/pages/Domain.vue'),
   },
   {
+    path: '/setup_website',
+    name: 'Setup Website',
+    component: () => import('@/pages/SetupWebsite.vue'),
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/pages/Dashboard.vue'),
+  },
+  {
+    path: '/page',
+    name: 'Page',
+    component: () => import('@/pages/Page.vue'),
+  },
+  {
+    path: '/new-page',
+    name: 'New Page',
+    component: () => import('@/pages/NewPage.vue'),
+  },
+  {
+    path: '/header-page',
+    name: 'Header Page',
+    component: () => import('@/pages/HeaderPage.vue'),
+  },
+  {
+    path: '/footer-page',
+    name: 'Footer Page',
+    component: () => import('@/pages/FooterPage.vue'),
+  },
+  {
+    path: '/posts',
+    name: 'Posts',
+    component: () => import('@/pages/Posts.vue'),
+  },
+  {
+    path: '/forms',
+    name: 'Forms',
+    component: () => import('@/pages/Forms.vue'),
   },
   {
     path: '/:invalidpath',

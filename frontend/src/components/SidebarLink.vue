@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex h-7 cursor-pointer items-center rounded text-gray-800 duration-300 ease-in-out focus:outline-none focus:transition-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-gray-400"
+    class="flex h-auto cursor-pointer items-center rounded text-gray-800 duration-300 ease-in-out focus:outline-none focus:transition-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-gray-400"
     :class="isActive ? 'bg-white shadow-sm' : 'hover:bg-gray-100'"
     @click="handleClick"
   >
@@ -22,7 +22,7 @@
           </slot>
         </Tooltip>
         <span
-          class="flex-1 flex-shrink-0 text-sm duration-300 ease-in-out"
+          class="flex-1 flex-shrink-0 text-sm duration-300 ease-in-out text-left"
           :class="
             isCollapsed
               ? 'ml-0 w-0 h-0 overflow-hidden opacity-0'

@@ -224,4 +224,8 @@ fixtures = [
     # "Color Palette",
     # "Background Mask",
     # "Background Gradient",
+    {
+        "doctype": "Custom Field",
+        "filters": [["module", "in", ("Go1 CMS")]]
+    }
 ]

@@ -1,6 +1,11 @@
 import frappe
 from frappe import _
 from pypika import Criterion
+from go1_cms.go1_cms.doctype.web_page_builder.web_page_builder import import_sections_from_template
+from go1_cms.api.common import (
+    copy_header_component,
+    copy_footer_component
+)
 
 
 @frappe.whitelist()
@@ -10,7 +15,8 @@ def get_web_templates(repo):
         frappe.qb.from_(WebTemplate)
         .select("*")
     )
-    if repo != 'Tất cả':
+
+    if repo != 'all':
         query = query.where(WebTemplate.type_template == repo)
 
     templates = query.run(as_dict=True)
@@ -39,9 +45,95 @@ def add_web_template(name):
     if not template:
         frappe.throw(_("Template not found"), frappe.DoesNotExistError)
 
-    MBWClientWebsite = frappe.qb.DocType("MBW Client Website")
     website = frappe.new_doc("MBW Client Website")
+    website.save(ignore_permissions=True)
+    website.reload()
+
+    page_websites = []
+    list_header = {}
+    list_footer = {}
+    idx_p = 0
+    for page_temp in template.page_templates:
+        idx_p += 1
+        new_webpage = frappe.new_doc("Web Page Builder")
+        new_import = import_sections_from_template(page_temp.page_template)
+
+        page_build_name = page_temp.name_template + \
+            ' ' + frappe.scrub(website.name)
+
+        info = new_import.get('info')
+        mobile_sections = new_import.get('mobile_sections')
+        web_sections = new_import.get('web_sections')
+
+        new_webpage.page_title = page_build_name
+        new_webpage.published = info.published
+        new_webpage.page_type = info.page_type
+        new_webpage.meta_title = info.meta_title
+        new_webpage.meta_keywords = info.meta_keywords
+        new_webpage.meta_description = info.meta_description
+        new_webpage.use_page_builder = info.use_page_builder
+        new_webpage.is_location_based = 0
+        if info.content:
+            new_webpage.content = info.content
+        if info.header_component:
+            cp_header = list_header.get(info.header_component)
+            if not cp_header:
+                cp_header = copy_header_component(
+                    info.header_component, website.name)
+                list_header[info.header_component] = cp_header
+            new_webpage.header_component = cp_header
+        if info.footer_component:
+            cp_footer = list_footer.get(info.footer_component)
+            if not cp_footer:
+                cp_footer = copy_footer_component(
+                    info.footer_component, website.name)
+                list_footer[info.footer_component] = cp_footer
+            new_webpage.footer_component = cp_footer
+
+        mobile_section = []
+        idx = 0
+        for mb_st in mobile_sections:
+            idx += 1
+            mb_page_new = frappe.new_doc('Mobile Page Section')
+            mb_page_new.allow_update_to_style = mb_st.allow_update_to_style
+            mb_page_new.content_type = mb_st.content_type
+            mb_page_new.section = mb_st.section
+            mb_page_new.section_title = mb_st.section_title
+            mb_page_new.section_type = mb_st.section_type
+            mb_page_new.idx = idx
+            mobile_section.append(mb_page_new)
+
+        web_section = []
+        idx = 0
+        for wb_st in web_sections:
+            idx += 1
+            mb_page_new = frappe.new_doc('Mobile Page Section')
+            mb_page_new.allow_update_to_style = wb_st.allow_update_to_style
+            mb_page_new.content_type = wb_st.content_type
+            mb_page_new.section = wb_st.section
+            mb_page_new.section_title = wb_st.section_title
+            mb_page_new.section_type = wb_st.section_type
+            mb_page_new.idx = idx
+            web_section.append(mb_page_new)
+
+        new_webpage.mobile_section = mobile_section
+        new_webpage.web_section = web_section
+        new_webpage.save(ignore_permissions=True)
+
+        # add item client web
+        item_cl_web = frappe.new_doc("MBW Client Website Item")
+        item_cl_web.page_id = page_build_name
+        item_cl_web.name_page = page_temp.name_template
+        item_cl_web.icon = page_temp.icon
+        item_cl_web.route_template = page_temp.route_template
+        item_cl_web.idx = idx_p
+        page_websites.append(item_cl_web)
+
+    # update client website
     website.name_web = template.name
+    website.published = 1
+    website.type_template = template.type_template
+    website.page_websites = page_websites
     website.save(ignore_permissions=True)
 
     return website.name

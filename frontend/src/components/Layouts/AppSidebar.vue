@@ -3,10 +3,10 @@
     class="relative flex h-full flex-col justify-between transition-all duration-300 ease-in-out"
     :class="isSidebarCollapsed ? 'w-15' : 'w-56'"
   >
-    <div class="flex justify-center">
+    <div class="flex justify-center border-b">
       <UserDropdown class="p-2" :isCollapsed="isSidebarCollapsed" />
     </div>
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto pt-2">
       <!-- <div class="mb-3 flex flex-col">
         <SidebarLink
           id="notifications-btn"
@@ -32,6 +32,12 @@
           </template>
         </SidebarLink>
       </div> -->
+      <div
+        v-if="!isSidebarCollapsed && name_website_edit"
+        class="m-2 text-base p-2 rounded-md border-2 bg-gray-200"
+      >
+        <p class="text-gray-700 font-bold">{{ name_website_edit }}</p>
+      </div>
       <div v-for="view in allViews" :key="view.label">
         <div
           v-if="!view.hideLabel && isSidebarCollapsed && view.views?.length"
@@ -149,6 +155,10 @@ import { notificationsStore } from '@/stores/notifications'
 import { FeatherIcon } from 'frappe-ui'
 import { useStorage } from '@vueuse/core'
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { globalStore } from '@/stores/global'
+const { changeNameWebsiteEdit } = globalStore()
+const { name_website_edit } = storeToRefs(globalStore())
 
 const { views } = viewsStore()
 
@@ -178,6 +188,7 @@ const allViews = computed(() => {
   ]
 
   if (views.data?.website_primary == 1) {
+    changeNameWebsiteEdit(views.data?.name_web)
     //
     _views.push({
       name: 'Bảng chính',
@@ -203,60 +214,54 @@ const allViews = computed(() => {
           to: 'Domain',
         },
         {
-          label: 'Giao diện',
-          icon: DisplayIcon,
-          to: 'Interface',
+          label: 'Thiết lập website',
+          icon: SettingsIcon,
+          to: 'Setup Website',
         },
+        // {
+        //   label: 'Giao diện',
+        //   icon: DisplayIcon,
+        //   to: 'Interface',
+        // },
       ],
     })
-    //
-    _views.push({
-      name: 'Danh sách trang',
-      opened: true,
-      // icon: InboxIcon,
-      views: [
+
+    if (views.data?.list_page) {
+      let items_view = [
         {
           label: 'Header',
           icon: HeaderIcon,
-          to: 'Email Templates',
+          to: 'Header Page',
         },
         {
           label: 'Footer',
           icon: FooterIcon,
-          to: 'Email Templates',
+          to: 'Footer Page',
         },
-        {
-          label: 'Trang chủ',
-          icon: HomeIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Trang giới thiệu công ty',
-          icon: OrganizationsIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Trang dịch vụ',
-          icon: ServiceIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Trang tin tức',
-          icon: NewsIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Trang liên hệ',
-          icon: ContactsIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Thêm trang mới',
-          icon: NewPageIcon,
-          to: 'Email Templates',
-        },
-      ],
-    })
+      ]
+      views.data?.list_page.forEach((el) => {
+        items_view.push({
+          label: el.name_page,
+          icon: getIcon(el.icon),
+          to: {
+            name: 'Page',
+            query: { view: el.name },
+          },
+        })
+      })
+      items_view.push({
+        label: 'Thêm trang mới',
+        icon: NewPageIcon,
+        to: 'New Page',
+      })
+
+      _views.push({
+        name: 'Danh sách trang',
+        opened: true,
+        // icon: InboxIcon,
+        views: items_view,
+      })
+    }
 
     //
     _views.push({
@@ -267,36 +272,12 @@ const allViews = computed(() => {
         {
           label: 'Quản lý bài viết',
           icon: PostIcon,
-          to: 'Email Templates',
+          to: 'Posts',
         },
         {
           label: 'Quản lý biểu mẫu',
           icon: FormIcon,
-          to: 'Email Templates',
-        },
-      ],
-    })
-
-    //
-    _views.push({
-      name: 'Thiết lập website',
-      opened: true,
-      // icon: InboxIcon,
-      views: [
-        {
-          label: 'Tên & mô tả website',
-          icon: DescriptionIcon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Cài favicon',
-          icon: Favicon,
-          to: 'Email Templates',
-        },
-        {
-          label: 'Tích hợp',
-          icon: IntegrationIcon,
-          to: 'Email Templates',
+          to: 'Forms',
         },
       ],
     })
@@ -318,26 +299,32 @@ function parseView(views) {
   })
 }
 
-function getIcon(routeName) {
-  switch (routeName) {
-    case 'Leads':
-      return LeadsIcon
-    case 'Deals':
-      return DealsIcon
-    case 'Contacts':
-      return ContactsIcon
-    case 'Organizations':
+function getIcon(name) {
+  switch (name) {
+    case 'HeaderIcon':
+      return HeaderIcon
+    case 'FooterIcon':
+      return FooterIcon
+    case 'HomeIcon':
+      return HomeIcon
+    case 'OrganizationsIcon':
       return OrganizationsIcon
-    case 'Notes':
-      return NoteIcon
-    case 'Call Logs':
-      return PhoneIcon
+    case 'ServiceIcon':
+      return ServiceIcon
+    case 'NewPageIcon':
+      return NewPageIcon
+    case 'NewsIcon':
+      return NewsIcon
+    case 'ContactsIcon':
+      return ContactsIcon
+    case 'DescriptionIcon':
+      return DescriptionIcon
     default:
       return PinIcon
   }
 }
 
 function openDocs() {
-  window.open('https://docs.frappe.io/crm', '_blank')
+  window.open('#', '_blank')
 }
 </script>

@@ -2,6 +2,26 @@ import { defineStore } from 'pinia'
 import { getCurrentInstance, ref } from 'vue'
 
 export const globalStore = defineStore('cms-global', () => {
+  //
+  const name_website_edit = ref()
+  function changeNameWebsiteEdit(new_name) {
+    name_website_edit.value = new_name
+  }
+
+  // loading
+  const loadingValue = ref({
+    active: false,
+    text: 'Loading...',
+  })
+
+  function changeLoadingValue(active = false, text = 'Loading...') {
+    loadingValue.value = {
+      active,
+      text,
+    }
+  }
+
+  //
   const app = getCurrentInstance()
   const { $dialog } = app.appContext.config.globalProperties
 
@@ -21,6 +41,10 @@ export const globalStore = defineStore('cms-global', () => {
   }
 
   return {
+    name_website_edit,
+    changeNameWebsiteEdit,
+    loadingValue,
+    changeLoadingValue,
     $dialog,
     twilioEnabled,
     makeCall,
