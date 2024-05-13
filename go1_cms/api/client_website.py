@@ -71,3 +71,14 @@ def delete_client_website(name):
 
     frappe.delete_doc('MBW Client Website', name)
     return name
+
+
+@frappe.whitelist()
+def get_page_detail(name):
+    doc_item = frappe.get_doc('MBW Client Website Item', name)
+    doc_page = frappe.get_doc('Web Page Builder', doc_item.page_id)
+    result = {
+        'doc_item': doc_item,
+        'doc_page': doc_page
+    }
+    return result

@@ -126,6 +126,7 @@ def add_web_template(name):
         item_cl_web.name_page = page_temp.name_template
         item_cl_web.icon = page_temp.icon
         item_cl_web.route_template = page_temp.route_template
+        item_cl_web.page_type = page_temp.page_type
         item_cl_web.idx = idx_p
         page_websites.append(item_cl_web)
 

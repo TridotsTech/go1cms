@@ -4,43 +4,48 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">
-    <div class="border-b border-gray-300 pb-2">
-      <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 gap-4">
-        <FormControl
-          :type="'text'"
-          size="sm"
-          variant="subtle"
-          placeholder=""
-          :disabled="false"
-          label="Tên website"
-          v-model="inputNameWeb"
-        />
-        <FormControl
-          type="select"
-          :options="[
-            {
-              label: 'Tất cả',
-              value: 'all',
-            },
-            {
-              label: 'Bản chính',
-              value: 'Bản chính',
-            },
-            {
-              label: 'Bản nháp',
-              value: 'Bản nháp',
-            },
-          ]"
-          size="sm"
-          variant="subtle"
-          :disabled="false"
-          label="Loại"
-          v-model="selectStatus"
-        />
+  <div class="p-6 mt-12">
+    <div class="border-b pb-2 mb-4 border-gray-300">
+      <div class="mb-4">
+        <h2 class="mb-2 font-bold text-3xl">Website của tôi</h2>
+      </div>
+      <div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 gap-4">
+          <FormControl
+            :type="'text'"
+            size="sm"
+            variant="subtle"
+            placeholder=""
+            :disabled="false"
+            label="Tên website"
+            v-model="inputNameWeb"
+          />
+          <FormControl
+            type="select"
+            :options="[
+              {
+                label: 'Tất cả',
+                value: 'all',
+              },
+              {
+                label: 'Bản chính',
+                value: 'Bản chính',
+              },
+              {
+                label: 'Bản nháp',
+                value: 'Bản nháp',
+              },
+            ]"
+            size="sm"
+            variant="subtle"
+            :disabled="false"
+            label="Loại"
+            v-model="selectStatus"
+          />
+        </div>
       </div>
     </div>
-    <div class="py-4">
+    <div class="pb-4">
       <MyWebsitesListView
         class="min-h-[250px] max-h-[80vh]"
         v-model:loading="loading"
@@ -56,6 +61,7 @@
             button: {
               label: 'Đến kho giao diện',
               variant: 'solid',
+              theme: 'blue',
               onClick: () => {
                 router.push({
                   name: 'Interface Repository',

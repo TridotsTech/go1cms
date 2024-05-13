@@ -4,20 +4,21 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">
-    <div class="mb-4 flex flex-wrap justify-between border-b">
-      <h2 class="mb-2 font-bold text-xl">{{ template.data?.name }}</h2>
-      <Button
-        class="mb-2"
-        :variant="'subtle'"
-        theme="gray"
-        size="sm"
-        label="Chọn giao diện này"
-        @click="addWebTemplate"
-      >
-      </Button>
+  <div class="p-6 mt-12">
+    <div class="border-b mb-4 pb-2 border-gray-300">
+      <div class="flex flex-wrap justify-between items-center gap-2">
+        <h2 class="font-bold text-3xl">{{ template.data?.name }}</h2>
+        <Button
+          :variant="'subtle'"
+          theme="gray"
+          size="sm"
+          label="Chọn giao diện này"
+          @click="addWebTemplate"
+        >
+        </Button>
+      </div>
     </div>
-    <div v-html="template.data?.content"></div>
+    <div class="pb-4" v-html="template.data?.content"></div>
   </div>
 </template>
 

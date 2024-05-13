@@ -517,6 +517,7 @@
   {
    "fieldname": "custom_js",
    "fieldtype": "Text",
+   "ignore_xss_filter": 1,
    "label": "Custom Js"
   },
   {
@@ -583,7 +584,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-07 11:36:52.062537",
+ "modified": "2024-05-11 14:15:28.109666",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",

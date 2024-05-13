@@ -201,6 +201,8 @@ frappe.ui.form.on("Footer Component", {
       args: {
         name: name,
         parentfield: parentfield,
+        fc_name: cur_frm.doc.name,
+        doctype: "Footer Component",
       },
       callback: function (r) {
         cur_frm.reload_doc();

@@ -196,7 +196,7 @@ class WebPageBuilder(WebsiteGenerator):
                 "order_time", urllib.parse.unquote(preferred_time))
         if source_doc:
             html_list, js_list = get_page_html(
-                doc, sections, html, source_doc, context.device_type, add_info)
+                doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=context.device_type, blog_name=context.blog_name, add_info=add_info)
         context.html_list = html_list
         context.js_list = js_list
 
@@ -783,7 +783,7 @@ def update_component_page_section(page_section, comp_id, comp_uuid, cid):
 
 
 @frappe.whitelist()
-def delete_section(name, parentfield):
+def delete_section(name, parentfield, fc_name=None, doctype=None):
     page_section = frappe.db.get_all("Mobile Page Section", filters={
         "name": name}, fields=['section'])
     frappe.db.sql('''delete from `tabMobile Page Section` where name = %(name)s and parentfield = %(parentfield)s''', {
@@ -792,6 +792,11 @@ def delete_section(name, parentfield):
         frappe.db.sql('''delete from `tabPage Section` where name = %(name)s''', {
             'name': page_section[0].section})
         frappe.db.commit()
+    if fc_name and doctype:
+        if frappe.db.exists(doctype, fc_name, cache=True):
+            doc = frappe.get_doc(doctype, fc_name)
+            doc.save()
+
     return {'status': 'Success'}
 
 
@@ -1498,7 +1503,7 @@ def get_source_doc(doc, device_type):
     return source_doc, sections, html
 
 
-def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, page_no=0, page_len=3):
+def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, add_info=None, page_no=0, page_len=3):
     section_list = sections[int(page_no):int(page_len)]
     data = get_page_section(source_doc)
     html_list = []
@@ -1562,6 +1567,21 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
         if allow:
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
+            if blog_name and frappe.db.exists("Mbw Blog Post", blog_name):
+                blog_detail = frappe.get_doc(
+                    'Mbw Blog Post', blog_name)
+                blog_detail.published_on = blog_detail.published_on.strftime(
+                    "%d-%m-%Y")
+                data_source['blog_detail'] = blog_detail
+
+                breadcrumb = data_source.get('breadcrumb')
+                if breadcrumb:
+                    breadcrumb.append({
+                        'idx': len(breadcrumb) + 1,
+                        'menu': blog_detail.title,
+                        'route': "#"
+                    })
+                    data_source['breadcrumb'] = breadcrumb
             # customer_data = bind_customer_cart()
             # data_source["cart"] = customer_data.get("cart_items")
             # data_source["my_boxes"] = customer_data.get("my_boxes")
@@ -1593,9 +1613,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
                         i['published_on'] = published_on.strftime(
                             "%d-%m-%Y")
                     data_source['data'] = data_doc
-                import json
-                data_source['breadcrumb_json'] = json.dumps(
-                    data_source.get('breadcrumb'))
                 template = frappe.render_template(section_html, data_source)
                 html_list.append(
                     {'template': template, 'section': item.section})
@@ -1689,7 +1706,7 @@ def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
     start = int(page_no) * int(page_len)
     if source_doc:
         html_list, js = get_page_html(
-            doc, sections, html, source_doc, device_type, add_info, start, int(page_len) + int(start))
+            doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=device_type, add_info=add_info, page_no=start, page_len=int(page_len) + int(start))
     return html_list
 
 

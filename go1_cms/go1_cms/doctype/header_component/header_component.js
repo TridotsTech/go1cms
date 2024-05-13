@@ -192,6 +192,8 @@ frappe.ui.form.on("Header Component", {
       args: {
         name: name,
         parentfield: parentfield,
+        fc_name: cur_frm.doc.name,
+        doctype: "Header Component",
       },
       callback: function (r) {
         cur_frm.reload_doc();

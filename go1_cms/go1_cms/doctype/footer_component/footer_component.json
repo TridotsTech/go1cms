@@ -415,7 +415,7 @@
    "fieldname": "sc_ct_type",
    "fieldtype": "Select",
    "label": "Second Column Content Type",
-   "options": "Custom\nSocial Links"
+   "options": "Custom\nSocial Links\nMbw Policy"
   },
   {
    "default": "Right",
@@ -445,10 +445,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-22 12:20:26.650202",
+ "modified": "2024-05-10 08:28:45.659522",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -467,5 +468,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

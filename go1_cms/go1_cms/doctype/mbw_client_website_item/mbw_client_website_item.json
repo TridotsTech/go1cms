@@ -8,6 +8,7 @@
  "field_order": [
   "page_id",
   "name_page",
+  "page_type",
   "column_break_gzkg",
   "route_template",
   "icon"
@@ -37,12 +38,18 @@
    "fieldname": "icon",
    "fieldtype": "Data",
    "label": "Icon"
+  },
+  {
+   "fieldname": "page_type",
+   "fieldtype": "Select",
+   "label": "Lo\u1ea1i trang",
+   "options": "\nTrang chi ti\u1ebft tin t\u1ee9c"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-03 09:54:33.067402",
+ "modified": "2024-05-13 08:27:29.917960",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website Item",

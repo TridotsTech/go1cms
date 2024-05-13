@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">Domain</div>
+  <div class="p-6 mt-12">Domain</div>
 </template>
 
 <script setup>

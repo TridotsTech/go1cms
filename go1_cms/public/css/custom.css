@@ -2441,3 +2441,14 @@
 .max-w-\[630px\] {
   max-width: 630px;
 }
+
+/* ql editer */
+.ql-editor {
+  padding: 0;
+}
+.ql-snow .ql-editor .ql-code-block-container {
+  overflow: auto;
+}
+pre {
+  font-size: 87.5%;
+}

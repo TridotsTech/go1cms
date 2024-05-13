@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">
+  <div class="p-6 mt-12">
     <div class="text-center mt-10">
       <div>
         Bạn chưa có website nào, hãy nhấp vào "Xem kho giao diện" và chọn một

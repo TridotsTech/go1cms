@@ -4,40 +4,45 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">
-    <div class="border-b border-gray-300 pb-2">
-      <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2">
-        <FormControl
-          type="select"
-          :options="[
-            {
-              label: 'Tất cả',
-              value: 'all',
-            },
-            {
-              label: 'Website công ty',
-              value: 'Website công ty',
-            },
-            {
-              label: 'Website bán hàng',
-              value: 'Website bán hàng',
-            },
-            {
-              label: 'Website tuyển dụng',
-              value: 'Website tuyển dụng',
-            },
-          ]"
-          size="sm"
-          variant="subtle"
-          :disabled="false"
-          label="Loại website"
-          v-model="selectRepo"
-        />
+  <div class="p-6 mt-12">
+    <div class="border-b pb-2 mb-4 border-gray-300">
+      <div class="mb-4">
+        <h2 class="mb-2 font-bold text-3xl">Kho giao diện</h2>
+      </div>
+      <div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2">
+          <FormControl
+            type="select"
+            :options="[
+              {
+                label: 'Tất cả',
+                value: 'all',
+              },
+              {
+                label: 'Website công ty',
+                value: 'Website công ty',
+              },
+              {
+                label: 'Website bán hàng',
+                value: 'Website bán hàng',
+              },
+              {
+                label: 'Website tuyển dụng',
+                value: 'Website tuyển dụng',
+              },
+            ]"
+            size="sm"
+            variant="subtle"
+            :disabled="false"
+            label="Loại website"
+            v-model="selectRepo"
+          />
+        </div>
       </div>
     </div>
     <div
       v-if="listInterFace.data && listInterFace.data.length"
-      class="py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      class="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
     >
       <div class="rounded-md shadow-md" v-for="temp in listInterFace.data">
         <div

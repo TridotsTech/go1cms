@@ -220,7 +220,7 @@
 				<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left"%}justify-content: start;{%endif%}">
 
 				{%if footer.sc_ct_type == "Custom" %}
-					<div class="go1-cms-copyright-sc-content"    >
+					<div class="go1-cms-copyright-sc-content">
 						{{footer.cp_sc_content}}
 					</div>
 				{%endif%}
@@ -239,6 +239,14 @@
                     	 </li>
                     	 	{%endfor%}
                     	 </ul>
+				{% elif footer.sc_ct_type == "Mbw Policy" %}
+				{% if theme_settings.mbw_policy %}
+				<ul>
+					{%for menu_item in theme_settings.mbw_policy%}
+					<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+					{% endfor %}
+				  </ul>
+				{%endif%}
 				{%endif%}
 			</div>
 		</div>

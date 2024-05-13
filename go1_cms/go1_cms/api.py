@@ -768,8 +768,15 @@ def update_website_context(context):
                 if context.doc.edit_header_style:
                     if context.header and context.doc.is_transparent_header:
                         context.header.is_transparent_header = 1
+
+        if context.footer:
+            for sec_item in context.footer.get('items'):
+                for m_sc_items in sec_item.get("items"):
+                    if m_sc_items.get('section_name') == "Mbw Policy":
+                        context.theme_settings.mbw_policy = m_sc_items.get(
+                            'policy')
         get_device_type(context)
-        context.template_header = "templates/header/header.html"
+        context.template_header = "/templates/header/header.html"
         # frappe.log_error(context.header,">> context.header <<")
         # frappe.log_error(context,">> context data <<")
     except Exception as e:

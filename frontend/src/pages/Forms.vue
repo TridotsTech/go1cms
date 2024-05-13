@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6">Forms</div>
+  <div class="p-6 mt-12">Forms</div>
 </template>
 
 <script setup>

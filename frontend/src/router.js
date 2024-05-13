@@ -70,6 +70,26 @@ const routes = [
     component: () => import('@/pages/Posts.vue'),
   },
   {
+    path: '/posts/create',
+    name: 'Posts Create',
+    component: () => import('@/pages/PostCreate.vue'),
+  },
+  {
+    path: '/category',
+    name: 'Category',
+    component: () => import('@/pages/Category.vue'),
+  },
+  {
+    path: '/category/create',
+    name: 'Category Create',
+    component: () => import('@/pages/CategoryCreate.vue'),
+  },
+  {
+    path: '/menu',
+    name: 'Menu',
+    component: () => import('@/pages/Menu.vue'),
+  },
+  {
     path: '/forms',
     name: 'Forms',
     component: () => import('@/pages/Forms.vue'),

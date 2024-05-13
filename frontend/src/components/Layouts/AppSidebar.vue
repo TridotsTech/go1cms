@@ -146,6 +146,7 @@ import OrganizationsIcon from '@/components/Icons/OrganizationsIcon.vue'
 import NoteIcon from '@/components/Icons/NoteIcon.vue'
 import SettingsIcon from '@/components/Icons/SettingsIcon.vue'
 import PhoneIcon from '@/components/Icons/PhoneIcon.vue'
+import MenuIcon from '@/components/Icons/MenuIcon.vue'
 import CollapseSidebar from '@/components/Icons/CollapseSidebar.vue'
 import NotificationsIcon from '@/components/Icons/NotificationsIcon.vue'
 import SidebarLink from '@/components/SidebarLink.vue'
@@ -229,12 +230,17 @@ const allViews = computed(() => {
     if (views.data?.list_page) {
       let items_view = [
         {
-          label: 'Header',
+          label: 'Menu',
+          icon: MenuIcon,
+          to: 'Menu',
+        },
+        {
+          label: 'Đầu trang',
           icon: HeaderIcon,
           to: 'Header Page',
         },
         {
-          label: 'Footer',
+          label: 'Chân trang',
           icon: FooterIcon,
           to: 'Footer Page',
         },

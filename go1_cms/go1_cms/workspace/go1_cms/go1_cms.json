@@ -296,7 +296,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Website",
-   "link_count": 1,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -310,9 +310,39 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mbw Blog Post",
+   "link_count": 0,
+   "link_to": "Mbw Blog Post",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Blogger",
+   "link_count": 0,
+   "link_to": "Blogger",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mbw Blog Category",
+   "link_count": 0,
+   "link_to": "Mbw Blog Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-04-24 14:23:11.568063",
+ "modified": "2024-05-13 09:59:51.202221",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Go1 CMS",
