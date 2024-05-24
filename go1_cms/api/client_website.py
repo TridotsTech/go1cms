@@ -33,7 +33,7 @@ def set_primary_client_website(name):
         frappe.throw(_("My website not found"), frappe.DoesNotExistError)
 
     doc = frappe.get_doc('MBW Client Website', name)
-    doc.status_web = 'Bản chính'
+    doc.type_web = 'Bản chính'
     doc.save()
 
     return name

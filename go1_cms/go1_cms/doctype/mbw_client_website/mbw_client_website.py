@@ -6,21 +6,76 @@ from frappe.model.document import Document
 
 
 class MBWClientWebsite(Document):
+    @staticmethod
+    def default_list_data():
+        columns = [
+            {
+                "label": "Tên Website",
+                "type": "Data",
+                "key": "name_web",
+                "width": "276px"
+            },
+            {
+                "label": "Loại mẫu",
+                "type": "Select",
+                "key": "type_template",
+                "width": "228px"
+            },
+            {
+                "label": "Loại website",
+                "type": "Select",
+                "key": "type_web",
+                "width": "116px"
+            },
+            {
+                "label": "Kích hoạt",
+                "type": "Check",
+                "key": "published",
+                "width": "149px"
+            },
+            {
+                "label": "Chỉnh sửa",
+                "type": "Check",
+                "key": "edit",
+                "width": "149px"
+            },
+            {
+                "label": "Hành động",
+                "key": "action_button"
+            }
+        ]
+
+        rows = [
+            "name",
+            "creation",
+            "modified_by",
+            "_assign",
+            "owner",
+            "action_button",
+            "name_web",
+            "type_template",
+            "modified",
+            "type_web",
+            "edit"
+            "published"
+        ]
+        return {'columns': columns, 'rows': rows}
+
     def validate(self):
         try:
             doc_self_old = frappe.get_doc('MBW Client Website', self.name)
             # check status web
-            if doc_self_old.status_web != self.status_web and self.status_web == 'Bản chính':
+            if doc_self_old.type_web != self.type_web and self.type_web == 'Bản chính':
                 existing_list = frappe.db.get_all(
                     "MBW Client Website",
                     filters={"name": ("!=", self.name),
-                             "status_web": "Bản chính"},
+                             "type_web": "Bản chính"},
                     fields=['name'],
                 )
                 if existing_list:
                     doc = frappe.get_doc(
                         'MBW Client Website', existing_list[0].get('name'))
-                    doc.status_web = "Bản nháp"
+                    doc.type_web = "Bản nháp"
                     doc.save()
 
             # check edit
@@ -29,7 +84,14 @@ class MBWClientWebsite(Document):
             #         '''UPDATE `tabMBW Client Website` SET edit=0 WHERE name!="{web_name}" AND edit=1'''.format(web_name=self.name))
             #     frappe.db.commit()
 
-            if doc_self_old.status_web != self.status_web or doc_self_old.route_web == None:
+            # update published
+            if doc_self_old.published != self.published:
+                for item in self.page_websites:
+                    doc = frappe.get_doc('Web Page Builder', item.page_id)
+                    doc.published = self.published
+                    doc.save()
+
+            if doc_self_old.type_web != self.type_web or doc_self_old.route_web == None:
                 list_cpn = []
                 """ check published, set route page, update menu """
                 router_menu_draft = "/template_" + frappe.scrub(
@@ -43,8 +105,7 @@ class MBWClientWebsite(Document):
                     if doc.footer_component and doc.footer_component not in list_cpn:
                         list_cpn.append(doc.footer_component)
 
-                    doc.published = self.published
-                    if self.status_web == 'Bản chính':
+                    if self.type_web == 'Bản chính':
                         if item.route_template and item.route_template[0] == '/':
                             route_template = item.route_template[1:]
                         else:
@@ -53,7 +114,7 @@ class MBWClientWebsite(Document):
                         route_template = 'template_' + frappe.scrub(
                             self.name) + item.route_template
                     doc.route_template = route_template
-                    doc.route_prefix = '' if self.status_web == 'Bản chính' else router_menu_draft
+                    doc.route_prefix = '' if self.type_web == 'Bản chính' else router_menu_draft
                     doc.save()
 
                 # update menu header and footer
@@ -76,10 +137,10 @@ class MBWClientWebsite(Document):
                             for m in menu_items:
                                 redirect_url = m.redirect_url or '#'
                                 if not redirect_url.startswith('http'):
-                                    if self.status_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
+                                    if self.type_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
                                         redirect_url = redirect_url.replace(
                                             router_menu_draft, "", 1)
-                                    elif self.status_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
+                                    elif self.type_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
                                         redirect_url = router_menu_draft + redirect_url
 
                                     frappe.db.set_value('Menus Item', m.name, {
@@ -88,7 +149,7 @@ class MBWClientWebsite(Document):
 
             # set route website
             route_web = ''
-            if self.status_web == 'Bản chính' and self.page_websites:
+            if self.type_web == 'Bản chính' and self.page_websites:
                 route_web = self.page_websites[0].route_template
             else:
                 route_web = '/template_' + frappe.scrub(

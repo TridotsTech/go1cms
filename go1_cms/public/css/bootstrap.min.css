@@ -7314,7 +7314,7 @@ fieldset:disabled .btn {
 /* .m-0 {
   margin: 0 !important;
 } */
-.m-1 {
+/* .m-1 {
   margin: 0.25rem !important;
 }
 .m-2 {
@@ -7328,23 +7328,23 @@ fieldset:disabled .btn {
 }
 .m-5 {
   margin: 3rem !important;
-}
+} */
 /* .m-auto {
   margin: auto !important;
 } */
-.mx-0 {
+/* .mx-0 {
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
 .mx-1 {
   margin-right: 0.25rem !important;
   margin-left: 0.25rem !important;
-}
+} */
 /* .mx-2 {
   margin-right: 0.5rem !important;
   margin-left: 0.5rem !important;
 } */
-.mx-3 {
+/* .mx-3 {
   margin-right: 1rem !important;
   margin-left: 1rem !important;
 }
@@ -7359,8 +7359,8 @@ fieldset:disabled .btn {
 .mx-auto {
   margin-right: auto !important;
   margin-left: auto !important;
-}
-.my-0 {
+} */
+/* .my-0 {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
@@ -7375,16 +7375,16 @@ fieldset:disabled .btn {
 .my-3 {
   margin-top: 1rem !important;
   margin-bottom: 1rem !important;
-}
+} */
 /* .my-4 {
   margin-top: 1.5rem !important;
   margin-bottom: 1.5rem !important;
 } */
-.my-5 {
+/* .my-5 {
   margin-top: 3rem !important;
   margin-bottom: 3rem !important;
-}
-.my-auto {
+} */
+/* .my-auto {
   margin-top: auto !important;
   margin-bottom: auto !important;
 }
@@ -7399,7 +7399,7 @@ fieldset:disabled .btn {
 }
 .mt-3 {
   margin-top: 1rem !important;
-}
+} */
 /* .mt-4 {
   margin-top: 1.5rem !important;
 } */
@@ -7475,9 +7475,9 @@ fieldset:disabled .btn {
 /* .p-0 {
   padding: 0 !important;
 } */
-.p-1 {
+/* .p-1 {
   padding: 0.25rem !important;
-}
+} */
 /* .p-2 {
   padding: 0.5rem !important;
 } */
@@ -7490,7 +7490,7 @@ fieldset:disabled .btn {
 /* .p-5 {
   padding: 3rem !important;
 } */
-.px-0 {
+/* .px-0 {
   padding-right: 0 !important;
   padding-left: 0 !important;
 }
@@ -7509,19 +7509,19 @@ fieldset:disabled .btn {
 .px-4 {
   padding-right: 1.5rem !important;
   padding-left: 1.5rem !important;
-}
+} */
 /* .px-5 {
   padding-right: 3rem !important;
   padding-left: 3rem !important;
 } */
-.py-0 {
+/* .py-0 {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 .py-1 {
   padding-top: 0.25rem !important;
   padding-bottom: 0.25rem !important;
-}
+} */
 /* .py-2 {
   padding-top: 0.5rem !important;
   padding-bottom: 0.5rem !important;
@@ -7530,7 +7530,7 @@ fieldset:disabled .btn {
   padding-top: 1rem !important;
   padding-bottom: 1rem !important;
 } */
-.py-4 {
+/* .py-4 {
   padding-top: 1.5rem !important;
   padding-bottom: 1.5rem !important;
 }
@@ -7591,7 +7591,7 @@ fieldset:disabled .btn {
 }
 .pb-5 {
   padding-bottom: 3rem !important;
-}
+} */
 .ps-0 {
   padding-left: 0 !important;
 }
@@ -7610,7 +7610,7 @@ fieldset:disabled .btn {
 .ps-5 {
   padding-left: 3rem !important;
 }
-.gap-0 {
+/* .gap-0 {
   gap: 0 !important;
 }
 .gap-1 {
@@ -7624,7 +7624,7 @@ fieldset:disabled .btn {
 }
 .gap-4 {
   gap: 1.5rem !important;
-}
+} */
 /* .gap-5 {
   gap: 3rem !important;
 } */

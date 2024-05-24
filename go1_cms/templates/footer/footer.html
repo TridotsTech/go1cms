@@ -26,9 +26,7 @@
 													<div class="border_line"></div>
 													{%if m_sec_item.phone_no%}
 													<div class="phone-div py-3 items-center" style="display:flex;gap:5px;">
-															{%if m_sec_item.phone_icon%}
-																<img   class="phone__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.phone_icon}}" />
-															{%endif%}
+															<img   class="phone__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_phone.svg" />
 															<p class="phone_content m-0">
 																{{m_sec_item.phone_no}}
 															</p>
@@ -36,9 +34,7 @@
 													{%endif%}
 													{%if m_sec_item.email_id%}
 														<div class="email-div py-3 items-center" style="display:flex;gap:5px;">
-															{%if m_sec_item.email_icon%}
-																<img   class="email__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.email_icon}}" />
-															{%endif%}
+															<img   class="email__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_email.svg" />
 															<p class="email_content m-0">
 																{{m_sec_item.email_id}}
 															</p>
@@ -46,9 +42,7 @@
 													{%endif%}
 													{%if m_sec_item.address_content%}
 														<div class="address-div py-3 items-center" style="display:flex;gap:5px;">
-															{%if m_sec_item.icon%}
-																<img   class="address__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.icon}}" />
-															{% endif %}
+															<img   class="address__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_global.svg" />
 															<p class="address_content m-0">
 																{{m_sec_item.address_content}}
 															</p>
@@ -80,7 +74,7 @@
 												<div class="mb-6">
 													<div class="" style="display:flex;gap:5px;">
 														{%if ft_lc.icon%}
-															<img class="bg-red-800 rounded-sm p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="{{ft_lc.icon}}" />
+															<img class="bg-red-800 rounded-sm p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
 														{%endif%}
 														<p class="text-base">
 															{{ft_lc.title}}
@@ -95,17 +89,27 @@
 										 {%if m_sec_item.section_name=="Social Links MBW"%}
 										 <div class="footer_p_b mr-4 mb-6">
 											<div class="{{m_sec_item.class_name}} flex flex-wrap items-center">
-												{% for ft_lc in m_sec_item.get('social_links') %}
 												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
-													<a href="{{ ft_lc.link }}">
-														<div class="flex gap-1 justify-center" style="max-height: 30px;width: 30px;max-width: 30px">
-															{%if ft_lc.icon%}
-																<img class="rounded-sm p-1" src="{{ft_lc.icon}}" />
-															{%endif%}
+													<a href="{{ m_sec_item.link_yt }}">
+														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
+															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_ytb.png" />
 														</div>
 													</a>
 												</div>
-												{% endfor %}
+												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
+													<a href="{{ m_sec_item.link_fb }}">
+														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
+															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_fb.png" />
+														</div>
+													</a>
+												</div>
+												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
+													<a href="{{ m_sec_item.link_in }}">
+														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
+															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_in.png" />
+														</div>
+													</a>
+												</div>
 											</div>
 											<div>
 												<iframe class="rounded-sm" src="https://www.facebook.com/plugins/page.php?href={{ m_sec_item.link_embed }}&tabs=timeline&width=220&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="220" height="130" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>

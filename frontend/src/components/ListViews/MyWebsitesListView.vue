@@ -7,21 +7,11 @@
       selectable: options.selectable,
       showTooltip: options.showTooltip,
       resizeColumn: options.resizeColumn,
-      emptyState: options.emptyState,
     }"
     row-key="name"
   >
     <ListHeader @columnWidthUpdated="emit('columnWidthUpdated')" />
-    <div
-      class="flex relative justify-center items-center min-h-[250px]"
-      v-if="loading"
-    >
-      <div
-        class="absolute w-full h-full rounded-md opacity-80 bg-gray-200"
-      ></div>
-      <LoadingIndicator class="h-6 w-6" />
-    </div>
-    <ListRows id="list-rows" v-else-if="rows && rows.length">
+    <ListRows id="list-rows" v-if="rows && rows.length">
       <ListRow
         v-for="row in rows"
         :key="row.name_web"
@@ -33,18 +23,20 @@
           @click="(event) => emit('applyFilter', { event, idx, column, item })"
         >
           <template #prefix> </template>
-          <div v-if="column.key === 'action'">
+          <div v-if="column.key === 'action_button'">
             <div class="flex align-middle gap-4">
               <Tooltip text="Xem" :hover-delay="1" :placement="'top'">
-                <Button
-                  :variant="'subtle'"
-                  theme="blue"
-                  size="sm"
-                  label=""
-                  icon="eye"
-                  :link="item.route_web"
-                >
-                </Button>
+                <div>
+                  <Button
+                    :variant="'subtle'"
+                    theme="blue"
+                    size="sm"
+                    label=""
+                    icon="eye"
+                    :link="item.route_web"
+                  >
+                  </Button>
+                </div>
               </Tooltip>
               <Dropdown
                 :options="[
@@ -54,23 +46,23 @@
                       {
                         label: 'Đổi tên',
                         icon: 'edit-3',
-                        onClick: () => editValues(item),
+                        onClick: () => handleShowModal(item),
                       },
                       {
                         label: 'Đặt là website chính',
                         icon: 'key',
-                        onClick: () => setPrimaryMyWebsite(item),
+                        onClick: () => handleShowDialog(item, 'set primary'),
                       },
                       {
                         label: 'Đặt là website chỉnh sửa',
                         icon: 'edit',
-                        onClick: () => setEditMyWebsite(item),
+                        onClick: () => handleShowDialog(item, 'set edit'),
                       },
                       {
                         label:
                           item.published === 0 ? 'Kích hoạt' : 'Dừng kích hoạt',
                         icon: 'globe',
-                        onClick: () => setPublishedMyWebsite(item),
+                        onClick: () => handleShowDialog(item, 'set publish'),
                       },
                     ],
                   },
@@ -80,7 +72,7 @@
                       {
                         label: 'Xóa website',
                         icon: 'trash',
-                        onClick: () => deleteMyWebsite(item),
+                        onClick: () => handleShowDialog(item, 'delete'),
                       },
                     ],
                   },
@@ -127,7 +119,7 @@
               </Badge>
             </span>
           </div>
-          <div v-else-if="column.key === 'status_web'">
+          <div v-else-if="column.key === 'type_web'">
             <span v-if="item === 'Bản chính'" class="text-blue-600 text-base">
               {{ item }}
             </span>
@@ -162,22 +154,21 @@
               :label="item.value"
             />
           </div>
-          <div v-else-if="column.type === 'Check'">
+          <!-- <div v-else-if="column.type === 'Check'">
             <FormControl
               type="checkbox"
               :modelValue="item"
               :disabled="true"
               class="text-gray-900"
             />
-          </div>
+          </div> -->
         </ListRowItem>
       </ListRow>
     </ListRows>
-    <ListEmptyState class="min-h-[250px]" v-else></ListEmptyState>
   </ListView>
   <ListFooter
     v-if="pageLengthCount"
-    class="border-t px-5 py-2"
+    class="border-t py-2"
     v-model="pageLengthCount"
     :options="{
       rowCount: options.rowCount,
@@ -185,7 +176,9 @@
     }"
     @loadMore="emit('loadMore')"
   />
-  <Dialog v-model="showDialog">
+
+  <!-- modal edit name -->
+  <Dialog v-model="showModalEditName">
     <template #body-title>
       <h3>Đổi tên website</h3>
     </template>
@@ -203,10 +196,106 @@
     </template>
     <template #actions>
       <div class="flex justify-end gap-4">
-        <Button class="ml-2" @click="showDialog = false"> Đóng </Button>
+        <Button class="ml-2" @click="showModalEditName = false"> Đóng </Button>
         <Button variant="solid" theme="blue" @click="changeNameWebsite">
           Xác nhận
         </Button>
+      </div>
+    </template>
+  </Dialog>
+  <!-- dialog delete -->
+  <Dialog
+    :options="{
+      title: 'Xóa website',
+      actions: [
+        {
+          label: 'Xóa',
+          variant: 'solid',
+          theme: 'red',
+          onClick: (close) => deleteDoc(close),
+        },
+      ],
+    }"
+    v-model="showDialogDelete"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div>
+          Bạn chắc chắn muốn xóa website có tên:
+          <b>"{{ selectedItem.name_web }}"</b>?
+        </div>
+        <div class="text-base">
+          <p>- <b class="text-red-600"> Không thể hoàn tác</b>.</p>
+        </div>
+      </div>
+    </template>
+  </Dialog>
+  <!-- dialog set edit -->
+  <Dialog
+    :options="{
+      title: 'Đặt website chỉnh sửa',
+      actions: [
+        {
+          label: 'Đặt website chỉnh sửa',
+          variant: 'solid',
+          theme: 'blue',
+          onClick: (close) => setEditMyWebsite(close),
+        },
+      ],
+    }"
+    v-model="showDialogSetEdit"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div>
+          Bạn chắc chắn muốn đặt website có tên
+          <b>"{{ selectedItem.name_web }}"</b> cho việc chỉnh sửa?
+        </div>
+      </div>
+    </template>
+  </Dialog>
+  <!-- dialog set publish -->
+  <Dialog
+    :options="{
+      title: contentDialogPublish.title,
+      actions: [
+        {
+          label: contentDialogPublish.title,
+          variant: 'solid',
+          theme: 'red',
+          onClick: (close) => setPublishedMyWebsite(close),
+        },
+      ],
+    }"
+    v-model="showDialogSetPublish"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div v-html="contentDialogPublish.message"></div>
+      </div>
+    </template>
+  </Dialog>
+  <!-- dialog set primary -->
+  <Dialog
+    :options="{
+      title: 'Đặt website là bản chính',
+      actions: [
+        {
+          label: 'Đặt website là website chính',
+          variant: 'solid',
+          theme: 'blue',
+          onClick: (close) => setPrimaryMyWebsite(close),
+        },
+      ],
+    }"
+    v-model="showDialogSetPrimary"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div>
+          Bạn chắc chắn muốn đặt website có tên
+          <b>"{{ selectedItem.name_web }}"</b> là website hoạt động chính?
+        </div>
       </div>
     </template>
   </Dialog>
@@ -220,7 +309,6 @@ import {
   ListRow,
   ListRowItem,
   ListFooter,
-  ListEmptyState,
   Dropdown,
   call,
   Tooltip,
@@ -228,9 +316,8 @@ import {
   ErrorMessage,
 } from 'frappe-ui'
 import { createToast, errorMessage } from '@/utils'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { globalStore } from '@/stores/global'
-import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
 
 const { changeLoadingValue, $dialog, changeNameWebsiteEdit } = globalStore()
 const props = defineProps({
@@ -255,32 +342,35 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-  'loading',
-  'reFresh',
   'loadMore',
   'updatePageCount',
   'columnWidthUpdated',
   'applyFilter',
 ])
 
-const loading = defineModel('loading')
 const pageLengthCount = defineModel()
+const list = defineModel('list')
+const showModalEditName = ref(false)
+const showDialogDelete = ref(false)
+const showDialogSetPrimary = ref(false)
+const showDialogSetPublish = ref(false)
+const showDialogSetEdit = ref(false)
+const selectedItem = ref({})
+const errorTextMessage = ref({ name_web: null })
+const inputValues = { name_web: '' }
+const contentDialogPublish = ref({})
 
 watch(pageLengthCount, (val, old_value) => {
   if (val === old_value) return
   emit('updatePageCount', val)
 })
-const showDialog = ref(false)
-const itemSelected = ref({})
-const errorTextMessage = ref({ name_web: null })
-const inputValues = { name_web: '' }
 
 // change name web
-function editValues(item) {
+function handleShowModal(item) {
   inputValues.name_web = item.name_web
   errorTextMessage.value = { name_web: null }
-  itemSelected.value = item
-  showDialog.value = true
+  selectedItem.value = item
+  showModalEditName.value = true
 }
 
 async function changeNameWebsite() {
@@ -289,7 +379,7 @@ async function changeNameWebsite() {
     return false
   }
 
-  if (inputValues.name_web === itemSelected.value.name_web) {
+  if (inputValues.name_web === selectedItem.value.name_web) {
     errorTextMessage.value.name_web = 'Tên mới không thể trùng với tên cũ'
     return false
   }
@@ -298,7 +388,7 @@ async function changeNameWebsite() {
   changeLoadingValue(true, 'Đang cập nhật...')
   try {
     await call('go1_cms.api.client_website.change_name_web_client_website', {
-      name: itemSelected.value.id,
+      name: selectedItem.value.id,
       name_web: inputValues.name_web,
     }).then(() => {
       createToast({
@@ -307,214 +397,179 @@ async function changeNameWebsite() {
         iconClasses: 'text-green-600',
       })
 
-      if (itemSelected.value.edit == 1) {
+      if (selectedItem.value.edit == 1) {
         changeNameWebsiteEdit(inputValues.name_web)
       }
 
       changeLoadingValue(false)
-      emit('reFresh')
-      showDialog.value = false
+      list.value.reload()
+      showModalEditName.value = false
     })
   } catch (err) {
     changeLoadingValue(false)
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
     }
   }
 }
 
-// set primary
-function setPrimaryMyWebsite(item) {
-  $dialog({
-    title: 'Đặt website là bản chính',
-    message: `Bạn chắc chắn muốn đặt website có tên "${item.name_web}" là website hoạt động chính?`,
-    variant: 'danger',
-    actions: [
-      {
-        label: 'Đặt website là website chính',
-        variant: 'solid',
-        theme: 'blue',
-        onClick: async (close) => {
-          if (item.status_web == 'Bản chính') {
-            createToast({
-              title: 'Không thể chuyển đổi',
-              text: 'Website đã đặt là website chính',
-              icon: 'alert-circle',
-              iconClasses: 'text-orange-600',
-            })
-            return false
-          }
+// show dialog
+function handleShowDialog(item, type_modal) {
+  selectedItem.value = item
+  if (type_modal == 'delete') {
+    showDialogDelete.value = true
+  } else if (type_modal == 'set edit') {
+    showDialogSetEdit.value = true
+  } else if (type_modal == 'set primary') {
+    showDialogSetPrimary.value = true
+  } else if (type_modal == 'set publish') {
+    if (item.published == 1) {
+      contentDialogPublish.value = {
+        title: 'Dứng kích hoạt website',
+        message: `Bạn chắc chắn muốn dừng kích hoạt website có tên:
+          <b>"${selectedItem.value.name_web}"</b>?`,
+      }
+    } else {
+      contentDialogPublish.value = {
+        title: 'Kích hoạt website',
+        message: `Bạn chắc chắn muốn kích hoạt website có tên:
+          <b>"${selectedItem.value.name_web}"</b>?`,
+      }
+    }
+    showDialogSetPublish.value = true
+  }
+}
 
-          changeLoadingValue(true, 'Đang đặt...')
-          try {
-            await call(
-              'go1_cms.api.client_website.set_primary_client_website',
-              {
-                name: item.id,
-              }
-            ).then(() => {
-              createToast({
-                title: 'Thành công',
-                icon: 'check',
-                iconClasses: 'text-green-600',
-              })
-              changeLoadingValue(false)
-              emit('reFresh')
-              close()
-            })
-          } catch (err) {
-            changeLoadingValue(false)
-            if (err.messages && err.messages.length) {
-              errorMessage('Có lỗi xảy ra', err.messages[0])
-            }
-          }
-        },
-      },
-    ],
-  })
+// set primary
+async function setPrimaryMyWebsite(close) {
+  if (selectedItem.value.type_web == 'Bản chính') {
+    createToast({
+      title: 'Không thể chuyển đổi',
+      text: 'Website đã đặt là website chính',
+      icon: 'alert-circle',
+      iconClasses: 'text-orange-600',
+    })
+    return false
+  }
+
+  changeLoadingValue(true, 'Đang đặt...')
+  try {
+    await call('go1_cms.api.client_website.set_primary_client_website', {
+      name: selectedItem.value?.name,
+    }).then(() => {
+      createToast({
+        title: 'Thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      list.value.reload()
+      close()
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages[0])
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
 }
 
 // set edit
-function setEditMyWebsite(item) {
-  $dialog({
-    title: 'Đặt website chỉnh sửa',
-    message: `Bạn chắc chắn muốn đặt website có tên "${item.name_web}" cho việc chỉnh sửa?`,
-    variant: 'danger',
-    actions: [
-      {
-        label: 'Đặt website chỉnh sửa',
-        variant: 'solid',
-        theme: 'blue',
-        onClick: async (close) => {
-          if (item.edit == 1) {
-            createToast({
-              title: 'Không thể chuyển đổi',
-              text: 'Website đã đặt là chỉnh sửa',
-              icon: 'alert-circle',
-              iconClasses: 'text-orange-600',
-            })
-            return false
-          }
+async function setEditMyWebsite(close) {
+  if (selectedItem.value.edit == 1) {
+    createToast({
+      title: 'Không thể chuyển đổi',
+      text: 'Website đã đặt là chỉnh sửa',
+      icon: 'alert-circle',
+      iconClasses: 'text-orange-600',
+    })
+    return false
+  }
 
-          changeLoadingValue(true, 'Đang đặt...')
-          try {
-            await call(
-              'go1_cms.api.client_website.update_edit_client_website',
-              {
-                name: item.id,
-              }
-            ).then(() => {
-              createToast({
-                title: 'Thành công',
-                icon: 'check',
-                iconClasses: 'text-green-600',
-              })
-              // emit('reFresh')
-              // close()
-              // changeLoadingValue(false)
-              window.location.reload()
-            })
-          } catch (err) {
-            changeLoadingValue(false)
-            if (err.messages && err.messages.length) {
-              errorMessage('Có lỗi xảy ra', err.messages[0])
-            }
-          }
-        },
-      },
-    ],
-  })
+  changeLoadingValue(true, 'Đang đặt...')
+  try {
+    await call('go1_cms.api.client_website.update_edit_client_website', {
+      name: selectedItem.value?.name,
+    }).then(() => {
+      createToast({
+        title: 'Thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      // list.value.reload()
+      close()
+      changeLoadingValue(false)
+      window.location.reload()
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages[0])
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
 }
 
 // set published
-function setPublishedMyWebsite(item) {
-  let title = 'kích hoạt website'
-  let message = `Bạn chắc chắn muốn kích hoạt website có tên "${item.name_web}"?`
+async function setPublishedMyWebsite(close) {
   let loadingText = 'Đang kích hoạt website...'
-  if (item.published == 1) {
-    title = 'Dứng kích hoạt website'
-    message = `Bạn chắc chắn muốn dừng kích hoạt website có tên "${item.name_web}"?`
+  if (selectedItem.value.published == 1) {
     loadingText = 'Đang dừng kích hoạt website...'
   }
 
-  $dialog({
-    title: title,
-    message: message,
-    variant: 'danger',
-    actions: [
-      {
-        label: title,
-        variant: 'solid',
-        theme: 'red',
-        onClick: async (close) => {
-          changeLoadingValue(true, loadingText)
-          try {
-            await call(
-              'go1_cms.api.client_website.update_published_client_website',
-              {
-                name: item.id,
-                published: item.published == 1 ? 0 : 1,
-              }
-            ).then(() => {
-              createToast({
-                title: 'Thành công',
-                icon: 'check',
-                iconClasses: 'text-green-600',
-              })
-              emit('reFresh')
-              close()
-              changeLoadingValue(false)
-            })
-          } catch (err) {
-            changeLoadingValue(false)
-            if (err.messages && err.messages.length) {
-              errorMessage('Có lỗi xảy ra', err.messages[0])
-            }
-          }
-        },
-      },
-    ],
-  })
+  changeLoadingValue(true, loadingText)
+  try {
+    await call('go1_cms.api.client_website.update_published_client_website', {
+      name: selectedItem.value.name,
+      published: selectedItem.value.published == 1 ? 0 : 1,
+    }).then(() => {
+      createToast({
+        title: 'Thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      list.value.reload()
+      close()
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages[0])
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
 }
 
 // delete
-function deleteMyWebsite(item) {
-  $dialog({
-    title: 'Xóa website',
-    message: `Bạn chắc chắn muốn xóa website có tên: ${item.name_web}?`,
-    variant: 'danger',
-    actions: [
-      {
-        label: 'Xóa',
-        variant: 'solid',
-        theme: 'red',
-        onClick: async (close) => {
-          changeLoadingValue(true, 'Đang xóa...')
-          try {
-            await call('go1_cms.api.client_website.delete_client_website', {
-              name: item.id,
-            }).then(() => {
-              createToast({
-                title: 'Xóa thành công',
-                icon: 'check',
-                iconClasses: 'text-green-600',
-              })
-              emit('reFresh')
-              close()
-              changeLoadingValue(false)
-              if (item.edit == 1) {
-                window.location.reload()
-              }
-            })
-          } catch (err) {
-            changeLoadingValue(false)
-            if (err.messages && err.messages.length) {
-              errorMessage('Có lỗi xảy ra', err.messages[0])
-            }
-          }
-        },
-      },
-    ],
-  })
+async function deleteDoc(close) {
+  changeLoadingValue(true, 'Đang xóa...')
+  try {
+    await call('go1_cms.api.client_website.delete_client_website', {
+      name: selectedItem.value?.name,
+    }).then(() => {
+      createToast({
+        title: 'Xóa thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      list.value.reload()
+      close()
+      if (selectedItem.value.edit == 1) {
+        window.location.reload()
+      }
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
 }
 </script>

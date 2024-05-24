@@ -17,10 +17,21 @@ def get_views(doctype):
         type_category = doc.type_template
         name_web = doc.name_web
 
-    views = {
+    View = frappe.qb.DocType("CMS View Settings")
+    query = (
+        frappe.qb.from_(View)
+        .select("*")
+        .where(Criterion.any([View.user == '', View.user == frappe.session.user]))
+    )
+    if doctype:
+        query = query.where(View.dt == doctype)
+    views = query.run(as_dict=True)
+
+    result = {
         'website_primary': 1 if check_doc else 0,
         'type_category': type_category,
         'list_page': list_page,
-        'name_web': name_web
+        'name_web': name_web,
+        'views': views
     }
-    return views
+    return result

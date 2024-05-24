@@ -50,7 +50,6 @@
    "fieldname": "blogger",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Blogger",
    "options": "Blogger",
    "reqd": 1
@@ -209,6 +208,7 @@
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
+   "in_standard_filter": 1,
    "label": "Title",
    "no_copy": 1,
    "reqd": 1
@@ -219,7 +219,7 @@
  "is_published_field": "published",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-05-13 10:00:58.231962",
+ "modified": "2024-05-23 10:25:03.177375",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Mbw Blog Post",

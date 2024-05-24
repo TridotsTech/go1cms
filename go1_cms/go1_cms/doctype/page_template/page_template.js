@@ -1075,6 +1075,7 @@ var modify_section_data = Class.extend({
     this.dialog.$wrapper.find(".modal-dialog").css("width", "1000px");
     this.dialog.$wrapper.find(".modal-dialog").css("max-width", "750px");
     this.dialog.$wrapper.find(".ace-tomorrow").css("max-height", "200px");
+    this.dialog.$wrapper.find(".section-body").css("overflow", "auto");
 
     this.dialog.$wrapper
       .find(".modal-body")
@@ -2724,16 +2725,16 @@ var modify_section_data = Class.extend({
           list_html.find("thead").append("<tr id='head-cols'></tr>");
 
           for (var i = 0; i < fields.length; i++) {
-            if (fields[i].field_type != "Attach") {
-              list_html
-                .find("thead #head-cols")
-                .append(
-                  `<th style='border-bottom-width: 1px;border-color: #ddd;'>` +
-                    fields[i].field_label +
-                    `</th>`
-                );
-              display_fileds_count += 1;
-            }
+            // if (fields[i].field_type != "Attach") {
+            list_html
+              .find("thead #head-cols")
+              .append(
+                `<th style='border-bottom-width: 1px;border-color: #ddd;'>` +
+                  fields[i].field_label +
+                  `</th>`
+              );
+            display_fileds_count += 1;
+            // }
           }
           list_html
             .find("thead #head-cols")
@@ -2751,6 +2752,11 @@ var modify_section_data = Class.extend({
                   '<td style="border-color: #ddd;">' +
                   f[fields[i].field_key] +
                   "</td>";
+              } else {
+                row_html +=
+                  '<td style="border-color: #ddd;"><img src="' +
+                  f[fields[i].field_key] +
+                  '" style="height:50px"/></td>';
               }
             }
             row_html += ' <td style="width: 25%;border-color: #ddd;">';

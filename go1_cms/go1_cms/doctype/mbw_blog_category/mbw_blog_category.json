@@ -1,13 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "hash",
+ "autoname": "field:category_title",
  "creation": "2024-05-13 09:54:47.885744",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "published",
-  "title",
+  "category_title",
   "description",
   "column_break_smus",
   "route",
@@ -19,14 +19,6 @@
    "fieldname": "published",
    "fieldtype": "Check",
    "label": "Published"
-  },
-  {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Title",
-   "no_copy": 1,
-   "reqd": 1
   },
   {
    "fieldname": "description",
@@ -47,15 +39,25 @@
    "fieldname": "preview_image",
    "fieldtype": "Attach Image",
    "label": "Preview Image"
+  },
+  {
+   "fieldname": "category_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Category Title",
+   "no_copy": 1,
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-13 09:58:19.298416",
+ "modified": "2024-05-23 10:24:38.935106",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Mbw Blog Category",
- "naming_rule": "Random",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -75,6 +77,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "title",
  "track_changes": 1
 }

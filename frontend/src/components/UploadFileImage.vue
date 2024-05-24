@@ -1,7 +1,9 @@
 <template>
   <div class="grid lg:grid-cols-2 gap-4">
     <div>
-      <label class="block text-base text-gray-600 mb-2"> {{ title }} </label>
+      <label v-if="title" class="block text-base text-gray-600 mb-2">
+        {{ title }}
+      </label>
       <Button
         iconLeft="paperclip"
         label="Upload ảnh"
@@ -14,6 +16,7 @@
         accept="image/*"
         @change="(e) => validateFile(e.target.files)"
       />
+      <div v-if="nameFile" class="text-sm my-2">{{ nameFile }}</div>
       <ErrorMessage v-if="messageError" class="my-1" :message="messageError" />
     </div>
     <slot name="preview"></slot>
@@ -22,7 +25,7 @@
 
 <script setup>
 import { ErrorMessage } from 'frappe-ui'
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   title: {
@@ -32,8 +35,15 @@ const props = defineProps({
 })
 
 const refImg = defineModel('refImg')
-const inputFile = defineModel('inputFile')
+const inputFile = defineModel()
 const messageError = ref()
+const nameFile = ref()
+
+watch(inputFile, (val) => {
+  if (!val) {
+    nameFile.value = ''
+  }
+})
 
 const reader = new FileReader()
 reader.addEventListener(
@@ -52,6 +62,7 @@ function validateFile(files) {
       messageError.value = 'Chỉ cho phép hình ảnh PNG và JPG'
     }
     inputFile.value = file
+    nameFile.value = file.name
     reader.readAsDataURL(file)
   }
 }

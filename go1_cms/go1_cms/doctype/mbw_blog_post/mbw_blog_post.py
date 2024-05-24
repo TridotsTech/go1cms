@@ -26,6 +26,45 @@ from frappe.website.website_generator import WebsiteGenerator
 
 
 class MbwBlogPost(WebsiteGenerator):
+    @staticmethod
+    def default_list_data():
+        columns = [
+            {
+                "label": "Tiêu đề",
+                "type": "Data",
+                "key": "title",
+                "width": "10rem"
+            },
+            {
+                "label": "Danh mục",
+                "type": "Link",
+                "key": "blog_category",
+                "width": "10rem"
+            },
+            {
+                "label": "Ngày đăng",
+                "type": "Date",
+                "key": "published_on",
+                "width": "315px"
+            },
+            {
+                "label": "Hành động",
+                "key": "action_button"
+            }
+        ]
+        rows = [
+            "name",
+            "creation",
+            "modified_by",
+            "_assign", "owner",
+            "title",
+            "modified",
+            "blog_category",
+            "published_on",
+            "action_button"
+        ]
+        return {'columns': columns, 'rows': rows}
+
     # @frappe.whitelist()
     # def make_route(self):
     #     if not self.route:
@@ -81,7 +120,7 @@ class MbwBlogPost(WebsiteGenerator):
         context.blog_name = self.name
 
         web_client = frappe.db.get_value(
-            'MBW Client Website', {"status_web": "Bản chính"}, as_dict=1)
+            'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
         if web_client:
             page_blog = frappe.db.get_value('MBW Client Website Item', {
                                             'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'Trang chi tiết tin tức'}, ['page_id'], as_dict=1)

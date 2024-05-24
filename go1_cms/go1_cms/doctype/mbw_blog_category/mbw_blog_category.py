@@ -3,7 +3,31 @@
 
 # import frappe
 from frappe.model.document import Document
+from frappe import _
 
 
 class MbwBlogCategory(Document):
-	pass
+    @staticmethod
+    def default_list_data():
+        columns = [
+            {
+                "label": "Tên danh mục",
+                "type": "Data",
+                "key": "category_title",
+                "width": "473px"
+            },
+            {
+                "label": "Hành động",
+                "key": "action_button"
+            }
+        ]
+        rows = [
+            "name",
+            "creation",
+            "modified_by",
+            "_assign", "owner",
+            "modified",
+            "action_button",
+            "category_title"
+        ]
+        return {'columns': columns, 'rows': rows}

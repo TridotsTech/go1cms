@@ -62,7 +62,11 @@ async function addWebTemplate() {
           iconClasses: 'text-green-600',
         })
         changeLoadingValue(false)
-        router.push({ name: 'My Website' })
+        if (d.template_edit) {
+          router.push({ name: 'My Website' })
+        } else {
+          window.location.href = '/cms/my-website'
+        }
       }
     })
   } catch (err) {

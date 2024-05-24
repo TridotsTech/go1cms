@@ -14,6 +14,7 @@ from go1_cms.go1_cms.api import check_domain, get_business_from_login
 from frappe.model.naming import make_autoname
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
+from datetime import datetime
 
 
 class WebPageBuilder(WebsiteGenerator):
@@ -1573,6 +1574,9 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                 blog_detail.published_on = blog_detail.published_on.strftime(
                     "%d-%m-%Y")
                 data_source['blog_detail'] = blog_detail
+                print("==================")
+                print(blog_detail.content)
+                print("==================")
 
                 breadcrumb = data_source.get('breadcrumb')
                 if breadcrumb:
@@ -1606,19 +1610,22 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                     'Product Box', product_box, 'route')
             try:
                 # frappe.log_error(section_html,">> section_html <<")
+                import datetime as dt
                 data_doc = data_source.get('data')
                 if data_doc:
                     for i in data_doc:
                         published_on = i.get('published_on')
-                        i['published_on'] = published_on.strftime(
-                            "%d-%m-%Y")
+                        if published_on and isinstance(published_on, dt.date):
+                            i['published_on'] = published_on.strftime(
+                                "%d-%m-%Y")
                     data_source['data'] = data_doc
                 template = frappe.render_template(section_html, data_source)
                 html_list.append(
                     {'template': template, 'section': item.section})
             except Exception as e:
-                frappe.log_error(frappe.get_traceback(
-                ), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html")
+                print(e)
+                # frappe.log_error(frappe.get_traceback(
+                # ), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html")
     return html_list, js_list
 
 

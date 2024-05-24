@@ -177,6 +177,15 @@
 .inset-0 {
   inset: 0px;
 }
+.float-left {
+  float: left;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -320,6 +329,9 @@
 }
 .h-56 {
   height: 14rem /* 224px */;
+}
+.h-64 {
+  height: 16rem /* 256px */;
 }
 .h-80 {
   height: 20rem /* 320px */;
@@ -2441,14 +2453,25 @@
 .max-w-\[630px\] {
   max-width: 630px;
 }
+.max-h-5 {
+  max-height: 1.25rem /* 20px */;
+}
+.max-w-5 {
+  max-width: 1.25rem /* 20px */;
+}
 
 /* ql editer */
-.ql-editor {
+.ql-snow .ql-editor {
   padding: 0;
 }
 .ql-snow .ql-editor .ql-code-block-container {
   overflow: auto;
 }
-pre {
+.ql-snow pre {
   font-size: 87.5%;
+  line-height: 1.6;
+}
+
+.ql-snow img {
+  display: inline-block;
 }

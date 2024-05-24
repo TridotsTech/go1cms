@@ -67,22 +67,34 @@ const routes = [
   {
     path: '/posts',
     name: 'Posts',
-    component: () => import('@/pages/Posts.vue'),
+    component: () => import('@/pages/post/Posts.vue'),
   },
   {
     path: '/posts/create',
-    name: 'Posts Create',
-    component: () => import('@/pages/PostCreate.vue'),
+    name: 'Post Create',
+    component: () => import('@/pages/post/PostCreate.vue'),
+  },
+  {
+    path: '/posts/:postId',
+    name: 'Post Detail',
+    component: () => import('@/pages/post/PostDetail.vue'),
+    props: true,
   },
   {
     path: '/category',
     name: 'Category',
-    component: () => import('@/pages/Category.vue'),
+    component: () => import('@/pages/category/Category.vue'),
   },
   {
     path: '/category/create',
     name: 'Category Create',
-    component: () => import('@/pages/CategoryCreate.vue'),
+    component: () => import('@/pages/category/CategoryCreate.vue'),
+  },
+  {
+    path: '/category/:categoryId',
+    name: 'Category Detail',
+    component: () => import('@/pages/category/CategoryDetail.vue'),
+    props: true,
   },
   {
     path: '/menu',

@@ -22,7 +22,7 @@
           </slot>
         </Tooltip>
         <span
-          class="flex-1 flex-shrink-0 text-sm duration-300 ease-in-out text-left"
+          class="flex-1 flex-shrink-0 text-base duration-300 ease-in-out text-left"
           :class="
             isCollapsed
               ? 'ml-0 w-0 h-0 overflow-hidden opacity-0'

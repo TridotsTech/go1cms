@@ -131,10 +131,14 @@ def add_web_template(name):
         page_websites.append(item_cl_web)
 
     # update client website
+    # check template edit
+    template_edit = frappe.db.exists('MBW Client Website', {'edit': 1})
+
     website.name_web = template.name
     website.published = 1
+    website.edit = 0 if template_edit else 1
     website.type_template = template.type_template
     website.page_websites = page_websites
     website.save(ignore_permissions=True)
 
-    return website.name
+    return {'name': website.name, 'template_edit': template_edit}

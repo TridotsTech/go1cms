@@ -2578,6 +2578,7 @@ var modify_section_data = Class.extend({
     this.dialog.$wrapper.find(".modal-dialog").css("width", "1000px");
     this.dialog.$wrapper.find(".modal-dialog").css("max-width", "750px");
     this.dialog.$wrapper.find(".ace-tomorrow").css("max-height", "200px");
+    this.dialog.$wrapper.find(".section-body").css("overflow", "auto");
 
     this.dialog.$wrapper
       .find(".modal-body")
@@ -2585,7 +2586,6 @@ var modify_section_data = Class.extend({
         "style",
         "max-height:calc(100vh - 100px);overflow-y: auto;overflow-x: hidden;"
       );
-
     // this.dialog.$wrapper.find('.form-section-heading.uppercase"').append('<p>hi</p>')
     // if(this.fields.allow_update_to_style==1){
     //     this.dialog.$wrapper.find('.form-page.form-page-section').css("width", "70%");

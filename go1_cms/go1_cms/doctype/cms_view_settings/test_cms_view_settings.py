@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestDemoBlog(FrappeTestCase):
+class TestCMSViewSettings(FrappeTestCase):
 	pass

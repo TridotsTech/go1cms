@@ -6,7 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "name_web",
-  "status_web",
+  "type_web",
   "type_template",
   "column_break_uzqk",
   "edit",
@@ -17,13 +17,6 @@
  ],
  "fields": [
   {
-   "default": "B\u1ea3n nh\u00e1p",
-   "fieldname": "status_web",
-   "fieldtype": "Select",
-   "label": "Tr\u1ea1ng th\u00e1i",
-   "options": "B\u1ea3n nh\u00e1p\nB\u1ea3n ch\u00ednh"
-  },
-  {
    "default": "0",
    "fieldname": "edit",
    "fieldtype": "Check",
@@ -32,13 +25,14 @@
   {
    "fieldname": "name_web",
    "fieldtype": "Data",
+   "in_standard_filter": 1,
    "label": "T\u00ean Website"
   },
   {
    "default": "0",
    "fieldname": "published",
    "fieldtype": "Check",
-   "label": "Published"
+   "label": "K\u00edch ho\u1ea1t"
   },
   {
    "fieldname": "column_break_uzqk",
@@ -61,13 +55,21 @@
   },
   {
    "fieldname": "type_template",
-   "fieldtype": "Data",
-   "label": "Lo\u1ea1i m\u1eabu"
+   "fieldtype": "Select",
+   "label": "Lo\u1ea1i m\u1eabu",
+   "options": "Website c\u00f4ng ty\nWebsite b\u00e1n h\u00e0ng\nWebsite tuy\u1ec3n d\u1ee5ng"
+  },
+  {
+   "default": "B\u1ea3n nh\u00e1p",
+   "fieldname": "type_web",
+   "fieldtype": "Select",
+   "label": "Lo\u1ea1i website",
+   "options": "B\u1ea3n nh\u00e1p\nB\u1ea3n ch\u00ednh"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-03 09:50:49.656429",
+ "modified": "2024-05-23 14:46:22.025146",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

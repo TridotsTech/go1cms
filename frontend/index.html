@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MBW CMS</title>
   </head>
-  <body>
+  <body class="overscroll-y-none no-scrollbar">
     <div id="app"></div>
     <div id="modals"></div>
     <div id="popovers"></div>
 
     <script>
-      window.csrf_token = '{{ csrf_token }}'
+      {% for key in boot %}
+        window["{{ key }}"] = {{ boot[key] | tojson }};
+      {% endfor %}
     </script>
     <script type="module" src="/src/main.js"></script>
   </body>

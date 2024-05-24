@@ -2,6 +2,7 @@ import TaskStatusIcon from '@/components/Icons/TaskStatusIcon.vue'
 import TaskPriorityIcon from '@/components/Icons/TaskPriorityIcon.vue'
 import { useDateFormat, useTimeAgo } from '@vueuse/core'
 import { usersStore } from '@/stores/users'
+import { gemoji } from 'gemoji'
 import { toast } from 'frappe-ui'
 import { h } from 'vue'
 
@@ -131,11 +132,12 @@ export function setupCustomActions(data, obj) {
   data._customActions = formScript?.actions || []
 }
 
-export function setupBulkActions(data, obj = {}) {
-  if (!data.form_script) return []
-  let script = new Function(data.form_script + '\nreturn setupForm')()
-  let formScript = script(obj)
-  data.bulkActions = formScript?.bulk_actions || []
+export function setupListActions(data, obj = {}) {
+  if (!data.list_script) return []
+  let script = new Function(data.list_script + '\nreturn setupList')()
+  let listScript = script(obj)
+  data.listActions = listScript?.actions || []
+  data.bulkActions = listScript?.bulk_actions || []
 }
 
 export function errorMessage(title, message) {
@@ -145,4 +147,31 @@ export function errorMessage(title, message) {
     icon: 'x',
     iconClasses: 'text-red-600',
   })
+}
+
+export function copyToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(show_success_alert)
+  } else {
+    let input = document.createElement('textarea')
+    document.body.appendChild(input)
+    input.value = text
+    input.select()
+    document.execCommand('copy')
+    show_success_alert()
+    document.body.removeChild(input)
+  }
+  function show_success_alert() {
+    createToast({
+      title: 'Copied to clipboard',
+      text: text,
+      icon: 'check',
+      iconClasses: 'text-green-600',
+    })
+  }
+}
+
+export function isEmoji(str) {
+  const emojiList = gemoji.map((emoji) => emoji.emoji)
+  return emojiList.includes(str)
 }

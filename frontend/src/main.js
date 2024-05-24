@@ -19,10 +19,10 @@ import {
   frappeRequest,
   FeatherIcon,
 } from 'frappe-ui'
+
+import translationPlugin from './translation'
 import { createDialog } from './utils/dialogs'
-import socket from './socket'
-import { getCachedListResource } from 'frappe-ui/src/resources/listResource'
-import { getCachedResource } from 'frappe-ui/src/resources/resources'
+import { initSocket } from './socket'
 
 let globalComponents = {
   Button,
@@ -42,26 +42,36 @@ let pinia = createPinia()
 let app = createApp(App)
 
 setConfig('resourceFetcher', frappeRequest)
-// app.use(FrappeUI)
+
+if (!import.meta.env.DEV) {
+  app.use(FrappeUI)
+}
 app.use(pinia)
 app.use(router)
+app.use(translationPlugin)
 for (let key in globalComponents) {
   app.component(key, globalComponents[key])
 }
 
 app.config.globalProperties.$dialog = createDialog
 
-app.mount('#app')
-
-socket.on('refetch_resource', (data) => {
-  if (data.cache_key) {
-    let resource =
-      getCachedResource(data.cache_key) || getCachedListResource(data.cache_key)
-    if (resource) {
-      resource.reload()
+let socket
+if (import.meta.env.DEV) {
+  frappeRequest({
+    url: '/api/method/go1_cms.www.cms.get_context_for_dev',
+  }).then((values) => {
+    for (let key in values) {
+      window[key] = values[key]
     }
-  }
-})
+    socket = initSocket()
+    app.config.globalProperties.$socket = socket
+    app.mount('#app')
+  })
+} else {
+  socket = initSocket()
+  app.config.globalProperties.$socket = socket
+  app.mount('#app')
+}
 
 if (import.meta.env.DEV) {
   window.$dialog = createDialog

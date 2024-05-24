@@ -4,165 +4,111 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6 mt-12">
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4 mt-12">
     <div class="border-b pb-2 mb-4 border-gray-300">
-      <div class="mb-4">
+      <div class="flex justify-between gap-4">
         <h2 class="mb-2 font-bold text-3xl">Website của tôi</h2>
-      </div>
-      <div>
-        <div class="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-2 gap-4">
-          <FormControl
-            :type="'text'"
+        <div>
+          <Button
+            :variant="'solid'"
+            theme="blue"
             size="sm"
-            variant="subtle"
-            placeholder=""
-            :disabled="false"
-            label="Tên website"
-            v-model="inputNameWeb"
-          />
-          <FormControl
-            type="select"
-            :options="[
-              {
-                label: 'Tất cả',
-                value: 'all',
-              },
-              {
-                label: 'Bản chính',
-                value: 'Bản chính',
-              },
-              {
-                label: 'Bản nháp',
-                value: 'Bản nháp',
-              },
-            ]"
-            size="sm"
-            variant="subtle"
-            :disabled="false"
-            label="Loại"
-            v-model="selectStatus"
-          />
+            label="Thêm mới"
+            iconLeft="plus-circle"
+            route="/interface-repository"
+          >
+          </Button>
         </div>
       </div>
     </div>
-    <div class="pb-4">
-      <MyWebsitesListView
-        class="min-h-[250px] max-h-[80vh]"
-        v-model:loading="loading"
-        :rows="dataRows"
-        :columns="dataColums"
-        :options="{
-          selectable: false,
-          showTooltip: false,
-          resizeColumn: true,
-          emptyState: {
-            title: 'Bạn chưa có website nào',
-            description: 'Chọn một mẫu website từ kho giao diện để bắt đầu',
-            button: {
-              label: 'Đến kho giao diện',
-              variant: 'solid',
-              theme: 'blue',
-              onClick: () => {
-                router.push({
-                  name: 'Interface Repository',
-                })
-              },
-            },
-          },
-        }"
-        @reFresh="
-          () => {
-            reFresh = !reFresh
-          }
-        "
-      />
+    <ViewControls
+      ref="viewControls"
+      v-model="clientWebsite"
+      v-model:loadMore="loadMore"
+      v-model:resizeColumn="triggerResize"
+      v-model:updatedPageCount="updatedPageCount"
+      :options="{
+        hideColumnsButton: true,
+      }"
+      doctype="MBW Client Website"
+    />
+    <MyWebsitesListView
+      v-if="clientWebsite.data && rows.length"
+      v-model="clientWebsite.data.page_length_count"
+      v-model:list="clientWebsite"
+      :rows="rows"
+      :columns="columns"
+      :options="{
+        rowCount: clientWebsite.data.row_count,
+        totalCount: clientWebsite.data.total_count,
+        selectable: false,
+        showTooltip: false,
+        resizeColumn: true,
+      }"
+      @loadMore="() => loadMore++"
+      @columnWidthUpdated="() => triggerResize++"
+      @updatePageCount="(count) => (updatedPageCount = count)"
+      @applyFilter="(data) => viewControls.applyFilter(data)"
+    />
+    <div
+      v-else-if="clientWebsite.data"
+      class="flex flex-1 items-center justify-center"
+    >
+      <div
+        class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
+      >
+        <MyWebsiteIcon class="h-10 w-10" />
+        <span>{{
+          __('Chọn một mẫu website từ kho giao diện để bắt đầu')
+        }}</span>
+        <Button :label="__('Thêm mới')" route="/interface-repository">
+          <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
+        </Button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import ViewControls from '@/components/ViewControls.vue'
 import MyWebsitesListView from '@/components/ListViews/MyWebsitesListView.vue'
+import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import { Breadcrumbs, createResource } from 'frappe-ui'
-import { createToast, errorMessage } from '@/utils'
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { Breadcrumbs } from 'frappe-ui'
+import { ref, computed } from 'vue'
 
 const breadcrumbs = [
   { label: 'Website của tôi', route: { name: 'My Website' } },
 ]
 
-const loading = ref(true)
-const reFresh = ref(true)
-const dataRows = ref([])
-const dataColums = ref([
-  {
-    label: 'STT',
-    key: 'stt',
-    width: '50px',
-  },
-  {
-    label: 'Tên website',
-    key: 'name_web',
-  },
-  {
-    label: 'Loại',
-    key: 'status_web',
-  },
-  {
-    label: 'Trang thái',
-    key: 'published',
-  },
-  {
-    label: 'Website chỉnh sửa',
-    key: 'edit',
-  },
-  {
-    label: 'Hành dộng',
-    key: 'action',
-  },
-])
-const selectStatus = ref('all')
-const inputNameWeb = ref()
+// leads data is loaded in the ViewControls component
+const clientWebsite = ref({})
+const loadMore = ref(1)
+const triggerResize = ref(1)
+const updatedPageCount = ref(20)
+const viewControls = ref(null)
 
-const client_websites = createResource({
-  url: 'go1_cms.api.client_website.get_client_websites',
-  method: 'GET',
-  auto: true,
-  onSuccess: (data) => {
-    let dtRows = []
-    data.forEach((el, idx) => {
-      dtRows.push({
-        stt: idx + 1,
-        name_web: el.name_web,
-        status_web: el.status_web,
-        published: el.published,
-        edit: el.edit,
-        action: {
-          id: el.name,
-          name_web: el.name_web,
-          route_web: el.route_web,
-          published: el.published,
-          status_web: el.status_web,
-          edit: el.edit,
-        },
-      })
-    })
-    dataRows.value = dtRows
-    loading.value = false
-  },
-  onError: (err) => {
-    createToast({
-      title: 'Có lỗi xảy ra',
-      text: err.messages?.[0],
-      icon: 'x',
-      iconClasses: 'text-red-600',
-    })
-  },
+// Columns
+const columns = computed(() => {
+  if (!clientWebsite.value?.data?.columns) return []
+
+  let _columns = clientWebsite.value?.data?.columns
+  if (!_columns.find((el) => el.key == 'action_button')) {
+    _columns.push({ label: __('Action'), key: 'action_button' })
+  }
+  return _columns
 })
 
-watch(reFresh, (val, old_value) => {
-  client_websites.reload()
+// Rows
+const rows = computed(() => {
+  if (!clientWebsite.value?.data?.data) return []
+  return clientWebsite.value?.data.data.map((cat) => {
+    let _rows = {}
+    clientWebsite.value?.data.rows.forEach((row) => {
+      _rows[row] = cat[row]
+    })
+    _rows['action_button'] = { ...cat }
+    return _rows
+  })
 })
 </script>

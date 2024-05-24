@@ -47,3 +47,7 @@
 .img-bg .img-skin:hover {
   animation: scaleHeightToBottom 7s ease-in-out 0s forwards;
 }
+
+.ql-editor img {
+  display: inline-block;
+}
