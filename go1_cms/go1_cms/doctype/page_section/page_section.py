@@ -19,6 +19,10 @@ from urllib.parse import urljoin, unquote, urlencode
 class PageSection(Document):
 
     def validate(self):
+        print("===========================")
+        if not self.section_name:
+            self.section_name = self.section_title
+
         # getting field information of the selected doctype
         if self.section_type == 'Custom Section' and self.content_type == 'Dynamic':
             fields = []
@@ -95,7 +99,7 @@ class PageSection(Document):
         json_obj = {}
         json_obj['section'] = self.name
         json_obj['class_name'] = self.class_name
-        json_obj['section_name'] = self.section_title
+        json_obj['section_name'] = self.section_name or self.section_title
         json_obj['section_type'] = self.section_type
         json_obj['content_type'] = self.content_type
         json_obj['reference_document'] = self.reference_document

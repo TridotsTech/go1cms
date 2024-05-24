@@ -1330,7 +1330,6 @@ var modify_section_data = Class.extend({
   save_data: function () {
     let me = this;
     let values = me.dialog.get_values();
-
     var dialog_fields = [];
     let results = [];
     $.each(values, function (k, v) {

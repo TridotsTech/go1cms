@@ -100,6 +100,19 @@ class WebPageBuilder(WebsiteGenerator):
         generate_css_file()
 
     def after_delete(self):
+        # delete file json
+        path = get_files_path()
+        if self.web_section:
+            file_path = os.path.join(
+                path, 'data_source', (self.name.lower().replace(' ', '_') + '_web.json'))
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        if self.mobile_section:
+            file_path = os.path.join(
+                path, 'data_source', (self.name.lower().replace(' ', '_') + '_mobile.json'))
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
         for item in self.web_section:
             frappe.delete_doc('Page Section', item.section)
 
@@ -729,6 +742,7 @@ def convert_template_to_section(template, business=None, section_name=None):
     doc.section_title = template
     # if section_name:
     # 	doc.section_title = section_name
+    doc.section_name = section_name
     doc.custom_title = section_name
     doc.choose_from_template = 1
     doc.section_template = template

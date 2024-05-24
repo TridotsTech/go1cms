@@ -25,6 +25,13 @@ class HeaderComponent(Document):
         self.construct_html('web', 'web_section')
 
     def after_delete(self):
+        # delete file json
+        path = get_files_path()
+        file_path = os.path.join(
+            path, 'data_source', (self.name.lower().replace(' ', '_') + '_web.json'))
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
         for item in self.web_section:
             frappe.delete_doc('Page Section', item.section)
 

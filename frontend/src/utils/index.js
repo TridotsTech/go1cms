@@ -149,6 +149,15 @@ export function errorMessage(title, message) {
   })
 }
 
+export function warningMessage(title, message) {
+  createToast({
+    title: title || 'Warning',
+    text: message,
+    icon: 'alert-circle',
+    iconClasses: 'text-orange-600',
+  })
+}
+
 export function copyToClipboard(text) {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(text).then(show_success_alert)

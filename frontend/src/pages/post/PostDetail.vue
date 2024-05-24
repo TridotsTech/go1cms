@@ -124,7 +124,7 @@ import {
   createResource,
   Dropdown,
 } from 'frappe-ui'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, warningMessage } from '@/utils'
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { globalStore } from '@/stores/global'
@@ -311,6 +311,14 @@ watch(post, (val) => {
 
 // update doc
 async function callUpdateDoc() {
+  let _post_cp = { ..._post.value }
+  delete _post_cp.file_image
+
+  if (JSON.stringify(post.data) == JSON.stringify(_post_cp)) {
+    warningMessage('Không có gì thay đổi')
+    return
+  }
+
   changeLoadingValue(true, 'Đang lưu...')
   try {
     if (_post.value['file_image']) {

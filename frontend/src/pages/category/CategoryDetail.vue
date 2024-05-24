@@ -117,7 +117,7 @@ import {
   Dropdown,
 } from 'frappe-ui'
 import { ref, computed, watch, nextTick } from 'vue'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, warningMessage } from '@/utils'
 import { useRouter } from 'vue-router'
 import { globalStore } from '@/stores/global'
 
@@ -193,6 +193,11 @@ watch(category, (val) => {
 })
 
 async function callUpdateDoc() {
+  if (JSON.stringify(category.data) == JSON.stringify(_category.value)) {
+    warningMessage('Không có gì thay đổi')
+    return
+  }
+
   changeLoadingValue(true, 'Đang lưu...')
   try {
     const doc = await call('go1_cms.api.category.update_category', {
