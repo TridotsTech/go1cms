@@ -319,7 +319,7 @@ import { createToast, errorMessage } from '@/utils'
 import { ref, watch } from 'vue'
 import { globalStore } from '@/stores/global'
 
-const { changeLoadingValue, $dialog, changeNameWebsiteEdit } = globalStore()
+const { changeLoadingValue, changeNameWebsiteEdit } = globalStore()
 const props = defineProps({
   rows: {
     type: Array,
@@ -388,7 +388,7 @@ async function changeNameWebsite() {
   changeLoadingValue(true, 'Đang cập nhật...')
   try {
     await call('go1_cms.api.client_website.change_name_web_client_website', {
-      name: selectedItem.value.id,
+      name: selectedItem.value.name,
       name_web: inputValues.name_web,
     }).then(() => {
       createToast({
