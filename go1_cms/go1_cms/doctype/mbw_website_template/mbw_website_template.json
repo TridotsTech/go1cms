@@ -9,6 +9,10 @@
   "template_name",
   "image_preview",
   "type_template",
+  "column_break_cdyg",
+  "header_component",
+  "footer_component",
+  "section_break_bblf",
   "page_templates",
   "content"
  ],
@@ -43,11 +47,31 @@
    "fieldtype": "Table",
    "label": "C\u00e1c trang m\u1eabu",
    "options": "MBW Website Template Item"
+  },
+  {
+   "fieldname": "column_break_cdyg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "header_component",
+   "fieldtype": "Link",
+   "label": "\u0110\u1ea7u trang",
+   "options": "Header Component"
+  },
+  {
+   "fieldname": "footer_component",
+   "fieldtype": "Link",
+   "label": "Ch\u00e2n trang",
+   "options": "Footer Component"
+  },
+  {
+   "fieldname": "section_break_bblf",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-23 16:26:27.990844",
+ "modified": "2024-05-24 15:07:01.901128",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

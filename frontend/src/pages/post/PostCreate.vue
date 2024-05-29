@@ -3,28 +3,29 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="p-6 mt-12">
-    <div class="border-b mb-4 pb-2 border-gray-300">
-      <div class="flex flex-wrap justify-between items-center gap-2">
-        <h2 class="font-bold text-3xl">Thêm mới bài viết</h2>
-        <div class="flex rounded-sm gap-2 justify-end">
-          <Button
-            variant="subtle"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/posts"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callInsertDoc"
-          ></Button>
-        </div>
+    <template #right-header>
+      <div class="flex rounded-sm gap-2 justify-end">
+        <Button
+          variant="subtle"
+          theme="gray"
+          size="md"
+          label="Hủy"
+          route="/posts"
+        ></Button>
+        <Button
+          variant="solid"
+          theme="blue"
+          size="md"
+          label="Lưu"
+          @click="callInsertDoc"
+        ></Button>
       </div>
+    </template>
+  </LayoutHeader>
+  <div class="p-6 overflow-auto">
+    <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <ErrorMessage :message="msgError" />
     </div>
     <div class="p-6 border border-gray-300 rounded-sm mb-4">
       <div>
@@ -41,25 +42,6 @@
         </div>
         <div class="mb-5">
           <Fields :sections="sections1" :data="_post" />
-        </div>
-      </div>
-      <div class="border-t border-gray-300">
-        <ErrorMessage class="mt-3" :message="msgError" />
-        <div class="flex py-4 gap-2 justify-end">
-          <Button
-            variant="subtle"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/posts"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callInsertDoc"
-          ></Button>
         </div>
       </div>
     </div>
@@ -145,7 +127,7 @@ const sections = computed(() => {
 
             {
               label: 'Ảnh',
-              name: 'file_image',
+              name: 'upload_file_image',
               type: 'upload_image',
             },
           ],
@@ -216,7 +198,7 @@ async function callInsertDoc() {
       data: { ..._post.value },
     })
 
-    if (docCreate.name && _post.value['file_image']) {
+    if (docCreate.name && _post.value['upload_file_image']) {
       let headers = { Accept: 'application/json' }
       if (window.csrf_token && window.csrf_token !== '{{ csrf_token }}') {
         headers['X-Frappe-CSRF-Token'] = window.csrf_token
@@ -225,8 +207,8 @@ async function callInsertDoc() {
       let imgForm = new FormData()
       imgForm.append(
         'file',
-        _post.value['file_image'],
-        _post.value['file_image'].name
+        _post.value['upload_file_image'],
+        _post.value['upload_file_image'].name
       )
       imgForm.append('is_private', '0')
       imgForm.append('doctype', 'Mbw Blog Post')

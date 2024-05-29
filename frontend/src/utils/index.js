@@ -158,6 +158,23 @@ export function warningMessage(title, message) {
   })
 }
 
+export function getTypeField(name) {
+  switch (name) {
+    case 'Link':
+      return 'link'
+    case 'Text':
+      return 'text'
+    case 'Small Text':
+      return 'textarea'
+    case 'Long Text':
+      return 'textarea'
+    case 'Attach':
+      return 'upload_image'
+    default:
+      return name
+  }
+}
+
 export function copyToClipboard(text) {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(text).then(show_success_alert)

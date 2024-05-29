@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6 mt-12">
+  <div class="p-6 overflow-auto">
     <div class="border-b mb-4 pb-2 border-gray-300">
       <div class="flex flex-wrap justify-between items-center gap-2">
         <h2 class="font-bold text-3xl">{{ template.data?.name }}</h2>

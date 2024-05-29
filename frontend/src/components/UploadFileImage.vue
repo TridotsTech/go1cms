@@ -1,5 +1,5 @@
 <template>
-  <div class="grid lg:grid-cols-2 gap-4">
+  <div class="flex flex-wrap gap-4">
     <div>
       <label v-if="title" class="block text-base text-gray-600 mb-2">
         {{ title }}

@@ -3,73 +3,59 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="p-6 mt-12">
-    <div class="border-b mb-4 pb-2 border-gray-300">
-      <div class="flex flex-wrap justify-between items-center gap-2">
-        <h2 class="font-bold text-3xl">Cập nhật danh mục bài viết</h2>
-        <div class="flex rounded-sm gap-2 justify-end">
-          <Button
-            variant="subtle"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/category"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callUpdateDoc"
-          ></Button>
-          <Dropdown
-            :options="[
-              {
-                group: 'Xóa',
-                items: [
-                  {
-                    label: 'Xóa danh mục',
-                    icon: 'trash',
-                    onClick: () => {
-                      showModalDelete = true
-                    },
+    <template #right-header>
+      <div
+        class="gap-2 justify-end"
+        :class="alreadyActions ? 'flex' : 'hidden'"
+      >
+        <Button
+          variant="subtle"
+          theme="gray"
+          size="md"
+          label="Trở lại"
+          route="/category"
+        ></Button>
+        <Dropdown
+          :options="[
+            {
+              group: 'Xóa',
+              items: [
+                {
+                  label: 'Xóa danh mục',
+                  icon: 'trash',
+                  onClick: () => {
+                    showModalDelete = true
                   },
-                ],
-              },
-            ]"
-          >
-            <Button size="md">
-              <template #icon>
-                <FeatherIcon name="more-horizontal" class="h-4 w-4" />
-              </template>
-            </Button>
-          </Dropdown>
-        </div>
+                },
+              ],
+            },
+          ]"
+        >
+          <Button size="md">
+            <template #icon>
+              <FeatherIcon name="more-horizontal" class="h-4 w-4" />
+            </template>
+          </Button>
+        </Dropdown>
+        <Button
+          variant="solid"
+          theme="blue"
+          size="md"
+          label="Lưu"
+          @click="callUpdateDoc"
+          :disabled="!dirty"
+        ></Button>
       </div>
+    </template>
+  </LayoutHeader>
+  <div class="p-6 overflow-auto">
+    <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <ErrorMessage :message="msgError" />
     </div>
     <div v-if="_category" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
         <Fields :sections="sections" :data="_category" />
-      </div>
-      <div class="border-t border-gray-300">
-        <ErrorMessage class="mt-3" :message="msgError" />
-        <div class="flex py-4 gap-2 justify-end">
-          <Button
-            :variant="'subtle'"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/category"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callUpdateDoc"
-          ></Button>
-        </div>
       </div>
     </div>
   </div>
@@ -116,7 +102,7 @@ import {
   ErrorMessage,
   Dropdown,
 } from 'frappe-ui'
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { createToast, errorMessage, warningMessage } from '@/utils'
 import { useRouter } from 'vue-router'
 import { globalStore } from '@/stores/global'
@@ -174,27 +160,31 @@ const sections = computed(() => {
 
 const category = createResource({
   url: 'go1_cms.api.category.get_category',
-  cache: ['category', props.categoryId],
   params: {
     name: props.categoryId,
   },
   auto: true,
   transform: (data) => {
+    _category.value = {
+      ...data,
+    }
     return data
   },
 })
 
-watch(category, (val) => {
-  nextTick(() => {
-    _category.value = {
-      ...category.data,
-    }
-  })
+// handle allow actions
+const alreadyActions = ref(false)
+const dirty = computed(() => {
+  return JSON.stringify(category.data) !== JSON.stringify(_category.value)
+})
+
+watch(dirty, (val) => {
+  alreadyActions.value = true
 })
 
 async function callUpdateDoc() {
   if (JSON.stringify(category.data) == JSON.stringify(_category.value)) {
-    warningMessage('Không có gì thay đổi')
+    warningMessage('Tài liệu không thay đổi')
     return
   }
 
@@ -205,14 +195,29 @@ async function callUpdateDoc() {
         ..._category.value,
       },
     })
-    createToast({
-      title: 'Cập nhật thành công',
-      icon: 'check',
-      iconClasses: 'text-green-600',
-    })
+    if (doc.name) {
+      createToast({
+        title: 'Cập nhật thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+
+      if (doc.name != props.categoryId) {
+        router.push({
+          name: 'Category Detail',
+          params: { categoryId: doc.name },
+        })
+      } else {
+        category.reload()
+      }
+    }
   } catch (err) {
-    msgError.value = err.messages.join(', ')
-    errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
   }
   changeLoadingValue(false)
 }
@@ -235,9 +240,22 @@ async function deleteDoc(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
     }
   }
   changeLoadingValue(false)
 }
+
+watch(
+  () => props.categoryId,
+  (val) => {
+    category.update({
+      params: { name: val },
+    })
+    category.reload()
+  }
+)
 </script>

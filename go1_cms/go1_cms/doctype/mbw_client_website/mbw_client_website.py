@@ -117,35 +117,34 @@ class MBWClientWebsite(Document):
                     doc.route_prefix = '' if self.type_web == 'Bản chính' else router_menu_draft
                     doc.save()
 
-                # update menu header and footer
+                # update redirect url menu
                 for x in list_cpn:
-                    web_sections = frappe.db.get_all(
-                        "Mobile Page Section",
-                        filters={"parent": x, "parentfield": "web_section"},
-                        fields=['section']
+                    menus = frappe.db.get_all(
+                        "Menu",
+                        filters={"id_client_website": self.name},
+                        fields=['name']
                     )
-                    for w in web_sections:
-                        doc_page = frappe.get_doc('Page Section', w.section)
-                        if doc_page.section_type == "Menu":
-                            menu_items = frappe.db.get_all(
-                                "Menus Item",
-                                filters={"parent": doc_page.menu,
-                                         "parentfield": "menus"},
-                                fields=['name', 'redirect_url']
-                            )
 
-                            for m in menu_items:
-                                redirect_url = m.redirect_url or '#'
-                                if not redirect_url.startswith('http'):
-                                    if self.type_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
-                                        redirect_url = redirect_url.replace(
-                                            router_menu_draft, "", 1)
-                                    elif self.type_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
-                                        redirect_url = router_menu_draft + redirect_url
+                    for mn in menus:
+                        menu_items = frappe.db.get_all(
+                            "Menus Item",
+                            filters={"parent": mn.name,
+                                     "parentfield": "menus"},
+                            fields=['name', 'redirect_url']
+                        )
 
-                                    frappe.db.set_value('Menus Item', m.name, {
-                                        'redirect_url': redirect_url
-                                    })
+                        for m in menu_items:
+                            redirect_url = m.redirect_url or '#'
+                            if not redirect_url.startswith('http'):
+                                if self.type_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
+                                    redirect_url = redirect_url.replace(
+                                        router_menu_draft, "", 1)
+                                elif self.type_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
+                                    redirect_url = router_menu_draft + redirect_url
+
+                                frappe.db.set_value('Menus Item', m.name, {
+                                    'redirect_url': redirect_url
+                                })
 
             # set route website
             route_web = ''

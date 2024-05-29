@@ -4,14 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6 mt-12">
-    <div class="border-b pb-2 mb-4 border-gray-300">
-      <div>
-        <h2 class="font-bold text-3xl">
-          {{ page_detail.data?.doc_item.name_page }}
-        </h2>
-      </div>
-    </div>
+  <div class="p-6 overflow-auto">
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="p-2">
         <div>
@@ -35,7 +28,7 @@
                 placeholder="Nhập từ khóa"
                 label="Thẻ từ khóa"
                 v-model="inputValue"
-                rows="4"
+                :rows="4"
               />
             </div>
             <div class="flex flex-col gap-4">
@@ -46,7 +39,7 @@
                 placeholder="Nhập mô tả"
                 label="Thẻ mô tả"
                 v-model="inputValue"
-                rows="9"
+                :rows="9"
               />
             </div>
           </div>

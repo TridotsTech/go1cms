@@ -1588,9 +1588,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                 blog_detail.published_on = blog_detail.published_on.strftime(
                     "%d-%m-%Y")
                 data_source['blog_detail'] = blog_detail
-                print("==================")
-                print(blog_detail.content)
-                print("==================")
 
                 breadcrumb = data_source.get('breadcrumb')
                 if breadcrumb:

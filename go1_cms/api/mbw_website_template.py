@@ -138,6 +138,10 @@ def add_web_template(name):
     website.published = 1
     website.edit = 0 if template_edit else 1
     website.type_template = template.type_template
+    if list_header:
+        website.header_component = list_header[next(iter(list_header))]
+    if list_footer:
+        website.footer_component = list_footer[next(iter(list_footer))]
     website.page_websites = page_websites
     website.save(ignore_permissions=True)
 

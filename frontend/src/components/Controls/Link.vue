@@ -7,6 +7,7 @@
       ref="autocomplete"
       :options="options.data"
       v-model="value"
+      v-model:currentOption="currentOption"
       :size="attrs.size || 'sm'"
       :variant="attrs.variant"
       :placeholder="attrs.placeholder"
@@ -62,7 +63,7 @@
 import Autocomplete from '@/components/frappe-ui/Autocomplete.vue'
 import { watchDebounced } from '@vueuse/core'
 import { createResource } from 'frappe-ui'
-import { useAttrs, computed, ref } from 'vue'
+import { useAttrs, computed, ref, onMounted } from 'vue'
 
 const props = defineProps({
   doctype: {
@@ -76,6 +77,10 @@ const props = defineProps({
   hideMe: {
     type: Boolean,
     default: false,
+  },
+  filters: {
+    type: [Object, Array],
+    default: {},
   },
 })
 
@@ -97,6 +102,12 @@ const value = computed({
 
 const autocomplete = ref(null)
 const text = ref('')
+const currentOption = ref(null)
+// onMounted(() => {
+//   if (!text.value) {
+//     text.value = value.value
+//   }
+// })
 
 watchDebounced(
   () => autocomplete.value?.query,
@@ -111,7 +122,7 @@ watchDebounced(
 
 watchDebounced(
   () => props.doctype,
-  () => reload(''),
+  () => reload(value.value),
   { debounce: 300, immediate: true }
 )
 
@@ -119,8 +130,8 @@ const options = createResource({
   url: 'frappe.desk.search.search_link',
   cache: [props.doctype, text.value, props.hideMe],
   method: 'POST',
-  auto: true,
   params: {
+    filters: props.filters,
     txt: text.value,
     doctype: props.doctype,
   },
@@ -131,6 +142,11 @@ const options = createResource({
         value: option.value,
       }
     })
+
+    if (!currentOption.value) {
+      currentOption.value = allData.find((el) => el.value == value.value)
+    }
+
     if (!props.hideMe && props.doctype == 'User') {
       allData.unshift({
         label: '@me',
@@ -151,6 +167,7 @@ function reload(val) {
 
   options.update({
     params: {
+      filters: props.filters,
       txt: val,
       doctype: props.doctype,
     },

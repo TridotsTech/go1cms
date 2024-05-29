@@ -5,6 +5,8 @@ from frappe import _
 from frappe.utils import cint
 from frappe.handler import is_whitelisted
 from frappe.utils.image import optimize_image
+import datetime
+import math
 
 
 @frappe.whitelist(allow_guest=True)
@@ -28,6 +30,11 @@ def upload_file():
         file = files["file"]
         content = file.stream.read()
         filename = file.filename
+        ct = datetime.datetime.now()
+        str_ts = str(math.floor(ct.timestamp()))
+        sp_fn = filename.split('.')
+        if len(sp_fn) == 2:
+            filename = sp_fn[0] + '_' + str_ts + '.' + sp_fn[1]
 
         content_type = guess_type(filename)[0]
         if optimize and content_type and content_type.startswith("image/"):

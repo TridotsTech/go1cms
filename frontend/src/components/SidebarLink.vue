@@ -47,7 +47,7 @@ const route = useRoute()
 
 const props = defineProps({
   icon: {
-    type: Object,
+    type: [Object, String],
   },
   label: {
     type: String,

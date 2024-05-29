@@ -4,12 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full p-6 pb-4 mt-12">
-    <div class="border-b pb-2 mb-4 border-gray-300">
-      <div class="mb-2">
-        <h2 class="mb-2 font-bold text-3xl">Kho giao diện</h2>
-      </div>
-    </div>
+  <div class="flex-1 flex flex-col h-full p-6 pb-4 overflow-auto">
     <div>
       <ViewControls
         v-model="interFaces"

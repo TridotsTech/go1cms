@@ -3,32 +3,29 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
+    <template #right-header>
+      <Button
+        :variant="'solid'"
+        theme="blue"
+        size="sm"
+        label="Thêm mới"
+        iconLeft="plus-circle"
+        route="/posts/create"
+      >
+      </Button>
+    </template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4 mt-12">
-    <div class="border-b pb-2 mb-4 border-gray-300">
-      <div class="mb-4">
-        <h2 class="mb-2 font-bold text-3xl">Quản lý bài viết</h2>
-      </div>
-      <div class="flex items-center gap-2 mb-2 justify-between">
-        <Button
-          :variant="'ghost'"
-          theme="gray"
-          size="sm"
-          label="Quản lý danh mục"
-          route="/category"
-          iconLeft="edit"
-        >
-        </Button>
-        <Button
-          :variant="'solid'"
-          theme="blue"
-          size="sm"
-          label="Thêm mới"
-          iconLeft="plus-circle"
-          route="/posts/create"
-        >
-        </Button>
-      </div>
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4">
+    <div class="mb-2">
+      <Button
+        :variant="'ghost'"
+        theme="gray"
+        size="sm"
+        label="Quản lý danh mục"
+        route="/category"
+        iconLeft="edit"
+      >
+      </Button>
     </div>
     <ViewControls
       ref="viewControls"

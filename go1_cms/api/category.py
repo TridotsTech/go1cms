@@ -49,6 +49,10 @@ def update_category(data):
         frappe.throw(_("Tiêu đề đã tồn tại"))
 
     doc = frappe.get_doc('Mbw Blog Category', doc_name)
+    if doc.name != category_title:
+        frappe.rename_doc(doc.doctype, doc.name, category_title, merge=False)
+
+    doc = frappe.get_doc('Mbw Blog Category', category_title)
     doc.category_title = category_title
     doc.description = data.get('description')
     doc.save()

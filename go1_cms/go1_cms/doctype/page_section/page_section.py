@@ -19,7 +19,6 @@ from urllib.parse import urljoin, unquote, urlencode
 class PageSection(Document):
 
     def validate(self):
-        print("===========================")
         if not self.section_name:
             self.section_name = self.section_title
 

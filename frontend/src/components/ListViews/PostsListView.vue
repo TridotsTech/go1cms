@@ -38,7 +38,7 @@
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa bài viết" hover-delay="1" :placement="'top'">
+              <Tooltip text="Xóa bài viết" :hover-delay="1" :placement="'top'">
                 <div>
                   <Button
                     :variant="'subtle'"

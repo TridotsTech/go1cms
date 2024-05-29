@@ -57,7 +57,7 @@
 	                                	 <div class="footer_p_b mr-4 mb-6">
 	                                	 	<div class="{{m_sec_item.class_name}}">
 												<div>
-													<img   class="home__logo" style="max-height: 60px;" src="{{m_sec_item.logo}}" />
+													<img class="home__logo rounded-lg" style="max-height: 60px;" src="{{m_sec_item.logo}}" />
 												</div>
 												<div>
 													<div class="about_content text-lg">
@@ -73,9 +73,7 @@
 												{% for ft_lc in m_sec_item.get('list') %}
 												<div class="mb-6">
 													<div class="" style="display:flex;gap:5px;">
-														{%if ft_lc.icon%}
-															<img class="bg-red-800 rounded-sm p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
-														{%endif%}
+														<img class="bg-red-800 rounded-sm p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
 														<p class="text-base">
 															{{ft_lc.title}}
 														</p>

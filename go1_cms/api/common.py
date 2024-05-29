@@ -34,7 +34,8 @@ def copy_header_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            doc_menu.title = doc_menu.title + ' ' + sub_name
+            # doc_menu.title = doc_menu.title + ' ' + sub_name
+            doc_menu.title = doc_menu.title
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)
@@ -88,7 +89,8 @@ def copy_footer_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            doc_menu.title = doc_menu.title + ' ' + sub_name
+            # doc_menu.title = doc_menu.title + ' ' + sub_name
+            doc_menu.title = doc_menu.title
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)
@@ -109,3 +111,15 @@ def copy_footer_component(name, sub_name):
     doc_footer_comp.save(ignore_permissions=True)
     # frappe.db.commit()
     return doc_footer_comp.name
+
+
+def get_section_content(section, content_type):
+    section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
+        'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
+        'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'section_title'
+    ])
+
+    if section:
+        section[0].fields = frappe.db.sql('''select field_label, field_key, field_type, content, name, group_name, fields_json,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''', {
+            'parent': section[0].name, 'content_type': content_type}, as_dict=1)
+    return section[0]

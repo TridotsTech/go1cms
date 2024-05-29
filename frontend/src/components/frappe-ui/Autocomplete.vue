@@ -155,12 +155,17 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  currentOption: {
+    type: Object,
+    default: {},
+  },
 })
 const emit = defineEmits(['update:modelValue', 'update:query', 'change'])
 
 const query = ref('')
 const showOptions = ref(false)
 const search = ref(null)
+const currentOption = defineModel('currentOption')
 
 const attrs = useAttrs()
 const slots = useSlots()
@@ -175,6 +180,9 @@ const selectedValue = computed({
     query.value = ''
     if (val) {
       showOptions.value = false
+    }
+    if (val) {
+      currentOption.value = val
     }
     emit(valuePropPassed.value ? 'change' : 'update:modelValue', val)
   },
@@ -219,7 +227,7 @@ function displayValue(option) {
   if (typeof option === 'string') {
     let allOptions = groups.value.flatMap((group) => group.items)
     let selectedOption = allOptions.find((o) => o.value === option)
-    return selectedOption?.label || option
+    return selectedOption?.label || currentOption.value?.label || option
   }
   return option?.label
 }

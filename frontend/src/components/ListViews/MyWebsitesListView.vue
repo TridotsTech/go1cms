@@ -401,18 +401,17 @@ async function changeNameWebsite() {
         changeNameWebsiteEdit(inputValues.name_web)
       }
 
-      changeLoadingValue(false)
       list.value.reload()
       showModalEditName.value = false
     })
   } catch (err) {
-    changeLoadingValue(false)
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
     } else {
       errorMessage('Có lỗi xảy ra', err)
     }
   }
+  changeLoadingValue(false)
 }
 
 // show dialog

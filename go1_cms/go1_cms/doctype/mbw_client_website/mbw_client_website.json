@@ -12,6 +12,8 @@
   "edit",
   "published",
   "route_web",
+  "header_component",
+  "footer_component",
   "section_break_smuv",
   "page_websites"
  ],
@@ -65,11 +67,23 @@
    "fieldtype": "Select",
    "label": "Lo\u1ea1i website",
    "options": "B\u1ea3n nh\u00e1p\nB\u1ea3n ch\u00ednh"
+  },
+  {
+   "fieldname": "header_component",
+   "fieldtype": "Link",
+   "label": "\u0110\u1ea7u trang",
+   "options": "Header Component"
+  },
+  {
+   "fieldname": "footer_component",
+   "fieldtype": "Link",
+   "label": "Ch\u00e2n trang",
+   "options": "Footer Component"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-23 14:46:22.025146",
+ "modified": "2024-05-24 15:10:10.290757",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

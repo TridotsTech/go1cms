@@ -610,6 +610,7 @@ var modify_section_data = Class.extend({
       async: false,
       callback: function (r) {
         if (r.message) {
+          console.log(r.message);
           me.fields = r.message;
         }
       },
@@ -1462,6 +1463,10 @@ var modify_section_data = Class.extend({
         }
       }
     });
+
+    console.log(results);
+    console.log(me.section);
+    // return;
 
     if (results.length > 0 || me.list_section_data.length > 0) {
       frappe.call({

@@ -3,51 +3,33 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="p-6 mt-12">
-    <div class="border-b mb-4 pb-2 border-gray-300">
-      <div class="flex flex-wrap justify-between items-center gap-2">
-        <h2 class="font-bold text-3xl">Thêm mới danh mục bài viết</h2>
-        <div class="flex rounded-sm gap-2 justify-end">
-          <Button
-            variant="subtle"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/category"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callInsertDoc"
-          ></Button>
-        </div>
+    <template #right-header>
+      <div class="flex rounded-sm gap-2 justify-end">
+        <Button
+          variant="subtle"
+          theme="gray"
+          size="md"
+          label="Hủy"
+          route="/category"
+        ></Button>
+        <Button
+          variant="solid"
+          theme="blue"
+          size="md"
+          label="Lưu"
+          @click="callInsertDoc"
+        ></Button>
       </div>
+    </template>
+  </LayoutHeader>
+  <div class="p-6 overflow-auto">
+    <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <ErrorMessage :message="msgError" />
     </div>
     <div class="p-6 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
         <Fields :sections="sections" :data="_category" />
-      </div>
-      <div class="border-t border-gray-300">
-        <ErrorMessage class="mt-3" :message="msgError" />
-        <div class="flex py-4 gap-2 justify-end">
-          <Button
-            :variant="'subtle'"
-            theme="gray"
-            size="md"
-            label="Hủy"
-            route="/category"
-          ></Button>
-          <Button
-            variant="solid"
-            theme="blue"
-            size="md"
-            label="Lưu"
-            @click="callInsertDoc"
-          ></Button>
-        </div>
       </div>
     </div>
   </div>

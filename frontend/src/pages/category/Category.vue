@@ -3,24 +3,21 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4 mt-12">
-    <div class="border-b pb-2 mb-4 border-gray-300">
-      <div class="flex justify-between gap-4">
-        <h2 class="mb-2 font-bold text-3xl">Quản lý danh mục</h2>
-        <div>
-          <Button
-            :variant="'solid'"
-            theme="blue"
-            size="sm"
-            label="Thêm mới"
-            iconLeft="plus-circle"
-            route="/category/create"
-          >
-          </Button>
-        </div>
+    <template #right-header>
+      <div>
+        <Button
+          :variant="'solid'"
+          theme="blue"
+          size="sm"
+          label="Thêm mới"
+          iconLeft="plus-circle"
+          route="/category/create"
+        >
+        </Button>
       </div>
-    </div>
+    </template>
+  </LayoutHeader>
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4">
     <ViewControls
       ref="viewControls"
       v-model="category"

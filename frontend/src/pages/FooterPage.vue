@@ -3,38 +3,96 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="p-6 mt-12">
-    <div class="border-b pb-2 mb-4 border-gray-300">
-      <div>
-        <h2 class="font-bold text-3xl">Chân trang</h2>
+    <template #right-header>
+      <div
+        class="gap-2 justify-end"
+        :class="alreadyActions ? 'flex' : 'hidden'"
+      >
+        <Button
+          variant="subtle"
+          theme="gray"
+          size="md"
+          label="Hủy"
+          :disabled="!dirty"
+          @click="cacelSaveDoc"
+        ></Button>
+        <Button
+          :variant="'solid'"
+          theme="blue"
+          size="md"
+          label="Lưu"
+          :disabled="!dirty"
+          @click="callUpdateDoc"
+        >
+        </Button>
       </div>
+    </template>
+  </LayoutHeader>
+  <div class="p-6 overflow-auto">
+    <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <ErrorMessage :message="msgError" />
     </div>
-    <div class="p-4 border border-gray-300 rounded-sm mb-4">
+    <div
+      v-if="_footer?.fields_cp"
+      class="p-4 border border-gray-300 rounded-sm mb-4"
+    >
       <div class="p-2">
-        <div class="mb-4">
-          <h2 class="font-bold text-xl">Nội dung bản quyền</h2>
-        </div>
-        <div class="grid lg:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-4">
-            <FormControl
-              type="textarea"
-              size="md"
-              variant="subtle"
-              placeholder="Nhập nội dung"
-              label="Nội dung"
-              v-model="inputValue"
-              rows="7"
-            />
+        <div v-for="(field, idx) in _footer?.fields_cp" :key="field.name">
+          <div
+            v-if="field.allow_edit"
+            :class="idx != 0 ? 'border-t py-4' : 'pb-4'"
+          >
+            <div class="mb-4">
+              <h2 class="font-bold text-xl">{{ field.label }}</h2>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-4">
+              <template v-for="fd in field.fields">
+                <FieldSection :field="fd"></FieldSection>
+              </template>
+            </div>
           </div>
         </div>
-        <div class="flex mt-4 border-t py-2 rounded-sm gap-2 justify-end">
-          <Button
-            :variant="'solid'"
-            theme="blue"
-            size="md"
-            label="Lưu"
-          ></Button>
+      </div>
+    </div>
+    <div
+      v-if="_footer?.fields_st_cp"
+      class="p-4 border border-gray-300 rounded-sm mb-4"
+    >
+      <div class="p-2">
+        <div class="mb-4">
+          <h2 class="font-bold text-xl">Các thành phần của trang</h2>
+        </div>
+        <div v-for="(field, idx) in _footer?.fields_st_cp" :key="field.name">
+          <div
+            v-if="field.allow_edit"
+            :class="idx != 0 ? 'border-t py-4' : 'pb-4'"
+          >
+            <div class="mb-2">
+              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-4">
+              <template v-for="fd in field.fields">
+                <template v-if="fd.group_name">
+                  <template v-for="fsc in fd.fields">
+                    <FieldSection
+                      :field="fsc"
+                      :sectionName="field.section_title"
+                    ></FieldSection>
+                  </template>
+                </template>
+                <template v-else>
+                  <FieldSection
+                    :field="fd"
+                    :sectionName="field.section_title"
+                  ></FieldSection>
+                </template>
+              </template>
+              <template v-for="fd in field.fields_ps">
+                <FieldSection :field="fd"></FieldSection>
+              </template>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -43,8 +101,167 @@
 
 <script setup>
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import { Breadcrumbs, FormControl, ErrorMessage } from 'frappe-ui'
-import { ref, onMounted } from 'vue'
+import FieldSection from '../components/FieldSection.vue'
+import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
+import { ref, computed, watch } from 'vue'
+import { createToast, errorMessage } from '@/utils'
+import { globalStore } from '@/stores/global'
+const { changeLoadingValue } = globalStore()
 
 const breadcrumbs = [{ label: 'Chân trang', route: { name: 'Footer Page' } }]
+const _footer = ref({})
+const msgError = ref()
+
+const footer = createResource({
+  url: 'go1_cms.api.footer.get_info_footer_component',
+  auto: true,
+  transform: (data) => {
+    _footer.value = JSON.parse(JSON.stringify(data))
+    return data
+  },
+})
+
+// handle allow actions
+const alreadyActions = ref(false)
+const dirty = computed(() => {
+  return JSON.stringify(footer.data) !== JSON.stringify(_footer.value)
+})
+
+watch(dirty, (val) => {
+  alreadyActions.value = true
+})
+
+async function callUpdateDoc() {
+  changeLoadingValue(true, 'Đang lưu...')
+  try {
+    let data = JSON.parse(JSON.stringify(_footer.value))
+
+    // upload image
+    for (const [idx_cp, field] of _footer.value.fields_cp.entries()) {
+      for (const [idx, f] of field.fields.entries()) {
+        if (f.field_type == 'Attach' && f.upload_file_image) {
+          // upload file
+          let file_url = await uploadFile(
+            'Footer Component',
+            _footer.value.docname,
+            f.field_key,
+            f.content,
+            f.upload_file_image
+          )
+
+          data['fields_cp'][idx_cp]['fields'][idx]['content'] = file_url
+        }
+      }
+    }
+
+    for (const [idx_cp, field] of _footer.value.fields_st_cp.entries()) {
+      for (const [idx_f, f] of field.fields.entries()) {
+        if (f.group_name) {
+          for (const [idx, f_st] of f.fields.entries()) {
+            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+              // upload file
+              let file_url = await uploadFile(
+                'Footer Component',
+                _footer.value.docname,
+                f_st.field_key,
+                f_st.content,
+                f_st.upload_file_image
+              )
+
+              data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+                'content'
+              ] = file_url
+            }
+          }
+        } else {
+          if (f.field_type == 'Attach' && f.upload_file_image) {
+            // upload file
+            let file_url = await uploadFile(
+              'Footer Component',
+              _footer.value.docname,
+              f.field_key,
+              f.content,
+              f.upload_file_image
+            )
+
+            data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+          }
+        }
+      }
+    }
+
+    let docUpdate = await call(
+      'go1_cms.api.footer.update_info_footer_component',
+      {
+        data: data,
+      }
+    )
+
+    if (docUpdate.name) {
+      footer.reload()
+
+      createToast({
+        title: 'Cập nhật thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+    }
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
+}
+
+async function uploadFile(
+  doctype,
+  docname,
+  fieldname,
+  file_url_old,
+  upload_file_image
+) {
+  let file_url = ''
+  let headers = { Accept: 'application/json' }
+  if (window.csrf_token && window.csrf_token !== '{{ csrf_token }}') {
+    headers['X-Frappe-CSRF-Token'] = window.csrf_token
+  }
+
+  let imgForm = new FormData()
+  imgForm.append('file', upload_file_image, upload_file_image.name)
+  imgForm.append('is_private', 0)
+  imgForm.append('doctype', doctype)
+  imgForm.append('fieldname', fieldname)
+  imgForm.append('docname', docname)
+  imgForm.append('file_url_old', file_url_old)
+
+  await fetch('/api/method/go1_cms.api.handler_file.upload_file', {
+    headers: headers,
+    method: 'POST',
+    body: imgForm,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.message) {
+        file_url = data.message.file_url
+      }
+    })
+    .catch((err) => {
+      if (err.messages && err.messages.length) {
+        msgError.value = err.messages.join(', ')
+        errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      } else {
+        errorMessage('Có lỗi xảy ra', err)
+      }
+    })
+
+  return file_url
+}
+
+async function cacelSaveDoc() {
+  await footer.reload()
+}
 </script>

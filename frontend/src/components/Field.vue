@@ -24,6 +24,7 @@
     @change="(v) => (data = v)"
     :placeholder="__(field.placeholder)"
     :onCreate="field.create"
+    :filters="field.filters"
   />
   <Link
     v-else-if="field.type === 'user'"
@@ -116,7 +117,7 @@
     v-model="data"
   >
     <template #preview>
-      <div class="border max-h-48 p-2 flex justify-center">
+      <div class="border h-48 max-w-48 p-2 flex justify-center">
         <ImageEmptyIcon
           :class="data || imgPreview ? 'hidden' : ''"
           class="text-gray-400 h-full w-full"
@@ -142,7 +143,7 @@
     v-else-if="field.type === 'texeditor'"
     variant="outline"
     editor-class="!prose-sm overflow-auto min-h-[180px] max-h-80 py-1.5 px-2 border border-gray-300 bg-white hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400 text-gray-800 transition-colors min-w-full"
-    fixedMenu="true"
+    :fixedMenu="true"
     :content="data"
     @change="(val) => (data = val)"
   ></TextEditor>
@@ -161,6 +162,13 @@
       >{{ field.labelInput }}</label
     >
   </div>
+  <FormControl
+    v-else-if="field.type === 'number'"
+    type="number"
+    :placeholder="__(field.placeholder)"
+    v-model="data"
+    :disabled="field.disabled || false"
+  />
   <FormControl
     v-else
     type="text"
@@ -197,17 +205,26 @@ const refImgMeta = ref(null)
 watch(
   () => props.imgPreview,
   (val, oldVal) => {
-    if (!data.value && refImgMeta.value) {
-      refImgMeta.value.src = props.imgPreview
-    }
+    updateUrlImage()
+  }
+)
+
+watch(
+  () => data.value,
+  (val, oldVal) => {
+    updateUrlImage()
   }
 )
 
 onMounted(() => {
-  if (!data.value && refImgMeta.value) {
+  updateUrlImage()
+})
+
+function updateUrlImage() {
+  if (!data.value && refImgMeta.value && props.imgPreview) {
     refImgMeta.value.src = props.imgPreview
   }
-})
+}
 </script>
 
 <style scoped>
