@@ -115,7 +115,7 @@ def copy_footer_component(name, sub_name):
 
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
-        'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
+        'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
         'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'section_title'
     ])
 

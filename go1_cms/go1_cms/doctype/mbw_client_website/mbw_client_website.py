@@ -56,8 +56,9 @@ class MBWClientWebsite(Document):
             "type_template",
             "modified",
             "type_web",
-            "edit"
-            "published"
+            "edit",
+            "published",
+            "route_web"
         ]
         return {'columns': columns, 'rows': rows}
 

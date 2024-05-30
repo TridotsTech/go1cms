@@ -115,7 +115,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-23 09:19:53.451617",
+ "modified": "2024-05-30 10:43:39.572264",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS View Settings",
@@ -135,7 +135,6 @@
    "write": 1
   }
  ],
- "read_only": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

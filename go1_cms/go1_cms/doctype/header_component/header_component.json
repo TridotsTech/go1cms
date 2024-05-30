@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "template_header",
   "layout_section",
   "pick_layout",
   "layout_json",
@@ -45,11 +46,54 @@
   "header_border_color",
   "header_extras_section",
   "call_to_action_button",
+  "button_1_section",
+  "active_button",
   "button_text",
+  "sub_text",
+  "icon_button",
+  "show_btn_text",
+  "show_sub_text",
+  "show_icon_btn",
   "column_break_14",
   "button_link",
-  "column_break_16",
   "link_target",
+  "use_action",
+  "button_2_section",
+  "active_button_2",
+  "button_text_2",
+  "sub_text_2",
+  "icon_button_2",
+  "show_btn_text_2",
+  "show_sub_text_2",
+  "show_icon_btn_2",
+  "column_break_uufy",
+  "button_link_2",
+  "link_target_2",
+  "use_action_2",
+  "button_3_section",
+  "active_button_3",
+  "button_text_3",
+  "sub_text_3",
+  "icon_button_3",
+  "show_btn_text_3",
+  "show_sub_text_3",
+  "show_icon_btn_3",
+  "column_break_kjrh",
+  "button_link_3",
+  "link_target_3",
+  "use_action_3",
+  "button_4_section",
+  "active_button_4",
+  "button_text_4",
+  "sub_text_4",
+  "icon_button_4",
+  "show_btn_text_4",
+  "show_sub_text_4",
+  "show_icon_btn_4",
+  "column_break_jlfy",
+  "button_link_4",
+  "link_target_4",
+  "use_action_4",
   "menu_settings_section",
   "font_family",
   "line_height",
@@ -255,7 +299,7 @@
    "description": "Set the call to action button text.",
    "fieldname": "button_text",
    "fieldtype": "Data",
-   "label": "Button Text"
+   "label": "Button Text 1"
   },
   {
    "fieldname": "column_break_14",
@@ -267,11 +311,7 @@
    "description": "Set the call to action button link.",
    "fieldname": "button_link",
    "fieldtype": "Data",
-   "label": "Button Link"
-  },
-  {
-   "fieldname": "column_break_16",
-   "fieldtype": "Column Break"
+   "label": "Button Link 1"
   },
   {
    "default": "_self",
@@ -279,7 +319,7 @@
    "description": "Set the call to action button link.",
    "fieldname": "link_target",
    "fieldtype": "Select",
-   "label": "Link Target",
+   "label": "Link Target 1",
    "options": "_self\n_blank"
   },
   {
@@ -560,14 +600,302 @@
    "fieldname": "back_button_text_color",
    "fieldtype": "Color",
    "label": "Back Button Text Color"
+  },
+  {
+   "default": "Template 1",
+   "fieldname": "template_header",
+   "fieldtype": "Select",
+   "label": "M\u1eabu Header",
+   "options": "Template 1\nTemplate 2\nTemplate 3\nTemplate 4"
+  },
+  {
+   "fieldname": "button_1_section",
+   "fieldtype": "Section Break",
+   "label": "Button 1"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "active_button",
+   "fieldtype": "Check",
+   "label": "Active Button 1"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "icon_button",
+   "fieldtype": "Attach Image",
+   "label": "Icon Button 1"
+  },
+  {
+   "fieldname": "button_2_section",
+   "fieldtype": "Section Break",
+   "label": "Button 2"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "active_button_2",
+   "fieldtype": "Check",
+   "label": "Active Button 2"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_text_2",
+   "fieldtype": "Data",
+   "label": "Button Text 2"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_link_2",
+   "fieldtype": "Data",
+   "label": "Button Link 2"
+  },
+  {
+   "fieldname": "column_break_uufy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "_self",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "link_target_2",
+   "fieldtype": "Select",
+   "label": "Link Target 2",
+   "options": "_self\n_blank"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "icon_button_2",
+   "fieldtype": "Attach Image",
+   "label": "Icon Button 2"
+  },
+  {
+   "fieldname": "button_3_section",
+   "fieldtype": "Section Break",
+   "label": "Button 3"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "active_button_3",
+   "fieldtype": "Check",
+   "label": "Active Button 3"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_text_3",
+   "fieldtype": "Data",
+   "label": "Button Text 3"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_link_3",
+   "fieldtype": "Data",
+   "label": "Button Link 3"
+  },
+  {
+   "fieldname": "column_break_kjrh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "_self",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "link_target_3",
+   "fieldtype": "Select",
+   "label": "Link Target 3",
+   "options": "_self\n_blank"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "icon_button_3",
+   "fieldtype": "Attach Image",
+   "label": "Icon Button 3"
+  },
+  {
+   "fieldname": "button_4_section",
+   "fieldtype": "Section Break",
+   "label": "Button 4"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "active_button_4",
+   "fieldtype": "Check",
+   "label": "Active Button 4"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_text_4",
+   "fieldtype": "Data",
+   "label": "Button Text 4"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "button_link_4",
+   "fieldtype": "Data",
+   "label": "Button Link 4"
+  },
+  {
+   "fieldname": "column_break_jlfy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "_self",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "link_target_4",
+   "fieldtype": "Select",
+   "label": "Link Target 4",
+   "options": "_self\n_blank"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "icon_button_4",
+   "fieldtype": "Attach Image",
+   "label": "Icon Button 4"
+  },
+  {
+   "default": "link",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "use_action",
+   "fieldtype": "Select",
+   "label": "Use Action 1",
+   "options": "link\nbutton"
+  },
+  {
+   "default": "link",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "use_action_2",
+   "fieldtype": "Select",
+   "label": "Use Action 2",
+   "options": "link\nbutton"
+  },
+  {
+   "default": "link",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "use_action_3",
+   "fieldtype": "Select",
+   "label": "Use Action 3",
+   "options": "link\nbutton"
+  },
+  {
+   "default": "link",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "use_action_4",
+   "fieldtype": "Select",
+   "label": "Use Action 4",
+   "options": "link\nbutton"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "sub_text",
+   "fieldtype": "Data",
+   "label": "Sub Text 1"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_btn_text",
+   "fieldtype": "Check",
+   "label": "Show Button Text 1"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_sub_text",
+   "fieldtype": "Check",
+   "label": "Show Sub Text 1"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_icon_btn",
+   "fieldtype": "Check",
+   "label": "Show Icon Button 1"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "sub_text_2",
+   "fieldtype": "Data",
+   "label": "Sub Text 2"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_btn_text_2",
+   "fieldtype": "Check",
+   "label": "Show Button Text 2"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_sub_text_2",
+   "fieldtype": "Check",
+   "label": "Show Sub Text 2"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_icon_btn_2",
+   "fieldtype": "Check",
+   "label": "Show Icon Button 2"
+  },
+  {
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "sub_text_3",
+   "fieldtype": "Data",
+   "label": "Sub Text 3"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_btn_text_3",
+   "fieldtype": "Check",
+   "label": "Show Button Text 3"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_sub_text_3",
+   "fieldtype": "Check",
+   "label": "Show Sub Text 3"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
+   "fieldname": "show_icon_btn_3",
+   "fieldtype": "Check",
+   "label": "Show Icon Button 3"
+  },
+  {
+   "fieldname": "sub_text_4",
+   "fieldtype": "Data",
+   "label": "Sub Text 4"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_btn_text_4",
+   "fieldtype": "Check",
+   "label": "Show Button Text 4"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_sub_text_4",
+   "fieldtype": "Check",
+   "label": "Show Sub Text 4"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_icon_btn_4",
+   "fieldtype": "Check",
+   "label": "Show Icon Button 4"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-01 18:39:23.066439",
+ "modified": "2024-05-30 11:48:33.402639",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -586,5 +914,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -96,6 +96,7 @@
           rows: 7,
           doctype: field.doctype,
           filters: field.filters,
+          options: field.options,
         }"
         v-model="field['content']"
       ></Field>

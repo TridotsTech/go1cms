@@ -103,11 +103,6 @@ const value = computed({
 const autocomplete = ref(null)
 const text = ref('')
 const currentOption = ref(null)
-// onMounted(() => {
-//   if (!text.value) {
-//     text.value = value.value
-//   }
-// })
 
 watchDebounced(
   () => autocomplete.value?.query,

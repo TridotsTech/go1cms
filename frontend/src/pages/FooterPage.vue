@@ -34,7 +34,7 @@
       <ErrorMessage :message="msgError" />
     </div>
     <div
-      v-if="_footer?.fields_cp"
+      v-if="_footer?.fields_cp && _footer?.fields_cp.length"
       class="p-4 border border-gray-300 rounded-sm mb-4"
     >
       <div class="p-2">
@@ -56,7 +56,7 @@
       </div>
     </div>
     <div
-      v-if="_footer?.fields_st_cp"
+      v-if="_footer?.fields_st_cp && _footer?.fields_st_cp.length"
       class="p-4 border border-gray-300 rounded-sm mb-4"
     >
       <div class="p-2">

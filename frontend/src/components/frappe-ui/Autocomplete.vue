@@ -43,7 +43,7 @@
                     query = e.target.value
                   }
                 "
-                :value="query"
+                :displayValue="(e) => query"
                 autocomplete="off"
                 placeholder="Search"
               />

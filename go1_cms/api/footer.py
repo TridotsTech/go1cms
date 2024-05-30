@@ -24,78 +24,77 @@ def get_info_footer_component():
     for item in footer_component.web_section:
         info_item = get_section_content(item.section, 'Data')
         info_item['allow_edit'] = True
-        if info_item.get('fields'):
-            d = {}
-            fields_new = []
-            if info_item.get('section_type') == "Menu":
-                info_item['fields_ps'] = [
-                    {
-                        'field_label': 'Menu',
-                        'field_key': 'menu',
-                        'field_type': 'Link',
-                        'content': info_item.get('menu'),
-                        'allow_edit': True,
-                        'upload_file_image': None,
-                        'doctype': "Menu",
-                        'filters': {
-                            'id_client_website': web_edit.name
-                        }
-
+        d = {}
+        fields_new = []
+        if info_item.get('section_type') == "Menu":
+            info_item['fields_ps'] = [
+                {
+                    'field_label': 'Menu',
+                    'field_key': 'menu',
+                    'field_type': 'Link',
+                    'content': info_item.get('menu'),
+                    'allow_edit': True,
+                    'upload_file_image': None,
+                    'doctype': "Menu",
+                    'filters': {
+                        'id_client_website': web_edit.name
                     }
-                ]
 
-            for field in info_item['fields']:
-                field['allow_edit'] = True
-                field['upload_file_image'] = None
-                if field.get('field_type') in FIELD_TYPE_JSON:
-                    field['content'] = json.loads(field['content'])
-                    field['fields_json'] = json.loads(field['fields_json'])
-
-                if field.get('group_name'):
-                    if not d.get(str(field.get('group_name'))):
-                        d[str(field.get('group_name'))] = []
-                    d[str(field.get('group_name'))].append(field)
-                else:
-                    fields_new.append(field)
-
-            for k, v in d.items():
-                obj = {
-                    'group_name': k,
-                    'fields': v
                 }
-                fields_new.append(obj)
+            ]
 
-            info_item['fields'] = fields_new
+        for field in info_item['fields']:
+            field['allow_edit'] = True
+            field['upload_file_image'] = None
+            if field.get('field_type') in FIELD_TYPE_JSON:
+                field['content'] = json.loads(field['content'])
+                field['fields_json'] = json.loads(field['fields_json'])
+
+            if field.get('group_name'):
+                if not d.get(str(field.get('group_name'))):
+                    d[str(field.get('group_name'))] = []
+                d[str(field.get('group_name'))].append(field)
+            else:
+                fields_new.append(field)
+
+        for k, v in d.items():
+            obj = {
+                'group_name': k,
+                'fields': v
+            }
+            fields_new.append(obj)
+
+        info_item['fields'] = fields_new
         fields_st_cp.append(info_item)
 
+    # fields component
+    fields_cp = []
     # copyright
-    field_fcp = [
-        {
-            'field_label': 'Nội dung cột 1',
-            'field_key': 'cp_fc_content',
-            'field_type': 'Small Text',
-            'content': footer_component.cp_fc_content,
-            'allow_edit': footer_component.fc_ct_type == 'Custom',
-            'upload_file_image': None
-        },
-        {
-            'field_label': 'Nội dung cột 2',
-            'field_key': 'cp_sc_content',
-            'field_type': 'Small Text',
-            'content': footer_component.cp_sc_content,
-            'allow_edit': footer_component.sc_ct_type == 'Custom',
-            'upload_file_image': None
-        }
-    ]
+    fields_copyright = {
+        'allow_edit':  footer_component.enable_copyright == 1,
+        'label': 'Nội dung bản quyền',
+        'fields': [
+            {
+                 'field_label': 'Nội dung cột 1',
+                 'field_key': 'cp_fc_content',
+                'field_type': 'Small Text',
+                'content': footer_component.cp_fc_content,
+                'allow_edit': footer_component.fc_ct_type == 'Custom',
+                'upload_file_image': None
+            },
+            {
+                'field_label': 'Nội dung cột 2',
+                'field_key': 'cp_sc_content',
+                'field_type': 'Small Text',
+                'content': footer_component.cp_sc_content,
+                'allow_edit': footer_component.sc_ct_type == 'Custom',
+                'upload_file_image': None
+            }
+        ],
+        'name': 'footer-1'
+    }
 
-    fields_cp = [
-        {
-            'allow_edit':  footer_component.enable_copyright == 1,
-            'label': 'Nội dung bản quyền',
-            'fields': field_fcp,
-            'name': 'footer-1'
-        }
-    ]
+    fields_cp.append(fields_copyright)
 
     return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'docname': footer_component.name}
 

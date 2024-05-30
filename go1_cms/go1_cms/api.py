@@ -9,6 +9,13 @@ import json
 import mimetypes
 from frappe.utils import getdate, nowdate, now, get_url
 
+TEMPLATE_HEADER = {
+    'Template 1': 'header.html',
+    'Template 2': 'header.html',
+    'Template 3': 'header.html',
+    'Template 4': 'header.html',
+}
+
 
 @frappe.whitelist(allow_guest=True)
 def get_template_folder(url=None, business=None, temp=0):
@@ -583,8 +590,9 @@ def get_page_builder_data(page, customer=None, application_type="mobile", busine
 
 
 def get_header_info(header_id):
-    header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=['is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top',
-                                    'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button', 'button_text', 'button_link', 'link_target', 'is_transparent_header', 'sticky_header_background', 'menu_text_color'])
+    header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=[
+        'is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top', 'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button', 'button_text', 'button_link', 'link_target', 'is_transparent_header', 'sticky_header_background', 'menu_text_color', 'template_header'
+    ])
     if header_list:
         path = frappe.utils.get_files_path()
         if os.path.exists(os.path.join(path, 'data_source', (header_id.lower().replace(' ', '_') + '_web.json'))):
@@ -776,7 +784,11 @@ def update_website_context(context):
                         context.theme_settings.mbw_policy = m_sc_items.get(
                             'policy')
         get_device_type(context)
-        context.template_header = "/templates/header/header.html"
+        if context.header.template_header:
+            context.template_header = f"/templates/header/{TEMPLATE_HEADER[context.header.template_header]}"
+        else:
+            context.template_header = "/templates/header/header.html"
+
         # frappe.log_error(context.header,">> context.header <<")
         # frappe.log_error(context,">> context data <<")
     except Exception as e:

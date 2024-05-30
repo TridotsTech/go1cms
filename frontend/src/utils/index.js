@@ -160,6 +160,10 @@ export function warningMessage(title, message) {
 
 export function getTypeField(name) {
   switch (name) {
+    case 'Select':
+      return 'select'
+    case 'Data':
+      return 'text'
     case 'Link':
       return 'link'
     case 'Text':
