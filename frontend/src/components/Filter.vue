@@ -1,30 +1,28 @@
 <template>
   <NestedPopover>
     <template #target>
-      <div class="flex">
-        <Button
-          :label="__('Filter')"
-          :class="filters?.size ? 'rounded-r-none' : ''"
-        >
-          <template #prefix><FilterIcon class="h-4" /></template>
-          <template v-if="filters?.size" #suffix>
-            <div
-              class="flex h-5 w-5 items-center justify-center rounded bg-gray-900 pt-[1px] text-2xs font-medium text-white"
-            >
-              {{ filters.size }}
-            </div>
-          </template>
-        </Button>
-        <Tooltip v-if="filters?.size" :text="__('Clear all Filter')">
-          <div>
-            <Button
-              class="rounded-l-none border-l"
-              icon="x"
-              @click.stop="clearfilter(false)"
-            />
+      <Button
+        :label="__('Filter')"
+        :class="filters?.size ? 'rounded-r-none' : ''"
+      >
+        <template #prefix><FilterIcon class="h-4" /></template>
+        <template v-if="filters?.size" #suffix>
+          <div
+            class="flex h-5 w-5 items-center justify-center rounded bg-gray-900 pt-[1px] text-2xs font-medium text-white"
+          >
+            {{ filters.size }}
           </div>
-        </Tooltip>
-      </div>
+        </template>
+      </Button>
+      <Tooltip v-if="filters?.size" :text="__('Clear all Filter')">
+        <span>
+          <Button
+            class="rounded-l-none border-l"
+            icon="x"
+            @click.stop="clearfilter(false)"
+          />
+        </span>
+      </Tooltip>
     </template>
     <template #body="{ close }">
       <div class="my-2 rounded-lg border border-gray-100 bg-white shadow-xl">

@@ -266,35 +266,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Template",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Page Template",
-   "link_count": 0,
-   "link_to": "Page Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "MBW Website Template",
-   "link_count": 0,
-   "link_to": "MBW Website Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Website",
    "link_count": 4,
    "link_type": "DocType",
@@ -340,9 +311,48 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Template",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Page Template",
+   "link_count": 0,
+   "link_to": "Page Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "MBW Website Template",
+   "link_count": 0,
+   "link_to": "MBW Website Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Menu",
+   "link_count": 0,
+   "link_to": "Menu",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-05-13 09:59:51.202221",
+ "modified": "2024-05-31 15:36:28.444080",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Go1 CMS",

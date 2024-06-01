@@ -36,6 +36,7 @@ def copy_header_component(name, sub_name):
             }, target_doc, ignore_permissions=True)
             # doc_menu.title = doc_menu.title + ' ' + sub_name
             doc_menu.title = doc_menu.title
+            doc_menu.id_client_website = sub_name
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)
@@ -91,6 +92,7 @@ def copy_footer_component(name, sub_name):
             }, target_doc, ignore_permissions=True)
             # doc_menu.title = doc_menu.title + ' ' + sub_name
             doc_menu.title = doc_menu.title
+            doc_menu.id_client_website = sub_name
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)

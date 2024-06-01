@@ -9,21 +9,21 @@ FIELD_TYPE_JSON = ["List", 'Button']
 
 
 @frappe.whitelist()
-def get_info_footer_component():
+def get_info_page(name):
+    web_item = frappe.get_doc('MBW Client Website Item', name)
+    if not web_item:
+        frappe.throw(_("Page not found"), frappe.DoesNotExistError)
     web_edit = frappe.get_last_doc('MBW Client Website', filters={"edit": 1})
-    if not web_edit or not web_edit.footer_component:
-        frappe.throw(_("Footer not found"), frappe.DoesNotExistError)
-    if not frappe.db.exists("Footer Component", web_edit.footer_component):
-        frappe.throw(_("Footer not found"), frappe.DoesNotExistError)
-
-    footer_component = frappe.get_doc(
-        "Footer Component", web_edit.footer_component)
+    web_page = frappe.get_doc('Web Page Builder', web_item.page_id)
 
     # get field section in component
     fields_st_cp = []
-    for item in footer_component.web_section:
+    for item in web_page.web_section:
         info_item = get_section_content(item.section, 'Data')
-        info_item['allow_edit'] = True
+        if item.section_name in ['Header Logo', 'Header Button']:
+            info_item['allow_edit'] = False
+        else:
+            info_item['allow_edit'] = True
         d = {}
         fields_new = []
         if info_item.get('section_type') == "Menu":
@@ -90,52 +90,72 @@ def get_info_footer_component():
 
     # fields component
     fields_cp = []
-    # copyright
-    fields_copyright = {
-        'allow_edit':  footer_component.enable_copyright == 1,
-        'section_title': 'Nội dung bản quyền',
+    # get field group button 1
+    fields_page = {
+        'allow_edit':  True,
+        'section_title': 'SEO',
         'fields': [
             {
-                'field_label': 'Nội dung cột 1',
-                'field_key': 'cp_fc_content',
-                'field_type': 'Small Text',
-                'content': footer_component.cp_fc_content,
-                'allow_edit': footer_component.fc_ct_type == 'Custom',
+                'field_label': 'Thẻ tiêu đề',
+                'field_key': 'meta_title',
+                'field_type': 'Data',
+                'content': web_page.meta_title,
+                'allow_edit': True,
                 'upload_file_image': None
             },
             {
-                'field_label': 'Nội dung cột 2',
-                'field_key': 'cp_sc_content',
-                'field_type': 'Small Text',
-                'content': footer_component.cp_sc_content,
-                'allow_edit': footer_component.sc_ct_type == 'Custom',
-                'upload_file_image': None
-            }
+                'group_name': 'seo-1',
+                'allow_edit': True,
+                'fields': [
+                    {
+                        'field_label': 'Thẻ mô tả',
+                        'field_key': 'meta_description',
+                        'field_type': 'Small Text',
+                        'content': web_page.meta_description,
+                        'allow_edit': True,
+                        'upload_file_image': None
+                    },
+                    {
+                        'field_label': 'Thẻ từ khóa',
+                        'field_key': 'meta_keywords',
+                        'field_type': 'Small Text',
+                        'content': web_page.meta_keywords,
+                        'allow_edit': True,
+                        'upload_file_image': None
+                    },
+                ]
+            },
         ],
-        'name': 'footer-1'
+        'name': 'header-1'
     }
+    fields_cp.append(fields_page)
 
-    fields_cp.append(fields_copyright)
-
-    return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'docname': footer_component.name}
+    web_page_info = {
+        'name_page': web_item.name_page,
+        'doc_page': web_item.page_id
+    }
+    return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'web_page': web_page_info}
 
 
 @frappe.whitelist()
-def update_info_footer_component(data):
+def update_info_page(data):
     try:
+        page_id = None
+        if data.get('web_page') and data.get('web_page').get('doc_page'):
+            page_id = data.get('web_page').get('doc_page')
+        if not page_id:
+            frappe.throw(_("Page not found"),
+                         frappe.DoesNotExistError)
+
         web_edit = frappe.get_last_doc(
             'MBW Client Website', filters={"edit": 1})
-        if not web_edit or not web_edit.footer_component:
-            frappe.throw(_("Footer not found"),
-                         frappe.DoesNotExistError)
-        if not frappe.db.exists("Footer Component", web_edit.footer_component):
-            frappe.throw(_("Footer not found"),
+        web_page = frappe.get_doc('Web Page Builder', page_id)
+
+        if not web_edit or not web_page:
+            frappe.throw(_("Page not found"),
                          frappe.DoesNotExistError)
 
-        footer_component = frappe.get_doc(
-            "Footer Component", web_edit.footer_component)
-
-        # update field section footer component
+        # update field section page
         if data.get('fields_st_cp') and type(data.get('fields_st_cp')) == list:
             for fcp in data.get('fields_st_cp'):
                 if fcp.get("allow_edit") and fcp.get('fields'):
@@ -169,10 +189,10 @@ def update_info_footer_component(data):
                         frappe.db.set_value(
                             'Page Section', fcp.get('name'), d_update)
 
-        # reload footer component
-        footer_component.reload()
+        # reload page
+        web_page.reload()
 
-        # update field footer component
+        # update field page
         data_update = {}
         if data.get('fields_cp') and type(data.get('fields_cp')) == list:
             for field_cp in data.get('fields_cp'):
@@ -188,13 +208,13 @@ def update_info_footer_component(data):
                                     'content')
 
         if data_update:
-            frappe.db.set_value('Footer Component',
-                                footer_component.name, data_update)
+            frappe.db.set_value('Web Page Builder',
+                                web_page.name, data_update)
 
-        footer_component.reload()
-        footer_component.save()
+        web_page.reload()
+        web_page.save()
 
-        return {'name': footer_component.name}
+        return {'name': web_page.name}
     except Exception as ex:
         print("ex::", ex)
         frappe.throw('Lỗi hệ thống')

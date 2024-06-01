@@ -12,9 +12,9 @@ FIELD_TYPE_JSON = ["List", 'Button']
 def get_info_header_component():
     web_edit = frappe.get_last_doc('MBW Client Website', filters={"edit": 1})
     if not web_edit or not web_edit.header_component:
-        frappe.throw(_("Header component not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Header not found"), frappe.DoesNotExistError)
     if not frappe.db.exists("Header Component", web_edit.header_component):
-        frappe.throw(_("Header component not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Header not found"), frappe.DoesNotExistError)
 
     header_component = frappe.get_doc(
         "Header Component", web_edit.header_component)
@@ -50,8 +50,29 @@ def get_info_header_component():
             field['allow_edit'] = True
             field['upload_file_image'] = None
             if field.get('field_type') in FIELD_TYPE_JSON:
-                field['content'] = json.loads(field['content'])
-                field['fields_json'] = json.loads(field['fields_json'])
+                if field.get('fields_json'):
+                    field['fields_json'] = json.loads(field['fields_json'])
+                if field.get('content'):
+                    field['content'] = json.loads(field['content']) or []
+                    if field.get('field_type') == "List":
+                        for item_f in field['fields_json']:
+                            for item_ct in field['content']:
+                                item_ct['upload_file_image_' +
+                                        item_f.get('field_key')] = None
+
+                if field.get('field_type') == "Button" and field.get('content'):
+                    f_json = []
+                    idx_sc = 1
+                    for k in field['content'].keys():
+                        field_label = 'Văn bản nút' if k == 'btn_text' else 'Link'
+                        f_json.append({
+                            "field_key": k,
+                            "field_label": field_label,
+                            "field_type": "Text",
+                            "idx": idx_sc
+                        })
+                        idx_sc += 1
+                    field['fields_json'] = f_json
 
             if field.get('group_name'):
                 if not d.get(str(field.get('group_name'))):
@@ -75,7 +96,7 @@ def get_info_header_component():
     # get field group button 1
     fields_btn_1 = {
         'allow_edit':  header_component.active_button == 1 and header_component.call_to_action_button == 1,
-        'label': 'Thông tin nút 1',
+        'section_title': 'Thông tin nút 1',
         'fields': [
             {
                 'field_label': 'Văn bản nút',
@@ -120,7 +141,7 @@ def get_info_header_component():
     # get field group button 2
     fields_btn_2 = {
         'allow_edit':  header_component.active_button_2 == 1 and header_component.call_to_action_button == 1,
-        'label': 'Thông tin nút 2',
+        'section_title': 'Thông tin nút 2',
         'fields': [
             {
                 'field_label': 'Văn bản nút',
@@ -165,7 +186,7 @@ def get_info_header_component():
     # get field group button 3
     fields_btn_3 = {
         'allow_edit':  header_component.active_button_3 == 1 and header_component.call_to_action_button == 1,
-        'label': 'Thông tin nút 1',
+        'section_title': 'Thông tin nút 1',
         'fields': [
             {
                 'field_label': 'Văn bản nút',
@@ -210,7 +231,7 @@ def get_info_header_component():
     # get field group button 4
     fields_btn_4 = {
         'allow_edit':  header_component.active_button_4 == 1 and header_component.call_to_action_button == 1,
-        'label': 'Thông tin nút 1',
+        'section_title': 'Thông tin nút 1',
         'fields': [
             {
                 'field_label': 'Văn bản nút',
@@ -262,10 +283,10 @@ def update_info_header_component(data):
         web_edit = frappe.get_last_doc(
             'MBW Client Website', filters={"edit": 1})
         if not web_edit or not web_edit.header_component:
-            frappe.throw(_("Header component not found"),
+            frappe.throw(_("Header not found"),
                          frappe.DoesNotExistError)
         if not frappe.db.exists("Header Component", web_edit.header_component):
-            frappe.throw(_("Header component not found"),
+            frappe.throw(_("Header not found"),
                          frappe.DoesNotExistError)
 
         header_component = frappe.get_doc(
@@ -315,8 +336,13 @@ def update_info_header_component(data):
                 if field_cp.get('allow_edit') and field_cp.get('fields'):
                     for field in field_cp.get('fields'):
                         if field.get('allow_edit'):
-                            data_update[field.get('field_key')] = field.get(
-                                'content')
+                            if field.get('group_name'):
+                                for f in field.get('fields'):
+                                    data_update[f.get('field_key')] = f.get(
+                                        'content')
+                            else:
+                                data_update[field.get('field_key')] = field.get(
+                                    'content')
 
         if data_update:
             frappe.db.set_value('Header Component',

@@ -38,17 +38,34 @@
       class="p-4 border border-gray-300 rounded-sm mb-4"
     >
       <div class="p-2">
+        <div class="mb-4">
+          <h2 class="font-bold text-xl">Thông tin chung</h2>
+        </div>
         <div v-for="(field, idx) in _header?.fields_cp" :key="field.name">
-          <div
-            v-if="field.allow_edit"
-            :class="idx != 0 ? 'border-t py-4' : 'pb-4'"
-          >
+          <div v-if="field.allow_edit" class="border-t py-4">
             <div class="mb-4">
-              <h2 class="font-bold text-xl">{{ field.label }}</h2>
+              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
             </div>
             <div class="grid lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
-                <FieldSection :field="fd"></FieldSection>
+                <template v-if="fd.group_name">
+                  <div class="col-span-2">
+                    <div class="grid lg:grid-cols-2 gap-4">
+                      <template v-for="fsc in fd.fields">
+                        <FieldSection
+                          :field="fsc"
+                          :sectionName="field.section_title"
+                        ></FieldSection>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <FieldSection
+                    :field="fd"
+                    :sectionName="field.section_title"
+                  ></FieldSection>
+                </template>
               </template>
             </div>
           </div>
@@ -64,22 +81,23 @@
           <h2 class="font-bold text-xl">Các thành phần của trang</h2>
         </div>
         <div v-for="(field, idx) in _header?.fields_st_cp" :key="field.name">
-          <div
-            v-if="field.allow_edit"
-            :class="idx != 0 ? 'border-t py-4' : 'pb-4'"
-          >
+          <div v-if="field.allow_edit" class="border-t py-4">
             <div class="mb-2">
               <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
             </div>
             <div class="grid lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
-                  <template v-for="fsc in fd.fields">
-                    <FieldSection
-                      :field="fsc"
-                      :sectionName="field.section_title"
-                    ></FieldSection>
-                  </template>
+                  <div class="col-span-2">
+                    <div class="grid lg:grid-cols-2 gap-4">
+                      <template v-for="fsc in fd.fields">
+                        <FieldSection
+                          :field="fsc"
+                          :sectionName="field.section_title"
+                        ></FieldSection>
+                      </template>
+                    </div>
+                  </div>
                 </template>
                 <template v-else>
                   <FieldSection
@@ -104,7 +122,7 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import FieldSection from '../components/FieldSection.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, uploadFile } from '@/utils'
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 
@@ -138,23 +156,6 @@ async function callUpdateDoc() {
 
     // upload image
     for (const [idx_cp, field] of _header.value.fields_cp.entries()) {
-      for (const [idx, f] of field.fields.entries()) {
-        if (f.field_type == 'Attach' && f.upload_file_image) {
-          // upload file
-          let file_url = await uploadFile(
-            'Header Component',
-            _header.value.docname,
-            f.field_key,
-            f.content,
-            f.upload_file_image
-          )
-
-          data['fields_cp'][idx_cp]['fields'][idx]['content'] = file_url
-        }
-      }
-    }
-
-    for (const [idx_cp, field] of _header.value.fields_st_cp.entries()) {
       for (const [idx_f, f] of field.fields.entries()) {
         if (f.group_name) {
           for (const [idx, f_st] of f.fields.entries()) {
@@ -167,8 +168,7 @@ async function callUpdateDoc() {
                 f_st.content,
                 f_st.upload_file_image
               )
-
-              data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+              data['fields_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
                 'content'
               ] = file_url
             }
@@ -183,12 +183,145 @@ async function callUpdateDoc() {
               f.content,
               f.upload_file_image
             )
-
-            data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+            data['fields_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
           }
         }
       }
     }
+
+    // for (const [idx_cp, field] of _header.value.fields_cp.entries()) {
+    //   for (const [idx, f] of field.fields.entries()) {
+    //     if (f.field_type == 'Attach' && f.upload_file_image) {
+    //       // upload file
+    //       let file_url = await uploadFile(
+    //         'Header Component',
+    //         _header.value.docname,
+    //         f.field_key,
+    //         f.content,
+    //         f.upload_file_image
+    //       )
+
+    //       data['fields_cp'][idx_cp]['fields'][idx]['content'] = file_url
+    //     }
+    //   }
+    // }
+
+    for (const [idx_cp, field] of _header.value.fields_st_cp.entries()) {
+      for (const [idx_f, f] of field.fields.entries()) {
+        if (f.group_name) {
+          for (const [idx, f_st] of f.fields.entries()) {
+            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+              // upload file
+              let file_url = await uploadFile(
+                'Header Component',
+                _header.value.docname,
+                f_st.field_key,
+                f_st.content,
+                f_st.upload_file_image
+              )
+              data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+                'content'
+              ] = file_url
+            } else if (f_st.field_type == 'List') {
+              for (const [idx_f_ps, f_ps] of f_st.content.entries()) {
+                for (const [idx_f_js, f_js] of f_st.fields_json.entries()) {
+                  if (
+                    f_js.field_type == 'Attach' &&
+                    f_ps['upload_file_image_' + f_js.field_key]
+                  ) {
+                    // upload file
+                    let file_url = await uploadFile(
+                      'Header Component',
+                      _header.value.docname,
+                      f_js.field_key,
+                      f_ps[f_js.field_key],
+                      f_ps['upload_file_image_' + f_js.field_key]
+                    )
+                    f_ps[f_js.field_key] = file_url
+                  }
+                  delete f_ps['upload_file_image_' + f_js.field_key]
+                  data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+                    'content'
+                  ][idx_f_ps] = { ...f_ps }
+                }
+              }
+            }
+          }
+        } else {
+          if (f.field_type == 'Attach' && f.upload_file_image) {
+            // upload file
+            let file_url = await uploadFile(
+              'Header Component',
+              _header.value.docname,
+              f.field_key,
+              f.content,
+              f.upload_file_image
+            )
+            data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+          } else if (f.field_type == 'List') {
+            for (const [idx_f_ps, f_ps] of f.content.entries()) {
+              for (const [idx_f_js, f_js] of f.fields_json.entries()) {
+                if (
+                  f_js.field_type == 'Attach' &&
+                  f_ps['upload_file_image_' + f_js.field_key]
+                ) {
+                  // upload file
+                  let file_url = await uploadFile(
+                    'Header Component',
+                    _header.value.docname,
+                    f_js.field_key,
+                    f_ps[f_js.field_key],
+                    f_ps['upload_file_image_' + f_js.field_key]
+                  )
+
+                  f_ps[f_js.field_key] = file_url
+                }
+                delete f_ps['upload_file_image_' + f_js.field_key]
+                data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'][
+                  idx_f_ps
+                ] = { ...f_ps }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // for (const [idx_cp, field] of _header.value.fields_st_cp.entries()) {
+    //   for (const [idx_f, f] of field.fields.entries()) {
+    //     if (f.group_name) {
+    //       for (const [idx, f_st] of f.fields.entries()) {
+    //         if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+    //           // upload file
+    //           let file_url = await uploadFile(
+    //             'Header Component',
+    //             _header.value.docname,
+    //             f_st.field_key,
+    //             f_st.content,
+    //             f_st.upload_file_image
+    //           )
+
+    //           data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+    //             'content'
+    //           ] = file_url
+    //         }
+    //       }
+    //     } else {
+    //       if (f.field_type == 'Attach' && f.upload_file_image) {
+    //         // upload file
+    //         let file_url = await uploadFile(
+    //           'Header Component',
+    //           _header.value.docname,
+    //           f.field_key,
+    //           f.content,
+    //           f.upload_file_image
+    //         )
+
+    //         data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+    //       }
+    //     }
+    //   }
+    // }
 
     let docUpdate = await call(
       'go1_cms.api.header.update_info_header_component',
@@ -215,50 +348,6 @@ async function callUpdateDoc() {
     }
   }
   changeLoadingValue(false)
-}
-
-async function uploadFile(
-  doctype,
-  docname,
-  fieldname,
-  file_url_old,
-  upload_file_image
-) {
-  let file_url = ''
-  let headers = { Accept: 'application/json' }
-  if (window.csrf_token && window.csrf_token !== '{{ csrf_token }}') {
-    headers['X-Frappe-CSRF-Token'] = window.csrf_token
-  }
-
-  let imgForm = new FormData()
-  imgForm.append('file', upload_file_image, upload_file_image.name)
-  imgForm.append('is_private', 0)
-  imgForm.append('doctype', doctype)
-  imgForm.append('fieldname', fieldname)
-  imgForm.append('docname', docname)
-  imgForm.append('file_url_old', file_url_old)
-
-  await fetch('/api/method/go1_cms.api.handler_file.upload_file', {
-    headers: headers,
-    method: 'POST',
-    body: imgForm,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.message) {
-        file_url = data.message.file_url
-      }
-    })
-    .catch((err) => {
-      if (err.messages && err.messages.length) {
-        msgError.value = err.messages.join(', ')
-        errorMessage('Có lỗi xảy ra', err.messages.join(', '))
-      } else {
-        errorMessage('Có lỗi xảy ra', err)
-      }
-    })
-
-  return file_url
 }
 
 async function cacelSaveDoc() {

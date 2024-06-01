@@ -205,3 +205,55 @@ export function isEmoji(str) {
   const emojiList = gemoji.map((emoji) => emoji.emoji)
   return emojiList.includes(str)
 }
+
+export async function uploadFile(
+  doctype,
+  docname,
+  fieldname,
+  file_url_old,
+  upload_file_image
+) {
+  let file_url = ''
+  let headers = { Accept: 'application/json' }
+  if (window.csrf_token && window.csrf_token !== '{{ csrf_token }}') {
+    headers['X-Frappe-CSRF-Token'] = window.csrf_token
+  }
+
+  let imgForm = new FormData()
+  imgForm.append('file', upload_file_image, upload_file_image.name)
+  imgForm.append('is_private', 0)
+  imgForm.append('doctype', doctype)
+  imgForm.append('fieldname', fieldname)
+  imgForm.append('docname', docname)
+  imgForm.append('file_url_old', file_url_old)
+
+  await fetch('/api/method/go1_cms.api.handler_file.upload_file', {
+    headers: headers,
+    method: 'POST',
+    body: imgForm,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.message) {
+        file_url = data.message.file_url
+      }
+    })
+    .catch((err) => {
+      if (err.messages && err.messages.length) {
+        msgError.value = err.messages.join(', ')
+        errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      } else {
+        errorMessage('Có lỗi xảy ra', err)
+      }
+    })
+
+  return file_url
+}
+
+export const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
+  })

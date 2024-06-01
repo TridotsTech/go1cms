@@ -55,7 +55,7 @@
 
 <script setup>
 import Field from '@/components/Field.vue'
-import { getTypeField } from '@/utils'
+import { getTypeField, toBase64 } from '@/utils'
 
 const props = defineProps({
   fields: {
@@ -80,10 +80,16 @@ const show = defineModel()
 const section = defineModel('section')
 
 async function updateSection() {
-  let item = props.fields.reduce((oldVal, currentVal) => {
-    oldVal[currentVal.field_key] = currentVal.value
-    return oldVal
-  }, {})
+  let item = {}
+  for (const [idx_f, f] of props.fields.entries()) {
+    if (f.field_type == 'Attach' && f.upload_file_image) {
+      item['upload_file_image_' + f.field_key] = f.upload_file_image
+      item[f.field_key] = await toBase64(f.upload_file_image)
+    } else {
+      item[f.field_key] = f.value
+    }
+  }
+
   if (props.editMode) {
     section.value[props.positionEdit] = {
       ...section.value[props.positionEdit],

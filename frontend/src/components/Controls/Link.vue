@@ -63,7 +63,7 @@
 import Autocomplete from '@/components/frappe-ui/Autocomplete.vue'
 import { watchDebounced } from '@vueuse/core'
 import { createResource } from 'frappe-ui'
-import { useAttrs, computed, ref, onMounted } from 'vue'
+import { useAttrs, computed, ref, watch } from 'vue'
 
 const props = defineProps({
   doctype: {
@@ -123,7 +123,7 @@ watchDebounced(
 
 const options = createResource({
   url: 'frappe.desk.search.search_link',
-  cache: [props.doctype, text.value, props.hideMe],
+  // cache: [props.doctype, text.value, props.hideMe],
   method: 'POST',
   params: {
     filters: props.filters,
