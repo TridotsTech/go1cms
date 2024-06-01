@@ -49,7 +49,7 @@
             <div class="grid lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
-                  <div class="col-span-2">
+                  <div class="lg:col-span-2">
                     <div class="grid lg:grid-cols-2 gap-4">
                       <template v-for="fsc in fd.fields">
                         <FieldSection
@@ -85,10 +85,10 @@
             <div class="mb-2">
               <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
             </div>
-            <div class="grid lg:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
-                  <div class="col-span-2">
+                  <div class="lg:col-span-2">
                     <div class="grid lg:grid-cols-2 gap-4">
                       <template v-for="fsc in fd.fields">
                         <FieldSection

@@ -257,3 +257,7 @@ export const toBase64 = (file) =>
     reader.onload = () => resolve(reader.result)
     reader.onerror = reject
   })
+
+export function scrollToTop(refToTop) {
+  refToTop.value.scrollTo(0, 0)
+}

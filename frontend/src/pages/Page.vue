@@ -28,7 +28,7 @@
       </div>
     </template>
   </LayoutHeader>
-  <div class="p-6 overflow-auto">
+  <div ref="refToTop" class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
@@ -49,7 +49,7 @@
             <div class="grid lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
-                  <div class="col-span-2">
+                  <div class="lg:col-span-2">
                     <div class="grid lg:grid-cols-2 gap-4">
                       <template v-for="fsc in fd.fields">
                         <FieldSection
@@ -88,7 +88,7 @@
             <div class="grid lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
-                  <div class="col-span-2">
+                  <div class="lg:col-span-2">
                     <div class="grid lg:grid-cols-2 gap-4">
                       <template v-for="fsc in fd.fields">
                         <FieldSection
@@ -123,7 +123,7 @@ import FieldSection from '../components/FieldSection.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { createToast, errorMessage, uploadFile } from '@/utils'
+import { createToast, errorMessage, uploadFile, scrollToTop } from '@/utils'
 import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
@@ -131,6 +131,7 @@ const route = useRoute()
 
 const _page = ref({})
 const msgError = ref()
+const refToTop = ref(null)
 
 // get detail
 const page = createResource({
@@ -149,6 +150,7 @@ watch(route, (val, oldVal) => {
     params: { name: route.query.view },
   })
   page.reload()
+  scrollToTop(refToTop)
 })
 
 // handle allow actions

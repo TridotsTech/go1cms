@@ -1,88 +1,98 @@
 <template>
   <template v-if="field.allow_edit">
-    <div v-if="field.field_type == 'List'" class="col-span-2">
-      <div class="flex flex-col overflow-y-auto">
-        <table class="text-base">
-          <tr class="border">
-            <th class="border p-2 w-auto">STT</th>
-            <template v-for="f in field.fields_json">
-              <th class="border p-2 min-w-48">{{ f.field_label }}</th>
-            </template>
-            <th class="border p-2 min-w-32"></th>
-          </tr>
-          <template v-if="field.content.length">
-            <Draggable
-              :list="field.content"
-              @end="applySort(field)"
-              item-key="idx"
-              tag="tbody"
-            >
-              <template #item="{ element, index }">
-                <tr class="border">
-                  <td class="border p-2 text-center">
-                    <div class="flex items-center gap-2">
-                      <DragVerticalIconV1
-                        class="h-8 text-gray-700 cursor-move"
-                      />
-                      <div>{{ element.idx }}</div>
-                    </div>
-                  </td>
-                  <template v-for="fj in field.fields_json">
-                    <td v-if="fj.field_type == 'Attach'">
-                      <img
-                        :src="element[fj.field_key]"
-                        alt=""
-                        class="h-15 w-20 border"
-                      />
-                    </td>
-                    <td v-else class="border p-2">
-                      {{ element[fj.field_key] }}
-                    </td>
-                  </template>
-                  <td class="p-2 flex gap-2">
-                    <Button
-                      variant="solid"
-                      theme="gray"
-                      size="sm"
-                      label="Sửa"
-                      @click="editItemSection(field, index)"
-                    ></Button>
-                    <Button
-                      variant="solid"
-                      theme="red"
-                      size="sm"
-                      label="Xóa"
-                      @click="deleteItemSection(field, index)"
-                    ></Button>
-                  </td>
-                </tr>
-              </template>
-            </Draggable>
-          </template>
-          <template v-else>
+    <template v-if="field.field_type == 'List'">
+      <div class="lg:col-span-2 overflow-y-hidden">
+        <div class="text-base text-gray-700 font-bold mb-2">
+          {{ field.field_label }}
+        </div>
+        <div class="flex flex-col overflow-y-auto">
+          <table class="text-base">
             <tr class="border">
-              <td
-                class="p-3 text-center text-base text-gray-600"
-                :colspan="field.fields_json.length + 2"
-              >
-                Không có dữ liệu
-              </td>
+              <th class="border p-2 w-auto">STT</th>
+              <template v-for="f in field.fields_json">
+                <th class="border p-2 min-w-48">{{ f.field_label }}</th>
+              </template>
+              <th class="border p-2 min-w-32"></th>
             </tr>
-          </template>
-        </table>
+            <template v-if="field.content.length">
+              <Draggable
+                :list="field.content"
+                @end="applySort(field)"
+                item-key="idx"
+                tag="tbody"
+              >
+                <template #item="{ element, index }">
+                  <tr class="border">
+                    <td class="border p-2 text-center">
+                      <div class="flex items-center gap-2">
+                        <DragVerticalIconV1
+                          class="h-8 text-gray-700 cursor-move"
+                        />
+                        <div>{{ element.idx }}</div>
+                      </div>
+                    </td>
+                    <template v-for="fj in field.fields_json">
+                      <td
+                        v-if="fj.field_type == 'Attach'"
+                        class="border p-2 text-center"
+                      >
+                        <img
+                          :src="element[fj.field_key]"
+                          alt=""
+                          class="h-15 w-20 border"
+                        />
+                      </td>
+                      <td v-else class="border p-2">
+                        {{ element[fj.field_key] }}
+                      </td>
+                    </template>
+                    <td>
+                      <div class="p-2 flex gap-2">
+                        <Button
+                          variant="solid"
+                          theme="gray"
+                          size="sm"
+                          label="Sửa"
+                          @click="editItemSection(field, index)"
+                        ></Button>
+                        <Button
+                          variant="solid"
+                          theme="red"
+                          size="sm"
+                          label="Xóa"
+                          @click="deleteItemSection(field, index)"
+                        ></Button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+              </Draggable>
+            </template>
+            <template v-else>
+              <tr class="border">
+                <td
+                  class="p-3 text-center text-base text-gray-600"
+                  :colspan="field.fields_json.length + 2"
+                >
+                  Không có dữ liệu
+                </td>
+              </tr>
+            </template>
+          </table>
+        </div>
+        <div class="flex py-3">
+          <Button
+            variant="solid"
+            theme="blue"
+            size="sm"
+            label="Thêm"
+            @click="createItemSection(field)"
+          ></Button>
+        </div>
       </div>
-      <div class="flex py-3">
-        <Button
-          variant="solid"
-          theme="blue"
-          size="sm"
-          label="Thêm"
-          @click="createItemSection(field)"
-        ></Button>
-      </div>
-    </div>
+    </template>
     <template v-else-if="field.field_type == 'Button'">
-      <div class="col-span-2">
+      <div class="lg:col-span-2">
         <div class="text-base text-gray-700 font-bold mb-2">
           {{ field.field_label }}
         </div>
