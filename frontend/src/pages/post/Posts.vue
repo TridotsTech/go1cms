@@ -15,8 +15,8 @@
       </Button>
     </template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pt-2 pb-4">
-    <div class="mb-2">
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4">
+    <div>
       <Button
         :variant="'ghost'"
         theme="gray"
