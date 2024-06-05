@@ -75,7 +75,7 @@
     .{{page_route}} .go1-cms-menu li.menu-item {
         display: inline-block;
     }
-    .{{page_route}} .go1-cms-menu li a{
+    .{{page_route}} .go1-cms-menu > li > a{
         padding: {{header_settings.menu_item_spacing}};
         line-height: {{header_settings.line_height}};
         letter-spacing: {{header_settings.letter_spacing}};
@@ -109,7 +109,7 @@
     }
     .{{page_route}} .go1-cms-dropdown a{
         color: {{header_settings.dropdown_menu_color}} !important;
-        width: 270px;
+        min-width: 220px;
       padding: 15px 10px;
 
      }
@@ -121,9 +121,10 @@
       position: absolute;
       transition: all 0.25s ease 0s;
       z-index: 999;
-      right: -270px;
-      width: 270px;
-      min-width: 200px;
+      /* right: -270px;
+      width: 270px; */
+      left: 100%;
+      min-width: 220px;
       top: 0;
       box-shadow: rgb(0 0 0 / 10%) 0px 10px 15px -3px, rgb(0 0 0 / 5%) 0px 4px 6px -2px;
       background-color: {{header_settings.dropdown_background_color}} !important;

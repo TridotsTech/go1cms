@@ -2422,28 +2422,6 @@
   }
 }
 /* my css */
-@keyframes scaleWidth {
-  from {
-    width: 0%;
-    transform: scaleX(0);
-  }
-  to {
-    width: 110%;
-    transform: scaleX(1);
-  }
-}
-.menu_after::after {
-  content: "";
-  display: block;
-  width: 0%;
-  background-color: #fa3232;
-  height: 2px;
-  margin-top: 5px;
-  animation: none;
-}
-.menu_after:hover::after {
-  animation: scaleWidth 0.5s ease forwards;
-}
 .item-slider-1 {
   width: 200px;
   display: inline-block;

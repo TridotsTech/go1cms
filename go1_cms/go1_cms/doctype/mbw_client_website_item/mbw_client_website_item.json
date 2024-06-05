@@ -17,6 +17,7 @@
   {
    "fieldname": "page_id",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "M\u00e3 trang",
    "options": "Web Page Builder"
   },
@@ -27,11 +28,13 @@
   {
    "fieldname": "route_template",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Route template"
   },
   {
    "fieldname": "name_page",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "T\u00ean trang"
   },
   {
@@ -49,7 +52,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-13 08:27:29.917960",
+ "modified": "2024-06-01 10:56:48.423292",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website Item",

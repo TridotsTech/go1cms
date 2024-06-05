@@ -18,6 +18,7 @@ import {
   setConfig,
   frappeRequest,
   FeatherIcon,
+  Tooltip,
 } from 'frappe-ui'
 
 import translationPlugin from './translation'
@@ -34,6 +35,7 @@ let globalComponents = {
   Alert,
   Badge,
   FeatherIcon,
+  Tooltip,
 }
 
 // create a pinia instance

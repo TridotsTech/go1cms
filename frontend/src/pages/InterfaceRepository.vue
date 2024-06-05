@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full p-6 pb-4 overflow-auto">
+  <div class="flex-1 flex flex-col h-full p-6 pt-2 pb-4 overflow-auto">
     <div>
       <ViewControls
         v-model="interFaces"

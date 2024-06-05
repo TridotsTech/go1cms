@@ -27,7 +27,7 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div class="p-6 border border-gray-300 rounded-sm mb-4">
+    <div class="p-4 border border-gray-300 rounded-sm mb-4">
       <div>
         <div class="mb-4">
           <h2 class="font-bold text-xl">Thông tin cơ bản</h2>
@@ -61,7 +61,7 @@ const { changeLoadingValue } = globalStore()
 const router = useRouter()
 const breadcrumbs = [
   { label: 'Quản lý bài viết', route: { name: 'Posts' } },
-  { label: 'Thêm mới bài viết', route: { name: 'Post Create' } },
+  { label: 'Thêm mới', route: { name: 'Post Create' } },
 ]
 
 let _post = ref({})
@@ -192,6 +192,7 @@ const sections1 = computed(() => {
 })
 
 async function callInsertDoc() {
+  msgError.value = null
   changeLoadingValue(true, 'Đang lưu...')
   try {
     const docCreate = await call('go1_cms.api.post.create_post', {

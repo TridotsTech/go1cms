@@ -63,20 +63,26 @@ def update_category(data):
 
 @frappe.whitelist()
 def delete_category(name):
-    if not frappe.db.exists("Mbw Blog Category", name):
-        frappe.throw(_("Category not found"), frappe.DoesNotExistError)
+    try:
+        if not frappe.db.exists("Mbw Blog Category", name):
+            frappe.throw(_("Category not found"), frappe.DoesNotExistError)
 
-    MbwBlogPost = frappe.qb.DocType("Mbw Blog Post")
-    query = (
-        frappe.qb.from_(MbwBlogPost)
-        .select("name")
-        .where(MbwBlogPost.blog_category == name)
-    )
-    blogs = query.run(as_dict=True)
-    for blog in blogs:
-        frappe.delete_doc('Mbw Blog Post', blog.name)
+        MbwBlogPost = frappe.qb.DocType("Mbw Blog Post")
+        query = (
+            frappe.qb.from_(MbwBlogPost)
+            .select("name")
+            .where(MbwBlogPost.blog_category == name)
+        )
+        blogs = query.run(as_dict=True)
+        for blog in blogs:
+            frappe.delete_doc('Mbw Blog Post', blog.name)
 
-    frappe.delete_doc('Mbw Blog Category', name)
+        frappe.delete_doc('Mbw Blog Category', name)
 
-    result = {'name': name}
-    return result
+        result = {'name': name}
+        return result
+    except frappe.LinkExistsError as ex:
+        frappe.clear_last_message()
+        frappe.throw(_("Danh mục này đã được liên kết, không thể xóa."))
+    except Exception as ex:
+        frappe.throw(_(f"Lỗi: {str(ex)}"))

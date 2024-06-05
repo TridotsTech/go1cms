@@ -17,7 +17,7 @@
       </div>
     </template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4">
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pt-2 pb-4">
     <ViewControls
       ref="viewControls"
       v-model="category"

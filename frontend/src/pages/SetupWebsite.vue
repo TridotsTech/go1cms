@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6 overflow-auto">Setup Website</div>
+  <div class="p-6 pt-2 overflow-auto">Setup Website</div>
 </template>
 
 <script setup>

@@ -8,13 +8,6 @@
         class="gap-2 justify-end"
         :class="alreadyActions ? 'flex' : 'hidden'"
       >
-        <Button
-          variant="subtle"
-          theme="gray"
-          size="md"
-          label="Trở lại"
-          route="/posts"
-        ></Button>
         <Dropdown
           :options="[
             {
@@ -37,6 +30,14 @@
             </template>
           </Button>
         </Dropdown>
+        <Button
+          variant="subtle"
+          theme="gray"
+          size="md"
+          label="Hủy"
+          @click="post.reload()"
+          :disabled="!dirty"
+        ></Button>
         <Button
           variant="solid"
           theme="blue"
@@ -126,11 +127,6 @@ const props = defineProps({
 const msgError = ref()
 let _post = ref({})
 const showModalDelete = ref(false)
-
-const breadcrumbs = [
-  { label: 'Quản lý bài viết', route: { name: 'Posts' } },
-  { label: 'Cập nhật bài viết', route: {} },
-]
 
 const sections = computed(() => {
   return [
@@ -304,6 +300,7 @@ watch(dirty, (val) => {
 
 // update doc
 async function callUpdateDoc() {
+  msgError.value = null
   let _post_cp = { ..._post.value }
 
   if (JSON.stringify(post.data) == JSON.stringify(_post_cp)) {
@@ -399,4 +396,14 @@ async function deleteDoc(close) {
   }
   changeLoadingValue(false)
 }
+
+// breadcrumbs
+const breadcrumbs = computed(() => {
+  let items = [{ label: 'Quản lý bài viết', route: { name: 'Posts' } }]
+  items.push({
+    label: post.data?.title,
+    route: {},
+  })
+  return items
+})
 </script>

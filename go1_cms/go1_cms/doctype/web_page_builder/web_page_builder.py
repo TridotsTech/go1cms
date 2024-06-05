@@ -807,7 +807,7 @@ def delete_section(name, parentfield, fc_name=None, doctype=None):
         frappe.delete_doc('Page Section', page_section[0].section)
         # frappe.db.sql('''delete from `tabPage Section` where name = %(name)s''', {
         #     'name': page_section[0].section})
-        frappe.db.commit()
+        # frappe.db.commit()
     if fc_name and doctype:
         if frappe.db.exists(doctype, fc_name, cache=True):
             doc = frappe.get_doc(doctype, fc_name)

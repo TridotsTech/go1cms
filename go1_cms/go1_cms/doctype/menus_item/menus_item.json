@@ -12,6 +12,7 @@
   "no_of_column",
   "mega_m_col_index",
   "column_break_4",
+  "menu_id",
   "redirect_url",
   "position",
   "icon"
@@ -35,6 +36,7 @@
    "label": "Redirect URL"
   },
   {
+   "default": "Left",
    "fieldname": "position",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -66,17 +68,24 @@
    "fieldname": "no_of_column",
    "fieldtype": "Int",
    "label": "Number Of Columns"
+  },
+  {
+   "fieldname": "menu_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Menu Id"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-25 15:26:35.455337",
+ "modified": "2024-06-05 10:56:41.369007",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menus Item",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

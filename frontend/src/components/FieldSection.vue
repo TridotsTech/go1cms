@@ -20,13 +20,14 @@
                 @end="applySort(field)"
                 item-key="idx"
                 tag="tbody"
+                handle=".handle"
               >
                 <template #item="{ element, index }">
                   <tr class="border">
                     <td class="border p-2 text-center">
                       <div class="flex items-center gap-2">
                         <DragVerticalIconV1
-                          class="h-8 text-gray-700 cursor-move"
+                          class="h-8 text-gray-700 cursor-move handle"
                         />
                         <div>{{ element.idx }}</div>
                       </div>

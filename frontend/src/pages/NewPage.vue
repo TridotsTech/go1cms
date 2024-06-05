@@ -4,7 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
   </LayoutHeader>
-  <div class="p-6 overflow-auto">
+  <div class="p-6 pt-2 overflow-auto">
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="p-2"></div>
     </div>

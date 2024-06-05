@@ -10,7 +10,7 @@
           theme="gray"
           size="md"
           label="Hủy"
-          route="/category"
+          route="/menu"
         ></Button>
         <Button
           variant="solid"
@@ -29,7 +29,15 @@
     </div>
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
-        <Fields :sections="sections" :data="_category" />
+        <Fields :sections="sections" :data="_menu" />
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 mb-2">Menus</p>
+        <DraggableNested
+          v-model="_menu.menus"
+          :maxLevel="3"
+          v-model:countId="countId"
+        ></DraggableNested>
       </div>
     </div>
   </div>
@@ -38,6 +46,7 @@
 <script setup>
 import Fields from '@/components/Fields.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
+import DraggableNested from '@/components/DraggableNested.vue'
 import { Breadcrumbs, call, ErrorMessage } from 'frappe-ui'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -47,53 +56,84 @@ const { changeLoadingValue } = globalStore()
 
 const router = useRouter()
 const breadcrumbs = [
-  { label: 'Quản lý danh mục', route: { name: 'Category' } },
-  { label: 'Thêm mới', route: { name: 'Category Create' } },
+  { label: 'Menu', route: { name: 'Menu' } },
+  { label: 'Thêm mới', route: {} },
 ]
 
-let _category = ref({})
+let _menu = ref({
+  menus: [],
+})
+const countId = ref(0)
 const msgError = ref()
 
 const sections = computed(() => {
   return [
     {
-      section: 'Category Name',
+      section: 'menu Name',
       columns: 1,
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tiêu đề',
+          label: 'Tên menu',
           mandatory: true,
-          name: 'category_title',
+          name: 'title',
           type: 'data',
-          placeholder: 'Nhập tiêu đề',
-        },
-      ],
-    },
-    {
-      section: 'Description',
-      columns: 2,
-      hideBorder: true,
-      fields: [
-        {
-          label: 'Mô tả',
-          name: 'description',
-          type: 'textarea',
-          placeholder: 'Nhập mô tả',
-          rows: 10,
+          placeholder: 'Nhập tên menu',
+          doctype: 'Mbw Blog menu',
         },
       ],
     },
   ]
 })
 
+function extractMenus(data) {
+  let elementsArray = []
+  let level = 0
+  let idx = 0
+
+  function recurse(elements, parentId = '') {
+    level++
+    for (let element of elements) {
+      idx++
+      if (element.elements.length) {
+        element['is_mega_menu'] = 1
+        if (level == 1 && element.no_of_column <= 0) {
+          element['no_of_column'] = 1
+        }
+      }
+      if (level > 1) {
+        element['parent_menu'] = parentId
+      }
+      element['menu_id'] = idx
+      element['idx'] = idx
+
+      elementsArray.push(element)
+      if (element.elements && element.elements.length > 0) {
+        recurse(element.elements, element.idx)
+      }
+    }
+  }
+
+  recurse(data)
+  return elementsArray
+}
+
 async function callInsertDoc() {
   msgError.value = null
+
+  let menuUpdate = { ..._menu.value, menus: extractMenus(_menu.value.menus) }
+
+  if (!menuUpdate.title) {
+    msgError.value = 'Tên menu không được để trống'
+    errorMessage('Có lỗi xảy ra', 'Tên menu không được để trống')
+    return
+  }
+
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    const doc = await call('go1_cms.api.category.create_category', {
+    const doc = await call('go1_cms.api.menu.create_menu', {
       data: {
-        ..._category.value,
+        ...menuUpdate,
       },
     })
     createToast({
@@ -103,8 +143,8 @@ async function callInsertDoc() {
     })
     doc.name &&
       router.push({
-        name: 'Category Detail',
-        params: { categoryId: doc.name },
+        name: 'Menu Detail',
+        params: { menuId: doc.name },
       })
   } catch (err) {
     msgError.value = err.messages.join(', ')

@@ -166,6 +166,12 @@ def get_list_data(
     custom_view = False
     filters = frappe._dict(filters)
 
+    if doctype == "Menu":
+        web_edit = frappe.get_last_doc(
+            'MBW Client Website', filters={"edit": 1})
+        if web_edit:
+            filters['id_client_website'] = web_edit.name
+
     for key in filters:
         value = filters[key]
         if isinstance(value, list):

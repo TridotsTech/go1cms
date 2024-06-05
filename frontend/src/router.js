@@ -99,7 +99,18 @@ const routes = [
   {
     path: '/menu',
     name: 'Menu',
-    component: () => import('@/pages/Menu.vue'),
+    component: () => import('@/pages/menu/Menu.vue'),
+  },
+  {
+    path: '/menu/create',
+    name: 'Menu Create',
+    component: () => import('@/pages/menu/MenuCreate.vue'),
+  },
+  {
+    path: '/menu/:menuId',
+    name: 'Menu Detail',
+    component: () => import('@/pages/menu/MenuDetail.vue'),
+    props: true,
   },
   {
     path: '/forms',
@@ -154,7 +165,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.name === 'Login' && isLoggedIn) {
-    next({ name: 'Leads' })
+    next({ name: 'My Website' })
   } else if (to.name !== 'Login' && !isLoggedIn) {
     next({ name: 'Login' })
   } else if (to.matched.length === 0) {

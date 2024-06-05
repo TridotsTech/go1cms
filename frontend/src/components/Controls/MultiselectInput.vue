@@ -177,7 +177,7 @@ const options = computed(() => {
 function reload(val) {
   filterOptions.update({
     params: {
-      txt: val,
+      txt: val || '',
       doctype: 'Contact',
     },
   })

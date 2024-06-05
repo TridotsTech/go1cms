@@ -14,7 +14,7 @@
               group: 'Xóa',
               items: [
                 {
-                  label: 'Xóa danh mục',
+                  label: 'Xóa menu',
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -35,7 +35,7 @@
           theme="gray"
           size="md"
           label="Hủy"
-          @click="category.reload()"
+          @click="menu.reload()"
           :disabled="!dirty"
         ></Button>
         <Button
@@ -54,15 +54,23 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div v-if="_category" class="p-4 border border-gray-300 rounded-sm mb-4">
+    <div v-if="_menu" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
-        <Fields :sections="sections" :data="_category" />
+        <Fields :sections="sections" :data="_menu" />
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 mb-2">Menus</p>
+        <DraggableNested
+          v-model="_menu.menus"
+          :maxLevel="3"
+          v-model:countId="countId"
+        ></DraggableNested>
       </div>
     </div>
   </div>
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: 'Xóa menu',
       actions: [
         {
           label: 'Xóa',
@@ -77,15 +85,10 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
-          <b>"{{ _category?.category_title }}"</b>?
+          Bạn chắc chắn muốn xóa menu:
+          <b>"{{ _menu?.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
-          </p>
           <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
@@ -106,63 +109,78 @@ import {
 import { ref, computed, watch } from 'vue'
 import { createToast, errorMessage, warningMessage } from '@/utils'
 import { useRouter } from 'vue-router'
+import DraggableNested from '@/components/DraggableNested.vue'
 import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
 const router = useRouter()
 const props = defineProps({
-  categoryId: {
+  menuId: {
     type: String,
     required: true,
   },
 })
 const msgError = ref()
-const _category = ref({})
+const _menu = ref({})
 const showModalDelete = ref(false)
+const countId = ref(0)
 
 const sections = computed(() => {
   return [
     {
-      section: 'Category Name',
+      section: 'menu Name',
       columns: 1,
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên danh mục',
+          label: 'Tên menu',
           mandatory: true,
-          name: 'category_title',
+          name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên danh mục',
-          doctype: 'Mbw Blog Category',
-        },
-      ],
-    },
-    {
-      section: 'Description',
-      columns: 2,
-      hideBorder: true,
-      fields: [
-        {
-          label: 'Mô tả',
-          name: 'description',
-          type: 'textarea',
-          placeholder: 'Nhập mô tả',
-          rows: 10,
+          placeholder: 'Nhập tên menu',
+          doctype: 'Mbw Blog menu',
         },
       ],
     },
   ]
 })
 
-const category = createResource({
-  url: 'go1_cms.api.category.get_category',
+function convertObjMenu(menus, menusParent) {
+  function recurse(elements) {
+    for (let element of elements) {
+      let menuChild = menus.filter((el) => el.parent_menu == element.menu_id)
+      menuChild.sort((a, b) => a.id - b.id)
+      element.elements = menuChild
+      if (menuChild && menuChild.length > 0) {
+        recurse(menuChild)
+      }
+    }
+  }
+
+  recurse(menusParent)
+  return menusParent
+}
+
+const menu = createResource({
+  url: 'go1_cms.api.menu.get_menu',
   params: {
-    name: props.categoryId,
+    name: props.menuId,
   },
   auto: true,
   transform: (data) => {
-    _category.value = {
+    // convert menu to object menu edit
+    let menus = data.menus.map((el) => ({
+      ...el,
+      id: el.idx,
+      elements: [],
+      parent_menu: el.parent_menu ? el.parent_menu : null,
+    }))
+    let menusParent = menus.filter((el) => el.parent_menu == null)
+    countId.value = menus.length
+
+    _menu.value = {
       ...data,
+      menus: convertObjMenu(menus, menusParent),
     }
     return data
   },
@@ -171,26 +189,82 @@ const category = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  return JSON.stringify(category.data) !== JSON.stringify(_category.value)
+  if (menu.data) {
+    // convert menu to object menu edit
+    let menus = menu.data.menus.map((el) => ({
+      ...el,
+      id: el.idx,
+      elements: [],
+      parent_menu: el.parent_menu ? el.parent_menu : null,
+    }))
+    let menusParent = menus.filter((el) => el.parent_menu == null)
+
+    return (
+      JSON.stringify({
+        ...menu.data,
+        menus: convertObjMenu(menus, menusParent),
+      }) !== JSON.stringify(_menu.value)
+    )
+  }
+  return JSON.stringify(menu.data) !== JSON.stringify(_menu.value)
 })
 
 watch(dirty, (val) => {
   alreadyActions.value = true
 })
 
+function extractMenus(data) {
+  let elementsArray = []
+  let level = 0
+  let idx = 0
+
+  function recurse(elements, parentId = '') {
+    level++
+    for (let element of elements) {
+      idx++
+      if (element.elements.length) {
+        element['is_mega_menu'] = 1
+        if (level == 1 && element.no_of_column <= 0) {
+          element['no_of_column'] = 1
+        }
+      }
+      if (level > 1) {
+        element['parent_menu'] = parentId
+      }
+      element['menu_id'] = idx
+      element['idx'] = idx
+
+      elementsArray.push(element)
+      if (element.elements && element.elements.length > 0) {
+        recurse(element.elements, element.idx)
+      }
+    }
+  }
+
+  recurse(data)
+  return elementsArray
+}
+
 async function callUpdateDoc() {
   msgError.value = null
-
-  if (JSON.stringify(category.data) == JSON.stringify(_category.value)) {
+  if (JSON.stringify(menu.data) == JSON.stringify(_menu.value)) {
     warningMessage('Tài liệu không thay đổi')
+    return
+  }
+
+  let menuUpdate = { ..._menu.value, menus: extractMenus(_menu.value.menus) }
+
+  if (!menuUpdate.title) {
+    msgError.value = 'Tên menu không được để trống'
+    errorMessage('Có lỗi xảy ra', 'Tên menu không được để trống')
     return
   }
 
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    const doc = await call('go1_cms.api.category.update_category', {
+    const doc = await call('go1_cms.api.menu.update_menu', {
       data: {
-        ..._category.value,
+        ...menuUpdate,
       },
     })
     if (doc.name) {
@@ -199,15 +273,7 @@ async function callUpdateDoc() {
         icon: 'check',
         iconClasses: 'text-green-600',
       })
-
-      if (doc.name != props.categoryId) {
-        router.push({
-          name: 'Category Detail',
-          params: { categoryId: doc.name },
-        })
-      } else {
-        category.reload()
-      }
+      menu.reload()
     }
   } catch (err) {
     if (err.messages && err.messages.length) {
@@ -223,8 +289,8 @@ async function callUpdateDoc() {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.category.delete_category', {
-      name: props.categoryId,
+    await call('go1_cms.api.menu.delete_menu', {
+      name: props.menuId,
     }).then(() => {
       createToast({
         title: 'Xóa thành công',
@@ -233,7 +299,7 @@ async function deleteDoc(close) {
       })
       close()
       router.push({
-        name: 'Category',
+        name: 'Menu',
       })
     })
   } catch (err) {
@@ -248,20 +314,20 @@ async function deleteDoc(close) {
 }
 
 watch(
-  () => props.categoryId,
+  () => props.menuId,
   (val) => {
-    category.update({
+    menu.update({
       params: { name: val },
     })
-    category.reload()
+    menu.reload()
   }
 )
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Quản lý danh mục', route: { name: 'Category' } }]
+  let items = [{ label: 'Menu', route: { name: 'Menu' } }]
   items.push({
-    label: category.data?.name,
+    label: menu.data?.title,
     route: {},
   })
   return items

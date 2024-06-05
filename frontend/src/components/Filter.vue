@@ -114,7 +114,7 @@ import FilterIcon from '@/components/Icons/FilterIcon.vue'
 import Link from '@/components/Controls/Link.vue'
 import Autocomplete from '@/components/frappe-ui/Autocomplete.vue'
 import { FormControl, createResource, Tooltip } from 'frappe-ui'
-import { h, computed, onMounted } from 'vue'
+import { h, computed, onMounted, ref } from 'vue'
 
 const typeCheck = ['Check']
 const typeLink = ['Link', 'Dynamic Link']
@@ -470,6 +470,7 @@ function isSameTypeOperator(oldOperator, newOperator) {
   return false
 }
 
+const currentFilters = ref({})
 function apply() {
   let _filters = []
   filters.value.forEach((f) => {
@@ -479,7 +480,16 @@ function apply() {
       value: f.value,
     })
   })
-  emit('update', parseFilters(_filters))
+
+  if (
+    JSON.stringify(currentFilters.value) !=
+      JSON.stringify(parseFilters(_filters)) ||
+    JSON.stringify(parseFilters(_filters)) == '{}'
+  ) {
+    emit('update', parseFilters(_filters))
+  }
+
+  currentFilters.value = parseFilters(_filters)
 }
 
 function parseFilters(filters) {

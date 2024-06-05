@@ -163,7 +163,7 @@ function reload(val) {
   options.update({
     params: {
       filters: props.filters,
-      txt: val,
+      txt: val || '',
       doctype: props.doctype,
     },
   })

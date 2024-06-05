@@ -4,8 +4,33 @@
 import frappe
 from frappe.model.document import Document
 
+
 class Menu(Document):
-	pass
-	# def validate(self):
-	# 	if self.mega_menu_number_of_columns > 4:
-	# 		frappe.throw('Maximun no of columns should be less than or euqal to <b>4</b>')
+    @staticmethod
+    def default_list_data():
+        columns = [
+            {
+                "label": "Tên menu",
+                "type": "Data",
+                "key": "title",
+                "width": "473px"
+            },
+            {
+                "label": "Hành động",
+                "key": "action_button"
+            }
+        ]
+        rows = [
+            "name",
+            "creation",
+            "modified_by",
+            "modified",
+            "action_button",
+            "title",
+            "id_client_website"
+        ]
+        return {'columns': columns, 'rows': rows}
+
+    # def validate(self):
+    # 	if self.mega_menu_number_of_columns > 4:
+    # 		frappe.throw('Maximun no of columns should be less than or euqal to <b>4</b>')

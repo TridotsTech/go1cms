@@ -27,6 +27,7 @@
    "fetch_if_empty": 1,
    "fieldname": "name_template",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "T\u00ean m\u1eabu"
   },
   {
@@ -36,6 +37,7 @@
   {
    "fieldname": "route_template",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Route template"
   },
   {
@@ -53,7 +55,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-11 11:33:19.447623",
+ "modified": "2024-06-01 10:56:03.406029",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Item",

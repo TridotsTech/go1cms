@@ -28,7 +28,7 @@
       </div>
     </template>
   </LayoutHeader>
-  <div class="p-6 overflow-auto">
+  <div class="p-6 pt-2 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />

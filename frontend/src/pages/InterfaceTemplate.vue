@@ -3,11 +3,9 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-  </LayoutHeader>
-  <div class="p-6 overflow-auto">
-    <div class="border-b mb-4 pb-2 border-gray-300">
+    <template #right-header>
       <div class="flex flex-wrap justify-between items-center gap-2">
-        <h2 class="font-bold text-3xl">{{ template.data?.name }}</h2>
+        <h2 class="font-bold text-3xl"></h2>
         <Button
           :variant="'subtle'"
           theme="gray"
@@ -17,7 +15,9 @@
         >
         </Button>
       </div>
-    </div>
+    </template>
+  </LayoutHeader>
+  <div class="p-6 overflow-auto">
     <div class="pb-4" v-html="template.data?.content"></div>
   </div>
 </template>

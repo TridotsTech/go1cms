@@ -33,12 +33,12 @@
                     size="sm"
                     label=""
                     icon="edit"
-                    :route="'/category/' + item.name"
+                    :route="'/menu/' + item.name"
                   >
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa danh mục" :hover-delay="1" :placement="'top'">
+              <Tooltip text="Xóa menu" :hover-delay="1" :placement="'top'">
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -105,7 +105,7 @@
 
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: 'Xóa menu',
       actions: [
         {
           label: 'Xóa',
@@ -120,15 +120,10 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
-          <b>"{{ selectedItem.category_title }}"</b>?
+          Bạn chắc chắn muốn xóa menu:
+          <b>"{{ selectedItem.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
-          </p>
           <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
@@ -200,7 +195,7 @@ function handleShowModalDelete(item) {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.category.delete_category', {
+    await call('go1_cms.api.menu.delete_menu', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
