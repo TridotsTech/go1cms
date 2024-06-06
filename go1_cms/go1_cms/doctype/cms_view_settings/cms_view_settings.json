@@ -6,9 +6,11 @@
  "engine": "InnoDB",
  "field_order": [
   "label",
+  "icon",
   "user",
   "is_default",
   "column_break_newj",
+  "type",
   "dt",
   "route_name",
   "pinned",
@@ -20,7 +22,9 @@
   "filters_tab",
   "filters",
   "order_by_tab",
-  "order_by"
+  "order_by",
+  "group_by_tab",
+  "group_by_field"
  ],
  "fields": [
   {
@@ -111,11 +115,33 @@
    "fieldname": "order_by",
    "fieldtype": "Code",
    "label": "Order By"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon"
+  },
+  {
+   "default": "list",
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "list\ngroup_by"
+  },
+  {
+   "fieldname": "group_by_tab",
+   "fieldtype": "Tab Break",
+   "label": "Group By"
+  },
+  {
+   "fieldname": "group_by_field",
+   "fieldtype": "Data",
+   "label": "Group By Field"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-30 10:43:39.572264",
+ "modified": "2024-06-06 08:50:10.642326",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS View Settings",
