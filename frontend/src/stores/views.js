@@ -17,16 +17,17 @@ export const viewsStore = defineStore('cms-views', (doctype) => {
       for (let view of views.views) {
         viewsByName[view.name] = view
         if (view.is_default && view.dt) {
-          defaultView.value[view.dt] = view
+          defaultView.value[view.dt + ' ' + view.type] = view
         }
       }
       return views
     },
   })
 
-  function getView(view, doctype = null) {
+  function getView(view, type, doctype = null) {
+    type = type || 'list'
     if (!view && doctype) {
-      return defaultView.value?.[doctype] || null
+      return defaultView.value[doctype + ' ' + type] || null
     }
     return viewsByName[view]
   }

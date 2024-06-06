@@ -263,9 +263,9 @@ def get_list_data(
         "user": frappe.session.user,
     }
 
-    if not custom_view and frappe.db.exists("CRM View Settings", default_view_filters):
+    if not custom_view and frappe.db.exists("CMS View Settings", default_view_filters):
         list_view_settings = frappe.get_doc(
-            "CRM View Settings", default_view_filters)
+            "CMS View Settings", default_view_filters)
         columns = frappe.parse_json(list_view_settings.columns)
         rows = frappe.parse_json(list_view_settings.rows)
         is_default = False

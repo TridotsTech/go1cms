@@ -613,6 +613,7 @@ function updateColumns(obj) {
 
 function create_or_update_default_view() {
   if (route.query.view) return
+  console.log(view.value)
   view.value.doctype = props.doctype
   call(
     'go1_cms.go1_cms.doctype.cms_view_settings.cms_view_settings.create_or_update_default_view',
