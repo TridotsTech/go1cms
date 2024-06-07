@@ -93,7 +93,6 @@ class MBWClientWebsite(Document):
                     doc.save()
 
             if doc_self_old.type_web != self.type_web or doc_self_old.route_web == None:
-                list_cpn = []
                 """ check published, set route page, update menu """
                 router_menu_draft = "/template_" + frappe.scrub(
                     self.name)
@@ -101,10 +100,6 @@ class MBWClientWebsite(Document):
                 for item in self.page_websites:
                     route_template = ""
                     doc = frappe.get_doc('Web Page Builder', item.page_id)
-                    if doc.header_component and doc.header_component not in list_cpn:
-                        list_cpn.append(doc.header_component)
-                    if doc.footer_component and doc.footer_component not in list_cpn:
-                        list_cpn.append(doc.footer_component)
 
                     if self.type_web == 'Bản chính':
                         if item.route_template and item.route_template[0] == '/':
@@ -119,33 +114,32 @@ class MBWClientWebsite(Document):
                     doc.save()
 
                 # update redirect url menu
-                for x in list_cpn:
-                    menus = frappe.db.get_all(
-                        "Menu",
-                        filters={"id_client_website": self.name},
-                        fields=['name']
+                menus = frappe.db.get_all(
+                    "Menu",
+                    filters={"id_client_website": self.name},
+                    fields=['name']
+                )
+
+                for mn in menus:
+                    menu_items = frappe.db.get_all(
+                        "Menus Item",
+                        filters={"parent": mn.name,
+                                 "parentfield": "menus"},
+                        fields=['name', 'redirect_url']
                     )
 
-                    for mn in menus:
-                        menu_items = frappe.db.get_all(
-                            "Menus Item",
-                            filters={"parent": mn.name,
-                                     "parentfield": "menus"},
-                            fields=['name', 'redirect_url']
-                        )
+                    for m in menu_items:
+                        redirect_url = m.redirect_url or '#'
+                        if not redirect_url.startswith('http'):
+                            if self.type_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
+                                redirect_url = redirect_url.replace(
+                                    router_menu_draft, "", 1)
+                            elif self.type_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
+                                redirect_url = router_menu_draft + redirect_url
 
-                        for m in menu_items:
-                            redirect_url = m.redirect_url or '#'
-                            if not redirect_url.startswith('http'):
-                                if self.type_web == 'Bản chính' and redirect_url.startswith(router_menu_draft):
-                                    redirect_url = redirect_url.replace(
-                                        router_menu_draft, "", 1)
-                                elif self.type_web == 'Bản nháp' and not redirect_url.startswith(router_menu_draft):
-                                    redirect_url = router_menu_draft + redirect_url
-
-                                frappe.db.set_value('Menus Item', m.name, {
-                                    'redirect_url': redirect_url
-                                })
+                            frappe.db.set_value('Menus Item', m.name, {
+                                'redirect_url': redirect_url
+                            })
 
             # set route website
             route_web = ''
@@ -171,35 +165,21 @@ class MBWClientWebsite(Document):
 
             frappe.delete_doc('Web Page Builder', item.page_id)
 
+        # delete web theme
+        if self.web_theme:
+            frappe.delete_doc('Web Theme', self.web_theme)
+
         # delete header and footer
         for x in list_header:
-            web_sections = frappe.db.get_all(
-                "Mobile Page Section",
-                filters={"parent": x, "parentfield": "web_section"},
-                fields=['section']
-            )
-
-            list_menu = []
-            for w in web_sections:
-                doc = frappe.get_doc('Page Section', w.section)
-                if doc.section_type == "Menu":
-                    list_menu.append(doc.menu)
             frappe.delete_doc('Header Component', x)
-            for n in list_menu:
-                frappe.delete_doc('Menu', n)
-
         for x in list_footer:
-            web_sections = frappe.db.get_all(
-                "Mobile Page Section",
-                filters={"parent": x, "parentfield": "web_section"},
-                fields=['section']
-            )
-
-            list_menu = []
-            for w in web_sections:
-                doc = frappe.get_doc('Page Section', w.section)
-                if doc.section_type == "Menu":
-                    list_menu.append(doc.menu)
             frappe.delete_doc('Footer Component', x)
-            for n in list_menu:
-                frappe.delete_doc('Menu', n)
+
+        # delete menu
+        menus = frappe.db.get_all(
+            "Menu",
+            filters={"id_client_website": self.name},
+            fields=['name']
+        )
+        for n in menus:
+            frappe.delete_doc('Menu', n.name)

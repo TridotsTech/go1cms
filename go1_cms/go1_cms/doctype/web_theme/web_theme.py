@@ -162,56 +162,77 @@ def generate_webtheme_css_file(path, sitename, self):
             webtheme_css += global_header_css
         css_file_name = self.name.lower().replace(' ', '-')+".css"
         path = get_files_path()
-        pages = frappe.db.get_all("Web Page Builder", filters={"published": 1}, fields=[
-            'route', 'name', 'header_component', 'footer_component', 'edit_header_style', 'is_transparent_header', 'menu_text_color', 'menu_hover_bg', 'menu_hover_text_color'])
+        client_webs = frappe.db.get_all("MBW Client Website", filters={
+            "web_theme": self.name, "published": 1}, fields=['name'])
+
+        pages = []
+        for cl_web in client_webs:
+            web_items = frappe.db.get_all("MBW Client Website Item", filters={
+                "parent": cl_web.name, "parentfield": "page_websites"}, fields=['page_id'])
+
+            web_names = []
+            for page in web_items:
+                web_names.append(page.page_id)
+            pages += frappe.db.get_all(
+                "Web Page Builder", filters={'name': ('IN', web_names)}, fields=[
+                    'route', 'name', 'header_component', 'footer_component', 'edit_header_style', 'is_transparent_header', 'menu_text_color', 'menu_hover_bg', 'menu_hover_text_color'])
+        if self.is_active == 1:
+            pages += frappe.db.sql(
+                """ SELECT route,name,header_component,footer_component,edit_header_style,is_transparent_header,menu_text_color,menu_hover_bg,menu_hover_text_color FROM `tabWeb Page Builder` WHERE (web_client_id IS NULL OR web_client_id='')""", as_dict=1)
+            # pages = frappe.db.get_all("Web Page Builder", filters={"published": 1}, fields=[
+            #     'route', 'name', 'header_component', 'footer_component', 'edit_header_style', 'is_transparent_header', 'menu_text_color', 'menu_hover_bg', 'menu_hover_text_color'])
         header_settings = None
         for page in pages:
             web_sections = frappe.db.sql("""SELECT P.class_name,P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""", {
                 "page_name": page.name}, as_dict=1)
-            for x in web_sections:
-                header_settings = None
-                if page.header_component:
-                    template = frappe.get_template(
-                        "templates/includes/header.css")
-                    header_settings = frappe.get_doc(
-                        "Header Component", page.header_component)
-                    """ for map font family """
-                    if header_settings.font_family:
-                        header_settings.font_family = frappe.db.get_value(
-                            "CSS Font", header_settings.font_family, "font_family")
-                    if header_settings.m_font_family:
-                        header_settings.m_font_family = frappe.db.get_value(
-                            "CSS Font", header_settings.m_font_family, "font_family")
-                    """ End """
-                    p_route = page.route
-                    if "/" in p_route:
-                        p_route = p_route.split('/')[1]
-                    # frappe.log_error(header_settings.as_dict(),"<< header_settings >>")
-                    # frappe.log_error(p_route,"<< p_route >>")
-                    header_css = template.render(
-                        {'header_settings': header_settings, "page_route": p_route})
-                    # frappe.log_error(header_css,"<< header_css >>")
-                    webtheme_css += header_css
-                if page.footer_component:
-                    p_route = page.route
-                    if "/" in p_route:
-                        p_route = p_route.split('/')[1]
-                    template = frappe.get_template(
-                        "templates/includes/footer.css")
-                    footer_settings = frappe.get_doc(
-                        "Footer Component", page.footer_component)
-                    """ for map font family """
-                    if footer_settings.font_family:
-                        footer_settings.font_family = frappe.db.get_value(
-                            "CSS Font", footer_settings.font_family, "font_family")
-                    if footer_settings.f_txt_font_family:
-                        footer_settings.f_txt_font_family = frappe.db.get_value(
-                            "CSS Font", footer_settings.f_txt_font_family, "font_family")
-                    """ End """
-                    footer_css = template.render(
-                        {'footer_settings': footer_settings, "page_route": p_route})
-                    webtheme_css += footer_css
 
+            # header
+            header_settings = None
+            if page.header_component:
+                template = frappe.get_template(
+                    "templates/includes/header.css")
+                header_settings = frappe.get_doc(
+                    "Header Component", page.header_component)
+                """ for map font family """
+                if header_settings.font_family:
+                    header_settings.font_family = frappe.db.get_value(
+                        "CSS Font", header_settings.font_family, "font_family")
+                if header_settings.m_font_family:
+                    header_settings.m_font_family = frappe.db.get_value(
+                        "CSS Font", header_settings.m_font_family, "font_family")
+                """ End """
+                p_route = page.route
+                if "/" in p_route:
+                    p_route = p_route.split('/')[1]
+                # frappe.log_error(header_settings.as_dict(),"<< header_settings >>")
+                # frappe.log_error(p_route,"<< p_route >>")
+                header_css = template.render(
+                    {'header_settings': header_settings, "page_route": p_route})
+                # frappe.log_error(header_css,"<< header_css >>")
+                webtheme_css += header_css
+
+            # footer
+            if page.footer_component:
+                p_route = page.route
+                if "/" in p_route:
+                    p_route = p_route.split('/')[1]
+                template = frappe.get_template(
+                    "templates/includes/footer.css")
+                footer_settings = frappe.get_doc(
+                    "Footer Component", page.footer_component)
+                """ for map font family """
+                if footer_settings.font_family:
+                    footer_settings.font_family = frappe.db.get_value(
+                        "CSS Font", footer_settings.font_family, "font_family")
+                if footer_settings.f_txt_font_family:
+                    footer_settings.f_txt_font_family = frappe.db.get_value(
+                        "CSS Font", footer_settings.f_txt_font_family, "font_family")
+                """ End """
+                footer_css = template.render(
+                    {'footer_settings': footer_settings, "page_route": p_route})
+                webtheme_css += footer_css
+
+            for x in web_sections:
                 if x.css_text:
                     webtheme_css += x.css_text
                 section_content = frappe.db.get_all("Section Content", filters={
@@ -223,6 +244,7 @@ def generate_webtheme_css_file(path, sitename, self):
                 for field in section_content:
                     if field.css_text:
                         webtheme_css += field.css_text
+
             if page.edit_header_style == 1:
                 if page.is_transparent_header == 1:
                     p_route = page.route

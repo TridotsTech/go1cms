@@ -12,6 +12,7 @@
   "edit",
   "published",
   "route_web",
+  "web_theme",
   "header_component",
   "footer_component",
   "section_break_smuv",
@@ -79,11 +80,17 @@
    "fieldtype": "Link",
    "label": "Ch\u00e2n trang",
    "options": "Footer Component"
+  },
+  {
+   "fieldname": "web_theme",
+   "fieldtype": "Link",
+   "label": "Web Theme",
+   "options": "Web Theme"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-24 15:10:10.290757",
+ "modified": "2024-06-06 11:26:10.670429",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

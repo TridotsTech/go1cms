@@ -10,6 +10,7 @@
   "image_preview",
   "type_template",
   "column_break_cdyg",
+  "web_theme",
   "header_component",
   "footer_component",
   "section_break_bblf",
@@ -67,11 +68,17 @@
   {
    "fieldname": "section_break_bblf",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "web_theme",
+   "fieldtype": "Link",
+   "label": "Web Theme",
+   "options": "Web Theme"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-24 15:07:01.901128",
+ "modified": "2024-06-06 11:24:34.389875",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

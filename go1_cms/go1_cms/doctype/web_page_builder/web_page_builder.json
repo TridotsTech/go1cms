@@ -16,6 +16,7 @@
   "column_break_7",
   "published",
   "document",
+  "web_client_id",
   "route",
   "edit_with_go1_builder",
   "hf_sec",
@@ -674,13 +675,19 @@
    "fieldname": "route_prefix",
    "fieldtype": "Data",
    "label": "Route Prefix"
+  },
+  {
+   "fieldname": "web_client_id",
+   "fieldtype": "Data",
+   "label": "Web Client Id",
+   "read_only": 1
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2024-05-08 08:43:06.982776",
+ "modified": "2024-06-06 15:28:31.640951",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

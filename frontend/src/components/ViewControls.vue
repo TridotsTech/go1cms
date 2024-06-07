@@ -30,7 +30,7 @@
     </div>
     <div class="-mr-2 h-[70%] border-l" />
     <FadedScrollableDiv
-      class="flex flex-1 items-center overflow-x-auto px-1"
+      class="flex flex-1 items-center overflow-x-auto px-1 min-w-72"
       orientation="horizontal"
     >
       <div
@@ -613,7 +613,6 @@ function updateColumns(obj) {
 
 function create_or_update_default_view() {
   if (route.query.view) return
-  console.log(view.value)
   view.value.doctype = props.doctype
   call(
     'go1_cms.go1_cms.doctype.cms_view_settings.cms_view_settings.create_or_update_default_view',

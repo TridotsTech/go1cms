@@ -155,13 +155,9 @@
     include "templates/footer/footer.html" %} {% endif %} {% if theme_settings
     %} {% if theme_settings.js_list %} {%for js in theme_settings.js_list %}
     <script type="text/javascript" src="{{js.js_file}}"></script>
-    {%endfor%} {% endif %} {%if theme_settings.page_js%}
+    {%endfor%} {% endif %} {%if theme_settings and theme_settings.page_js%}
     <script type="text/javascript">
-      {
-        {
-          theme_settings.page_js;
-        }
-      }
+      eval(`{{ theme_settings.page_js | safe }}`);
     </script>
     {%endif%} {% endif %}
 

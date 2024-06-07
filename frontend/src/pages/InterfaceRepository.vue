@@ -18,7 +18,7 @@
     </div>
     <div class="flex-1 flex" v-if="interFaces?.data?.data?.length">
       <div class="w-full">
-        <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="p-4 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           <div
             class="rounded-md shadow-md"
             v-for="temp in interFaces.data.data"
@@ -36,9 +36,18 @@
             >
               <span class="img-bg h-60 block relative overflow-hidden">
                 <span
+                  v-if="temp.image_preview"
                   class="img-skin rounded-t-md h-full bg-cover w-full bg-no-repeat absolute transition-all"
-                  v-bind:style="{
-                    'background-image': 'url(' + temp.image_preview + ')',
+                  :style="{
+                    backgroundImage: `url('${temp.image_preview}')`,
+                  }"
+                >
+                </span>
+                <span
+                  v-else
+                  class="img-skin rounded-t-md h-full bg-cover w-full bg-no-repeat absolute transition-all"
+                  :style="{
+                    backgroundImage: `url('${noImage}')`,
                   }"
                 >
                 </span>
@@ -87,6 +96,7 @@
 </template>
 
 <script setup>
+import noImage from '@/assets/images/no_image.jpg'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import ViewControls from '@/components/ViewControls.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'

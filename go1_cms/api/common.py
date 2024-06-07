@@ -115,6 +115,24 @@ def copy_footer_component(name, sub_name):
     return doc_footer_comp.name
 
 
+def copy_web_theme(name, sub_name, cp_header, cp_footer):
+    target_doc = None
+    web_theme = frappe.new_doc("Web Theme")
+    web_theme = get_mapped_doc("Web Theme", name,	{
+        "Web Theme": {
+            "doctype": "Web Theme"
+        },
+    }, target_doc, ignore_permissions=True)
+    web_theme.name = name + ' ' + sub_name
+    web_theme.default_header = cp_header
+    web_theme.default_footer = cp_footer
+    web_theme.is_active = 0
+    web_theme.container_width = ''
+    web_theme.save(ignore_permissions=True)
+    # frappe.db.commit()
+    return web_theme.name
+
+
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
         'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',

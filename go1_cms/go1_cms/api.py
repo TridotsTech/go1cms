@@ -694,8 +694,16 @@ def update_website_context(context):
             context.csrf_token = frappe.local.session.data.csrf_token
         else:
             context.csrf_token = ''
-        theme_list = frappe.get_all(
-            "Web Theme", filters={"is_active": 1}, fields=['*'])
+        # get theme
+        if context.doc and context.doc.web_client_id:
+            cl_web = frappe.get_all(
+                "MBW Client Website", filters={"name": context.doc.web_client_id}, fields=['web_theme'])
+            if cl_web:
+                theme_list = frappe.get_all(
+                    "Web Theme", filters={"name": cl_web[0].web_theme}, fields=['*'])
+        else:
+            theme_list = frappe.get_all(
+                "Web Theme", filters={"is_active": 1}, fields=['*'])
         if not theme_list:
             theme_list = frappe.get_all(
                 "Web Theme", fields=['*'], order_by='creation desc')
@@ -1092,7 +1100,25 @@ def update_website_themes(doc):
     # if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
     # 	update_themes = 0
     if update_themes == 1:
-        themes = frappe.db.get_all("Web Theme")
+        my_filter = {}
+        if doc.doctype == "Header Component":
+            my_filter['default_header'] = doc.name
+        elif doc.doctype == "Footer Component":
+            my_filter['default_footer'] = doc.name
+        elif doc.doctype == "Web Page Builder":
+            if doc.web_client_id:
+                cl_web = frappe.get_all(
+                    "MBW Client Website", filters={"name": doc.web_client_id}, fields=['web_theme'])
+                if cl_web:
+                    my_filter['name'] = cl_web[0].web_theme
+            else:
+                my_filter['is_active'] = 1
+
+        themes = frappe.db.get_all(
+            "Web Theme",
+            filters=my_filter,
+            fields=['name']
+        )
         for x in themes:
             theme = frappe.get_doc("Web Theme", x.name)
             theme.save(ignore_permissions=True)
