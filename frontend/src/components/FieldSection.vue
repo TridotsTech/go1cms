@@ -122,7 +122,7 @@
           name: field.field_key,
           type: getTypeField(field.field_type),
           placeholder: field.field_label,
-          rows: 7,
+          classSize: field.classSize,
         }"
         :imgPreview="field['content']"
         v-model="field['upload_file_image']"
@@ -138,6 +138,7 @@
           doctype: field.doctype,
           filters: field.filters,
           options: field.options,
+          labelInput: field.label_input,
         }"
         v-model="field['content']"
       ></Field>

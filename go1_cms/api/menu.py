@@ -125,8 +125,11 @@ def delete_menu(name):
         frappe.delete_doc('Menu', name)
         result = {'name': name}
         return result
-    except frappe.LinkExistsError as ex:
-        frappe.clear_last_message()
-        frappe.throw(_("Menu này đã được liên kết, không thể xóa."))
     except Exception as ex:
-        frappe.throw(_(f"Lỗi: {str(ex)}"))
+        frappe.clear_last_message()
+        if type(ex) == frappe.LinkExistsError:
+            frappe.throw(_("Menu này đã được liên kết, không thể xóa."))
+        elif type(ex) == frappe.DoesNotExistError:
+            frappe.throw(str(ex), type(ex))
+        else:
+            frappe.throw('Lỗi hệ thống')

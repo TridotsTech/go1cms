@@ -129,7 +129,7 @@ frappe.ui.form.on("Web Page Builder", {
         frappe.db.get_doc("CMS Settings", "CMS Settings", {}).then((res) => {
           if (res.use_other_domain == 1) {
             window.open(
-              res.domain + "/p/" + frm.doc.route,
+              res.domain + "/" + frm.doc.route,
               "_blank" // <- This is what makes it open in a new window.
             );
           } else {

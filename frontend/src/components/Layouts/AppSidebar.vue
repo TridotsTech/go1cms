@@ -217,7 +217,7 @@ const allViews = computed(() => {
         {
           label: 'Thiết lập website',
           icon: SettingsIcon,
-          to: 'Setup Website',
+          to: 'Website Setup',
         },
         // {
         //   label: 'Giao diện',

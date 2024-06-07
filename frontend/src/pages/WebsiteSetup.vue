@@ -34,14 +34,14 @@
       <ErrorMessage :message="msgError" />
     </div>
     <div
-      v-if="_domain?.fields_cp && _domain?.fields_cp.length"
+      v-if="_webSetup?.fields_cp && _webSetup?.fields_cp.length"
       class="p-4 border border-gray-300 rounded-sm mb-4"
     >
       <div class="p-2">
         <div class="mb-4">
           <h2 class="font-bold text-xl">Thông tin chung</h2>
         </div>
-        <div v-for="(field, idx) in _domain?.fields_cp" :key="field.name">
+        <div v-for="(field, idx) in _webSetup?.fields_cp" :key="field.name">
           <div v-if="field.allow_edit" class="border-t py-4">
             <div class="mb-4">
               <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
@@ -85,13 +85,15 @@ import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
 
-const breadcrumbs = [{ label: 'Cấu hình tên miền', route: { name: 'Domain' } }]
-const _domain = ref({})
+const breadcrumbs = [
+  { label: 'Thiết lập website', route: { name: 'Website Setup' } },
+]
+const _webSetup = ref({})
 const msgError = ref()
 
 // get detail
-const domain = createResource({
-  url: 'go1_cms.api.domain.get_info_domain',
+const webSetup = createResource({
+  url: 'go1_cms.api.web_setup.get_setup',
   method: 'GET',
   auto: true,
   transform: (data) => {
@@ -103,7 +105,7 @@ const domain = createResource({
       })
     })
 
-    _domain.value = JSON.parse(JSON.stringify(data))
+    _webSetup.value = JSON.parse(JSON.stringify(data))
     return data
   },
   onError: (err) => {
@@ -119,14 +121,7 @@ const domain = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  if (_domain.value?.fields_cp) {
-    let allow_edit = false
-    if (_domain.value?.fields_cp[0].fields[0].content) {
-      allow_edit = true
-    }
-    _domain.value.fields_cp[0].fields[1].allow_edit = allow_edit
-  }
-  return JSON.stringify(domain.data) !== JSON.stringify(_domain.value)
+  return JSON.stringify(webSetup.data) !== JSON.stringify(_webSetup.value)
 })
 
 watch(dirty, (val) => {
@@ -136,14 +131,49 @@ watch(dirty, (val) => {
 async function callUpdateDoc() {
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    let data = JSON.parse(JSON.stringify(_domain.value))
+    let data = JSON.parse(JSON.stringify(_webSetup.value))
 
-    let docUpdate = await call('go1_cms.api.domain.update_info_domain', {
+    // upload image
+    for (const [idx_cp, field] of _webSetup.value.fields_cp.entries()) {
+      for (const [idx_f, f] of field.fields.entries()) {
+        if (f.group_name) {
+          for (const [idx, f_st] of f.fields.entries()) {
+            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+              // upload file
+              let file_url = await uploadFile(
+                'Web Theme',
+                _webSetup.value.docname,
+                f_st.field_key,
+                f_st.content,
+                f_st.upload_file_image
+              )
+              data['fields_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+                'content'
+              ] = file_url
+            }
+          }
+        } else {
+          if (f.field_type == 'Attach' && f.upload_file_image) {
+            // upload file
+            let file_url = await uploadFile(
+              'Web Theme',
+              _webSetup.value.docname,
+              f.field_key,
+              f.content,
+              f.upload_file_image
+            )
+            data['fields_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+          }
+        }
+      }
+    }
+
+    let docUpdate = await call('go1_cms.api.web_setup.update_setup', {
       data: data,
     })
 
     if (docUpdate.name) {
-      domain.reload()
+      webSetup.reload()
 
       createToast({
         title: 'Cập nhật thành công',
@@ -163,6 +193,6 @@ async function callUpdateDoc() {
 }
 
 async function cacelSaveDoc() {
-  await domain.reload()
+  await webSetup.reload()
 }
 </script>

@@ -35,9 +35,9 @@ const routes = [
     component: () => import('@/pages/Domain.vue'),
   },
   {
-    path: '/setup_website',
-    name: 'Setup Website',
-    component: () => import('@/pages/SetupWebsite.vue'),
+    path: '/website_setup',
+    name: 'Website Setup',
+    component: () => import('@/pages/WebsiteSetup.vue'),
   },
   {
     path: '/dashboard',

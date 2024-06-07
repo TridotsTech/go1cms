@@ -41,7 +41,7 @@
    "options": "Field Types Property"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "enable_go1_builder",
    "fieldtype": "Check",
    "label": "Enable Go1 CMS Builder"
@@ -78,7 +78,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-10-06 13:14:04.149793",
+ "modified": "2024-06-07 14:38:48.265773",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",
@@ -97,5 +97,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

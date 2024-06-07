@@ -260,9 +260,10 @@ const post = createResource({
   },
   auto: true,
   transform: (data) => {
+    data.published = data.published == 1
+    data.upload_file_image = null
     _post.value = {
       ...data,
-      upload_file_image: null,
     }
     return data
   },
@@ -288,10 +289,7 @@ const post = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  return (
-    JSON.stringify({ ...post.data, upload_file_image: null }) !==
-    JSON.stringify(_post.value)
-  )
+  return JSON.stringify(post.data) !== JSON.stringify(_post.value)
 })
 
 watch(dirty, (val) => {

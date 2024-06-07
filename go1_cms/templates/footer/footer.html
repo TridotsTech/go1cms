@@ -73,12 +73,14 @@
 												{% for ft_lc in m_sec_item.get('list') %}
 												<div class="mb-6">
 													<div class="" style="display:flex;gap:5px;">
-														<img class="bg-red-800 rounded-sm p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
-														<p class="text-base">
-															{{ft_lc.title}}
-														</p>
+														<img class="bg-red-900 rounded p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
+														<div>
+															<p class="text-base mb-2">
+																{{ft_lc.title}}
+															</p>
+															<div class="text-sm">{{ft_lc.content}}</div>
+														</div>
 													</div>
-													<div class="text-sm">{{ft_lc.content}}</div>
 												</div>
 												{% endfor %}
 	                                	 	</div>

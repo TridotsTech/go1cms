@@ -117,7 +117,10 @@
     v-model="data"
   >
     <template #preview>
-      <div class="border h-48 max-w-48 p-2 flex justify-center">
+      <div
+        class="border p-2 flex justify-center"
+        :class="field.classSize ? field.classSize : 'h-48 max-w-48'"
+      >
         <ImageEmptyIcon
           :class="data || imgPreview ? 'hidden' : ''"
           class="text-gray-400 h-full w-full"
