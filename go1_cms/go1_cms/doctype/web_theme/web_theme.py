@@ -134,7 +134,7 @@ def generate_webtheme_css_file(path, sitename, self):
             header_template = frappe.get_template(
                 "templates/includes/header.css")
             header_css = header_template.render(
-                {'header_settings': doc_obj.header_settings})
+                {'header_settings': doc_obj.header_settings, 'mobile_width': doc_obj.mobile_width})
             global_header_css = header_css
             is_custom_header = 1
         if doc_obj.default_footer:
@@ -286,13 +286,17 @@ def generate_webtheme_css_file(path, sitename, self):
                 "is_private": 1,
             })
         # frappe.log_error(webtheme_css,"<< webtheme_css >>")
+        if webtheme_css and doc_obj.page_css_jinja:
+            webtheme_css += frappe.render_template(
+                doc_obj.page_css_jinja, {'doc': doc_obj})
+
         if webtheme_css:
             with open(os.path.join(path, (css_file_name)), "w") as f:
                 f.write(minify_string(webtheme_css))
         fpath = os.path.join(path, (css_file_name))
         if self.file_path != fpath:
             frappe.db.set_value('Web Theme', self.name, 'file_path', fpath)
-    except Exception:
+    except Exception as ex:
         frappe.log_error(frappe.get_traceback(
         ), "go1_cms.go1_cms.doctype.web_theme.web_theme.generate_webtheme_css_file")
 

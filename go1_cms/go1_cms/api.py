@@ -591,15 +591,15 @@ def get_page_builder_data(page, customer=None, application_type="mobile", busine
 
 def get_header_info(header_id):
     header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=[
-        'is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top', 'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button',  'is_transparent_header', 'sticky_header_background', 'menu_text_color', 'template_header', 'active_button', 'button_text', 'sub_text', 'icon_button', 'show_btn_text', 'show_sub_text', 'show_icon_btn', 'button_link', 'link_target', 'use_action', 'active_button_2', 'button_text_2', 'sub_text_2', 'icon_button_2', 'show_btn_text_2', 'show_sub_text_2', 'show_icon_btn_2', 'button_link_2', 'link_target_2', 'use_action_2', 'active_button_3', 'button_text_3', 'sub_text_3', 'icon_button_3', 'show_btn_text_3', 'show_sub_text_3', 'show_icon_btn_3', 'button_link_3', 'link_target_3', 'use_action_3', 'active_button_4', 'button_text_4', 'sub_text_4', 'icon_button_4', 'show_btn_text_4', 'show_sub_text_4', 'show_icon_btn_4', 'button_link_4', 'link_target_4', 'use_action_4',
+        'is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top', 'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button',  'is_transparent_header', 'sticky_header_background', 'menu_text_color', 'template_header', 'active_button', 'button_text', 'sub_text', 'icon_button', 'show_btn_text', 'show_sub_text', 'show_icon_btn', 'button_link', 'link_target', 'use_action', 'active_button_2', 'button_text_2', 'sub_text_2', 'icon_button_2', 'show_btn_text_2', 'show_sub_text_2', 'show_icon_btn_2', 'button_link_2', 'link_target_2', 'use_action_2', 'active_button_3', 'button_text_3', 'sub_text_3', 'icon_button_3', 'show_btn_text_3', 'show_sub_text_3', 'show_icon_btn_3', 'button_link_3', 'link_target_3', 'use_action_3', 'active_button_4', 'button_text_4', 'sub_text_4', 'icon_button_4', 'show_btn_text_4', 'show_sub_text_4', 'show_icon_btn_4', 'button_link_4', 'link_target_4', 'use_action_4', 'menu_item_spacing'
     ])
     if header_list:
         path = frappe.utils.get_files_path()
         if os.path.exists(os.path.join(path, 'data_source', (header_id.lower().replace(' ', '_') + '_web.json'))):
+            lists = []
             with open(os.path.join(path, 'data_source', (header_id.lower().replace(' ', '_') + '_web.json'))) as f:
                 data = json.loads(f.read())
                 from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
-                lists = []
                 for item in data:
                     if item.get('section_type') == "Menu":
                         page_st = frappe.get_value(
@@ -620,7 +620,11 @@ def get_header_info(header_id):
                                                                         "parent_menu": sub_menu.menu_id, "menu_id": menu[0].name}, as_dict=1)
                             item["menus"] = parent_menus
                     lists.append(item)
-            header_list[0].items = lists
+            if lists:
+                header_list[0].items = sorted(
+                    lists, key=lambda d: d['column_index'])
+            else:
+                header_list[0].items = []
             if header_list[0].enable_top_menu == 1:
                 left_items = frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""", {
                                            "menu_id": header_id}, as_dict=1)
@@ -646,7 +650,7 @@ def get_header_info(header_id):
 
 def get_footer_info(footer_id):
     footer_list = frappe.db.get_all("Footer Component", filters={"name": footer_id}, fields=[
-                                    'title', 'enable_link_icon', 'layout_json', 'enable_copyright', 'copyright_layout', 'fc_ct_type', 'cp_fc_alignment', 'sc_ct_type', 'cp_sc_alignment', 'cp_fc_content', 'cp_sc_content'])
+                                    'title', 'enable_link_icon', 'layout_json', 'enable_copyright', 'copyright_layout', 'fc_ct_type', 'cp_fc_alignment', 'sc_ct_type', 'cp_sc_alignment', 'cp_fc_content', 'cp_sc_content', 'active_border_top'])
     if footer_list:
         path = frappe.utils.get_files_path()
         with open(os.path.join(path, 'data_source', (footer_id.lower().replace(' ', '_') + '_web.json'))) as f:
@@ -695,7 +699,7 @@ def update_website_context(context):
         else:
             context.csrf_token = ''
         # get theme
-        if context.doc and context.doc.web_client_id:
+        if context.doc and context.doc.doctype == "Web Page Builder" and context.doc.web_client_id:
             cl_web = frappe.get_all(
                 "MBW Client Website", filters={"name": context.doc.web_client_id}, fields=['web_theme'])
             if cl_web:
@@ -784,13 +788,23 @@ def update_website_context(context):
                 if context.doc.edit_header_style:
                     if context.header and context.doc.is_transparent_header:
                         context.header.is_transparent_header = 1
-
+        footer_items = []
         if context.footer:
             for sec_item in context.footer.get('items'):
-                for m_sc_items in sec_item.get("items"):
-                    if m_sc_items.get('section_name') == "Mbw Policy":
-                        context.theme_settings.mbw_policy = m_sc_items.get(
+                d = sec_item.copy()
+                items = []
+                for m_sec_item in sec_item.get("items"):
+                    if m_sec_item.get('section_name') == "Mbw Policy":
+                        context.theme_settings.mbw_policy = m_sec_item.get(
                             'policy')
+                    if m_sec_item.get('web_template'):
+                        m_sec_item['web_template'] = frappe.render_template(
+                            m_sec_item.get('web_template'), {'m_sec_item': m_sec_item, 'theme_settings': context.theme_settings, 'footer': context.footer})
+                    if m_sec_item.get('section_name') not in ['Mbw Policy', 'Social Links']:
+                        items.append(m_sec_item)
+                d['items'] = items
+                footer_items.append(d)
+        context.footer_items = footer_items
         get_device_type(context)
         if context.header.template_header:
             context.template_header = f"/templates/header/{TEMPLATE_HEADER[context.header.template_header]}"

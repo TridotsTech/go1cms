@@ -14,7 +14,7 @@
               </template>
               <th class="border p-2 min-w-32"></th>
             </tr>
-            <template v-if="field.content.length">
+            <template v-if="field.content?.length">
               <Draggable
                 :list="field.content"
                 @end="applySort(field)"
@@ -73,7 +73,7 @@
               <tr class="border">
                 <td
                   class="p-3 text-center text-base text-gray-600"
-                  :colspan="field.fields_json.length + 2"
+                  :colspan="field.fields_json?.length + 2"
                 >
                   Không có dữ liệu
                 </td>
@@ -193,7 +193,7 @@ function createItemSection(field) {
     field_key: 'idx',
     field_type: 'number',
     disabled: true,
-    value: field.content.length + 1,
+    value: field.content?.length + 1,
   })
 
   editMode.value = false

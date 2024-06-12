@@ -62,6 +62,46 @@
       href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"
       rel="stylesheet"
     />
+    <style>
+      /* custom back to top */
+      .btn-fixed {
+        z-index: 98;
+        position: fixed;
+        bottom: 80px;
+        right: 40px;
+      }
+      .btn-fixed-1 {
+        display: none;
+      }
+      .btn-back-to-top {
+        display: none;
+        height: 30px;
+        width: 30px;
+        align-items: center;
+        justify-content: center;
+        background-color: #dc3545;
+        border-radius: 0.5;
+        border: 1px solid #dc3545;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        user-select: none;
+        color: white;
+        font-size: 20px;
+      }
+      .btn-back-to-top:hover {
+        color: white;
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+      }
+      .btn-back-to-top:focus {
+        color: white;
+        outline: 0;
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+        box-shadow: 0 0 0 0.25rem rgba(225, 83, 97, 0.5);
+      }
+      /* custom back to top */
+    </style>
     {% if theme_settings %} {% if theme_settings.css_list %} {%for css in
     theme_settings.css_list%}
     <link rel="stylesheet" type="text/css" href="{{css.css_file}}" />
@@ -150,10 +190,34 @@
     ></script>
   </head>
   <body class="{{p_route}}">
-    {% if header %} {% include template_header %} {% endif %} {% block content
-    %} {% endblock %}{% block page_content %} {% endblock %} {% if footer %} {%
-    include "templates/footer/footer.html" %} {% endif %} {% if theme_settings
-    %} {% if theme_settings.js_list %} {%for js in theme_settings.js_list %}
+    {% if header %} {% include template_header %} {% endif %}
+    <div>
+      {% block content %} {% endblock %}{% block page_content %} {% endblock %}
+      <div class="btn-fixed">
+        {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
+        <button
+          type="button"
+          class="btn p-5 btn-back-to-top"
+          id="btn-back-to-top"
+        >
+          <i class="fa-solid fa-angle-up"></i>
+        </button>
+        {% endif %}
+      </div>
+      <div class="btn-fixed-1">
+        <button
+          type="button"
+          class="btn p-5 btn-back-to-top-1 flex"
+          id="btn-back-to-top-1"
+        >
+          <i class="fa-solid fa-angle-up"></i>
+        </button>
+      </div>
+    </div>
+
+    {% if footer %} {% include "templates/footer/footer.html" %} {% endif %} {%
+    if theme_settings %} {% if theme_settings.js_list %} {%for js in
+    theme_settings.js_list %}
     <script type="text/javascript" src="{{js.js_file}}"></script>
     {%endfor%} {% endif %} {%if theme_settings and theme_settings.page_js%}
     <script type="text/javascript">
@@ -176,13 +240,13 @@
         padding: {
           DEFAULT: 'calc(1.5rem * 0.5)',
         },
-        screens: {
-          sm: '576px',
-          md: '768px',
-          lg: '992px',
-          xl: '1200px',
-          '2xl': '1400px',
-        },
+      },
+      screens: {
+        sm: '576px',
+        md: '768px',
+        lg: '992px',
+        xl: '1200px',
+        '2xl': '1400px',
       },
     },
     plugins: [
@@ -254,7 +318,6 @@
             }
             allow_scroll = false;
             page = page + 1;
-            // page_len = page_len + 3
             $.ajax({
                 type: 'POST',
                 Accept: 'application/json',
@@ -330,22 +393,14 @@
         }
     })
     }
-
+        // btn to top 1
+        let mybutton = document.getElementById("btn-back-to-top-1");
+        if (mybutton) {
+            mybutton.addEventListener("click", backToTop);
+        }
         function scrollFunction() {
-            // console.log("working")
             {% if p_route %}
             {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
-            if (!(typeof (document.getElementById('btn-back-to-top')) == "object") || !document.getElementById('btn-back-to-top')) {
-                $(".{{p_route}}").append(`<button type="button"
-                    class="btn btn-danger btn-floating btn-lg p-5" id="btn-back-to-top">
-                    <i class="fas fa-arrow-up"></i>
-                    </button>`)
-                    $("#btn-back-to-top").css({"z-index": "9999","position": "fixed","bottom":"20px","right":"20px","display":"none","height":"30px",
-                    "width": "30px",
-                    "align-items": "center",
-                    "justify-content":"center"})
-            }
-            // console.log(typeof (document.getElementById('btn-back-to-top')) == "object", "document.getElementById('btn-back-to-top')")
             let mybutton = document.getElementById("btn-back-to-top");
             if (mybutton) {
                 {% if theme_settings.back_to_top %}

@@ -64,7 +64,10 @@ class MBWClientWebsite(Document):
 
     def validate(self):
         try:
-            doc_self_old = frappe.get_doc('MBW Client Website', self.name)
+            if frappe.db.exists('MBW Client Website', self.name):
+                doc_self_old = frappe.get_doc('MBW Client Website', self.name)
+            else:
+                doc_self_old = frappe._dict({})
             # check status web
             if doc_self_old.type_web != self.type_web and self.type_web == 'Bản chính':
                 existing_list = frappe.db.get_all(
@@ -92,11 +95,10 @@ class MBWClientWebsite(Document):
                     doc.published = self.published
                     doc.save()
 
-            if doc_self_old.type_web != self.type_web or doc_self_old.route_web == None:
+            if doc_self_old.type_web != self.type_web or not doc_self_old.route_web:
                 """ check published, set route page, update menu """
                 router_menu_draft = "/template_" + frappe.scrub(
                     self.name)
-
                 for item in self.page_websites:
                     route_template = ""
                     doc = frappe.get_doc('Web Page Builder', item.page_id)
@@ -145,7 +147,7 @@ class MBWClientWebsite(Document):
             route_web = ''
             if self.type_web == 'Bản chính' and self.page_websites:
                 route_web = self.page_websites[0].route_template
-            else:
+            elif self.page_websites:
                 route_web = '/template_' + frappe.scrub(
                     self.name) + self.page_websites[0].route_template
             self.route_web = route_web or ''

@@ -1,5 +1,16 @@
 
 {% if footer_settings %}
+.{{page_route}} .footer__container {
+    {% if footer_settings.background_color %}
+        background-color:{{footer_settings.background_color}};
+    {% endif %}
+}
+{% if footer_settings.active_border_top %}
+.border_image_top {
+    background-image: url('{{ footer_settings.border_image_top }}');
+    height: {{ footer_settings.height_border_top }};
+}
+{% endif %}
 .{{page_route}} .go1-cms-footer{
     /* footer property */
     {% if footer_settings.background_color %}
@@ -111,12 +122,12 @@
 {%endif%}
 .{{page_route}} .go1-cms-footer a span:hover{
     {% if footer_settings.link_hover_color %}
-        color: {{footer_settings.link_hover_color}} !important;
+        color: {{footer_settings.link_hover_color}};
     {% endif %}  
 }
 .{{page_route}} .go1-cms-footer a:hover{
     {% if footer_settings.link_hover_color %}
-        color: {{footer_settings.link_hover_color}} !important;
+        color: {{footer_settings.link_hover_color}};
     {% endif %}  
 }
 .{{page_route}} .go1-cms-footer-title{
@@ -142,22 +153,23 @@
 }
 
 {% if footer_settings.enable_copyright %}
-
+.{{page_route}} .go1-cms-footer-copyright {
+    {% if footer_settings.cr_bg_color %}
+        background-color:{{footer_settings.cr_bg_color}};
+    {% endif %}
+}
 .{{page_route}} .go1-cms-copyright-content{
+    {% if footer_settings.copyright_vertical_padding %}
+    padding:{{footer_settings.copyright_vertical_padding}} 0px;
+    {% endif %}
     {% if footer_settings.copyright_font_size %}
         font-size: {{footer_settings.copyright_font_size}};
     {% endif %}
     {% if footer_settings.enable_footer_border %}
         border-top:1px solid {{footer_settings.footer_border_color}};
     {% endif %}
-    {% if footer_settings.copyright_vertical_padding %}
-        padding:{{footer_settings.copyright_vertical_padding}} 0px;
-    {% endif %}
     {% if footer_settings.cp_text_color %}
         color: {{footer_settings.cp_text_color}};
-    {% endif %}
-    {% if footer_settings.cr_bg_color %}
-        background-color:{{footer_settings.cr_bg_color}};
     {% endif %}
 }
 .{{page_route}} .go1-cms-copyright-fc-content{

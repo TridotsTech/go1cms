@@ -20,6 +20,9 @@
   "background_color",
   "footer_bg_image",
   "text_color",
+  "active_border_top",
+  "height_border_top",
+  "border_image_top",
   "column_break_5",
   "link_color",
   "link_hover_color",
@@ -378,7 +381,7 @@
    "fieldname": "fc_ct_type",
    "fieldtype": "Select",
    "label": "First Column Content Type",
-   "options": "Custom\nSocial Links"
+   "options": "Custom\nSocial Links\nMbw Policy"
   },
   {
    "default": "Left",
@@ -441,11 +444,30 @@
    "fieldname": "enable_link_icon",
    "fieldtype": "Check",
    "label": "Enable Icon For Link"
+  },
+  {
+   "default": "20px",
+   "depends_on": "eval:doc.active_border_top==1",
+   "fieldname": "height_border_top",
+   "fieldtype": "Data",
+   "label": "Height Border Top"
+  },
+  {
+   "depends_on": "eval:doc.active_border_top==1",
+   "fieldname": "border_image_top",
+   "fieldtype": "Attach Image",
+   "label": "Border Image Top"
+  },
+  {
+   "default": "0",
+   "fieldname": "active_border_top",
+   "fieldtype": "Check",
+   "label": "Active Border Top"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-10 08:28:45.659522",
+ "modified": "2024-06-12 08:38:09.909459",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",

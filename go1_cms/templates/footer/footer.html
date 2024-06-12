@@ -1,268 +1,154 @@
 <div class="footer">
-	<div class="f2 footer__container go1-cms-footer">
-		<div class="container">
-		 {%if footer.layout_json_data%}
-            <div class="d__flex enable-mobile-footer" style="align-items: flex-start;">
-                {%for col in footer.layout_json_data%}
-             
-                  {%if col.columns%}
-                    {%for each_col in col.columns%}
-                    {%set col_index = loop.index %}
-                        <div style="width: {{each_col.width}}" class="footer_sec">
-                            {%for sec_item in footer.get("items")%}
-							{%if col_index == (sec_item.column_index+1) %}
-							{%for m_sec_item in sec_item.get("items")%}
-									<!-- newly added -->
-									{%if m_sec_item.section_name=="Footer Contact"%}
-										<div class="footer_p_b mr-4 mb-6">
-											<div class="{{m_sec_item.class_name}}">
-												<div class="footer-contact-sub-container" style="display:flex;flex-direction: column;">
-													<div class="title-div mb-2" style="display:flex;gap:5px;">
-														{%if m_sec_item.logo%}
-															<img   class="title__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="{{m_sec_item.logo}}" />
-														{% endif %}
-														<span  class="go1-cms-footer-title">{{m_sec_item.title}}</span>
-													</div>
-													<div class="border_line"></div>
-													{%if m_sec_item.phone_no%}
-													<div class="phone-div py-3 items-center" style="display:flex;gap:5px;">
-															<img   class="phone__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_phone.svg" />
-															<p class="phone_content m-0">
-																{{m_sec_item.phone_no}}
-															</p>
-													</div>
-													{%endif%}
-													{%if m_sec_item.email_id%}
-														<div class="email-div py-3 items-center" style="display:flex;gap:5px;">
-															<img   class="email__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_email.svg" />
-															<p class="email_content m-0">
-																{{m_sec_item.email_id}}
-															</p>
-														</div>
-													{%endif%}
-													{%if m_sec_item.address_content%}
-														<div class="address-div py-3 items-center" style="display:flex;gap:5px;">
-															<img   class="address__logo" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/icon_global.svg" />
-															<p class="address_content m-0">
-																{{m_sec_item.address_content}}
-															</p>
-														</div>
-													{%endif%}
-												</div>
-											</div>
-										</div>
-									{%endif%}
-									<!-- end -->
-	                                	 {%if m_sec_item.section_name=="Footer About"%}
-	                                	 <div class="footer_p_b mr-4 mb-6">
-	                                	 	<div class="{{m_sec_item.class_name}}">
-												<div>
-													<img class="home__logo rounded-lg" style="max-height: 60px;" src="{{m_sec_item.logo}}" />
-												</div>
-												<div>
-													<div class="about_content text-lg">
-														{{m_sec_item.content}}
-													</div>
-												</div>
-	                                	 	</div>
-	                                	 	</div>
-	                                	 {%endif%}
-										 {%if m_sec_item.section_name=="Footer Location MBW"%}
-	                                	 <div class="footer_p_b mr-4 mb-6">
-	                                	 	<div class="{{m_sec_item.class_name}}">
-												{% for ft_lc in m_sec_item.get('list') %}
-												<div class="mb-6">
-													<div class="" style="display:flex;gap:5px;">
-														<img class="bg-red-900 rounded p-1" style="max-height: 20px;width: 20px;max-width: 20px" src="/assets/go1_cms/images/Vectorlocation_1.png" />
-														<div>
-															<p class="text-base mb-2">
-																{{ft_lc.title}}
-															</p>
-															<div class="text-sm">{{ft_lc.content}}</div>
-														</div>
-													</div>
-												</div>
-												{% endfor %}
-	                                	 	</div>
-	                                	 	</div>
-	                                	 {%endif%}
-										 {%if m_sec_item.section_name=="Social Links MBW"%}
-										 <div class="footer_p_b mr-4 mb-6">
-											<div class="{{m_sec_item.class_name}} flex flex-wrap items-center">
-												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
-													<a href="{{ m_sec_item.link_yt }}">
-														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
-															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_ytb.png" />
-														</div>
-													</a>
-												</div>
-												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
-													<a href="{{ m_sec_item.link_fb }}">
-														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
-															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_fb.png" />
-														</div>
-													</a>
-												</div>
-												<div class="mb-6 mr-4 rounded-sm hover:bg-red-600">
-													<a href="{{ m_sec_item.link_in }}">
-														<div class="flex justify-center items-center" style="height: 30px;width: 30px;max-width: 30px">
-															<img class="rounded-sm p-1" src="/assets/go1_cms/images/Vectoricon_in.png" />
-														</div>
-													</a>
-												</div>
-											</div>
-											<div>
-												<iframe class="rounded-sm" src="https://www.facebook.com/plugins/page.php?href={{ m_sec_item.link_embed }}&tabs=timeline&width=220&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="220" height="130" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
-											</div>
-										</div>
-										 {% endif %}
-	                                	 {%if m_sec_item.section_name=="Menu"%}
-	                                	 <div class="footer_p_b mr-4 mb-6">
-	                                	 	<div class="{{m_sec_item.class_name}}">
-												<div class="flex mb-2">
-													<span  class="go1-cms-footer-title">{{m_sec_item.title}}</span>
-												</div>
-	                                	 		<div class="border_line"></div>
-	                                	 		{%for menu_item in m_sec_item.menus%}
-		                                	 		<div  class="d__flex" style="align-items: flex-start;"><a href="{{menu_item.redirect_url}}" class="d__flex go1-cms-footer-text m-0 text-base">
-		                                	 		{%if footer.enable_link_icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>{%endif%}
-		                                	 		<span>{{menu_item.menu_label}}</span></a></div>
-		                                	 	{%endfor%}
-	                                	 	</div>
-	                                	 	</div>
-	                                	 {%endif%}
-	                                	 {%if m_sec_item.section_name=="Social Links"%}
-	                                	 	<!-- <span  class="go1-cms-footer-title">Social Media</span> -->
-	                                	 	<span  class="go1-cms-footer-title"></span>
-		                                	 		<ul  class="d__flex" style="gap:10px">
+	<div class="f2 footer__container">
+		{% if footer.active_border_top %}
+		<div class="bg-contain bg-repeat border_image_top"></div>
+		{% endif %}
+		<div class="go1-cms-footer">
+			<div class="container">
+			 {%if footer.layout_json_data%}
+				<div class="d__flex enable-mobile-footer gap-6" style="align-items: flex-start;">
+					{%for col in footer.layout_json_data%}
+				 
+					  {%if col.columns%}
+						{%for each_col in col.columns%}
+						{%set col_index = loop.index %}
+							<div style="width: {{each_col.width}}" class="footer_sec">
+								{%for sec_item in footer_items%}
+								{%if col_index == (sec_item.column_index+1) %}
+									{%for m_sec_item in sec_item.get("items")%}
+										{{ m_sec_item.web_template }}
+										{%if m_sec_item.section_name=="Footer Contact"%}
 
-	                                	 	{%for menu_item in theme_settings.social_links%}
-	                                	 	<li>
-		                                	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
-		                                	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
-		                                	 		<span>{{menu_item.social_type}}</span>
-		                                	 		{%else%}
-		                                	 			<img src="{{menu_item.icon}}" height="35px" />
-		                                	 		{%endif%}
-		                                	 	</a>
-		                                	 </li>
-		                                	 	{%endfor%}
-		                                	 </ul>
-	                                	 {%endif%}
-                                	 {%endfor%}
-                                  {%endif%}
-                             
-                            {%endfor%}
-                        </div>
-                    {%endfor%}
-                  {%endif%}
-                    
-                {%endfor%}
-            </div>
-        {%endif%}
+										{% endif %}
+									{%endfor%}
+								{%endif%}
+								{%endfor%}
+							</div>
+						{%endfor%}
+					  {%endif%}
+						
+					{%endfor%}
+				</div>
+			{%endif%}
+			</div>
 		</div>
 	</div>
 
 </div>
 {%if footer.enable_copyright%}
-<div class="go1-cms-copyright-content">
+<div class="go1-cms-footer-copyright">
 	<div class="container">
-		<div class="d_flex">
-		{%if footer.copyright_layout == "One Column"%}
-			<div class="col-md-12" >
-				<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}{%if footer.cp_fc_alignment=="Center"%}justify-content: center;{%endif%}">
-				{%if footer.fc_ct_type == "Custom" %}
-					<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
-						{{footer.cp_fc_content}}
-					</div>
-				{%endif%}
-				{%if footer.fc_ct_type == "Social Links" %}
-					<ul  class="d__flex" style="gap:10px">
-
-                	 	{%for menu_item in theme_settings.social_links%}
-                	 	<li>
-                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
-                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
-                    	 		<span>{{menu_item.social_type}}</span>
-                    	 		{%else%}
-                    	 			<img src="{{menu_item.icon}}" height="35px" />
-                    	 		{%endif%}
-                    	 	</a>
-                    	 </li>
-                    	 	{%endfor%}
-                    	 </ul>
-				{%endif%}
-			</div>
-		</div>
-		{%else%}
-			<div class="col-md-5" >
-				<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}">
-				{%if footer.fc_ct_type == "Custom" %}
-					<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
-						{{footer.cp_fc_content}}
-					</div>
-				{%endif%}
-				{%if footer.fc_ct_type == "Social Links" %}
-					<ul  class="d__flex" style="gap:10px">
-
-                	 	{%for menu_item in theme_settings.social_links%}
-                	 	<li>
-                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
-                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
-                    	 		<span>{{menu_item.social_type}}</span>
-                    	 		{%else%}
-                    	 			<img src="{{menu_item.icon}}" height="35px" />
-                    	 		{%endif%}
-                    	 	</a>
-                    	 </li>
-                    	 	{%endfor%}
-                    	 </ul>
-				{%endif%}
+		<div class="go1-cms-copyright-content">
+			<div class="d_flex">
+			{%if footer.copyright_layout == "One Column"%}
+				<div class="col-md-12" >
+					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}{%if footer.cp_fc_alignment=="Center"%}justify-content: center;{%endif%}">
+					{%if footer.fc_ct_type == "Custom" %}
+						<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
+							{{footer.cp_fc_content}}
+						</div>
+					{%elif footer.sc_ct_type == "Social Links" %}
+						<ul  class="d__flex" style="gap:10px">
+							 {%for menu_item in theme_settings.social_links%}
+							 <li>
+								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+									{%if not menu_item.icon%}
+									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+									<span>{{menu_item.social_type}}</span>
+									{%else%}
+										<img src="{{menu_item.icon}}" height="35px" />
+									{%endif%}
+								 </a>
+							 </li>
+							{%endfor%}
+						</ul>
+					{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% if theme_settings.mbw_policy %}
+							<ul>
+								{%for menu_item in theme_settings.mbw_policy%}
+								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+								{% endfor %}
+							</ul>
+						{%endif%}
+					{%endif%}
 				</div>
 			</div>
-			<div class="col-md" >
-				<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left"%}justify-content: start;{%endif%}">
-
-				{%if footer.sc_ct_type == "Custom" %}
-					<div class="go1-cms-copyright-sc-content">
-						{{footer.cp_sc_content}}
+			{%else%}
+				<div class="col-md-5" >
+					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}">
+					{%if footer.fc_ct_type == "Custom" %}
+						<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
+							{{footer.cp_fc_content}}
+						</div>
+					{%elif footer.sc_ct_type == "Social Links" %}
+						<ul  class="d__flex" style="gap:10px">
+							 {%for menu_item in theme_settings.social_links%}
+							 <li>
+								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+									{%if not menu_item.icon%}
+									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+									<span>{{menu_item.social_type}}</span>
+									{%else%}
+										<img src="{{menu_item.icon}}" height="35px" />
+									{%endif%}
+								 </a>
+							 </li>
+							{%endfor%}
+						</ul>
+					{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% if theme_settings.mbw_policy %}
+							<ul>
+								{%for menu_item in theme_settings.mbw_policy%}
+								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+								{% endfor %}
+							</ul>
+						{%endif%}
+					{%endif%}
 					</div>
-				{%endif%}
-				{%if footer.sc_ct_type == "Social Links" %}
-					<ul  class="d__flex" style="gap:10px">
-
-                	 	{%for menu_item in theme_settings.social_links%}
-                	 	<li>
-                    	 			<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
-                    	 		{%if not menu_item.icon%}<i class="fa fa-chevron-right" style="margin-right:5px"></i>
-                    	 		<span>{{menu_item.social_type}}</span>
-                    	 		{%else%}
-                    	 			<img src="{{menu_item.icon}}" height="35px" />
-                    	 		{%endif%}
-                    	 	</a>
-                    	 </li>
-                    	 	{%endfor%}
-                    	 </ul>
-				{% elif footer.sc_ct_type == "Mbw Policy" %}
-				{% if theme_settings.mbw_policy %}
-				<ul>
-					{%for menu_item in theme_settings.mbw_policy%}
-					<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
-					{% endfor %}
-				  </ul>
-				{%endif%}
-				{%endif%}
+				</div>
+				<div class="col-md" >
+					<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left"%}justify-content: start;{%endif%}">
+	
+					{%if footer.sc_ct_type == "Custom" %}
+						<div class="go1-cms-copyright-sc-content">
+							{{footer.cp_sc_content}}
+						</div>
+					{%elif footer.sc_ct_type == "Social Links" %}
+						<ul  class="d__flex" style="gap:10px">
+							 {%for menu_item in theme_settings.social_links%}
+							 <li>
+								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+									{%if not menu_item.icon%}
+									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+									<span>{{menu_item.social_type}}</span>
+									{%else%}
+										<img src="{{menu_item.icon}}" height="35px" />
+									{%endif%}
+								 </a>
+							 </li>
+							{%endfor%}
+						</ul>
+					{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% if theme_settings.mbw_policy %}
+							<ul>
+								{%for menu_item in theme_settings.mbw_policy%}
+								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+								{% endfor %}
+							</ul>
+						{%endif%}
+					{%endif%}
+				</div>
 			</div>
+			{%endif%}
 		</div>
-		{%endif%}
 	</div>
-</div>
+	</div>
 </div>
 {%endif%}
 <style type="text/css">
 	.go1-cms-copyright-content p{margin-bottom: 0;}
 
-	@media (max-width: 767px){
+	@media (max-width: {{ theme_settings.mobile_width }}){
 		.enable-mobile-footer{
 			align-items: flex-start;
 			flex-wrap: wrap;

@@ -110,6 +110,7 @@ class PageSection(Document):
         json_obj['dynamic_data'] = self.dynamic_data
         json_obj['is_full_width'] = self.is_full_width
         json_obj['layout_json'] = self.layout_json
+        json_obj['web_template'] = self.web_template
         if self.section_type == 'Predefined Section' and not self.is_login_required:
             if self.predefined_section == "Recommended Items":
                 # frappe.log_error("rec", "recommended")

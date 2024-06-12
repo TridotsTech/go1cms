@@ -43,6 +43,7 @@
   "buttons_section",
   "buttons_table",
   "general_section",
+  "mobile_width",
   "site_layout",
   "container_width",
   "border_color",
@@ -99,6 +100,7 @@
   "google_fonts",
   "custom_css_section",
   "page_css",
+  "page_css_jinja",
   "column_break_91",
   "page_js",
   "css_section",
@@ -327,6 +329,7 @@
   {
    "fieldname": "page_css",
    "fieldtype": "Long Text",
+   "ignore_xss_filter": 1,
    "label": "Custom Css"
   },
   {
@@ -343,6 +346,7 @@
   {
    "fieldname": "page_js",
    "fieldtype": "Long Text",
+   "ignore_xss_filter": 1,
    "label": "Custom Js"
   },
   {
@@ -693,13 +697,26 @@
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
+  },
+  {
+   "fieldname": "page_css_jinja",
+   "fieldtype": "Long Text",
+   "ignore_xss_filter": 1,
+   "label": "Custom Css Jinja"
+  },
+  {
+   "default": "767px",
+   "fieldname": "mobile_width",
+   "fieldtype": "Data",
+   "label": "Mobile Width"
   }
  ],
  "links": [],
- "modified": "2022-11-28 12:58:55.591025",
+ "modified": "2024-06-11 09:07:20.547913",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {
@@ -715,5 +732,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

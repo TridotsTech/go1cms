@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "FCl-.####",
+ "autoname": "FL-.####",
  "creation": "2022-09-13 13:54:34.601980",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -51,10 +51,11 @@
  "image_field": "preview",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-19 15:22:30.161361",
+ "modified": "2024-06-11 09:58:08.912904",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Layout",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -72,5 +73,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "title"
 }

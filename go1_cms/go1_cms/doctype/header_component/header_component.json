@@ -866,24 +866,28 @@
    "label": "Show Icon Button 3"
   },
   {
+   "depends_on": "eval:doc.call_to_action_button==1",
    "fieldname": "sub_text_4",
    "fieldtype": "Data",
    "label": "Sub Text 4"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
    "fieldname": "show_btn_text_4",
    "fieldtype": "Check",
    "label": "Show Button Text 4"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
    "fieldname": "show_sub_text_4",
    "fieldtype": "Check",
    "label": "Show Sub Text 4"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.call_to_action_button==1",
    "fieldname": "show_icon_btn_4",
    "fieldtype": "Check",
    "label": "Show Icon Button 4"
@@ -891,7 +895,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-30 11:48:33.402639",
+ "modified": "2024-06-12 10:04:24.948092",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",
