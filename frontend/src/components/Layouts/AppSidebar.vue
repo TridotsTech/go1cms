@@ -271,7 +271,7 @@ const allViews = computed(() => {
 
     //
     _views.push({
-      name: 'Blog & biểu mẫu',
+      name: 'Bài viết & biểu mẫu',
       opened: true,
       // icon: InboxIcon,
       views: [

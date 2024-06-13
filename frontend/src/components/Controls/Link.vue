@@ -8,6 +8,7 @@
       :options="options.data"
       v-model="value"
       v-model:currentOption="currentOption"
+      v-model:query="text"
       :size="attrs.size || 'sm'"
       :variant="attrs.variant"
       :placeholder="attrs.placeholder"
@@ -108,8 +109,8 @@ watchDebounced(
   () => autocomplete.value?.query,
   (val) => {
     val = val || ''
-    if (text.value === val) return
-    text.value = val
+    // if (text.value === val) return
+    // text.value = val
     reload(val)
   },
   { debounce: 300, immediate: true }
@@ -172,6 +173,8 @@ function reload(val) {
 
 function clearValue(close) {
   emit(valuePropPassed.value ? 'change' : 'update:modelValue', '')
+  text.value = ''
+  reload('')
   close()
 }
 

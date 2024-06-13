@@ -171,7 +171,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue', 'update:query', 'change'])
 
-const query = ref('')
+const query = defineModel('query')
 const showOptions = ref(false)
 const search = ref(null)
 const currentOption = defineModel('currentOption')
