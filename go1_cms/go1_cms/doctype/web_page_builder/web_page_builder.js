@@ -2578,14 +2578,14 @@ var modify_section_data = Class.extend({
     this.dialog.$wrapper.find(".modal-dialog").css("width", "1000px");
     this.dialog.$wrapper.find(".modal-dialog").css("max-width", "750px");
     this.dialog.$wrapper.find(".ace-tomorrow").css("max-height", "200px");
-    this.dialog.$wrapper.find(".section-body").css("overflow", "auto");
+    // this.dialog.$wrapper.find(".section-body").css("overflow", "auto");
 
-    this.dialog.$wrapper
-      .find(".modal-body")
-      .attr(
-        "style",
-        "max-height:calc(100vh - 100px);overflow-y: auto;overflow-x: hidden;"
-      );
+    // this.dialog.$wrapper
+    //   .find(".modal-body")
+    //   .attr(
+    //     "style",
+    //     "max-height:calc(100vh - 100px);overflow-y: auto;overflow-x: hidden;"
+    //   );
     // this.dialog.$wrapper.find('.form-section-heading.uppercase"').append('<p>hi</p>')
     // if(this.fields.allow_update_to_style==1){
     //     this.dialog.$wrapper.find('.form-page.form-page-section').css("width", "70%");
@@ -3800,6 +3800,16 @@ var modify_section_data = Class.extend({
         fieldtype: "HTML",
       });
     }
+    if (this.fields.section_type == "Form") {
+      field_list.push({
+        fieldtype: "Link",
+        fieldname: "form",
+        label: __("Select Form"),
+        options: "MBW Form",
+        default: this.fields.form || "",
+        onchange: function () {},
+      });
+    }
     // console.log(field_list);
     return field_list;
   },
@@ -4131,7 +4141,6 @@ var modify_section_data = Class.extend({
       results.push({ name: "section_css_text", content: css_design });
     }
     if (results.length > 0 || me.list_section_data.length > 0) {
-      // console.log(results);
       frappe.call({
         method:
           "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.update_section_content",

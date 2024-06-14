@@ -2298,6 +2298,16 @@ var modify_section_data = Class.extend({
         fieldtype: "HTML",
       });
     }
+    if (this.fields.section_type == "Form") {
+      field_list.push({
+        fieldtype: "Link",
+        fieldname: "form",
+        label: __("Select Form"),
+        options: "MBW Form",
+        default: this.fields.form || "",
+        onchange: function () {},
+      });
+    }
     // console.log(field_list);
     return field_list;
   },

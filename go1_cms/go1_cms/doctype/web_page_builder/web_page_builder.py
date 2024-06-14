@@ -818,8 +818,9 @@ def delete_section(name, parentfield, fc_name=None, doctype=None):
 
 @frappe.whitelist()
 def get_section_content(section, content_type):
-    section = frappe.db.get_all('Page Section', filters={'name': section}, fields=['section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
-                                                                                   'custom_section_data', 'display_data_randomly', 'dynamic_data', 'is_login_required', 'allow_update_to_style', 'menu', 'section_title', 'class_name', 'css_json', 'is_full_width'])
+    section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
+        'section_type', 'name', 'form', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'custom_section_data', 'display_data_randomly', 'dynamic_data', 'is_login_required', 'allow_update_to_style', 'menu', 'section_title', 'class_name', 'css_json', 'is_full_width'
+    ])
 
     if section:
         section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''', {
@@ -1206,7 +1207,7 @@ def update_section_content(docs, section, lists_data='[]', business=None, templa
                 ',data:image/')[0], content, item.get('doctype'), item.get('parent'))
             if res:
                 item['content'] = res.file_url
-        if item.get('name') not in ['category_products_html', 'blog_category_html', 'display_data_randomly', 'dynamic_data', 'reference_name', 'fetch_product', 'no_of_records', 'collections', 'menu', 'section_css_json', 'section_css_text', 'is_full_width']:
+        if item.get('name') not in ['category_products_html', 'blog_category_html', 'display_data_randomly', 'dynamic_data', 'reference_name', 'fetch_product', 'no_of_records', 'collections', 'menu', 'form', 'section_css_json', 'section_css_text', 'is_full_width']:
             update_doc(item)
             if str(item.get("content")).startswith("/files") and ".svg" not in str(item.get("content")):
                 sec_content = frappe.get_doc(
@@ -1269,6 +1270,9 @@ def update_section_content(docs, section, lists_data='[]', business=None, templa
             elif item.get('name') == 'menu':
                 frappe.db.set_value('Page Section', section,
                                     'menu', item.get('content'))
+            elif item.get('name') == 'form':
+                frappe.db.set_value('Page Section', section,
+                                    'form', item.get('content'))
             elif item.get('name') == 'section_css_text':
                 # frappe.log_error("css_text",item.get('content'))
                 frappe.db.set_value('Page Section', section,
@@ -1526,8 +1530,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
     js_list = ''
     res = {}
     for item in section_list:
-        section_html, css, js, reference_document = frappe.db.get_value(
-            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document'])
+        section_html, css, js, reference_document, form_doc = frappe.db.get_value(
+            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form'])
         if section_html:
             if css:
                 if css.find('<style') == -1:
@@ -1583,6 +1587,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
         if allow:
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
+            if form_doc and frappe.db.exists('MBW Form', form_doc):
+                form_data = frappe.get_doc('MBW Form', form_doc)
+                data_source['form_data'] = form_data
+
             if blog_name and frappe.db.exists("Mbw Blog Post", blog_name):
                 blog_detail = frappe.get_doc(
                     'Mbw Blog Post', blog_name)
@@ -1636,8 +1644,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                     {'template': template, 'section': item.section})
             except Exception as e:
                 print(e)
-                # frappe.log_error(frappe.get_traceback(
-                # ), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html")
+                frappe.log_error(frappe.get_traceback(
+                ), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html")
     return html_list, js_list
 
 
@@ -2072,7 +2080,7 @@ def get_shuffled_category_products(category, no_of_records):
 
 
 @frappe.whitelist()
-def import_sections_from_template(page_id):
+def import_sections_from_template(page_id, id_client_website=''):
     page_template = frappe.get_doc("Page Template", page_id)
     mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
@@ -2088,6 +2096,19 @@ def import_sections_from_template(page_id):
                 "doctype": "Page Section"
             },
         }, target_doc, ignore_permissions=True)
+        if doc.section_type == "Form" and doc.form:
+            target_doc_form = None
+            doc_form = frappe.new_doc("MBW Form")
+            doc_form = get_mapped_doc("MBW Form", doc.form,	{
+                "MBW Form": {
+                    "doctype": "MBW Form"
+                },
+            }, target_doc_form, ignore_permissions=True)
+            doc_form.id_client_website = id_client_website
+            doc_form.id_parent_copy = doc.form
+            doc_form.save(ignore_permissions=True)
+            # set new id form
+            doc.form = doc_form.name
         doc.save(ignore_permissions=True)
         m_page_sec = frappe.new_doc("Mobile Page Section")
         m_page_sec.section_title = x.section_title
@@ -2106,6 +2127,25 @@ def import_sections_from_template(page_id):
                 "doctype": "Page Section"
             },
         }, target_doc, ignore_permissions=True)
+        if doc.section_type == "Form" and doc.form:
+            form_set = frappe.db.get_value(
+                'MBW Form', {'id_parent_copy': doc.form}, ['name'], as_dict=1)
+            if not form_set:
+                target_doc_form = None
+                doc_form = frappe.new_doc("MBW Form")
+                doc_form = get_mapped_doc("MBW Form", doc.form,	{
+                    "MBW Form": {
+                        "doctype": "MBW Form"
+                    },
+                }, target_doc_form, ignore_permissions=True)
+                doc_form.id_client_website = id_client_website
+                doc_form.id_parent_copy = doc.form
+                doc_form.save(ignore_permissions=True)
+                form_set_name = doc_form.name
+            else:
+                form_set_name = form_set.name
+            # set new id form
+            doc.form = form_set_name
         doc.save(ignore_permissions=True)
         m_page_sec = frappe.new_doc("Mobile Page Section")
         m_page_sec.section_title = x.section_title

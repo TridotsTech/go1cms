@@ -106,14 +106,18 @@
   </NestedPopover>
 </template>
 <script setup>
-import DatePicker from '@/components/Controls/DatePicker.vue'
-import DatetimePicker from '@/components/Controls/DatetimePicker.vue'
-import DateRangePicker from '@/components/Controls/DateRangePicker.vue'
 import NestedPopover from '@/components/NestedPopover.vue'
 import FilterIcon from '@/components/Icons/FilterIcon.vue'
 import Link from '@/components/Controls/Link.vue'
 import Autocomplete from '@/components/frappe-ui/Autocomplete.vue'
-import { FormControl, createResource, Tooltip } from 'frappe-ui'
+import {
+  FormControl,
+  createResource,
+  Tooltip,
+  DatePicker,
+  DateTimePicker,
+  DateRangePicker,
+} from 'frappe-ui'
 import { h, computed, onMounted, ref } from 'vue'
 
 const typeCheck = ['Check']
@@ -219,7 +223,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('In'), value: 'in' },
         { label: __('Not In'), value: 'not in' },
         { label: __('Is'), value: 'is' },
-      ]
+      ],
     )
   }
   if (fieldname === '_assign') {
@@ -244,7 +248,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('>'), value: '>' },
         { label: __('<='), value: '<=' },
         { label: __('>='), value: '>=' },
-      ]
+      ],
     )
   }
   if (typeSelect.includes(fieldtype)) {
@@ -255,7 +259,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('In'), value: 'in' },
         { label: __('Not In'), value: 'not in' },
         { label: __('Is'), value: 'is' },
-      ]
+      ],
     )
   }
   if (typeLink.includes(fieldtype)) {
@@ -268,7 +272,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('In'), value: 'in' },
         { label: __('Not In'), value: 'not in' },
         { label: __('Is'), value: 'is' },
-      ]
+      ],
     )
   }
   if (typeCheck.includes(fieldtype)) {
@@ -282,7 +286,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('In'), value: 'in' },
         { label: __('Not In'), value: 'not in' },
         { label: __('Is'), value: 'is' },
-      ]
+      ],
     )
   }
   if (typeDate.includes(fieldtype)) {
@@ -297,7 +301,7 @@ function getOperators(fieldtype, fieldname) {
         { label: __('<='), value: '<=' },
         { label: __('Between'), value: 'between' },
         { label: __('Timespan'), value: 'timespan' },
-      ]
+      ],
     )
   }
   return options
@@ -347,7 +351,7 @@ function getValSelect(f) {
   } else if (typeDate.includes(fieldtype) && operator == 'between') {
     return h(DateRangePicker, { value: f.value })
   } else if (typeDate.includes(fieldtype)) {
-    return h(fieldtype == 'Date' ? DatePicker : DatetimePicker, {
+    return h(fieldtype == 'Date' ? DatePicker : DateTimePicker, {
       value: f.value,
     })
   } else {

@@ -693,6 +693,7 @@ def key_func(k):
 
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
+    context.no_cache = 1
     try:
         if frappe.local.session.data.csrf_token:
             context.csrf_token = frappe.local.session.data.csrf_token

@@ -185,3 +185,12 @@ class MBWClientWebsite(Document):
         )
         for n in menus:
             frappe.delete_doc('Menu', n.name)
+
+        # delete MBW Form
+        mbw_forms = frappe.db.get_all(
+            "MBW Form",
+            filters={"id_client_website": self.name},
+            fields=['name']
+        )
+        for f in mbw_forms:
+            frappe.delete_doc('MBW Form', f.name)

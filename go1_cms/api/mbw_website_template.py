@@ -58,7 +58,8 @@ def add_web_template(name):
         for page_temp in template.page_templates:
             idx_p += 1
             new_webpage = frappe.new_doc("Web Page Builder")
-            new_import = import_sections_from_template(page_temp.page_template)
+            new_import = import_sections_from_template(
+                page_temp.page_template, website.name)
 
             page_build_name = page_temp.name_template + \
                 ' ' + frappe.scrub(website.name)

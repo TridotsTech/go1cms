@@ -100,15 +100,8 @@
   </div>
   <DatePicker
     v-else-if="field.type === 'date'"
-    type="date"
-    icon-left="calendar"
     :placeholder="__(field.placeholder)"
-    :value="data"
-    @change="
-      (v) => {
-        data = v
-      }
-    "
+    v-model="data"
   />
   <UploadFileImage
     v-else-if="field.type === 'upload_image'"
@@ -181,7 +174,6 @@
 </template>
 
 <script setup>
-import DatePicker from '@/components/Controls/DatePicker.vue'
 import UploadFileImage from '@/components/UploadFileImage.vue'
 import NestedPopover from '@/components/NestedPopover.vue'
 import DropdownItem from '@/components/DropdownItem.vue'
@@ -190,7 +182,7 @@ import ImageEmptyIcon from '@/components/Icons/ImageEmptyIcon.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Link from '@/components/Controls/Link.vue'
 import { usersStore } from '@/stores/users'
-import { Tooltip, TextEditor } from 'frappe-ui'
+import { Tooltip, TextEditor, DatePicker } from 'frappe-ui'
 import { ref, watch, onMounted } from 'vue'
 
 const { getUser } = usersStore()
@@ -209,14 +201,14 @@ watch(
   () => props.imgPreview,
   (val, oldVal) => {
     updateUrlImage()
-  }
+  },
 )
 
 watch(
   () => data.value,
   (val, oldVal) => {
     updateUrlImage()
-  }
+  },
 )
 
 onMounted(() => {

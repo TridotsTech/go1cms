@@ -318,7 +318,7 @@ async function callUpdateDoc() {
       imgForm.append(
         'file',
         _post.value['upload_file_image'],
-        _post.value['upload_file_image'].name
+        _post.value['upload_file_image'].name,
       )
       imgForm.append('is_private', 0)
       imgForm.append('doctype', 'Mbw Blog Post')

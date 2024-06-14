@@ -90,7 +90,8 @@
   "layout_id",
   "layout_type",
   "section_column_css",
-  "menu"
+  "menu",
+  "form"
  ],
  "fields": [
   {
@@ -120,7 +121,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Section Type",
-   "options": "\nSlider\nStatic Section\nPredefined Section\nCustom Section\nMenu",
+   "options": "\nSlider\nStatic Section\nPredefined Section\nCustom Section\nMenu\nForm",
    "reqd": 1
   },
   {
@@ -580,11 +581,17 @@
    "fieldtype": "Link",
    "label": "Menu",
    "options": "Menu"
+  },
+  {
+   "fieldname": "form",
+   "fieldtype": "Link",
+   "label": "Form",
+   "options": "MBW Form"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-11 14:15:28.109666",
+ "modified": "2024-06-13 15:50:33.412242",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",

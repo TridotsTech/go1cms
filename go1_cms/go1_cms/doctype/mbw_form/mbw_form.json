@@ -1,0 +1,94 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2024-06-13 14:00:54.733273",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "form_name",
+  "form_action",
+  "column_break_gvpf",
+  "id_client_website",
+  "id_parent_copy",
+  "c\u00e1c_tr\u01b0\u1eddng_section",
+  "form_fields",
+  "n\u00fat_bi\u1ec3u_m\u1eabu_section",
+  "btn_text"
+ ],
+ "fields": [
+  {
+   "fieldname": "form_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "T\u00ean bi\u1ec3u m\u1eabu"
+  },
+  {
+   "fieldname": "form_action",
+   "fieldtype": "Data",
+   "label": "G\u1eedi t\u1edbi"
+  },
+  {
+   "fieldname": "n\u00fat_bi\u1ec3u_m\u1eabu_section",
+   "fieldtype": "Section Break",
+   "label": "N\u00fat bi\u1ec3u m\u1eabu"
+  },
+  {
+   "fieldname": "btn_text",
+   "fieldtype": "Data",
+   "label": "N\u1ed9i dung n\u00fat"
+  },
+  {
+   "fieldname": "c\u00e1c_tr\u01b0\u1eddng_section",
+   "fieldtype": "Section Break",
+   "label": "C\u00e1c tr\u01b0\u1eddng"
+  },
+  {
+   "fieldname": "form_fields",
+   "fieldtype": "Table",
+   "label": "Tr\u01b0\u1eddng",
+   "options": "MBW Form Item"
+  },
+  {
+   "fieldname": "column_break_gvpf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "id_client_website",
+   "fieldtype": "Data",
+   "label": "ID Client Website"
+  },
+  {
+   "fieldname": "id_parent_copy",
+   "fieldtype": "Data",
+   "label": "ID Parent Copy"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-06-13 15:57:44.868542",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "MBW Form",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "form_name"
+}
