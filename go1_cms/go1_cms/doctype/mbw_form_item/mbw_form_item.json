@@ -10,6 +10,7 @@
   "field_name",
   "field_placeholder",
   "field_type",
+  "max_file_size",
   "column_break_iqxr",
   "field_mandatory",
   "field_hidden",
@@ -28,7 +29,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Lo\u1ea1i tr\u01b0\u1eddng",
-   "options": "checkbox\nemail\ntext\nfile\nselect\ntextarea"
+   "options": "checkbox\nemail\ntext\nfile\nselect\ntextarea\nradio"
   },
   {
    "fieldname": "column_break_iqxr",
@@ -62,13 +63,18 @@
   {
    "fieldname": "field_placeholder",
    "fieldtype": "Data",
-   "label": "Placeholder"
+   "label": "V\u0103n b\u1ea3n g\u1ee3i \u00fd"
+  },
+  {
+   "fieldname": "max_file_size",
+   "fieldtype": "Int",
+   "label": "Dung l\u01b0\u1ee3ng t\u1ed1i \u0111a c\u1ee7a file (MB)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-14 08:38:03.249780",
+ "modified": "2024-06-15 08:18:03.817467",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Form Item",

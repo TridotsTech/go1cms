@@ -1588,7 +1588,11 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
             if form_doc and frappe.db.exists('MBW Form', form_doc):
-                form_data = frappe.get_doc('MBW Form', form_doc)
+                form_data = frappe.get_doc('MBW Form', form_doc).as_dict()
+                for field in form_data.form_fields:
+                    if field.field_type in ['checkbox', 'radio', 'select']:
+                        field['field_options'] = str(
+                            field.field_options).split('\n')
                 data_source['form_data'] = form_data
 
             if blog_name and frappe.db.exists("Mbw Blog Post", blog_name):
@@ -1643,7 +1647,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                 html_list.append(
                     {'template': template, 'section': item.section})
             except Exception as e:
-                print(e)
                 frappe.log_error(frappe.get_traceback(
                 ), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html")
     return html_list, js_list

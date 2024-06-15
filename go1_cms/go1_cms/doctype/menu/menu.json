@@ -8,8 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "id_client_website",
   "is_static_menu",
+  "column_break_iuqv",
+  "id_client_website",
+  "id_parent_copy",
+  "section_break_hhec",
   "menus"
  ],
  "fields": [
@@ -38,11 +41,24 @@
    "fieldname": "id_client_website",
    "fieldtype": "Data",
    "label": "ID Client Website"
+  },
+  {
+   "fieldname": "column_break_iuqv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "id_parent_copy",
+   "fieldtype": "Data",
+   "label": "ID Parent Copy"
+  },
+  {
+   "fieldname": "section_break_hhec",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-01 10:55:05.702720",
+ "modified": "2024-06-15 09:55:41.836026",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menu",

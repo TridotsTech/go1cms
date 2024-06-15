@@ -17,7 +17,7 @@
             <template v-if="field.content?.length">
               <Draggable
                 :list="field.content"
-                @end="applySort(field)"
+                @change="applySort(field)"
                 item-key="idx"
                 tag="tbody"
                 handle=".handle"
@@ -160,7 +160,7 @@ import DragVerticalIconV1 from '@/components/Icons/DragVerticalIconV1.vue'
 import Draggable from 'vuedraggable'
 import SectionModal from '@/components/Modals/SectionModal.vue'
 import { getTypeField } from '@/utils'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   field: {

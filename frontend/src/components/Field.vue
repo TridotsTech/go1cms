@@ -129,7 +129,9 @@
     </template>
   </UploadFileImage>
   <FormControl
-    v-else-if="field.type === 'textarea'"
+    v-else-if="
+      ['Small Text', 'Text', 'Long Text', 'textarea'].includes(field.type)
+    "
     type="textarea"
     :placeholder="__(field.placeholder)"
     v-model="data"

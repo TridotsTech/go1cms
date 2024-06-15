@@ -115,7 +115,13 @@ const routes = [
   {
     path: '/forms',
     name: 'Forms',
-    component: () => import('@/pages/Forms.vue'),
+    component: () => import('@/pages/form/Forms.vue'),
+  },
+  {
+    path: '/forms/:formId',
+    name: 'Form Detail',
+    component: () => import('@/pages/form/FormDetail.vue'),
+    props: true,
   },
   {
     path: '/:invalidpath',

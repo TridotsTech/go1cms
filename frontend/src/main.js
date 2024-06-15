@@ -45,9 +45,9 @@ let app = createApp(App)
 
 setConfig('resourceFetcher', frappeRequest)
 
-if (!import.meta.env.DEV) {
-  app.use(FrappeUI)
-}
+// if (!import.meta.env.DEV) {
+//   app.use(FrappeUI)
+// }
 app.use(pinia)
 app.use(router)
 app.use(translationPlugin)

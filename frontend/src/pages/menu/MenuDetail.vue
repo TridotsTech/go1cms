@@ -138,7 +138,6 @@ const sections = computed(() => {
           name: 'title',
           type: 'data',
           placeholder: 'Nhập tên menu',
-          doctype: 'Mbw Blog menu',
         },
       ],
     },
@@ -320,7 +319,7 @@ watch(
       params: { name: val },
     })
     menu.reload()
-  }
+  },
 )
 
 // breadcrumbs

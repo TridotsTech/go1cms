@@ -133,7 +133,6 @@ const sections = computed(() => {
           name: 'category_title',
           type: 'data',
           placeholder: 'Nhập tên danh mục',
-          doctype: 'Mbw Blog Category',
         },
       ],
     },
@@ -254,7 +253,7 @@ watch(
       params: { name: val },
     })
     category.reload()
-  }
+  },
 )
 
 // breadcrumbs

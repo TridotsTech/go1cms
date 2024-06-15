@@ -213,7 +213,7 @@ def get_list_data(
     custom_view = False
     filters = frappe._dict(filters)
 
-    if doctype == "Menu":
+    if doctype in ["Menu", "MBW Form"]:
         web_edit = frappe.get_last_doc(
             'MBW Client Website', filters={"edit": 1})
         if web_edit:

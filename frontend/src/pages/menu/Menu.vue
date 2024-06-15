@@ -52,7 +52,7 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <PostIcon class="h-10 w-10" />
-        <span>{{ __('No Menu Found') }}</span>
+        <span>{{ __('Chưa có menu nào') }}</span>
         <Button :label="__('Thêm mới')" route="/menu/create">
           <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
         </Button>

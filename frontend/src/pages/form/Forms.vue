@@ -3,50 +3,29 @@
     <template #left-header>
       <Breadcrumbs :items="breadcrumbs" />
     </template>
-    <template #right-header>
-      <Button
-        :variant="'solid'"
-        theme="blue"
-        size="sm"
-        label="Thêm mới"
-        iconLeft="plus-circle"
-        route="/posts/create"
-      >
-      </Button>
-    </template>
+    <template #right-header></template>
   </LayoutHeader>
-  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pb-4">
-    <div>
-      <Button
-        :variant="'ghost'"
-        theme="gray"
-        size="sm"
-        label="Quản lý danh mục"
-        route="/category"
-        iconLeft="edit"
-      >
-      </Button>
-    </div>
+  <div class="flex-1 flex flex-col h-full overflow-auto p-6 pt-2 pb-4">
     <ViewControls
       ref="viewControls"
-      v-model="post"
+      v-model="forms"
       v-model:loadMore="loadMore"
       v-model:resizeColumn="triggerResize"
       v-model:updatedPageCount="updatedPageCount"
       :options="{
         hideColumnsButton: true,
       }"
-      doctype="Mbw Blog Post"
+      doctype="MBW Form"
     />
-    <PostsListView
-      v-if="post.data && rows.length"
-      v-model="post.data.page_length_count"
-      v-model:list="post"
+    <FormsListView
+      v-if="forms.data && rows.length"
+      v-model="forms.data.page_length_count"
+      v-model:list="forms"
       :rows="rows"
       :columns="columns"
       :options="{
-        rowCount: post.data.row_count,
-        totalCount: post.data.total_count,
+        rowCount: forms.data.row_count,
+        totalCount: forms.data.total_count,
         selectable: false,
         showTooltip: false,
         resizeColumn: true,
@@ -55,16 +34,13 @@
       @columnWidthUpdated="() => triggerResize++"
       @updatePageCount="(count) => (updatedPageCount = count)"
       @applyFilter="(data) => viewControls.applyFilter(data)"
-    ></PostsListView>
-    <div v-else-if="post.data" class="flex flex-1 items-center justify-center">
+    ></FormsListView>
+    <div v-else-if="forms.data" class="flex flex-1 items-center justify-center">
       <div
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <PostIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có bài viết nào') }}</span>
-        <Button :label="__('Create')" route="/posts/create">
-          <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
-        </Button>
+        <span>{{ __('Chưa có biểu mẫu nào') }}</span>
       </div>
     </div>
   </div>
@@ -73,15 +49,15 @@
 <script setup>
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import PostIcon from '@/components/Icons/PostIcon.vue'
-import PostsListView from '@/components/ListViews/PostsListView.vue'
+import FormsListView from '@/components/ListViews/FormsListView.vue'
 import ViewControls from '@/components/ViewControls.vue'
 import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
-const breadcrumbs = [{ label: 'Quản lý bài viết', route: { name: 'Posts' } }]
+const breadcrumbs = [{ label: 'Quản lý biểu mẫu', route: { name: 'Forms' } }]
 
 // leads data is loaded in the ViewControls component
-const post = ref({})
+const forms = ref({})
 const loadMore = ref(1)
 const triggerResize = ref(1)
 const updatedPageCount = ref(20)
@@ -89,9 +65,9 @@ const viewControls = ref(null)
 
 // Columns
 const columns = computed(() => {
-  if (!post.value?.data?.columns) return []
+  if (!forms.value?.data?.columns) return []
 
-  let _columns = post.value?.data?.columns
+  let _columns = forms.value?.data?.columns
   if (!_columns.find((el) => el.key == 'action_button')) {
     _columns.push({ label: __('Action'), key: 'action_button' })
   }
@@ -100,10 +76,10 @@ const columns = computed(() => {
 
 // Rows
 const rows = computed(() => {
-  if (!post.value?.data?.data) return []
-  return post.value?.data.data.map((cat) => {
+  if (!forms.value?.data?.data) return []
+  return forms.value?.data.data.map((cat) => {
     let _rows = {}
-    post.value?.data.rows.forEach((row) => {
+    forms.value?.data.rows.forEach((row) => {
       _rows[row] = cat[row]
     })
     _rows['action_button'] = { ...cat }
