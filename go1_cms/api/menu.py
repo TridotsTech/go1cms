@@ -3,6 +3,31 @@ from frappe import _
 
 
 @frappe.whitelist()
+def get_menu_suggest():
+    web_edit = frappe.db.get_value('MBW Client Website', {"edit": 1}, ['name'])
+    if web_edit:
+        menus = frappe.db.get_all("Menu", filters={"id_client_website": web_edit}, fields=[
+            'name', 'id_parent_copy'
+        ])
+        menus_name = []
+
+        for m in menus:
+            menus_name.append(m.name)
+            if m.id_parent_copy:
+                menus_name.append(m.id_parent_copy)
+
+        menus_item_suggest = frappe.db.get_all("Menus Item", filters={"parent": ('IN', menus_name), "parentfield": "menus"}, fields=[
+            'menu_label', 'redirect_url'
+        ], order_by="idx")
+        menu_suggest = []
+        for m in menus_item_suggest:
+            if not next((item for item in menu_suggest if item["redirect_url"] == m.redirect_url), None):
+                menu_suggest.append(m)
+        return menu_suggest
+    return []
+
+
+@frappe.whitelist()
 def get_menu(name):
     Menu = frappe.qb.DocType("Menu")
     query = (

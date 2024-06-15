@@ -41,6 +41,16 @@
     <template #body-content>
       <div class="grid grid-cols-1 gap-4">
         <div>
+          <FormControl
+            type="autocomplete"
+            :options="options_suggest"
+            size="sm"
+            variant="subtle"
+            label="Chọn menu đã có"
+            v-model="currentSuggest"
+          />
+        </div>
+        <div>
           <div class="mb-2 text-sm text-gray-600">
             Tên menu
             <span class="text-red-500">*</span>
@@ -67,12 +77,16 @@
 
 <script>
 import Nested from '@/components/nested/nested.vue'
+import { call } from 'frappe-ui'
 
 export default {
   name: 'draggable-nested',
   display: 'Draggable Nested',
   props: ['modelValue', 'maxLevel', 'countId'],
   emits: ['update:modelValue', 'update:countId'],
+  components: {
+    Nested,
+  },
   data() {
     return {
       dragChange: 0,
@@ -80,17 +94,41 @@ export default {
       showModal: false,
       currentItem: {},
       msgErr: {},
+      options_suggest: [],
+      currentSuggest: null,
     }
   },
   watch: {
+    showModal(val) {
+      if (val) {
+        this.currentSuggest = null
+      }
+    },
+    currentSuggest(val) {
+      if (val) {
+        this.currentItem = {
+          ...this.currentItem,
+          menu_label: val.label,
+          redirect_url: val.value,
+        }
+      }
+    },
     dragChange(val) {
       this.$emit('update:modelValue', this.validMenu(this.modelValue))
     },
   },
-  components: {
-    Nested,
+
+  mounted() {
+    this.optionsSuggest()
   },
   methods: {
+    async optionsSuggest() {
+      let menu_suggest = await call('go1_cms.api.menu.get_menu_suggest')
+      this.options_suggest = menu_suggest.map((el) => ({
+        label: el.menu_label,
+        value: el.redirect_url,
+      }))
+    },
     handleUpdateMenu() {
       if (!this.currentItem.menu_label) {
         this.msgErr['menu_label'] = 'Tên menu không được để trống'
@@ -107,7 +145,7 @@ export default {
             menu_label: this.currentItem.menu_label,
             redirect_url: this.currentItem.redirect_url,
             elements: [],
-          }
+          },
         )
       } else {
         newMenus.push({
@@ -129,7 +167,7 @@ export default {
       this.updateMenuById(
         newMenus,
         this.currentItem.id,
-        this.currentItem.action
+        this.currentItem.action,
       )
 
       // update value
@@ -175,7 +213,7 @@ export default {
           newEl.elements = this.recurseValidMenu(
             newEl.elements,
             elmsOutLevel,
-            level
+            level,
           )
         }
         if (level > this.maxLevel) {
