@@ -137,14 +137,17 @@
     v-model="data"
     :rows="field.rows"
   />
-  <TextEditor
+  <div v-else-if="field.type === 'texeditor'">
+    <Ckeditor v-model="data"></Ckeditor>
+  </div>
+  <!-- <TextEditor
     v-else-if="field.type === 'texeditor'"
     variant="outline"
     editor-class="!prose-sm overflow-auto min-h-[180px] max-h-80 py-1.5 px-2 border border-gray-300 bg-white hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400 text-gray-800 transition-colors min-w-full"
     :fixedMenu="true"
     :content="data"
     @change="(val) => (data = val)"
-  ></TextEditor>
+  ></TextEditor> -->
   <!-- <CustomQuillEditor
     v-else-if="field.type === 'texeditor'"
     classHeightscreen="max-h-80"
@@ -176,6 +179,7 @@
 </template>
 
 <script setup>
+import Ckeditor from '@/components/Ckeditor.vue'
 import UploadFileImage from '@/components/UploadFileImage.vue'
 import NestedPopover from '@/components/NestedPopover.vue'
 import DropdownItem from '@/components/DropdownItem.vue'

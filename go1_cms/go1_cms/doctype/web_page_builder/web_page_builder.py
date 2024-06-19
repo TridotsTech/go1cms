@@ -819,7 +819,7 @@ def delete_section(name, parentfield, fc_name=None, doctype=None):
 @frappe.whitelist()
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
-        'section_type', 'name', 'form', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'custom_section_data', 'display_data_randomly', 'dynamic_data', 'is_login_required', 'allow_update_to_style', 'menu', 'section_title', 'class_name', 'css_json', 'is_full_width'
+        'section_type', 'name', 'form', 'html_content', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'custom_section_data', 'display_data_randomly', 'dynamic_data', 'is_login_required', 'allow_update_to_style', 'menu', 'section_title', 'class_name', 'css_json', 'is_full_width'
     ])
 
     if section:
@@ -1207,7 +1207,7 @@ def update_section_content(docs, section, lists_data='[]', business=None, templa
                 ',data:image/')[0], content, item.get('doctype'), item.get('parent'))
             if res:
                 item['content'] = res.file_url
-        if item.get('name') not in ['category_products_html', 'blog_category_html', 'display_data_randomly', 'dynamic_data', 'reference_name', 'fetch_product', 'no_of_records', 'collections', 'menu', 'form', 'section_css_json', 'section_css_text', 'is_full_width']:
+        if item.get('name') not in ['category_products_html', 'blog_category_html', 'display_data_randomly', 'dynamic_data', 'reference_name', 'fetch_product', 'no_of_records', 'collections', 'menu', 'form', 'html_content', 'section_css_json', 'section_css_text', 'is_full_width']:
             update_doc(item)
             if str(item.get("content")).startswith("/files") and ".svg" not in str(item.get("content")):
                 sec_content = frappe.get_doc(
@@ -1273,6 +1273,10 @@ def update_section_content(docs, section, lists_data='[]', business=None, templa
             elif item.get('name') == 'form':
                 frappe.db.set_value('Page Section', section,
                                     'form', item.get('content'))
+            elif item.get('name') == 'html_content':
+                doc_update = frappe.get_doc('Page Section', section)
+                doc_update.html_content = item.get('content')
+                doc_update.save()
             elif item.get('name') == 'section_css_text':
                 # frappe.log_error("css_text",item.get('content'))
                 frappe.db.set_value('Page Section', section,
@@ -1530,8 +1534,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
     js_list = ''
     res = {}
     for item in section_list:
-        section_html, css, js, reference_document, form_doc = frappe.db.get_value(
-            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form'])
+        section_html, css, js, reference_document, form_doc, html_content = frappe.db.get_value(
+            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form', 'html_content'])
         if section_html:
             if css:
                 if css.find('<style') == -1:
@@ -1587,6 +1591,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
         if allow:
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
+            data_source['html_content'] = html_content or ''
+
             if form_doc and frappe.db.exists('MBW Form', form_doc):
                 form_data = frappe.get_doc('MBW Form', form_doc).as_dict()
                 for field in form_data.form_fields:

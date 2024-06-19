@@ -25,7 +25,7 @@ def get_setup():
         # logo website
         fields_favicon = {
             'allow_edit':  True,
-            'section_title': 'Icon website',
+            'section_title': 'Website icon',
             'fields': [
                 {
                     'field_label': 'Favicon (32 x 32px)',
@@ -44,7 +44,7 @@ def get_setup():
 
         fields_logo = {
             'allow_edit':  True,
-            'section_title': 'Logo website',
+            'section_title': 'Website logo',
             'fields': [
                 {
                     'field_label': 'Logo chính (192 x 192px)',

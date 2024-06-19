@@ -87,13 +87,13 @@
     </div>
     <div class="m-2 flex flex-col gap-1">
       <SidebarLink
-        label="Docs"
+        label="Tài liệu"
         :isCollapsed="isSidebarCollapsed"
         icon="book-open"
         @click="() => openDocs()"
       />
       <SidebarLink
-        :label="isSidebarCollapsed ? 'Expand' : 'Collapse'"
+        :label="isSidebarCollapsed ? 'Mở rộng' : 'Thu nhỏ'"
         :isCollapsed="isSidebarCollapsed"
         @click="isSidebarCollapsed = !isSidebarCollapsed"
         class=""
@@ -118,6 +118,7 @@ import DashboardIcon from '@/components/Icons/DashboardIcon.vue'
 import InboxIcon from '@/components/Icons/InboxIcon.vue'
 import PolicyIcon from '@/components/Icons/PolicyIcon.vue'
 import NewsIcon from '@/components/Icons/NewsIcon.vue'
+import TemplatePage from '@/components/Icons/TemplatePage.vue'
 import ProductIcon from '@/components/Icons/ProductIcon.vue'
 import TemplateWebsiteIcon from '@/components/Icons/TemplateWebsiteIcon.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
@@ -307,6 +308,8 @@ function parseView(views) {
 
 function getIcon(name) {
   switch (name) {
+    case 'TemplatePage':
+      return TemplatePage
     case 'HeaderIcon':
       return HeaderIcon
     case 'FooterIcon':

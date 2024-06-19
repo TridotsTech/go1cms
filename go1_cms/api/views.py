@@ -12,8 +12,11 @@ def get_views(doctype):
     type_category = ''
     name_web = ''
     if check_doc:
-        doc = frappe.get_doc('MBW Client Website', check_doc)
-        list_page = doc.page_websites
+        doc = frappe.db.get_value('MBW Client Website', check_doc, [
+                                  'type_template', 'name_web'], as_dict=1)
+        list_page = frappe.db.get_all("MBW Client Website Item", filters={
+            "parent": check_doc, "parentfield": "page_websites", 'allow_edit': 1}, fields=['*'], order_by="idx"
+        )
         type_category = doc.type_template
         name_web = doc.name_web
 

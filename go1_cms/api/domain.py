@@ -11,7 +11,7 @@ def get_info_domain():
         # domain
         fields_logo = {
             'allow_edit':  True,
-            'section_title': 'Cài đặt trang',
+            'section_title': 'Cài đặt website',
             'fields': [
                 {
                     'field_label': 'Sử dụng tên miền khác',

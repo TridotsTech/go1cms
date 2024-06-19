@@ -110,12 +110,12 @@
           <div v-else-if="column.key === 'published'">
             <span v-if="item === 1">
               <Badge :variant="'outline'" theme="green" size="sm" label="Badge">
-                Đã kích hoạt
+                Đang kích hoạt
               </Badge>
             </span>
             <span v-else>
               <Badge :variant="'outline'" theme="gray" size="sm" label="Badge">
-                Chưa kịch hoạt
+                Chưa kích hoạt
               </Badge>
             </span>
           </div>

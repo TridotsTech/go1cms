@@ -2308,6 +2308,14 @@ var modify_section_data = Class.extend({
         onchange: function () {},
       });
     }
+    if (this.fields.section_type == "Html Content") {
+      field_list.push({
+        fieldtype: "Text Editor",
+        fieldname: "html_content",
+        label: __("Html Content"),
+        default: this.fields.html_content || "",
+      });
+    }
     // console.log(field_list);
     return field_list;
   },
@@ -2640,6 +2648,7 @@ var modify_section_data = Class.extend({
     }
     if (results.length > 0 || me.list_section_data.length > 0) {
       // console.log(results);
+      // return;
       frappe.call({
         method:
           "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.update_section_content",

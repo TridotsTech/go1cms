@@ -708,11 +708,11 @@
    "default": "767px",
    "fieldname": "mobile_width",
    "fieldtype": "Data",
-   "label": "Mobile Width"
+   "label": "Mobile Max Width"
   }
  ],
  "links": [],
- "modified": "2024-06-11 09:07:20.547913",
+ "modified": "2024-06-18 09:00:55.038218",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

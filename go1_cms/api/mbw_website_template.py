@@ -61,15 +61,15 @@ def add_web_template(name):
             new_import = import_sections_from_template(
                 page_temp.page_template, website.name)
 
-            page_build_name = page_temp.name_template + \
+            page_build_name = page_temp.page_template + \
                 ' ' + frappe.scrub(website.name)
 
             info = new_import.get('info')
             mobile_sections = new_import.get('mobile_sections')
             web_sections = new_import.get('web_sections')
 
-            new_webpage.web_client_id = website.name
             new_webpage.page_title = page_build_name
+            new_webpage.web_client_id = website.name
             new_webpage.published = info.published
             new_webpage.page_type = info.page_type
             new_webpage.meta_title = info.meta_title
@@ -123,6 +123,8 @@ def add_web_template(name):
             # add item client web
             item_cl_web = frappe.new_doc("MBW Client Website Item")
             item_cl_web.page_id = page_build_name
+            item_cl_web.allow_edit = page_temp.allow_edit
+            item_cl_web.allow_delete = page_temp.allow_delete
             item_cl_web.name_page = page_temp.name_template
             item_cl_web.icon = page_temp.icon
             item_cl_web.route_template = page_temp.route_template

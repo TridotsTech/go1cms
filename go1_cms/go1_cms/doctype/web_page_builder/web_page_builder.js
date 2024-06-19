@@ -1085,10 +1085,16 @@ frappe.ui.form.on("Web Page Builder", {
                                                           "')no-repeat center / contain;"
                                                         : ""
                                                     }${
-            gra_patt_mask["divider-color"]
-              ? "background:" + gra_patt_mask["divider-color"] + ";"
-              : "#7a5b5b;"
-          }float:left;margin-right: 10px;width:80px;height:28px;border-radius:7px;margin-top:10px;"></div>
+                                                      gra_patt_mask[
+                                                        "divider-color"
+                                                      ]
+                                                        ? "background:" +
+                                                          gra_patt_mask[
+                                                            "divider-color"
+                                                          ] +
+                                                          ";"
+                                                        : "#7a5b5b;"
+                                                    }float:left;margin-right: 10px;width:80px;height:28px;border-radius:7px;margin-top:10px;"></div>
                                                 </div>         
                                                 </div>`;
           $(divider_html).insertBefore(
@@ -1851,23 +1857,29 @@ frappe.ui.form.on("Web Page Builder", {
                   each_gradiant.css_properties
                 }" bg_type="${bg_type}" style="flex: 0 0 calc(20% - 20px);cursor:pointer;">
                                                 <div class="bg-gradiant-color" bg_type="${bg_type}" value="${
-                  each_gradiant.css_properties
-                }" src='${each_gradiant.css_properties}' style="${
-                  gra_patt_mask["bg-divider-img"]
-                    ? "-webkit-mask:url('" +
-                      each_gradiant.css_properties +
-                      "')no-repeat center / contain;"
-                    : ""
-                }${
-                  gra_patt_mask["divider-color"]
-                    ? "background:" + gra_patt_mask["divider-color"] + ";"
-                    : "#a14848;"
-                }height:70px;border-radius:7px;"></div>
+                                                  each_gradiant.css_properties
+                                                }" src='${each_gradiant.css_properties}' style="${
+                                                  gra_patt_mask[
+                                                    "bg-divider-img"
+                                                  ]
+                                                    ? "-webkit-mask:url('" +
+                                                      each_gradiant.css_properties +
+                                                      "')no-repeat center / contain;"
+                                                    : ""
+                                                }${
+                                                  gra_patt_mask["divider-color"]
+                                                    ? "background:" +
+                                                      gra_patt_mask[
+                                                        "divider-color"
+                                                      ] +
+                                                      ";"
+                                                    : "#a14848;"
+                                                }height:70px;border-radius:7px;"></div>
                                                 <div class="bg-title" bg_type="${bg_type}" value="${
-                  each_gradiant.css_properties
-                }" style="text-align:center;padding-top:5px;font-weight:600;">${
-                  each_gradiant.title
-                }</div>
+                                                  each_gradiant.css_properties
+                                                }" style="text-align:center;padding-top:5px;font-weight:600;">${
+                                                  each_gradiant.title
+                                                }</div>
                                             </div>`);
               } else if (
                 each_gradiant.css_properties &&
@@ -1879,19 +1891,24 @@ frappe.ui.form.on("Web Page Builder", {
                     each_gradiant.css_properties
                   }" style="flex: 0 0 calc(20% - 20px);cursor:pointer;">
                                     <div class="bg-gradiant-color" bg_type="${bg_type}" value="${
-                    each_gradiant.css_properties
-                  }" style="height:70px;border-radius:7px;">
+                                      each_gradiant.css_properties
+                                    }" style="height:70px;border-radius:7px;">
                                     <img bg_type="${bg_type}" value="${
-                    each_gradiant.css_properties
-                  }" src=${
-                    "'" + each_gradiant.css_properties.replace(" ", "%20") + "'"
-                  }>
+                                      each_gradiant.css_properties
+                                    }" src=${
+                                      "'" +
+                                      each_gradiant.css_properties.replace(
+                                        " ",
+                                        "%20"
+                                      ) +
+                                      "'"
+                                    }>
                                     </div>
                                     <div bg_type="${bg_type}" class="bg-title" value="${
-                    each_gradiant.css_properties
-                  }" style="text-align:center;padding-top:5px;font-weight:600;">${
-                    each_gradiant.title
-                  }</div>
+                                      each_gradiant.css_properties
+                                    }" style="text-align:center;padding-top:5px;font-weight:600;">${
+                                      each_gradiant.title
+                                    }</div>
                                 </div>`);
               } else if (each_gradiant.css_properties) {
                 // console.log(each_gradiant.title+">> converted png file <<",svg_to_png_coverter(each_gradiant.css_properties,0,"white"))
@@ -1901,14 +1918,14 @@ frappe.ui.form.on("Web Page Builder", {
                     each_gradiant.css_properties
                   )}" style="flex: 0 0 calc(20% - 20px);cursor:pointer;">
                                     <div class="bg-gradiant-color" bg_type="${bg_type}" value="${dividers_values.indexOf(
-                    each_gradiant.css_properties
-                  )}" style="height:70px;border-radius:7px;text-align:center;">
+                                      each_gradiant.css_properties
+                                    )}" style="height:70px;border-radius:7px;text-align:center;">
                                             ${each_gradiant.css_properties}
                                     <div bg_type="${bg_type}" value="${dividers_values.indexOf(
-                    each_gradiant.css_properties
-                  )}" class="bg-title" style="text-align:center;padding-top:5px;font-weight:600;">${
-                    each_gradiant.title
-                  }</div>
+                                      each_gradiant.css_properties
+                                    )}" class="bg-title" style="text-align:center;padding-top:5px;font-weight:600;">${
+                                      each_gradiant.title
+                                    }</div>
                                 </div>`);
               }
               if (temp_html) {
@@ -2439,8 +2456,8 @@ function bind_layout_data(wrapper) {
 				<input type="radio"  value="${
           each_p.unique_id
         }" name="theme_radio" style="position:absolute;top:6px;right:0px;z-index:99;" ${
-        each_p.unique_id == seleted_layout_id
-      }?"checked":"">
+          each_p.unique_id == seleted_layout_id
+        }?"checked":"">
 			</label></div>`;
 
       let p_html = `<div class="palette-main-div" id=${r___id}>
@@ -3810,6 +3827,14 @@ var modify_section_data = Class.extend({
         onchange: function () {},
       });
     }
+    if (this.fields.section_type == "Html Content") {
+      field_list.push({
+        fieldtype: "Text Editor",
+        fieldname: "html_content",
+        label: __("Html Content"),
+        default: this.fields.html_content || "",
+      });
+    }
     // console.log(field_list);
     return field_list;
   },
@@ -4141,6 +4166,8 @@ var modify_section_data = Class.extend({
       results.push({ name: "section_css_text", content: css_design });
     }
     if (results.length > 0 || me.list_section_data.length > 0) {
+      // console.log(results);
+      // return;
       frappe.call({
         method:
           "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.update_section_content",

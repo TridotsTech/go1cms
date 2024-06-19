@@ -123,10 +123,9 @@ class MbwBlogPost(WebsiteGenerator):
             'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
         if web_client:
             page_blog = frappe.db.get_value('MBW Client Website Item', {
-                                            'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'Trang chi tiết tin tức'}, ['page_id'], as_dict=1)
+                                            'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'News detail page'}, ['page_id'], as_dict=1)
             if page_blog:
                 if frappe.db.exists('Web Page Builder', page_blog.page_id, cache=True):
                     doc_wpb = frappe.get_doc(
                         'Web Page Builder', page_blog.page_id)
-
                     doc_wpb.get_context(context)

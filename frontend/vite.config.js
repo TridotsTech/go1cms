@@ -3,6 +3,10 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import frappeui from 'frappe-ui/vite'
 
+import ckeditor5 from '@ckeditor/vite-plugin-ckeditor5'
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -12,6 +16,7 @@ export default defineConfig({
         propsDestructure: true,
       },
     }),
+    ckeditor5({ theme: require.resolve('@ckeditor/ckeditor5-theme-lark') }),
   ],
   server: {
     port: 8080,

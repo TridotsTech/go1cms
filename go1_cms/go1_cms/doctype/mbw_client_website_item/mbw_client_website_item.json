@@ -11,7 +11,10 @@
   "page_type",
   "column_break_gzkg",
   "route_template",
-  "icon"
+  "icon",
+  "allow_edit",
+  "allow_delete",
+  "index_new_page"
  ],
  "fields": [
   {
@@ -46,13 +49,31 @@
    "fieldname": "page_type",
    "fieldtype": "Select",
    "label": "Lo\u1ea1i trang",
-   "options": "\nTrang chi ti\u1ebft tin t\u1ee9c"
+   "options": "\nNews detail page\nNew page"
+  },
+  {
+   "default": "1",
+   "fieldname": "allow_edit",
+   "fieldtype": "Check",
+   "label": "Allow edit"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_delete",
+   "fieldtype": "Check",
+   "label": "Allow delete"
+  },
+  {
+   "default": "0",
+   "fieldname": "index_new_page",
+   "fieldtype": "Int",
+   "label": "M\u00e3 trang t\u1ea1o "
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-01 10:56:48.423292",
+ "modified": "2024-06-18 17:01:55.814154",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website Item",

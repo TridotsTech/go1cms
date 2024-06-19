@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import router from './router'
 import App from './App.vue'
 import { createPinia } from 'pinia'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import {
   FrappeUI,
@@ -48,6 +49,7 @@ setConfig('resourceFetcher', frappeRequest)
 // if (!import.meta.env.DEV) {
 //   app.use(FrappeUI)
 // }
+app.use(CKEditor)
 app.use(pinia)
 app.use(router)
 app.use(translationPlugin)
