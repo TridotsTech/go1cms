@@ -26,190 +26,190 @@ def get_info_header_component():
 
     # fields component
     fields_cp = []
-    # get field group button 1
-    fields_btn_1 = {
+    # get field
+    fields_btn = {
         'allow_edit':  True,
-        'show_edit': header_component.active_button == 1 and header_component.call_to_action_button == 1,
-        'section_title': 'Thông tin nút 1',
+        'show_edit': True,
+        'section_title': 'Thông tin các nút',
+        'image': header_component.image_btn,
+        'show_prv_image': True,
         'fields': [
             {
-                'field_label': 'Văn bản nút',
-                'field_key': 'button_text',
-                'field_type': 'Data',
-                'content': header_component.button_text,
-                'allow_edit':  True,
-                'show_edit': header_component.show_btn_text == 1
-            },
-            {
-                'field_label': 'Văn bản phụ nút',
-                'field_key': 'sub_text',
-                'field_type': 'Data',
-                'content': header_component.sub_text,
-                'allow_edit':  True,
-                'show_edit': header_component.show_sub_text == 1
-            },
-            {
-                'field_label': 'Link',
-                'field_key': 'button_link',
-                'field_type': 'Data',
-                'content': header_component.button_link,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action == 'link'
-            },
-            {
-                'field_label': 'Mục tiêu Link',
-                'field_key': 'link_target',
-                'field_type': 'Select',
-                'content': header_component.link_target,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action == 'link',
-                'options': [
-                    {'label': 'Trang hiện tại', 'value': '_self'},
-                    {'label': 'Trang mới', 'value': '_blank'}
+                'group_name': 'group 1',
+                'section_title': 'Nút 1',
+                'show_edit': header_component.active_button == 1 and header_component.call_to_action_button == 1,
+                'fields': [
+                    {
+                        'field_label': 'Văn bản nút',
+                        'field_key': 'button_text',
+                        'field_type': 'Data',
+                        'content': header_component.button_text,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_btn_text == 1
+                    },
+                    {
+                        'field_label': 'Văn bản phụ nút',
+                        'field_key': 'sub_text',
+                        'field_type': 'Data',
+                        'content': header_component.sub_text,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_sub_text == 1
+                    },
+                    {
+                        'field_label': 'Link',
+                        'field_key': 'button_link',
+                        'field_type': 'Data',
+                        'content': header_component.button_link,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action == 'link'
+                    },
+                    {
+                        'field_label': 'Mục tiêu Link',
+                        'field_key': 'link_target',
+                        'field_type': 'Select',
+                        'content': header_component.link_target,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action == 'link',
+                        'options': [
+                            {'label': 'Trang hiện tại', 'value': '_self'},
+                            {'label': 'Trang mới', 'value': '_blank'}
+                        ]
+                    },
                 ]
             },
+            {
+                'group_name': 'group 2',
+                'section_title': 'Nút 2',
+                'show_edit': header_component.active_button_2 == 1 and header_component.call_to_action_button == 1,
+                'fields': [
+                    {
+                        'field_label': 'Văn bản nút',
+                        'field_key': 'button_text_2',
+                        'field_type': 'Data',
+                        'content': header_component.button_text_2,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_btn_text_2 == 1
+                    },
+                    {
+                        'field_label': 'Văn bản phụ nút',
+                        'field_key': 'sub_text_2',
+                        'field_type': 'Data',
+                        'content': header_component.sub_text_2,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_sub_text_2 == 1
+                    },
+                    {
+                        'field_label': 'Link',
+                        'field_key': 'button_link_2',
+                        'field_type': 'Data',
+                        'content': header_component.button_link_2,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_2 == 'link'
+                    },
+                    {
+                        'field_label': 'Mục tiêu Link',
+                        'field_key': 'link_target_2',
+                        'field_type': 'Select',
+                        'content': header_component.link_target_2,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_2 == 'link',
+                        'options': [
+                            {'label': 'Trang hiện tại', 'value': '_self'},
+                            {'label': 'Trang mới', 'value': '_blank'}
+                        ]
+                    },
+                ],
+            },
+            {
+                'group_name': 'group 3',
+                'section_title': 'Nút 3',
+                'show_edit': header_component.active_button_3 == 1 and header_component.call_to_action_button == 1,
+                'fields': [
+                    {
+                        'field_label': 'Văn bản nút',
+                        'field_key': 'button_text_3',
+                        'field_type': 'Data',
+                        'content': header_component.button_text_3,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_btn_text_3 == 1
+                    },
+                    {
+                        'field_label': 'Văn bản phụ nút',
+                        'field_key': 'sub_text_3',
+                        'field_type': 'Data',
+                        'content': header_component.sub_text_3,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_sub_text_3 == 1
+                    },
+                    {
+                        'field_label': 'Link',
+                        'field_key': 'button_link_3',
+                        'field_type': 'Data',
+                        'content': header_component.button_link_3,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_3 == 'link'
+                    },
+                    {
+                        'field_label': 'Mục tiêu Link',
+                        'field_key': 'link_target_3',
+                        'field_type': 'Select',
+                        'content': header_component.link_target_3,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_3 == 'link',
+                        'options': [
+                            {'label': 'Trang hiện tại', 'value': '_self'},
+                            {'label': 'Trang mới', 'value': '_blank'}
+                        ]
+                    },
+                ],
+            },
+            {
+                'group_name': 'group 4',
+                'section_title': 'Nút 4',
+                'show_edit': header_component.active_button_4 == 1 and header_component.call_to_action_button == 1,
+                'fields': [
+                    {
+                        'field_label': 'Văn bản nút',
+                        'field_key': 'button_text_4',
+                        'field_type': 'Data',
+                        'content': header_component.button_text_4,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_btn_text_4 == 1
+                    },
+                    {
+                        'field_label': 'Văn bản phụ nút',
+                        'field_key': 'button_text_4',
+                        'field_type': 'Data',
+                        'content': header_component.button_text_4,
+                        'allow_edit':  True,
+                        'show_edit': header_component.show_sub_text_4 == 1
+                    },
+                    {
+                        'field_label': 'Link',
+                        'field_key': 'button_link_4',
+                        'field_type': 'Data',
+                        'content': header_component.button_link_4,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_4 == 'link'
+                    },
+                    {
+                        'field_label': 'Mục tiêu Link',
+                        'field_key': 'link_target_4',
+                        'field_type': 'Select',
+                        'content': header_component.link_target_4,
+                        'allow_edit':  True,
+                        'show_edit': header_component.use_action_4 == 'link',
+                        'options': [
+                            {'label': 'Trang hiện tại', 'value': '_self'},
+                            {'label': 'Trang mới', 'value': '_blank'}
+                        ]
+                    },
+                ],
+            }
         ],
         'name': 'header-1'
     }
-    fields_cp.append(fields_btn_1)
-    # get field group button 2
-    fields_btn_2 = {
-        'allow_edit':  True,
-        'show_edit':  header_component.active_button_2 == 1 and header_component.call_to_action_button == 1,
-        'section_title': 'Thông tin nút 2',
-        'fields': [
-            {
-                'field_label': 'Văn bản nút',
-                'field_key': 'button_text_2',
-                'field_type': 'Data',
-                'content': header_component.button_text_2,
-                'allow_edit':  True,
-                'show_edit': header_component.show_btn_text_2 == 1
-            },
-            {
-                'field_label': 'Văn bản phụ nút',
-                'field_key': 'sub_text_2',
-                'field_type': 'Data',
-                'content': header_component.sub_text_2,
-                'allow_edit':  True,
-                'show_edit': header_component.show_sub_text_2 == 1
-            },
-            {
-                'field_label': 'Link',
-                'field_key': 'button_link_2',
-                'field_type': 'Data',
-                'content': header_component.button_link_2,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_2 == 'link'
-            },
-            {
-                'field_label': 'Mục tiêu Link',
-                'field_key': 'link_target_2',
-                'field_type': 'Select',
-                'content': header_component.link_target_2,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_2 == 'link',
-                'options': [
-                    {'label': 'Trang hiện tại', 'value': '_self'},
-                    {'label': 'Trang mới', 'value': '_blank'}
-                ]
-            },
-        ],
-        'name': 'header-2'
-    }
-    fields_cp.append(fields_btn_2)
-    # get field group button 3
-    fields_btn_3 = {
-        'allow_edit':  True,
-        'show_edit':  header_component.active_button_3 == 1 and header_component.call_to_action_button == 1,
-        'section_title': 'Thông tin nút 3',
-        'fields': [
-            {
-                'field_label': 'Văn bản nút',
-                'field_key': 'button_text_3',
-                'field_type': 'Data',
-                'content': header_component.button_text_3,
-                'allow_edit':  True,
-                'show_edit': header_component.show_btn_text_3 == 1
-            },
-            {
-                'field_label': 'Văn bản phụ nút',
-                'field_key': 'sub_text_3',
-                'field_type': 'Data',
-                'content': header_component.sub_text_3,
-                'allow_edit':  True,
-                'show_edit': header_component.show_sub_text_3 == 1
-            },
-            {
-                'field_label': 'Link',
-                'field_key': 'button_link_3',
-                'field_type': 'Data',
-                'content': header_component.button_link_3,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_3 == 'link'
-            },
-            {
-                'field_label': 'Mục tiêu Link',
-                'field_key': 'link_target_3',
-                'field_type': 'Select',
-                'content': header_component.link_target_3,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_3 == 'link',
-                'options': [
-                    {'label': 'Trang hiện tại', 'value': '_self'},
-                    {'label': 'Trang mới', 'value': '_blank'}
-                ]
-            },
-        ],
-        'name': 'header-1'
-    }
-    fields_cp.append(fields_btn_3)
-    # get field group button 4
-    fields_btn_4 = {
-        'allow_edit':  True,
-        'show_edit':  header_component.active_button_4 == 1 and header_component.call_to_action_button == 1,
-        'section_title': 'Thông tin nút 4',
-        'fields': [
-            {
-                'field_label': 'Văn bản nút',
-                'field_key': 'button_text_4',
-                'field_type': 'Data',
-                'content': header_component.button_text_4,
-                'allow_edit':  True,
-                'show_edit': header_component.show_btn_text_4 == 1
-            },
-            {
-                'field_label': 'Văn bản phụ nút',
-                'field_key': 'button_text_4',
-                'field_type': 'Data',
-                'content': header_component.button_text_4,
-                'allow_edit':  True,
-                'show_edit': header_component.show_sub_text_4 == 1
-            },
-            {
-                'field_label': 'Link',
-                'field_key': 'button_link_4',
-                'field_type': 'Data',
-                'content': header_component.button_link_4,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_4 == 'link'
-            },
-            {
-                'field_label': 'Mục tiêu Link',
-                'field_key': 'link_target_4',
-                'field_type': 'Select',
-                'content': header_component.link_target_4,
-                'allow_edit':  True,
-                'show_edit': header_component.use_action_4 == 'link',
-                'options': [
-                    {'label': 'Trang hiện tại', 'value': '_self'},
-                    {'label': 'Trang mới', 'value': '_blank'}
-                ]
-            },
-        ],
-        'name': 'header-1'
-    }
-    fields_cp.append(fields_btn_4)
+    fields_cp.append(fields_btn)
 
     return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'docname': header_component.name}
 

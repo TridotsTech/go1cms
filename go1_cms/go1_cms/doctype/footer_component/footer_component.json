@@ -51,6 +51,7 @@
   "copyright_section",
   "enable_copyright",
   "copyright_layout",
+  "image_copyright",
   "column_break_39",
   "fc_ct_type",
   "sc_ct_type",
@@ -463,11 +464,16 @@
    "fieldname": "active_border_top",
    "fieldtype": "Check",
    "label": "Active Border Top"
+  },
+  {
+   "fieldname": "image_copyright",
+   "fieldtype": "Attach Image",
+   "label": "Image copyright"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-12 08:38:09.909459",
+ "modified": "2024-06-21 16:06:39.853959",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",

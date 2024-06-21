@@ -33,54 +33,16 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div
-      v-if="_domain?.fields_cp && _domain?.fields_cp.length"
-      class="p-4 border border-gray-300 rounded-sm mb-4"
-    >
-      <div class="p-2">
-        <div class="mb-4">
-          <h2 class="font-bold text-xl">Thông tin chung</h2>
-        </div>
-        <div v-for="(field, idx) in _domain?.fields_cp" :key="field.name">
-          <div v-if="field.allow_edit" class="border-t py-4">
-            <div class="mb-4">
-              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <template v-for="fd in field.fields">
-                <template v-if="fd.group_name">
-                  <div class="lg:col-span-2">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      <template v-for="fsc in fd.fields">
-                        <FieldSection
-                          :field="fsc"
-                          :sectionName="field.section_title"
-                        ></FieldSection>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-                <template v-else>
-                  <FieldSection
-                    :field="fd"
-                    :sectionName="field.section_title"
-                  ></FieldSection>
-                </template>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <FieldsComponent v-model="_domain"></FieldsComponent>
   </div>
 </template>
 
 <script setup>
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import FieldSection from '../components/FieldSection.vue'
+import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, uploadFile } from '@/utils'
+import { createToast, errorMessage } from '@/utils'
 import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
@@ -120,11 +82,11 @@ const domain = createResource({
 const alreadyActions = ref(false)
 const dirty = computed(() => {
   if (_domain.value?.fields_cp) {
-    let allow_edit = false
+    let show_edit = false
     if (_domain.value?.fields_cp[0].fields[0].content) {
-      allow_edit = true
+      show_edit = true
     }
-    _domain.value.fields_cp[0].fields[1].allow_edit = allow_edit
+    _domain.value.fields_cp[0].fields[1].show_edit = show_edit
   }
   return JSON.stringify(domain.data) !== JSON.stringify(_domain.value)
 })

@@ -140,7 +140,7 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
 
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
-        'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
+        'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'image',
         'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'html_content', 'section_title'
     ])
 
@@ -266,23 +266,18 @@ def update_fields_page_section(data):
 
             if fcp.get("show_edit") and fcp.get("allow_edit") and fcp.get("fields_ps"):
                 d_update = {}
-                ps = frappe.get_doc('Page Section', fcp.get('name'))
-                ud_ps = False
+                update_ps = False
                 for field in fcp.get('fields_ps'):
-                    if field.get('field_type') == "texeditor":
-                        if field.get('field_key') == "html_content":
-                            ps.html_content = field.get(
-                                'content')
-                            ud_ps = True
-                    else:
-                        d_update[field.get('field_key')] = field.get(
-                            'content')
-                if ud_ps:
-                    ps.save()
-
+                    if field.get('field_type') == "texeditor" and field.get('field_key') == "html_content":
+                        update_ps = True
+                    d_update[field.get('field_key')] = field.get(
+                        'content')
                 if d_update:
                     frappe.db.set_value(
                         'Page Section', fcp.get('name'), d_update)
+                if update_ps:
+                    ps = frappe.get_doc('Page Section', fcp.get('name'))
+                    ps.save()
 
 
 def update_fields_page(data, data_update):
@@ -290,11 +285,12 @@ def update_fields_page(data, data_update):
         for field_cp in data.get('fields_cp'):
             if field_cp.get("show_edit") and field_cp.get('allow_edit') and field_cp.get('fields'):
                 for field in field_cp.get('fields'):
-                    if field.get("show_edit") and field.get('allow_edit'):
-                        if field.get('group_name'):
-                            for f in field.get('fields'):
+                    if field.get('group_name'):
+                        for f in field.get('fields'):
+                            if f.get("show_edit") and f.get("allow_edit"):
                                 data_update[f.get('field_key')] = f.get(
                                     'content')
-                        else:
+                    else:
+                        if field.get("show_edit") and field.get("allow_edit"):
                             data_update[field.get('field_key')] = field.get(
                                 'content')

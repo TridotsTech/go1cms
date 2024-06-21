@@ -32,6 +32,7 @@ def get_info_template_page():
         'allow_edit':  True,
         'show_edit': True,
         'section_title': 'SEO',
+        'show_prv_image': False,
         'fields': [
             {
                 'field_label': 'Thẻ tiêu đề',

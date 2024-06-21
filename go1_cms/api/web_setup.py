@@ -22,6 +22,7 @@ def get_setup():
         # logo website
         fields_favicon = {
             'allow_edit':  True,
+            'show_edit': True,
             'section_title': 'Website icon',
             'fields': [
                 {
@@ -30,6 +31,7 @@ def get_setup():
                     'field_type': 'Attach',
                     'content': web_theme.favicon,
                     'allow_edit': True,
+                    'show_edit': True,
                     'upload_file_image': None,
                     'classSize': True,
                 },
@@ -41,6 +43,7 @@ def get_setup():
 
         fields_logo = {
             'allow_edit':  True,
+            'show_edit': True,
             'section_title': 'Website logo',
             'fields': [
                 {
@@ -49,6 +52,7 @@ def get_setup():
                     'field_type': 'Attach',
                     'content': web_theme.website_logo,
                     'allow_edit': True,
+                    'show_edit': True,
                     'upload_file_image': None
                 },
                 {
@@ -57,6 +61,7 @@ def get_setup():
                     'field_type': 'Attach',
                     'content': web_theme.secondary_logo,
                     'allow_edit': True,
+                    'show_edit': True,
                     'upload_file_image': None
                 },
                 {
@@ -65,6 +70,7 @@ def get_setup():
                     'field_type': 'Attach',
                     'content': web_theme.mobile_logo,
                     'allow_edit': True,
+                    'show_edit': True,
                     'upload_file_image': None
                 },
                 {
@@ -73,6 +79,7 @@ def get_setup():
                     'field_type': 'Attach',
                     'content': web_theme.secondary_mobile_logo,
                     'allow_edit': True,
+                    'show_edit': True,
                     'upload_file_image': None
                 },
 

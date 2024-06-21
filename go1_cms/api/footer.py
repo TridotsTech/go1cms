@@ -31,6 +31,8 @@ def get_info_footer_component():
         'allow_edit':  True,
         'show_edit': footer_component.enable_copyright == 1,
         'section_title': 'Nội dung bản quyền',
+        'image': footer_component.image_copyright,
+        'show_prv_image': True,
         'fields': [
             {
                 'field_label': 'Nội dung cột 1',

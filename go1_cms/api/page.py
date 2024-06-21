@@ -27,6 +27,7 @@ def get_info_page(name):
         'allow_edit':  False,
         'show_edit': True,
         'section_title': 'Chuyển hướng',
+        'show_prv_image': False,
         'fields': [
             {
                 'field_label': 'Link chuyển hướng',
@@ -45,6 +46,7 @@ def get_info_page(name):
         'allow_edit':  True,
         'show_edit': True,
         'section_title': 'SEO',
+        'show_prv_image': False,
         'fields': [
             {
                 'field_label': 'Thẻ tiêu đề',
@@ -56,7 +58,7 @@ def get_info_page(name):
             },
             {
                 'group_name': 'seo-1',
-                'allow_edit': True,
+                'section_title': '',
                 'show_edit': True,
                 'fields': [
                     {

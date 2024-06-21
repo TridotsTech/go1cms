@@ -46,6 +46,7 @@
   "header_border_color",
   "header_extras_section",
   "call_to_action_button",
+  "image_btn",
   "button_1_section",
   "active_button",
   "button_text",
@@ -891,11 +892,16 @@
    "fieldname": "show_icon_btn_4",
    "fieldtype": "Check",
    "label": "Show Icon Button 4"
+  },
+  {
+   "fieldname": "image_btn",
+   "fieldtype": "Attach Image",
+   "label": "Image button"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-12 10:04:24.948092",
+ "modified": "2024-06-21 16:04:47.845269",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",

@@ -9,8 +9,12 @@
       </div>
       <div v-for="(field, idx) in page?.fields_st_cp" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
-          <div class="mb-2">
+          <div class="flex items-center mb-4 gap-4">
             <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
+            <DialogImage
+              :title="field.section_title"
+              :urlImage="field.image"
+            ></DialogImage>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <template v-for="fd in field.fields">
@@ -45,6 +49,7 @@
 
 <script setup>
 import FieldSection from '@/components/FieldSection.vue'
+import DialogImage from '@/components/DialogImage.vue'
 
 const page = defineModel()
 </script>

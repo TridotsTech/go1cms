@@ -11,6 +11,7 @@ def get_info_domain():
         # domain
         fields_logo = {
             'allow_edit':  True,
+            'show_edit': True,
             'section_title': 'Cài đặt website',
             'fields': [
                 {
@@ -20,13 +21,15 @@ def get_info_domain():
                     'content': cms_settings.use_other_domain == 1,
                     'field_type': 'checkbox',
                     'allow_edit': True,
+                    'show_edit': True,
                 },
                 {
                     'field_label': 'Tên miền',
                     'field_key': 'domain',
                     'field_type': 'Data',
                     'content': cms_settings.domain,
-                    'allow_edit': cms_settings.use_other_domain == 1
+                    'allow_edit': True,
+                    'show_edit': cms_settings.use_other_domain == 1,
                 }
             ],
             'name': 'logo-2'
