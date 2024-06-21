@@ -2,10 +2,10 @@ import frappe
 from frappe import _
 import json
 from go1_cms.api.common import (
-    get_section_content
+    get_field_section_component,
+    update_fields_page_section,
+    update_fields_page
 )
-
-FIELD_TYPE_JSON = ["List", 'Button']
 
 
 @frappe.whitelist()
@@ -13,86 +13,37 @@ def get_info_page(name):
     web_item = frappe.get_doc('MBW Client Website Item', name)
     if not web_item:
         frappe.throw(_("Page not found"), frappe.DoesNotExistError)
-    web_edit = frappe.get_last_doc('MBW Client Website', filters={"edit": 1})
+    web_edit = frappe.db.get_value(
+        'MBW Client Website', {"edit": 1}, ['name'], as_dict=1)
     web_page = frappe.get_doc('Web Page Builder', web_item.page_id)
 
     # get field section in component
-    fields_st_cp = []
-    for item in web_page.web_section:
-        info_item = get_section_content(item.section, 'Data')
-        if item.section_name in ['Header Logo', 'Header Button']:
-            info_item['allow_edit'] = False
-        else:
-            info_item['allow_edit'] = True
-        d = {}
-        fields_new = []
-        if info_item.get('section_type') == "Menu":
-            info_item['fields_ps'] = [
-                {
-                    'field_label': 'Menu',
-                    'field_key': 'menu',
-                    'field_type': 'Link',
-                    'content': info_item.get('menu'),
-                    'allow_edit': True,
-                    'upload_file_image': None,
-                    'doctype': "Menu",
-                    'filters': {
-                        'id_client_website': web_edit.name
-                    }
-
-                }
-            ]
-
-        for field in info_item['fields']:
-            field['allow_edit'] = True
-            field['upload_file_image'] = None
-            if field.get('field_type') in FIELD_TYPE_JSON:
-                if field.get('fields_json'):
-                    field['fields_json'] = json.loads(field['fields_json'])
-                if field.get('content'):
-                    field['content'] = json.loads(field['content']) or []
-                    if field.get('field_type') == "List":
-                        for item_f in field['fields_json']:
-                            for item_ct in field['content']:
-                                item_ct['upload_file_image_' +
-                                        item_f.get('field_key')] = None
-
-                if field.get('field_type') == "Button" and field.get('content'):
-                    f_json = []
-                    idx_sc = 1
-                    for k in field['content'].keys():
-                        field_label = 'Văn bản nút' if k == 'btn_text' else 'Link'
-                        f_json.append({
-                            "field_key": k,
-                            "field_label": field_label,
-                            "field_type": "Text",
-                            "idx": idx_sc
-                        })
-                        idx_sc += 1
-                    field['fields_json'] = f_json
-
-            if field.get('group_name'):
-                if not d.get(str(field.get('group_name'))):
-                    d[str(field.get('group_name'))] = []
-                d[str(field.get('group_name'))].append(field)
-            else:
-                fields_new.append(field)
-
-        for k, v in d.items():
-            obj = {
-                'group_name': k,
-                'fields': v
-            }
-            fields_new.append(obj)
-
-        info_item['fields'] = fields_new
-        fields_st_cp.append(info_item)
+    fields_st_cp = get_field_section_component(web_edit, web_page.web_section)
 
     # fields component
     fields_cp = []
-    # get field group button 1
+    # get field group 1
+    fields_page = {
+        'allow_edit':  False,
+        'show_edit': True,
+        'section_title': 'Chuyển hướng',
+        'fields': [
+            {
+                'field_label': 'Link chuyển hướng',
+                'field_key': 'route',
+                'field_type': 'Data',
+                'content': '/' + web_page.route,
+                'allow_edit': False,
+                'show_edit': True,
+            }
+        ],
+        'name': 'group-1'
+    }
+    fields_cp.append(fields_page)
+    # get field group seo
     fields_page = {
         'allow_edit':  True,
+        'show_edit': True,
         'section_title': 'SEO',
         'fields': [
             {
@@ -101,11 +52,12 @@ def get_info_page(name):
                 'field_type': 'Data',
                 'content': web_page.meta_title,
                 'allow_edit': True,
-                'upload_file_image': None
+                'show_edit': True,
             },
             {
                 'group_name': 'seo-1',
                 'allow_edit': True,
+                'show_edit': True,
                 'fields': [
                     {
                         'field_label': 'Thẻ mô tả',
@@ -113,7 +65,7 @@ def get_info_page(name):
                         'field_type': 'Small Text',
                         'content': web_page.meta_description,
                         'allow_edit': True,
-                        'upload_file_image': None
+                        'show_edit': True,
                     },
                     {
                         'field_label': 'Thẻ từ khóa',
@@ -121,18 +73,19 @@ def get_info_page(name):
                         'field_type': 'Small Text',
                         'content': web_page.meta_keywords,
                         'allow_edit': True,
-                        'upload_file_image': None
+                        'show_edit': True,
                     },
                 ]
             },
         ],
-        'name': 'header-1'
+        'name': 'group-1'
     }
     fields_cp.append(fields_page)
 
     web_page_info = {
         'name_page': web_item.name_page,
-        'doc_page': web_item.page_id
+        'doc_page': web_item.page_id,
+        'allow_delete': web_item.allow_delete == 1
     }
     return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'web_page': web_page_info}
 
@@ -147,8 +100,7 @@ def update_info_page(data):
             frappe.throw(_("Page not found"),
                          frappe.DoesNotExistError)
 
-        web_edit = frappe.get_last_doc(
-            'MBW Client Website', filters={"edit": 1})
+        web_edit = frappe.db.exists("MBW Client Website", {"edit": 1})
         web_page = frappe.get_doc('Web Page Builder', page_id)
 
         if not web_edit or not web_page:
@@ -156,56 +108,14 @@ def update_info_page(data):
                          frappe.DoesNotExistError)
 
         # update field section page
-        if data.get('fields_st_cp') and type(data.get('fields_st_cp')) == list:
-            for fcp in data.get('fields_st_cp'):
-                if fcp.get("allow_edit") and fcp.get('fields'):
-                    for field in fcp.get('fields'):
-                        if field.get('group_name'):
-                            for f in field.get('fields'):
-                                if f.get("allow_edit"):
-                                    # update Section Content
-                                    content = f.get('content')
-                                    if f.get('field_type') in FIELD_TYPE_JSON:
-                                        content = json.dumps(f.get('content'))
-                                    frappe.db.set_value('Section Content', f.get('name'), {
-                                        'content': content
-                                    })
-                        else:
-                            if field.get("allow_edit"):
-                                # update Section Content
-                                content = field.get('content')
-                                if field.get('field_type') in FIELD_TYPE_JSON:
-                                    content = json.dumps(field.get('content'))
-                                frappe.db.set_value('Section Content', field.get('name'), {
-                                    'content': content
-                                })
-
-                if fcp.get("allow_edit") and fcp.get("fields_ps"):
-                    d_update = {}
-                    for field in fcp.get('fields_ps'):
-                        d_update[field.get('field_key')] = field.get('content')
-
-                    if d_update:
-                        frappe.db.set_value(
-                            'Page Section', fcp.get('name'), d_update)
+        update_fields_page_section(data)
 
         # reload page
         web_page.reload()
 
         # update field page
         data_update = {}
-        if data.get('fields_cp') and type(data.get('fields_cp')) == list:
-            for field_cp in data.get('fields_cp'):
-                if field_cp.get('allow_edit') and field_cp.get('fields'):
-                    for field in field_cp.get('fields'):
-                        if field.get('allow_edit'):
-                            if field.get('group_name'):
-                                for f in field.get('fields'):
-                                    data_update[f.get('field_key')] = f.get(
-                                        'content')
-                            else:
-                                data_update[field.get('field_key')] = field.get(
-                                    'content')
+        update_fields_page(data, data_update)
 
         if data_update:
             frappe.db.set_value('Web Page Builder',
@@ -217,4 +127,25 @@ def update_info_page(data):
         return {'name': web_page.name}
     except Exception as ex:
         print("ex::", ex)
+        frappe.throw('Lỗi hệ thống')
+
+
+@frappe.whitelist()
+def delete_page(name):
+    try:
+        web_item = frappe.db.get_value('MBW Client Website Item', name, [
+                                       'page_id', 'allow_delete'], as_dict=1)
+        if not web_item:
+            frappe.throw(_("Không tìm thấy trang xóa"),
+                         frappe.DoesNotExistError)
+        if web_item.allow_delete == 0:
+            frappe.throw(_("Trang không thể xóa"),
+                         frappe.DoesNotExistError)
+
+        # delete MBW Client Website Item
+        frappe.delete_doc('MBW Client Website Item', name)
+        # delete Web Page Builder
+        frappe.delete_doc('Web Page Builder', web_item.page_id)
+    except Exception as ex:
+        print(ex)
         frappe.throw('Lỗi hệ thống')

@@ -8,6 +8,29 @@
         class="gap-2 justify-end"
         :class="alreadyActions ? 'flex' : 'hidden'"
       >
+        <Dropdown
+          v-if="_page?.web_page?.allow_delete"
+          :options="[
+            {
+              group: 'Xóa',
+              items: [
+                {
+                  label: 'Xóa trang',
+                  icon: 'trash',
+                  onClick: () => {
+                    showModalDelete = true
+                  },
+                },
+              ],
+            },
+          ]"
+        >
+          <Button size="md">
+            <template #icon>
+              <FeatherIcon name="more-horizontal" class="h-4 w-4" />
+            </template>
+          </Button>
+        </Dropdown>
         <Button
           variant="subtle"
           theme="gray"
@@ -33,97 +56,56 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div
-      v-if="_page?.fields_cp && _page?.fields_cp.length"
-      class="p-4 border border-gray-300 rounded-sm mb-4"
-    >
-      <div class="p-2">
-        <div class="mb-4">
-          <h2 class="font-bold text-xl">Thông tin chung</h2>
-        </div>
-        <div v-for="(field, idx) in _page?.fields_cp" :key="field.name">
-          <div v-if="field.allow_edit" class="border-t py-4">
-            <div class="mb-4">
-              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
-            </div>
-            <div class="grid lg:grid-cols-2 gap-4">
-              <template v-for="fd in field.fields">
-                <template v-if="fd.group_name">
-                  <div class="lg:col-span-2">
-                    <div class="grid lg:grid-cols-2 gap-4">
-                      <template v-for="fsc in fd.fields">
-                        <FieldSection
-                          :field="fsc"
-                          :sectionName="field.section_title"
-                        ></FieldSection>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-                <template v-else>
-                  <FieldSection
-                    :field="fd"
-                    :sectionName="field.section_title"
-                  ></FieldSection>
-                </template>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="_page?.fields_st_cp && _page?.fields_st_cp.length"
-      class="p-4 border border-gray-300 rounded-sm mb-4"
-    >
-      <div class="p-2">
-        <div class="mb-4">
-          <h2 class="font-bold text-xl">Các thành phần của trang</h2>
-        </div>
-        <div v-for="(field, idx) in _page?.fields_st_cp" :key="field.name">
-          <div v-if="field.allow_edit" class="border-t py-4">
-            <div class="mb-2">
-              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
-            </div>
-            <div class="grid lg:grid-cols-2 gap-4">
-              <template v-for="fd in field.fields">
-                <template v-if="fd.group_name">
-                  <div class="lg:col-span-2">
-                    <div class="grid lg:grid-cols-2 gap-4">
-                      <template v-for="fsc in fd.fields">
-                        <FieldSection
-                          :field="fsc"
-                          :sectionName="field.section_title"
-                        ></FieldSection>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-                <template v-else>
-                  <FieldSection
-                    :field="fd"
-                    :sectionName="field.section_title"
-                  ></FieldSection>
-                </template>
-              </template>
-              <template v-for="fd in field.fields_ps">
-                <FieldSection :field="fd"></FieldSection>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <FieldsComponent v-model="_page"></FieldsComponent>
+    <FieldsSectionComponent v-model="_page"></FieldsSectionComponent>
   </div>
+  <Dialog
+    :options="{
+      title: 'Xóa trang',
+      actions: [
+        {
+          label: 'Xóa',
+          variant: 'solid',
+          theme: 'red',
+          onClick: (close) => deleteDoc(close),
+        },
+      ],
+    }"
+    v-model="showModalDelete"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div>
+          Bạn chắc chắn muốn xóa trang:
+          <b>"{{ _page?.web_page?.name_page }}"</b>?
+        </div>
+        <div class="text-base">
+          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
+        </div>
+      </div>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import FieldSection from '../components/FieldSection.vue'
-import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
+import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
+import FieldsSectionComponent from '@/components/FieldsPage/FieldsSectionComponent.vue'
+import {
+  Breadcrumbs,
+  ErrorMessage,
+  createResource,
+  call,
+  Dropdown,
+} from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { createToast, errorMessage, uploadFile, scrollToTop } from '@/utils'
+import {
+  createToast,
+  errorMessage,
+  handleUploadFieldImage,
+  scrollToTop,
+} from '@/utils'
 import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
@@ -179,122 +161,13 @@ async function callUpdateDoc() {
   changeLoadingValue(true, 'Đang lưu...')
   try {
     let data = JSON.parse(JSON.stringify(_page.value))
-
     // upload image
-    for (const [idx_cp, field] of _page.value.fields_cp.entries()) {
-      for (const [idx_f, f] of field.fields.entries()) {
-        if (f.group_name) {
-          for (const [idx, f_st] of f.fields.entries()) {
-            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
-              // upload file
-              let file_url = await uploadFile(
-                'Web Page Builder',
-                _page.value?.web_page?.doc_page,
-                f_st.field_key,
-                f_st.content,
-                f_st.upload_file_image
-              )
-              data['fields_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
-                'content'
-              ] = file_url
-            }
-          }
-        } else {
-          if (f.field_type == 'Attach' && f.upload_file_image) {
-            // upload file
-            let file_url = await uploadFile(
-              'Web Page Builder',
-              _page.value?.web_page?.doc_page,
-              f.field_key,
-              f.content,
-              f.upload_file_image
-            )
-            data['fields_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
-          }
-        }
-      }
-    }
-
-    for (const [idx_cp, field] of _page.value.fields_st_cp.entries()) {
-      for (const [idx_f, f] of field.fields.entries()) {
-        if (f.group_name) {
-          for (const [idx, f_st] of f.fields.entries()) {
-            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
-              // upload file
-              let file_url = await uploadFile(
-                'Web Page Builder',
-                _page.value?.web_page?.doc_page,
-                f_st.field_key,
-                f_st.content,
-                f_st.upload_file_image
-              )
-              data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
-                'content'
-              ] = file_url
-            } else if (f_st.field_type == 'List') {
-              for (const [idx_f_ps, f_ps] of f_st.content.entries()) {
-                for (const [idx_f_js, f_js] of f_st.fields_json.entries()) {
-                  if (
-                    f_js.field_type == 'Attach' &&
-                    f_ps['upload_file_image_' + f_js.field_key]
-                  ) {
-                    // upload file
-                    let file_url = await uploadFile(
-                      'Web Page Builder',
-                      _page.value?.web_page?.doc_page,
-                      f_js.field_key,
-                      f_ps[f_js.field_key],
-                      f_ps['upload_file_image_' + f_js.field_key]
-                    )
-                    f_ps[f_js.field_key] = file_url
-                  }
-                  delete f_ps['upload_file_image_' + f_js.field_key]
-                  data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
-                    'content'
-                  ][idx_f_ps] = { ...f_ps }
-                }
-              }
-            }
-          }
-        } else {
-          if (f.field_type == 'Attach' && f.upload_file_image) {
-            // upload file
-            let file_url = await uploadFile(
-              'Web Page Builder',
-              _page.value?.web_page?.doc_page,
-              f.field_key,
-              f.content,
-              f.upload_file_image
-            )
-            data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
-          } else if (f.field_type == 'List') {
-            for (const [idx_f_ps, f_ps] of f.content.entries()) {
-              for (const [idx_f_js, f_js] of f.fields_json.entries()) {
-                if (
-                  f_js.field_type == 'Attach' &&
-                  f_ps['upload_file_image_' + f_js.field_key]
-                ) {
-                  // upload file
-                  let file_url = await uploadFile(
-                    'Web Page Builder',
-                    _page.value?.web_page?.doc_page,
-                    f_js.field_key,
-                    f_ps[f_js.field_key],
-                    f_ps['upload_file_image_' + f_js.field_key]
-                  )
-
-                  f_ps[f_js.field_key] = file_url
-                }
-                delete f_ps['upload_file_image_' + f_js.field_key]
-                data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'][
-                  idx_f_ps
-                ] = { ...f_ps }
-              }
-            }
-          }
-        }
-      }
-    }
+    await handleUploadFieldImage(
+      data,
+      _page,
+      'Web Page Builder',
+      _page.value?.web_page?.doc_page,
+    )
 
     let docUpdate = await call('go1_cms.api.page.update_info_page', {
       data: data,
@@ -322,5 +195,32 @@ async function callUpdateDoc() {
 
 async function cacelSaveDoc() {
   await page.reload()
+}
+
+// delete page
+const showModalDelete = ref(false)
+async function deleteDoc(close) {
+  changeLoadingValue(true, 'Đang xóa...')
+  try {
+    await call('go1_cms.api.page.delete_page', {
+      name: route.query.view,
+    }).then(() => {
+      createToast({
+        title: 'Xóa thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      close()
+      window.location.href = '/cms/my-website'
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
 }
 </script>

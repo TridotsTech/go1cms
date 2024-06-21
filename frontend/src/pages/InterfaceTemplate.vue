@@ -7,8 +7,8 @@
       <div class="flex flex-wrap justify-between items-center gap-2">
         <h2 class="font-bold text-3xl"></h2>
         <Button
-          :variant="'subtle'"
-          theme="gray"
+          variant="solid"
+          theme="blue"
           size="sm"
           label="Chọn giao diện này"
           @click="addWebTemplate"

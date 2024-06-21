@@ -57,7 +57,7 @@ export function taskStatusOptions(action, data) {
         label: status,
         onClick: () => action && action(status, data),
       }
-    }
+    },
   )
 }
 
@@ -211,7 +211,7 @@ export async function uploadFile(
   docname,
   fieldname,
   file_url_old,
-  upload_file_image
+  upload_file_image,
 ) {
   let file_url = ''
   let headers = { Accept: 'application/json' }
@@ -248,6 +248,124 @@ export async function uploadFile(
     })
 
   return file_url
+}
+
+export async function handleUploadFieldImage(data, _page, doctype, docname) {
+  // upload image
+  for (const [idx_cp, field] of _page.value.fields_cp.entries()) {
+    for (const [idx_f, f] of field.fields.entries()) {
+      if (f.group_name) {
+        for (const [idx, f_st] of f.fields.entries()) {
+          if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+            // upload file
+            let file_url = await uploadFile(
+              doctype,
+              docname,
+              f_st.field_key,
+              f_st.content,
+              f_st.upload_file_image,
+            )
+            data['fields_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+              'content'
+            ] = file_url
+          }
+        }
+      } else {
+        if (f.field_type == 'Attach' && f.upload_file_image) {
+          // upload file
+          let file_url = await uploadFile(
+            doctype,
+            docname,
+            f.field_key,
+            f.content,
+            f.upload_file_image,
+          )
+          data['fields_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+        }
+      }
+    }
+  }
+
+  for (const [idx_cp, field] of _page.value.fields_st_cp.entries()) {
+    for (const [idx_f, f] of field.fields.entries()) {
+      if (f.group_name) {
+        for (const [idx, f_st] of f.fields.entries()) {
+          if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+            // upload file
+            let file_url = await uploadFile(
+              doctype,
+              docname,
+              f_st.field_key,
+              f_st.content,
+              f_st.upload_file_image,
+            )
+            data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+              'content'
+            ] = file_url
+          } else if (f_st.field_type == 'List') {
+            for (const [idx_f_ps, f_ps] of f_st.content.entries()) {
+              for (const [idx_f_js, f_js] of f_st.fields_json.entries()) {
+                if (
+                  f_js.field_type == 'Attach' &&
+                  f_ps['upload_file_image_' + f_js.field_key]
+                ) {
+                  // upload file
+                  let file_url = await uploadFile(
+                    doctype,
+                    docname,
+                    f_js.field_key,
+                    f_ps[f_js.field_key],
+                    f_ps['upload_file_image_' + f_js.field_key],
+                  )
+                  f_ps[f_js.field_key] = file_url
+                }
+                delete f_ps['upload_file_image_' + f_js.field_key]
+                data['fields_st_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
+                  'content'
+                ][idx_f_ps] = { ...f_ps }
+              }
+            }
+          }
+        }
+      } else {
+        if (f.field_type == 'Attach' && f.upload_file_image) {
+          // upload file
+          let file_url = await uploadFile(
+            doctype,
+            docname,
+            f.field_key,
+            f.content,
+            f.upload_file_image,
+          )
+          data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
+        } else if (f.field_type == 'List') {
+          for (const [idx_f_ps, f_ps] of f.content.entries()) {
+            for (const [idx_f_js, f_js] of f.fields_json.entries()) {
+              if (
+                f_js.field_type == 'Attach' &&
+                f_ps['upload_file_image_' + f_js.field_key]
+              ) {
+                // upload file
+                let file_url = await uploadFile(
+                  doctype,
+                  docname,
+                  f_js.field_key,
+                  f_ps[f_js.field_key],
+                  f_ps['upload_file_image_' + f_js.field_key],
+                )
+
+                f_ps[f_js.field_key] = file_url
+              }
+              delete f_ps['upload_file_image_' + f_js.field_key]
+              data['fields_st_cp'][idx_cp]['fields'][idx_f]['content'][
+                idx_f_ps
+              ] = { ...f_ps }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 export const toBase64 = (file) =>

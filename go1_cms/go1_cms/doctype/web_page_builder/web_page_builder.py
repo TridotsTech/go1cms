@@ -2089,8 +2089,8 @@ def get_shuffled_category_products(category, no_of_records):
 
 
 @frappe.whitelist()
-def import_sections_from_template(page_id, id_client_website=''):
-    page_template = frappe.get_doc("Page Template", page_id)
+def import_sections_from_template(page_id, doctype="Page Template",id_client_website=''):
+    page_template = frappe.get_doc(doctype, page_id)
     mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
     web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "web_section"}, fields=[

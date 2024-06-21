@@ -5,17 +5,14 @@ from frappe import _
 @frappe.whitelist()
 def get_setup():
     try:
-        web_edit = frappe.get_all(
-            "MBW Client Website",
-            filters={"edit": 1},
-            fields=["web_theme"]
-        )
-        if not web_edit or not frappe.db.exists("Web Theme", web_edit[0].web_theme):
+        web_edit = frappe.db.get_value(
+            'MBW Client Website', {"edit": 1}, ['web_theme'], as_dict=1)
+        if not web_edit or not frappe.db.exists("Web Theme", web_edit.web_theme):
             frappe.throw(_("Web Theme not found"), frappe.DoesNotExistError)
 
         web_themes = frappe.db.get_all(
             "Web Theme",
-            filters={'name': web_edit[0].web_theme},
+            filters={'name': web_edit.web_theme},
             fields=['name', 'website_logo', 'secondary_logo',
                     'mobile_logo', 'secondary_mobile_logo', 'favicon']
         )
@@ -96,12 +93,9 @@ def get_setup():
 @frappe.whitelist()
 def update_setup(data):
     try:
-        web_edit = frappe.get_all(
-            "MBW Client Website",
-            filters={"edit": 1},
-            fields=["web_theme"]
-        )
-        if not web_edit or not frappe.db.exists("Web Theme", web_edit[0].web_theme):
+        web_edit = frappe.db.get_value(
+            'MBW Client Website', {"edit": 1}, ['web_theme'], as_dict=1)
+        if not web_edit or not frappe.db.exists("Web Theme", web_edit.web_theme):
             frappe.throw(_("Web Theme not found"), frappe.DoesNotExistError)
 
         # update field web theme
@@ -121,9 +115,9 @@ def update_setup(data):
 
         if data_update:
             frappe.db.set_value('Web Theme',
-                                web_edit[0].web_theme, data_update)
+                                web_edit.web_theme, data_update)
 
-        web_theme = frappe.get_doc('Web Theme', web_edit[0].web_theme)
+        web_theme = frappe.get_doc('Web Theme', web_edit.web_theme)
         web_theme.save(ignore_permissions=True)
 
         return {'name': web_theme.name}

@@ -1,6 +1,9 @@
 import frappe
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
+import json
+
+FIELD_TYPE_JSON = ["List", 'Button']
 
 
 def copy_header_component(name, sub_name):
@@ -138,10 +141,160 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
         'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records',
-        'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'section_title'
+        'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'html_content', 'section_title'
     ])
 
     if section:
         section[0].fields = frappe.db.sql('''select field_label, field_key, field_type, content, name, group_name, fields_json,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''', {
             'parent': section[0].name, 'content_type': content_type}, as_dict=1)
     return section[0]
+
+
+def get_field_section_component(web_edit, web_section):
+    fields_st_cp = []
+    for item in web_section:
+        info_item = get_section_content(item.section, 'Data')
+        if item.section_name in ['Header Logo', 'Header Button']:
+            info_item['allow_edit'] = False
+            info_item['show_edit'] = False
+        else:
+            info_item['allow_edit'] = True
+            info_item['show_edit'] = True
+        d = {}
+        fields_new = []
+        if info_item.get('section_type') == "Menu":
+            info_item['fields_ps'] = [
+                {
+                    'field_label': 'Menu',
+                    'field_key': 'menu',
+                    'field_type': 'Link',
+                    'content': info_item.get('menu'),
+                    'allow_edit': True,
+                    'show_edit': True,
+                    'doctype': "Menu",
+                    'filters': {
+                        'id_client_website': web_edit.name
+                    }
+
+                }
+            ]
+        if info_item.get('section_type') == "Html Content":
+            info_item['fields_ps'] = [
+                {
+                    'field_label': 'Nội dung trang',
+                    'field_key': 'html_content',
+                    'field_type': 'texeditor',
+                    'content': info_item.get('html_content'),
+                    'allow_edit': True,
+                    'show_edit': True,
+                }
+            ]
+
+        for field in info_item['fields']:
+            field['allow_edit'] = True
+            field['show_edit'] = True
+            field['upload_file_image'] = None
+            if field.get('field_type') in FIELD_TYPE_JSON:
+                if field.get('fields_json'):
+                    field['fields_json'] = json.loads(field['fields_json'])
+                if field.get('content'):
+                    field['content'] = json.loads(field['content']) or []
+                    if field.get('field_type') == "List":
+                        for item_f in field['fields_json']:
+                            for item_ct in field['content']:
+                                item_ct['upload_file_image_' +
+                                        item_f.get('field_key')] = None
+
+                if field.get('field_type') == "Button" and field.get('content'):
+                    f_json = []
+                    idx_sc = 1
+                    for k in field['content'].keys():
+                        field_label = 'Văn bản nút' if k == 'btn_text' else 'Link'
+                        f_json.append({
+                            "field_key": k,
+                            "field_label": field_label,
+                            "field_type": "Text",
+                            "idx": idx_sc
+                        })
+                        idx_sc += 1
+                    field['fields_json'] = f_json
+
+            if field.get('group_name'):
+                if not d.get(str(field.get('group_name'))):
+                    d[str(field.get('group_name'))] = []
+                d[str(field.get('group_name'))].append(field)
+            else:
+                fields_new.append(field)
+
+        for k, v in d.items():
+            obj = {
+                'group_name': k,
+                'fields': v
+            }
+            fields_new.append(obj)
+
+        info_item['fields'] = fields_new
+        fields_st_cp.append(info_item)
+
+    return fields_st_cp
+
+
+def update_fields_page_section(data):
+    if data.get('fields_st_cp') and type(data.get('fields_st_cp')) == list:
+        for fcp in data.get('fields_st_cp'):
+            if fcp.get("show_edit") and fcp.get("allow_edit") and fcp.get('fields'):
+                for field in fcp.get('fields'):
+                    if field.get('group_name'):
+                        for f in field.get('fields'):
+                            if f.get("show_edit") and f.get("allow_edit"):
+                                # update Section Content
+                                content = f.get('content')
+                                if f.get('field_type') in FIELD_TYPE_JSON:
+                                    content = json.dumps(f.get('content'))
+                                frappe.db.set_value('Section Content', f.get('name'), {
+                                    'content': content
+                                })
+                    else:
+                        if field.get("show_edit") and field.get("allow_edit"):
+                            # update Section Content
+                            content = field.get('content')
+                            if field.get('field_type') in FIELD_TYPE_JSON:
+                                content = json.dumps(field.get('content'))
+                            frappe.db.set_value('Section Content', field.get('name'), {
+                                'content': content
+                            })
+
+            if fcp.get("show_edit") and fcp.get("allow_edit") and fcp.get("fields_ps"):
+                d_update = {}
+                ps = frappe.get_doc('Page Section', fcp.get('name'))
+                ud_ps = False
+                for field in fcp.get('fields_ps'):
+                    if field.get('field_type') == "texeditor":
+                        if field.get('field_key') == "html_content":
+                            ps.html_content = field.get(
+                                'content')
+                            ud_ps = True
+                    else:
+                        d_update[field.get('field_key')] = field.get(
+                            'content')
+                if ud_ps:
+                    ps.save()
+
+                if d_update:
+                    frappe.db.set_value(
+                        'Page Section', fcp.get('name'), d_update)
+
+
+def update_fields_page(data, data_update):
+    if data.get('fields_cp') and type(data.get('fields_cp')) == list:
+        for field_cp in data.get('fields_cp'):
+            if field_cp.get("show_edit") and field_cp.get('allow_edit') and field_cp.get('fields'):
+                for field in field_cp.get('fields'):
+                    if field.get("show_edit") and field.get('allow_edit'):
+                        if field.get('group_name'):
+                            for f in field.get('fields'):
+                                data_update[f.get('field_key')] = f.get(
+                                    'content')
+                        else:
+                            data_update[field.get('field_key')] = field.get(
+                                'content')

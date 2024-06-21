@@ -55,7 +55,8 @@ def create_menu(data):
         frappe.throw(_("Tên menu không được để trống"))
 
     # init menu
-    web_edit = frappe.get_last_doc('MBW Client Website', filters={"edit": 1})
+    web_edit = frappe.db.get_value(
+        'MBW Client Website', {"edit": 1}, ['name'], as_dict=1)
     doc_new = frappe.new_doc('Menu')
     doc_new.title = title
     if web_edit:

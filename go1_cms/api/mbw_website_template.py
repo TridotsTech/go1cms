@@ -7,6 +7,7 @@ from go1_cms.api.common import (
     copy_footer_component,
     copy_web_theme
 )
+from slugify import slugify
 
 
 @frappe.whitelist()
@@ -59,9 +60,9 @@ def add_web_template(name):
             idx_p += 1
             new_webpage = frappe.new_doc("Web Page Builder")
             new_import = import_sections_from_template(
-                page_temp.page_template, website.name)
+                page_id=page_temp.page_template, id_client_website=website.name)
 
-            page_build_name = page_temp.page_template + \
+            page_build_name = slugify(page_temp.name_template) + \
                 ' ' + frappe.scrub(website.name)
 
             info = new_import.get('info')

@@ -2,15 +2,16 @@ import frappe
 from frappe import _
 import json
 from go1_cms.api.common import (
-    get_section_content
+    get_field_section_component,
+    update_fields_page_section,
+    update_fields_page
 )
-
-FIELD_TYPE_JSON = ["List", 'Button']
 
 
 @frappe.whitelist()
 def get_info_footer_component():
-    web_edit = frappe.get_last_doc('MBW Client Website', filters={"edit": 1})
+    web_edit = frappe.db.get_value(
+        'MBW Client Website', {"edit": 1}, ['name', 'footer_component'], as_dict=1)
     if not web_edit or not web_edit.footer_component:
         frappe.throw(_("Footer not found"), frappe.DoesNotExistError)
     if not frappe.db.exists("Footer Component", web_edit.footer_component):
@@ -20,79 +21,15 @@ def get_info_footer_component():
         "Footer Component", web_edit.footer_component)
 
     # get field section in component
-    fields_st_cp = []
-    for item in footer_component.web_section:
-        info_item = get_section_content(item.section, 'Data')
-        info_item['allow_edit'] = True
-        d = {}
-        fields_new = []
-        if info_item.get('section_type') == "Menu":
-            info_item['fields_ps'] = [
-                {
-                    'field_label': 'Menu',
-                    'field_key': 'menu',
-                    'field_type': 'Link',
-                    'content': info_item.get('menu'),
-                    'allow_edit': True,
-                    'upload_file_image': None,
-                    'doctype': "Menu",
-                    'filters': {
-                        'id_client_website': web_edit.name
-                    }
-
-                }
-            ]
-
-        for field in info_item['fields']:
-            field['allow_edit'] = True
-            field['upload_file_image'] = None
-            if field.get('field_type') in FIELD_TYPE_JSON:
-                if field.get('fields_json'):
-                    field['fields_json'] = json.loads(field['fields_json'])
-                if field.get('content'):
-                    field['content'] = json.loads(field['content']) or []
-                    if field.get('field_type') == "List":
-                        for item_f in field['fields_json']:
-                            for item_ct in field['content']:
-                                item_ct['upload_file_image_' +
-                                        item_f.get('field_key')] = None
-
-                if field.get('field_type') == "Button" and field.get('content'):
-                    f_json = []
-                    idx_sc = 1
-                    for k in field['content'].keys():
-                        field_label = 'Văn bản nút' if k == 'btn_text' else 'Link'
-                        f_json.append({
-                            "field_key": k,
-                            "field_label": field_label,
-                            "field_type": "Text",
-                            "idx": idx_sc
-                        })
-                        idx_sc += 1
-                    field['fields_json'] = f_json
-
-            if field.get('group_name'):
-                if not d.get(str(field.get('group_name'))):
-                    d[str(field.get('group_name'))] = []
-                d[str(field.get('group_name'))].append(field)
-            else:
-                fields_new.append(field)
-
-        for k, v in d.items():
-            obj = {
-                'group_name': k,
-                'fields': v
-            }
-            fields_new.append(obj)
-
-        info_item['fields'] = fields_new
-        fields_st_cp.append(info_item)
+    fields_st_cp = get_field_section_component(
+        web_edit, footer_component.web_section)
 
     # fields component
     fields_cp = []
     # copyright
     fields_copyright = {
-        'allow_edit':  footer_component.enable_copyright == 1,
+        'allow_edit':  True,
+        'show_edit': footer_component.enable_copyright == 1,
         'section_title': 'Nội dung bản quyền',
         'fields': [
             {
@@ -100,16 +37,16 @@ def get_info_footer_component():
                 'field_key': 'cp_fc_content',
                 'field_type': 'Small Text',
                 'content': footer_component.cp_fc_content,
-                'allow_edit': footer_component.fc_ct_type == 'Custom',
-                'upload_file_image': None
+                'allow_edit': True,
+                'show_edit': footer_component.fc_ct_type == 'Custom'
             },
             {
                 'field_label': 'Nội dung cột 2',
                 'field_key': 'cp_sc_content',
                 'field_type': 'Small Text',
                 'content': footer_component.cp_sc_content,
-                'allow_edit': footer_component.sc_ct_type == 'Custom',
-                'upload_file_image': None
+                'allow_edit': True,
+                'show_edit': footer_component.sc_ct_type == 'Custom'
             }
         ],
         'name': 'footer-1'
@@ -123,8 +60,8 @@ def get_info_footer_component():
 @frappe.whitelist()
 def update_info_footer_component(data):
     try:
-        web_edit = frappe.get_last_doc(
-            'MBW Client Website', filters={"edit": 1})
+        web_edit = frappe.db.get_value(
+            'MBW Client Website', {"edit": 1}, ['name', 'footer_component'], as_dict=1)
         if not web_edit or not web_edit.footer_component:
             frappe.throw(_("Footer not found"),
                          frappe.DoesNotExistError)
@@ -136,56 +73,14 @@ def update_info_footer_component(data):
             "Footer Component", web_edit.footer_component)
 
         # update field section footer component
-        if data.get('fields_st_cp') and type(data.get('fields_st_cp')) == list:
-            for fcp in data.get('fields_st_cp'):
-                if fcp.get("allow_edit") and fcp.get('fields'):
-                    for field in fcp.get('fields'):
-                        if field.get('group_name'):
-                            for f in field.get('fields'):
-                                if f.get("allow_edit"):
-                                    # update Section Content
-                                    content = f.get('content')
-                                    if f.get('field_type') in FIELD_TYPE_JSON:
-                                        content = json.dumps(f.get('content'))
-                                    frappe.db.set_value('Section Content', f.get('name'), {
-                                        'content': content
-                                    })
-                        else:
-                            if field.get("allow_edit"):
-                                # update Section Content
-                                content = field.get('content')
-                                if field.get('field_type') in FIELD_TYPE_JSON:
-                                    content = json.dumps(field.get('content'))
-                                frappe.db.set_value('Section Content', field.get('name'), {
-                                    'content': content
-                                })
-
-                if fcp.get("allow_edit") and fcp.get("fields_ps"):
-                    d_update = {}
-                    for field in fcp.get('fields_ps'):
-                        d_update[field.get('field_key')] = field.get('content')
-
-                    if d_update:
-                        frappe.db.set_value(
-                            'Page Section', fcp.get('name'), d_update)
+        update_fields_page_section(data)
 
         # reload footer component
         footer_component.reload()
 
         # update field footer component
         data_update = {}
-        if data.get('fields_cp') and type(data.get('fields_cp')) == list:
-            for field_cp in data.get('fields_cp'):
-                if field_cp.get('allow_edit') and field_cp.get('fields'):
-                    for field in field_cp.get('fields'):
-                        if field.get('allow_edit'):
-                            if field.get('group_name'):
-                                for f in field.get('fields'):
-                                    data_update[f.get('field_key')] = f.get(
-                                        'content')
-                            else:
-                                data_update[field.get('field_key')] = field.get(
-                                    'content')
+        update_fields_page(data, data_update)
 
         if data_update:
             frappe.db.set_value('Footer Component',

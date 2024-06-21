@@ -91,9 +91,10 @@ class MBWClientWebsite(Document):
             # update published
             if doc_self_old.published != self.published:
                 for item in self.page_websites:
-                    doc = frappe.get_doc('Web Page Builder', item.page_id)
-                    doc.published = self.published
-                    doc.save()
+                    if item.page_type not in ['News detail page', 'New page']:
+                        doc = frappe.get_doc('Web Page Builder', item.page_id)
+                        doc.published = self.published
+                        doc.save()
 
             if doc_self_old.type_web != self.type_web or not doc_self_old.route_web:
                 """ check published, set route page, update menu """

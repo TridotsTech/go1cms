@@ -1,5 +1,5 @@
 <template>
-  <template v-if="field.allow_edit">
+  <template v-if="field.show_edit">
     <template v-if="field.field_type == 'List'">
       <div class="lg:col-span-2 overflow-y-hidden">
         <div class="text-base text-gray-700 font-bold mb-2">
@@ -113,7 +113,24 @@
         </div>
       </div>
     </template>
-
+    <template v-else-if="field.field_type == 'texeditor'">
+      <div class="lg:col-span-2">
+        <Field
+          :field="{
+            label: field.field_label,
+            name: field.field_key,
+            type: getTypeField(field.field_type),
+            placeholder: field.field_label,
+            rows: 7,
+            doctype: field.doctype,
+            filters: field.filters,
+            options: field.options,
+            labelInput: field.label_input,
+          }"
+          v-model="field['content']"
+        ></Field>
+      </div>
+    </template>
     <div class="flex flex-col" v-else>
       <Field
         v-if="getTypeField(field.field_type) == 'upload_image'"
@@ -139,6 +156,7 @@
           filters: field.filters,
           options: field.options,
           labelInput: field.label_input,
+          disabled: !field.allow_edit,
         }"
         v-model="field['content']"
       ></Field>

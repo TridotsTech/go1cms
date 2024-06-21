@@ -175,6 +175,7 @@
     type="text"
     :placeholder="__(field.placeholder)"
     v-model="data"
+    :disabled="field.disabled"
   />
 </template>
 

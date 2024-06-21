@@ -13,7 +13,6 @@ from frappe.utils import (
     strip_html_tags,
     today,
 )
-from frappe.desk.utils import slug
 from frappe.website.utils import (
     clear_cache,
     find_first_image,

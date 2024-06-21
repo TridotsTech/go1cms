@@ -46,11 +46,11 @@
             <div class="mb-4">
               <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
             </div>
-            <div class="grid lg:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <template v-for="fd in field.fields">
                 <template v-if="fd.group_name">
                   <div class="lg:col-span-2">
-                    <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <template v-for="fsc in fd.fields">
                         <FieldSection
                           :field="fsc"
@@ -145,7 +145,7 @@ async function callUpdateDoc() {
                 _webSetup.value.docname,
                 f_st.field_key,
                 f_st.content,
-                f_st.upload_file_image
+                f_st.upload_file_image,
               )
               data['fields_cp'][idx_cp]['fields'][idx_f]['fields'][idx][
                 'content'
@@ -160,7 +160,7 @@ async function callUpdateDoc() {
               _webSetup.value.docname,
               f.field_key,
               f.content,
-              f.upload_file_image
+              f.upload_file_image,
             )
             data['fields_cp'][idx_cp]['fields'][idx_f]['content'] = file_url
           }
