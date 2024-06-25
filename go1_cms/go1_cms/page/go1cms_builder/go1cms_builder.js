@@ -991,8 +991,8 @@ frappe.Go1CmsBuilder = class Go1CmsBuilder {
 					<input type="radio"  value="${
             each_p.unique_id
           }" name="theme_radio" style="position:absolute;top:6px;right:30px;z-index:99;" ${
-                each_p.unique_id == seleted_layout_id
-              }?"checked":"">
+            each_p.unique_id == seleted_layout_id
+          }?"checked":"">
 				</label></div>`;
             });
           }
@@ -1026,8 +1026,8 @@ frappe.Go1CmsBuilder = class Go1CmsBuilder {
 					<input type="radio"  value="${
             each_p.unique_id
           }" name="theme_radio" style="position:absolute;top:6px;right:30px;z-index:99;" ${
-                each_p.unique_id == seleted_layout_id
-              }?"checked":"">
+            each_p.unique_id == seleted_layout_id
+          }?"checked":"">
 				</label></div>`;
             });
           }
@@ -1062,8 +1062,8 @@ frappe.Go1CmsBuilder = class Go1CmsBuilder {
 				<input type="radio"  value="${
           each_p.name
         }" name="theme_radio" style="position:absolute;top:6px;right:30px;z-index:99;" ${
-                each_p.unique_id == seleted_layout_id
-              }?"checked":"">
+          each_p.unique_id == seleted_layout_id
+        }?"checked":"">
 			</label></div>`;
             });
           }
@@ -3795,12 +3795,12 @@ var modify_section_data = Class.extend({
             for (var i = 0; i < fields.length; i++) {
               if (fields[i].field_type != "Attach") {
                 row_html +=
-                  '<td style="border-color: #ddd;">' +
+                  '<td style="border-color: #ddd;word-break: break-word;">' +
                   f[fields[i].field_key] +
                   "</td>";
               } else {
                 row_html +=
-                  '<td style="border-color: #ddd;"><img src="' +
+                  '<td style="border-color: #ddd;word-break: break-word;"><img src="' +
                   f[fields[i].field_key] +
                   '" style="height:50px"/></td>';
               }
@@ -3831,7 +3831,7 @@ var modify_section_data = Class.extend({
           list_html
             .find("tbody")
             .html(
-              `<tr><td style='border-color: #ddd;' colspan="` +
+              `<tr><td style='border-color: #ddd;word-break: break-word;' colspan="` +
                 display_fileds_count +
                 `">No records found!</td></tr>`
             );

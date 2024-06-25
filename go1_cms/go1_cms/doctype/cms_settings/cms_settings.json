@@ -15,7 +15,12 @@
   "route_prefix",
   "website_settings_section",
   "use_other_domain",
-  "domain"
+  "domain",
+  "email_setup_section",
+  "allow_send_email_contact",
+  "list_email_receipt",
+  "synchronize_lead_data_section",
+  "sync_lead_data"
  ],
  "fields": [
   {
@@ -73,12 +78,40 @@
    "fieldtype": "Table",
    "label": "Route Prefix",
    "options": "CMS Route"
+  },
+  {
+   "fieldname": "email_setup_section",
+   "fieldtype": "Section Break",
+   "label": "Email setup"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_send_email_contact",
+   "fieldtype": "Check",
+   "label": "Allow send email contact"
+  },
+  {
+   "depends_on": "eval:doc.allow_send_email_contact==1",
+   "fieldname": "list_email_receipt",
+   "fieldtype": "Text",
+   "label": "List Email"
+  },
+  {
+   "fieldname": "synchronize_lead_data_section",
+   "fieldtype": "Section Break",
+   "label": "Synchronize lead data"
+  },
+  {
+   "default": "0",
+   "fieldname": "sync_lead_data",
+   "fieldtype": "Check",
+   "label": "Synchronize lead data"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-07 14:38:48.265773",
+ "modified": "2024-06-25 09:10:32.261506",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",

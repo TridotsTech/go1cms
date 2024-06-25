@@ -40,6 +40,11 @@ const routes = [
     component: () => import('@/pages/WebsiteSetup.vue'),
   },
   {
+    path: '/contact_setup',
+    name: 'Contact Setup',
+    component: () => import('@/pages/ContactSetup.vue'),
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/pages/Dashboard.vue'),

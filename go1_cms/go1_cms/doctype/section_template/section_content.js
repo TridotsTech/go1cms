@@ -451,12 +451,12 @@ function view_list_items(wrapper, doc) {
         for (var i = 0; i < fields.length; i++) {
           if (fields[i].field_type != "Attach") {
             row_html +=
-              '<td style="border-color: #ddd;">' +
+              '<td style="border-color: #ddd;word-break: break-word;">' +
               f[fields[i].field_key] +
               "</td>";
           } else {
             row_html +=
-              '<td style="border-color: #ddd;"><img style="max-height:50px" src="' +
+              '<td style="border-color: #ddd;word-break: break-word;"><img style="max-height:50px" src="' +
               f[fields[i].field_key] +
               '"/></td>';
           }
@@ -499,9 +499,9 @@ function view_list_items(wrapper, doc) {
       list_html
         .find("tbody")
         .html(
-          `<tr><td style='border-color: #ddd;' colspan="` +
+          `<tr><td style='border-color: #ddd;word-break: break-word;' colspan="` +
             display_fileds_count +
-            `">No records found!</td></tr>`
+            `;word-break: break-word;">No records found!</td></tr>`
         );
     }
     list_html.find(".add-list-item").click(function () {
@@ -570,12 +570,12 @@ function view_list_item(wrapper, doc) {
         for (var i = 0; i < fields.length; i++) {
           if (fields[i].field_type != "Attach") {
             row_html +=
-              '<td style="border-color: #ddd;">' +
+              '<td style="border-color: #ddd;word-break: break-word;">' +
               f[fields[i].field_key] +
               "</td>";
           } else {
             row_html +=
-              '<td style="border-color: #ddd;"><img style="max-height:50px" src="' +
+              '<td style="border-color: #ddd;word-break: break-word;"><img style="max-height:50px" src="' +
               f[fields[i].field_key] +
               '"/></td>';
           }
@@ -621,9 +621,9 @@ function view_list_item(wrapper, doc) {
       list_html
         .find("tbody")
         .html(
-          `<tr><td style='border-color: #ddd;' colspan="` +
+          `<tr><td style='border-color: #ddd;word-break: break-word;' colspan="` +
             display_fileds_count +
-            `">No records found!</td></tr>`
+            `;word-break: break-word;">No records found!</td></tr>`
         );
     }
   }
@@ -732,12 +732,12 @@ function update_list_items(wrapper, doc) {
         for (var i = 0; i < fields.length; i++) {
           if (fields[i].field_type != "Attach") {
             row_html +=
-              '<td style="border-color: #ddd;">' +
+              '<td style="border-color: #ddd;word-break: break-word;">' +
               f[fields[i].field_key] +
               "</td>";
           } else {
             row_html +=
-              '<td style="border-color: #ddd;"><img style="max-height:50px" src="' +
+              '<td style="border-color: #ddd;word-break: break-word;"><img style="max-height:50px" src="' +
               f[fields[i].field_key] +
               '"/></td>';
           }
@@ -780,7 +780,7 @@ function update_list_items(wrapper, doc) {
       list_html
         .find("tbody")
         .html(
-          `<tr><td style='border-color: #ddd;' colspan="` +
+          `<tr><td style='border-color: #ddd;word-break: break-word;' colspan="` +
             display_fileds_count +
             `">No records found!</td></tr>`
         );

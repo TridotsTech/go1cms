@@ -1,13 +1,13 @@
 <template>
   <div
-    v-if="page?.fields_st_cp && page?.fields_st_cp.length"
+    v-if="fieldsComponent && fieldsComponent.length"
     class="p-4 border border-gray-300 rounded-sm mb-4"
   >
     <div class="p-2">
       <div class="mb-4">
-        <h2 class="font-bold text-xl">Các thành phần của trang</h2>
+        <h2 class="font-bold text-xl">{{ title }}</h2>
       </div>
-      <div v-for="(field, idx) in page?.fields_st_cp" :key="field.name">
+      <div v-for="(field, idx) in fieldsComponent" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
           <div class="flex items-center mb-4 gap-4">
             <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
@@ -51,5 +51,11 @@
 import FieldSection from '@/components/FieldSection.vue'
 import DialogImage from '@/components/DialogImage.vue'
 
-const page = defineModel()
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Các thành phần của trang',
+  },
+})
+const fieldsComponent = defineModel()
 </script>

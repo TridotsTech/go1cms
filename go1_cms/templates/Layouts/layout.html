@@ -192,6 +192,7 @@
       type="text/javascript"
       src="/assets/go1_cms/js/owl1.carousel.js"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body class="{{p_route}}">
     {% if header %} {% include template_header %} {% endif %}
@@ -302,6 +303,45 @@
       })
     }
     var body_scroll = true
+    if(document.body.scrollHeight <= document.documentElement.scrollHeight){
+      body_scroll = false
+        if (allow_scroll == true) {
+            var hT = $('.page-sections-main').offset().top,
+                hH = $('.page-sections-main').outerHeight(),
+                wH = $(window).height(),
+                wS = $(this).scrollTop();
+            if (wS > ((hT + hH - wH) - 500)) {
+                if (stop_scroll == false) {
+                    $('.page-loader').show();
+                }
+            }
+            allow_scroll = false;
+            page = page + 1;
+            $.ajax({
+                type: 'POST',
+                Accept: 'application/json',
+                ContentType: 'application/json;charset=utf-8',
+                url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+                data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+                dataType: "json",
+                headers: {
+                    'X-Frappe-CSRF-Token': '{{csrf_token}}'
+                },
+                success: function(data) {
+                    $('.page-loader').hide();
+                    if (data.message && data.message.length > 0) {
+                        allow_scroll = true;
+                        $(data.message).each(function(k, v) {
+                            $('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+                        })
+                    } else {
+                        allow_scroll = false;
+                        stop_scroll = true;
+                    }
+                }
+            })
+        }
+    }
     $(window).scroll(function() {
         scrollFunction()
        body_scroll = false

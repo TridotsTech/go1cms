@@ -5,14 +5,17 @@
   {% endfor %}
 </div>
 <div class="page-loader">
-  <img alt="loader" class="lazyload" data-src="/assets/go1_cms/images/{% if
-  device_type == "Mobile" %}zoomloader{% else %}product-loading{% endif %}.gif">
+  <div class="flex justify-center">
+    <img alt="loader" class="lazyload" src="/assets/go1_cms/images/{% if
+    device_type == "Mobile" %}zoomloader{% else %}product-loading{% endif %}.gif">
+  </div>
 </div>
 {% if custom_css %} {{ custom_css }} {% endif %}
 <style type="text/css">
   .page-loader {
-      display: none;
+      /* display: none; */
       text-align: center;
+      justify-content: center;
       padding: 10px;
   }
   {% if p_route %}

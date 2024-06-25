@@ -18,78 +18,66 @@
     </template>
   </LayoutHeader>
   <div class="flex-1 flex flex-col h-full overflow-auto p-6 pt-2 pb-4">
-    <ViewControls
-      ref="viewControls"
-      v-model="clientWebsite"
-      v-model:loadMore="loadMore"
-      v-model:resizeColumn="triggerResize"
-      v-model:updatedPageCount="updatedPageCount"
-      :options="{
-        hideColumnsButton: true,
-      }"
-      doctype="MBW Client Website"
-    />
-    <MyWebsitesListView
-      v-if="clientWebsite.data && rows.length"
-      v-model="clientWebsite.data.page_length_count"
-      v-model:list="clientWebsite"
-      :rows="rows"
-      :columns="columns"
-      :options="{
-        rowCount: clientWebsite.data.row_count,
-        totalCount: clientWebsite.data.total_count,
-        selectable: false,
-        showTooltip: false,
-        resizeColumn: true,
-      }"
-      @loadMore="() => loadMore++"
-      @columnWidthUpdated="() => triggerResize++"
-      @updatePageCount="(count) => (updatedPageCount = count)"
-      @applyFilter="(data) => viewControls.applyFilter(data)"
-    />
-    <div
-      v-else-if="clientWebsite.data"
-      class="flex flex-1 items-center justify-center"
-    >
+    <div class="pt-4">
+      <MyWebsitesListView
+        v-if="clientWebsite.data && rows.length"
+        v-model="clientWebsite.data.page_length_count"
+        v-model:list="clientWebsite"
+        :rows="rows"
+        :columns="columns"
+        :options="{
+          rowCount: clientWebsite.data.row_count,
+          totalCount: clientWebsite.data.total_count,
+          selectable: false,
+          showTooltip: false,
+          resizeColumn: true,
+        }"
+      />
+
       <div
-        class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
+        v-else-if="clientWebsite.data"
+        class="flex flex-1 items-center justify-center"
       >
-        <MyWebsiteIcon class="h-10 w-10" />
-        <span>{{
-          __('Chọn một mẫu website từ kho giao diện để bắt đầu')
-        }}</span>
-        <Button :label="__('Thêm mới')" route="/interface-repository">
-          <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
-        </Button>
+        <div
+          class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
+        >
+          <MyWebsiteIcon class="h-10 w-10" />
+          <span>{{
+            __('Chọn một mẫu website từ kho giao diện để bắt đầu')
+          }}</span>
+          <Button :label="__('Thêm mới')" route="/interface-repository">
+            <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
+          </Button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import ViewControls from '@/components/ViewControls.vue'
 import MyWebsitesListView from '@/components/ListViews/MyWebsitesListView.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import { Breadcrumbs } from 'frappe-ui'
-import { ref, computed } from 'vue'
+import { Breadcrumbs, createResource } from 'frappe-ui'
+import { computed } from 'vue'
 
 const breadcrumbs = [
   { label: 'Website của tôi', route: { name: 'My Website' } },
 ]
 
-// leads data is loaded in the ViewControls component
-const clientWebsite = ref({})
-const loadMore = ref(1)
-const triggerResize = ref(1)
-const updatedPageCount = ref(20)
-const viewControls = ref(null)
+const clientWebsite = createResource({
+  url: 'go1_cms.api.client_website.get_client_websites',
+  auto: true,
+  onSuccess(data) {
+    return data
+  },
+})
 
 // Columns
 const columns = computed(() => {
-  if (!clientWebsite.value?.data?.columns) return []
+  if (!clientWebsite?.data?.columns) return []
 
-  let _columns = clientWebsite.value?.data?.columns
+  let _columns = clientWebsite?.data?.columns
   if (!_columns.find((el) => el.key == 'action_button')) {
     _columns.push({ label: __('Action'), key: 'action_button' })
   }
@@ -98,10 +86,10 @@ const columns = computed(() => {
 
 // Rows
 const rows = computed(() => {
-  if (!clientWebsite.value?.data?.data) return []
-  return clientWebsite.value?.data.data.map((cat) => {
+  if (!clientWebsite?.data?.data) return []
+  return clientWebsite?.data.data.map((cat) => {
     let _rows = {}
-    clientWebsite.value?.data.rows.forEach((row) => {
+    clientWebsite?.data.rows.forEach((row) => {
       _rows[row] = cat[row]
     })
     _rows['action_button'] = { ...cat }

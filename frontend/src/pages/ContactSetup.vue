@@ -35,7 +35,7 @@
     </div>
     <FieldsComponent
       title="Cấu hình chung"
-      v-model="_domain.fields_cp"
+      v-model="_email_setup.fields_cp"
     ></FieldsComponent>
   </div>
 </template>
@@ -50,17 +50,19 @@ import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
 
-const breadcrumbs = [{ label: 'Cấu hình tên miền', route: { name: 'Domain' } }]
-const _domain = ref({})
+const breadcrumbs = [
+  { label: 'Cấu hình liên hệ', route: { name: 'Contact Setup' } },
+]
+const _email_setup = ref({})
 const msgError = ref()
 
 // get detail
-const domain = createResource({
-  url: 'go1_cms.api.domain.get_setup',
+const contact_setup = createResource({
+  url: 'go1_cms.api.contact_setup.get_setup',
   method: 'GET',
   auto: true,
   transform: (data) => {
-    _domain.value = JSON.parse(JSON.stringify(data))
+    _email_setup.value = JSON.parse(JSON.stringify(data))
     return data
   },
   onError: (err) => {
@@ -76,14 +78,16 @@ const domain = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  if (_domain.value?.fields_cp) {
+  if (_email_setup.value?.fields_cp) {
     let show_edit = false
-    if (_domain.value?.fields_cp[0].fields[0].content) {
+    if (_email_setup.value?.fields_cp[0].fields[0].content) {
       show_edit = true
     }
-    _domain.value.fields_cp[0].fields[1].show_edit = show_edit
+    _email_setup.value.fields_cp[0].fields[1].show_edit = show_edit
   }
-  return JSON.stringify(domain.data) !== JSON.stringify(_domain.value)
+  return (
+    JSON.stringify(contact_setup.data) !== JSON.stringify(_email_setup.value)
+  )
 })
 
 watch(dirty, (val) => {
@@ -93,14 +97,14 @@ watch(dirty, (val) => {
 async function callUpdateDoc() {
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    let data = JSON.parse(JSON.stringify(_domain.value))
+    let data = JSON.parse(JSON.stringify(_email_setup.value))
 
-    let docUpdate = await call('go1_cms.api.domain.update_setup', {
+    let docUpdate = await call('go1_cms.api.contact_setup.update_setup', {
       data: data,
     })
 
     if (docUpdate.name) {
-      domain.reload()
+      contact_setup.reload()
 
       createToast({
         title: 'Cập nhật thành công',
@@ -120,6 +124,6 @@ async function callUpdateDoc() {
 }
 
 async function cacelSaveDoc() {
-  await domain.reload()
+  await contact_setup.reload()
 }
 </script>

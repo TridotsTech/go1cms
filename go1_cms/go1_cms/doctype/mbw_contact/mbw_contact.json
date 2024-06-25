@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-06-22 08:16:43.094244",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "full_name",
+  "last_name",
+  "first_name",
+  "column_break_vhqr",
+  "email",
+  "phone_number",
+  "message"
+ ],
+ "fields": [
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "H\u1ecd"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "T\u00ean"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "H\u1ecd v\u00e0 t\u00ean"
+  },
+  {
+   "fieldname": "column_break_vhqr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text",
+   "label": "Th\u00f4ng tin th\u00eam"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-06-22 08:23:55.230875",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "MBW Contact",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

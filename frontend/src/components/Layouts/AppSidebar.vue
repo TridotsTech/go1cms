@@ -120,7 +120,7 @@ import PolicyIcon from '@/components/Icons/PolicyIcon.vue'
 import NewsIcon from '@/components/Icons/NewsIcon.vue'
 import TemplatePageIcon from '@/components/Icons/TemplatePageIcon.vue'
 import WebpageIcon from '@/components/Icons/WebpageIcon.vue'
-import ProductIcon from '@/components/Icons/ProductIcon.vue'
+import SetupContactIcon from '@/components/Icons/SetupContactIcon.vue'
 import TemplateWebsiteIcon from '@/components/Icons/TemplateWebsiteIcon.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
 import DomainIcon from '@/components/Icons/DomainIcon.vue'
@@ -212,30 +212,31 @@ const allViews = computed(() => {
       // icon: SettingsIcon,
       views: [
         {
+          label: 'Menu',
+          icon: MenuIcon,
+          to: 'Menu',
+        },
+        {
           label: 'Domain',
           icon: DomainIcon,
           to: 'Domain',
         },
+
         {
           label: 'Thiết lập website',
           icon: SettingsIcon,
           to: 'Website Setup',
         },
-        // {
-        //   label: 'Giao diện',
-        //   icon: DisplayIcon,
-        //   to: 'Interface',
-        // },
+        {
+          label: 'Cấu hình liên hệ',
+          icon: SetupContactIcon,
+          to: 'Contact Setup',
+        },
       ],
     })
 
     if (views.data?.list_page) {
       let items_view = [
-        {
-          label: 'Menu',
-          icon: MenuIcon,
-          to: 'Menu',
-        },
         {
           label: 'Đầu trang',
           icon: HeaderIcon,

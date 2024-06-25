@@ -236,8 +236,7 @@ def update_info_header_component(data):
         header_component.reload()
 
         # update field header component
-        data_update = {}
-        update_fields_page(data, data_update)
+        data_update = update_fields_page(data)
 
         if data_update:
             frappe.db.set_value('Header Component',

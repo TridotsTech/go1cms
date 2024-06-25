@@ -1536,32 +1536,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
     for item in section_list:
         section_html, css, js, reference_document, form_doc, html_content = frappe.db.get_value(
             'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form', 'html_content'])
-        if section_html:
-            if css:
-                if css.find('<style') == -1:
-                    section_html += '<style>{0}</style>'.format(css)
-                else:
-                    section_html += '{0}'.format(css)
-            if js:
-                js = js.replace('&amp;', '&').replace('&gt;', '>')
-                if js.find('<script') == -1:
-                    if page_no == 0:
-                        js_list += frappe.render_template(
-                            '<script>{0}</script>'.format(js), item.as_dict())
-                        section_html += frappe.render_template(
-                            '<script>{0}</script>'.format(js), item.as_dict())
 
-                    else:
-                        section_html += '<script>{0}</script>'.format(js)
-                else:
-                    if page_no == 0:
-                        js_list += frappe.render_template(
-                            '{0}'.format(js), item.as_dict())
-                        section_html += frappe.render_template(
-                            '{0}'.format(js), item.as_dict())
-
-                    else:
-                        section_html += '{0}'.format(js)
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
         allow = True
@@ -1649,6 +1624,36 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                             i['published_on'] = published_on.strftime(
                                 "%d-%m-%Y")
                     data_source['data'] = data_doc
+
+                # render template css, js
+                if section_html:
+                    if css:
+                        if css.find('<style') == -1:
+                            section_html += '<style>{0}</style>'.format(css)
+                        else:
+                            section_html += '{0}'.format(css)
+                    if js:
+                        js = js.replace('&amp;', '&').replace('&gt;', '>')
+                        if js.find('<script') == -1:
+                            if page_no == 0:
+                                js_list += frappe.render_template(
+                                    '<script>{0}</script>'.format(js), data_source)
+                                section_html += frappe.render_template(
+                                    '<script>{0}</script>'.format(js), data_source)
+
+                            else:
+                                section_html += '<script>{0}</script>'.format(js)
+                        else:
+                            if page_no == 0:
+                                js_list += frappe.render_template(
+                                    '{0}'.format(js), data_source)
+                                section_html += frappe.render_template(
+                                    '{0}'.format(js), data_source)
+
+                            else:
+                                section_html += '{0}'.format(js)
+
+                # render template html
                 template = frappe.render_template(section_html, data_source)
                 html_list.append(
                     {'template': template, 'section': item.section})
@@ -2089,7 +2094,7 @@ def get_shuffled_category_products(category, no_of_records):
 
 
 @frappe.whitelist()
-def import_sections_from_template(page_id, doctype="Page Template",id_client_website=''):
+def import_sections_from_template(page_id, doctype="Page Template", id_client_website=''):
     page_template = frappe.get_doc(doctype, page_id)
     mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")

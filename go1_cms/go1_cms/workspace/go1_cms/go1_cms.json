@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"clagZzjDqa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Go1 CMS</span>\",\"col\":12}},{\"id\":\"Kvn4LYcq9o\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Page Builder\",\"col\":3}},{\"id\":\"ZvveMBB3U-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Section Templates\",\"col\":3}},{\"id\":\"Y7UhRr18dQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Header Templates\",\"col\":3}},{\"id\":\"1vGMQYmE7d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Footer Templates\",\"col\":3}},{\"id\":\"eSnTcJtdXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Content\",\"col\":3}},{\"id\":\"NoCegjv7FW\",\"type\":\"card\",\"data\":{\"card_name\":\"Sections\",\"col\":3}},{\"id\":\"c5f2D-s5zV\",\"type\":\"card\",\"data\":{\"card_name\":\"Header &amp; Footer Section\",\"col\":3}},{\"id\":\"p61wBBoqHc\",\"type\":\"card\",\"data\":{\"card_name\":\"Design\",\"col\":3}},{\"id\":\"MAfEcpdHAG\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":3}},{\"id\":\"VHb54Rsnsa\",\"type\":\"card\",\"data\":{\"card_name\":\"Template\",\"col\":3}},{\"id\":\"37SAiY7CQ9\",\"type\":\"card\",\"data\":{\"card_name\":\"Website\",\"col\":3}}]",
+ "content": "[{\"id\":\"clagZzjDqa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Go1 CMS</span>\",\"col\":12}},{\"id\":\"Kvn4LYcq9o\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Page Builder\",\"col\":3}},{\"id\":\"ZvveMBB3U-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Section Templates\",\"col\":3}},{\"id\":\"Y7UhRr18dQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Header Templates\",\"col\":3}},{\"id\":\"1vGMQYmE7d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Footer Templates\",\"col\":3}},{\"id\":\"eSnTcJtdXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Content\",\"col\":3}},{\"id\":\"NoCegjv7FW\",\"type\":\"card\",\"data\":{\"card_name\":\"Sections\",\"col\":3}},{\"id\":\"c5f2D-s5zV\",\"type\":\"card\",\"data\":{\"card_name\":\"Header &amp; Footer Section\",\"col\":3}},{\"id\":\"p61wBBoqHc\",\"type\":\"card\",\"data\":{\"card_name\":\"Design\",\"col\":3}},{\"id\":\"MAfEcpdHAG\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":3}},{\"id\":\"VHb54Rsnsa\",\"type\":\"card\",\"data\":{\"card_name\":\"Template\",\"col\":3}},{\"id\":\"37SAiY7CQ9\",\"type\":\"card\",\"data\":{\"card_name\":\"Website\",\"col\":3}},{\"id\":\"YVlvPEcCsA\",\"type\":\"card\",\"data\":{\"card_name\":\"Contact\",\"col\":3}}]",
  "creation": "2022-10-28 08:57:40.088555",
  "custom_blocks": [],
  "docstatus": 0,
@@ -350,9 +350,38 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contact",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "MBW Form",
+   "link_count": 0,
+   "link_to": "MBW Form",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "MBW Contact",
+   "link_count": 0,
+   "link_to": "MBW Contact",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-05-31 15:36:28.444080",
+ "modified": "2024-06-22 08:18:19.629731",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Go1 CMS",

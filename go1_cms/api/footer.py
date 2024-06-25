@@ -81,8 +81,7 @@ def update_info_footer_component(data):
         footer_component.reload()
 
         # update field footer component
-        data_update = {}
-        update_fields_page(data, data_update)
+        data_update = update_fields_page(data)
 
         if data_update:
             frappe.db.set_value('Footer Component',

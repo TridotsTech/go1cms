@@ -45,6 +45,8 @@ website_route_rules = [
     {"from_route": "/cms/<path:app_path>", "to_route": "cms"},
 ]
 
+email_css = ["/assets/go1_cms/email/email.css"]
+
 # Home Pages
 # ----------
 

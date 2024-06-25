@@ -1,9 +1,12 @@
 import frappe
 from frappe import _
+from go1_cms.api.common import (
+    update_fields_page
+)
 
 
 @frappe.whitelist()
-def get_info_domain():
+def get_setup():
     try:
         cms_settings = frappe.get_single('CMS Settings')
 
@@ -46,22 +49,10 @@ def get_info_domain():
 
 
 @frappe.whitelist()
-def update_info_domain(data):
+def update_setup(data):
     try:
         # update field web theme
-        data_update = {}
-        if data.get('fields_cp') and type(data.get('fields_cp')) == list:
-            for field_cp in data.get('fields_cp'):
-                if field_cp.get('allow_edit') and field_cp.get('fields'):
-                    for field in field_cp.get('fields'):
-                        if field.get('allow_edit'):
-                            if field.get('group_name'):
-                                for f in field.get('fields'):
-                                    data_update[f.get('field_key')] = f.get(
-                                        'content')
-                            else:
-                                data_update[field.get('field_key')] = field.get(
-                                    'content')
+        data_update = update_fields_page(data)
 
         if data_update:
             frappe.db.set_value('CMS Settings', 'CMS Settings', data_update)

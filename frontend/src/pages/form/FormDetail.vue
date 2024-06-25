@@ -45,7 +45,7 @@
               <th class="border p-2 min-w-48">Tên hiển thị</th>
               <th class="border p-2 min-w-48">Tên trường</th>
               <th class="border p-2 min-w-48">Trường bắt buộc</th>
-              <th class="border p-2 min-w-48">Ẩn trường</th>
+              <th class="border p-2 min-w-48">Hiển thị</th>
               <th class="border p-2 min-w-32"></th>
             </tr>
             <template v-if="_form.form_fields?.length">
@@ -76,7 +76,7 @@
                       {{ element.field_mandatory ? 'Có' : 'Không' }}
                     </td>
                     <td class="border p-2">
-                      {{ element.field_hidden ? 'Có' : 'Không' }}
+                      {{ element.field_hidden ? 'Hiện' : 'Ẩn' }}
                     </td>
                     <td>
                       <div class="p-2 flex gap-2">
@@ -170,6 +170,9 @@ const form = createResource({
   },
   auto: true,
   transform: (data) => {
+    data?.form_fields.forEach((f) => {
+      f.field_hidden = f.field_hidden ? 0 : 1
+    })
     _form.value = JSON.parse(JSON.stringify(data))
     return data
   },
@@ -193,6 +196,9 @@ async function callUpdateDoc() {
   }
 
   let formUpdate = { ..._form.value }
+  formUpdate?.form_fields.forEach((f) => {
+    f.field_hidden = f.field_hidden ? 0 : 1
+  })
 
   if (!formUpdate.form_name) {
     msgError.value = 'Tên biểu mẫu không được để trống'
@@ -264,9 +270,9 @@ function editItem(el, idx) {
       value: el.field_mandatory,
     },
     {
-      field_label: 'Ẩn trường',
+      field_label: 'Hiển thị',
       field_key: 'field_hidden',
-      labelInput: 'Có',
+      labelInput: 'Hiện',
       field_type: 'checkbox',
       disabled: false,
       value: el.field_hidden,

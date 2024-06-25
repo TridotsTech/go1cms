@@ -56,8 +56,10 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <FieldsComponent v-model="_page"></FieldsComponent>
-    <FieldsSectionComponent v-model="_page"></FieldsSectionComponent>
+    <FieldsComponent v-model="_page.fields_cp"></FieldsComponent>
+    <FieldsSectionComponent
+      v-model="_page.fields_st_cp"
+    ></FieldsSectionComponent>
   </div>
   <Dialog
     :options="{

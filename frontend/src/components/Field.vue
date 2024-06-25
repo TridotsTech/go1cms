@@ -128,15 +128,21 @@
       </div>
     </template>
   </UploadFileImage>
-  <FormControl
+  <div
     v-else-if="
       ['Small Text', 'Text', 'Long Text', 'textarea'].includes(field.type)
     "
-    type="textarea"
-    :placeholder="__(field.placeholder)"
-    v-model="data"
-    :rows="field.rows"
-  />
+  >
+    <FormControl
+      type="textarea"
+      :placeholder="__(field.placeholder)"
+      v-model="data"
+      :rows="field.rows"
+    />
+    <p v-if="field.description" class="text-sm my-1 text-gray-600">
+      <strong>Chú thích: </strong>{{ field.description }}
+    </p>
+  </div>
   <div v-else-if="field.type === 'texeditor'">
     <Ckeditor v-model="data"></Ckeditor>
   </div>
@@ -155,7 +161,12 @@
     v-model="data"
   ></CustomQuillEditor> -->
   <div class="flex" v-else-if="field.type === 'checkbox'">
-    <FormControl :id="field.name" type="checkbox" v-model="data" />
+    <FormControl
+      :disabled="field.disabled"
+      :id="field.name"
+      type="checkbox"
+      v-model="data"
+    />
     <label
       v-if="field.labelInput"
       class="ml-2 text-sm text-gray-600"

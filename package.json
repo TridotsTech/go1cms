@@ -1,9 +1,15 @@
 {
-    "private": true,
-    "workspaces": ["frontend", "frappe-ui"],
-    "scripts": {
-        "postinstall": "cd frontend && yarn install",
-        "dev": "cd frontend && yarn dev",
-        "build": "cd frontend && yarn build"
-    }
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "frappe-ui"
+  ],
+  "scripts": {
+    "postinstall": "cd frontend && yarn install",
+    "dev": "cd frontend && yarn dev",
+    "build": "NODE_ENV=production yarn run build-all",
+    "build-all": "yarn run build-app && yarn run build-email-css",
+    "build-app": "cd frontend && yarn build",
+    "build-email-css": "npx tailwindcss -i ./go1_cms/public/email/style.css -o ./go1_cms/public/email/email.css --config ./go1_cms/public/email/tailwind.config.js"
+  }
 }

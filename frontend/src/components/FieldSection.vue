@@ -150,13 +150,14 @@
           label: field.field_label,
           name: field.field_key,
           type: getTypeField(field.field_type),
-          placeholder: field.field_label,
+          placeholder: field.placeholder || field.field_label,
           rows: 7,
           doctype: field.doctype,
           filters: field.filters,
           options: field.options,
           labelInput: field.label_input,
           disabled: !field.allow_edit,
+          description: field.description,
         }"
         v-model="field['content']"
       ></Field>

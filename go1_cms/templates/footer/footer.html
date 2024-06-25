@@ -5,31 +5,31 @@
 		{% endif %}
 		<div class="go1-cms-footer">
 			<div class="container">
-			 {%if footer.layout_json_data%}
+				{%if footer.layout_json_data%}
 				<div class="d__flex enable-mobile-footer gap-6" style="align-items: flex-start;">
 					{%for col in footer.layout_json_data%}
-				 
-					  {%if col.columns%}
-						{%for each_col in col.columns%}
-						{%set col_index = loop.index %}
-							<div style="width: {{each_col.width}}" class="footer_sec">
-								{%for sec_item in footer_items%}
-								{%if col_index == (sec_item.column_index+1) %}
-									{%for m_sec_item in sec_item.get("items")%}
-										{{ m_sec_item.web_template }}
-										{%if m_sec_item.section_name=="Footer About Interior"%}
 
-										{% endif %}
-									{%endfor%}
-								{%endif%}
-								{%endfor%}
-							</div>
+					{%if col.columns%}
+					{%for each_col in col.columns%}
+					{%set col_index = loop.index %}
+					<div style="width: {{each_col.width}}" class="footer_sec">
+						{%for sec_item in footer_items%}
+						{%if col_index == (sec_item.column_index+1) %}
+						{%for m_sec_item in sec_item.get("items")%}
+						{{ m_sec_item.web_template }}
+						{%if m_sec_item.section_name=="Footer About Interior"%}
+
+						{% endif %}
 						{%endfor%}
-					  {%endif%}
-						
+						{%endif%}
+						{%endfor%}
+					</div>
+					{%endfor%}
+					{%endif%}
+
 					{%endfor%}
 				</div>
-			{%endif%}
+				{%endif%}
 			</div>
 		</div>
 	</div>
@@ -40,125 +40,132 @@
 	<div class="container">
 		<div class="go1-cms-copyright-content">
 			<div class="d_flex">
-			{%if footer.copyright_layout == "One Column"%}
-				<div class="col-md-12" >
-					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}{%if footer.cp_fc_alignment=="Center"%}justify-content: center;{%endif%}">
-					{%if footer.fc_ct_type == "Custom" %}
+				{%if footer.copyright_layout == "One Column"%}
+				<div class="col-md-12">
+					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="
+						Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left" %}justify-content:
+						start;{%endif%}{%if footer.cp_fc_alignment=="Center" %}justify-content: center;{%endif%}">
+						{%if footer.fc_ct_type == "Custom" %}
 						<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
 							{{footer.cp_fc_content}}
 						</div>
-					{%elif footer.sc_ct_type == "Social Links" %}
-						<ul  class="d__flex" style="gap:10px">
-							 {%for menu_item in theme_settings.social_links%}
-							 <li>
+						{%elif footer.sc_ct_type == "Social Links" %}
+						<ul class="d__flex" style="gap:10px">
+							{%for menu_item in theme_settings.social_links%}
+							<li>
 								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
 									{%if not menu_item.icon%}
 									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
 									<span>{{menu_item.social_type}}</span>
 									{%else%}
-										<img src="{{menu_item.icon}}" height="35px" />
+									<img src="{{menu_item.icon}}" height="35px" />
 									{%endif%}
-								 </a>
-							 </li>
+								</a>
+							</li>
 							{%endfor%}
 						</ul>
-					{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% elif footer.sc_ct_type == "Mbw Policy" %}
 						{% if theme_settings.mbw_policy %}
-							<ul>
-								{%for menu_item in theme_settings.mbw_policy%}
-								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
-								{% endfor %}
-							</ul>
-						{%endif%}
-					{%endif%}
-				</div>
-			</div>
-			{%else%}
-				<div class="col-md-5" >
-					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left"%}justify-content: start;{%endif%}">
-					{%if footer.fc_ct_type == "Custom" %}
-						<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
-							{{footer.cp_fc_content}}
-						</div>
-					{%elif footer.sc_ct_type == "Social Links" %}
-						<ul  class="d__flex" style="gap:10px">
-							 {%for menu_item in theme_settings.social_links%}
-							 <li>
-								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
-									{%if not menu_item.icon%}
-									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
-									<span>{{menu_item.social_type}}</span>
-									{%else%}
-										<img src="{{menu_item.icon}}" height="35px" />
-									{%endif%}
-								 </a>
-							 </li>
-							{%endfor%}
+						<ul>
+							{%for menu_item in theme_settings.mbw_policy%}
+							<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+							{% endfor %}
 						</ul>
-					{% elif footer.sc_ct_type == "Mbw Policy" %}
-						{% if theme_settings.mbw_policy %}
-							<ul>
-								{%for menu_item in theme_settings.mbw_policy%}
-								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
-								{% endfor %}
-							</ul>
 						{%endif%}
-					{%endif%}
+						{%endif%}
 					</div>
 				</div>
-				<div class="col-md" >
-					<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left"%}justify-content: start;{%endif%}">
-	
-					{%if footer.sc_ct_type == "Custom" %}
+				{%else%}
+				<div class="col-md-5">
+					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="
+						Right"%}justify-content: end;{%endif%}{%if footer.cp_fc_alignment=="Left" %}justify-content:
+						start;{%endif%}">
+						{%if footer.fc_ct_type == "Custom" %}
+						<div class="go1-cms-copyright-fc-content" style="text-align: {{footer.cp_fc_alignment}};">
+							{{footer.cp_fc_content}}
+						</div>
+						{%elif footer.sc_ct_type == "Social Links" %}
+						<ul class="d__flex" style="gap:10px">
+							{%for menu_item in theme_settings.social_links%}
+							<li>
+								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+									{%if not menu_item.icon%}
+									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
+									<span>{{menu_item.social_type}}</span>
+									{%else%}
+									<img src="{{menu_item.icon}}" height="35px" />
+									{%endif%}
+								</a>
+							</li>
+							{%endfor%}
+						</ul>
+						{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% if theme_settings.mbw_policy %}
+						<ul>
+							{%for menu_item in theme_settings.mbw_policy%}
+							<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+							{% endfor %}
+						</ul>
+						{%endif%}
+						{%endif%}
+					</div>
+				</div>
+				<div class="col-md">
+					<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="
+						Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left" %}justify-content:
+						start;{%endif%}">
+
+						{%if footer.sc_ct_type == "Custom" %}
 						<div class="go1-cms-copyright-sc-content">
 							{{footer.cp_sc_content}}
 						</div>
-					{%elif footer.sc_ct_type == "Social Links" %}
-						<ul  class="d__flex" style="gap:10px">
-							 {%for menu_item in theme_settings.social_links%}
-							 <li>
+						{%elif footer.sc_ct_type == "Social Links" %}
+						<ul class="d__flex" style="gap:10px">
+							{%for menu_item in theme_settings.social_links%}
+							<li>
 								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
 									{%if not menu_item.icon%}
 									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
 									<span>{{menu_item.social_type}}</span>
 									{%else%}
-										<img src="{{menu_item.icon}}" height="35px" />
+									<img src="{{menu_item.icon}}" height="35px" />
 									{%endif%}
-								 </a>
-							 </li>
+								</a>
+							</li>
 							{%endfor%}
 						</ul>
-					{% elif footer.sc_ct_type == "Mbw Policy" %}
+						{% elif footer.sc_ct_type == "Mbw Policy" %}
 						{% if theme_settings.mbw_policy %}
-							<ul>
-								{%for menu_item in theme_settings.mbw_policy%}
-								<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
-								{% endfor %}
-							</ul>
+						<ul>
+							{%for menu_item in theme_settings.mbw_policy%}
+							<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
+							{% endfor %}
+						</ul>
 						{%endif%}
-					{%endif%}
+						{%endif%}
+					</div>
 				</div>
+				{%endif%}
 			</div>
-			{%endif%}
 		</div>
-	</div>
 	</div>
 </div>
 {%endif%}
 <style type="text/css">
-	.go1-cms-copyright-content p{margin-bottom: 0;}
+	.go1-cms-copyright-content p {
+		margin-bottom: 0;
+	}
 
-	@media (max-width: {{ theme_settings.mobile_width }}){
-		.enable-mobile-footer{
+	@media(max-width: {{theme_settings.mobile_width}}) {
+		.enable-mobile-footer {
 			align-items: flex-start;
 			flex-wrap: wrap;
 			flex-direction: column;
 			gap: 5px;
 		}
-		.footer_sec{
+
+		.footer_sec {
 			width: unset !important;
 		}
 	}
-
-
 </style>

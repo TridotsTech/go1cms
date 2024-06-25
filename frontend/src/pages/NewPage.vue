@@ -44,8 +44,10 @@
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="pageExists">
-      <FieldsComponent v-model="_page"></FieldsComponent>
-      <FieldsSectionComponent v-model="_page"></FieldsSectionComponent>
+      <FieldsComponent v-model="_page.fields_cp"></FieldsComponent>
+      <FieldsSectionComponent
+        v-model="_page.fields_st_cp"
+      ></FieldsSectionComponent>
     </div>
     <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
       <div
@@ -164,6 +166,8 @@ watch(dirty, (val) => {
 const breadcrumbs = [{ label: 'Thêm trang mới', route: { name: 'New Page' } }]
 
 async function callUpdateDoc() {
+  console.log(_page.value)
+  return
   changeLoadingValue(true, 'Đang lưu...')
   try {
     let data = JSON.parse(JSON.stringify(_page.value))

@@ -492,7 +492,7 @@ const quickFilterList = computed(() => {
       if (Array.isArray(value)) {
         if (
           (['Check', 'Select', 'Link', 'Date', 'Datetime'].includes(
-            filter.type
+            filter.type,
           ) &&
             value[0]?.toLowerCase() == 'like') ||
           value[0]?.toLowerCase() != 'like'
@@ -618,7 +618,7 @@ function create_or_update_default_view() {
     'go1_cms.go1_cms.doctype.cms_view_settings.cms_view_settings.create_or_update_default_view',
     {
       view: view.value,
-    }
+    },
   ).then(() => {
     reloadView()
     view.value = {
@@ -734,7 +734,7 @@ const viewModalObj = ref({})
 function duplicateView() {
   let label =
     __(
-      getView(route.query.view, route.params.viewType, props.doctype)?.label
+      getView(route.query.view, route.params.viewType, props.doctype)?.label,
     ) || getViewType().label
   view.value.name = ''
   view.value.label = label + __(' (New)')
@@ -865,7 +865,7 @@ watch(
     if (_.isEqual(value, old_value)) return
     reload()
   },
-  { deep: true }
+  { deep: true },
 )
 
 watch([() => route, () => route.params.viewType], (value, old_value) => {

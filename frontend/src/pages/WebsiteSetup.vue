@@ -33,7 +33,10 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <FieldsComponent v-model="_webSetup"></FieldsComponent>
+    <FieldsComponent
+      title="Thiết lập chung"
+      v-model="_webSetup.fields_cp"
+    ></FieldsComponent>
   </div>
 </template>
 

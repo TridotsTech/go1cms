@@ -105,8 +105,7 @@ def update_info_template_page(data):
         web_page.reload()
 
         # update field page
-        data_update = {}
-        update_fields_page(data, data_update)
+        data_update = update_fields_page(data)
 
         if data_update:
             frappe.db.set_value('Web Page Builder',

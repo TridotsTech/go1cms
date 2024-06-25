@@ -1,18 +1,48 @@
 import frappe
 from frappe import _
 from pypika import Criterion
+from frappe.model.document import get_controller
 
 
 @frappe.whitelist()
 def get_client_websites():
-    ClientWebsite = frappe.qb.DocType("MBW Client Website")
-    query = (
-        frappe.qb.from_(ClientWebsite)
-        .select("*")
-    )
+    filters = {}
+    doctype = "MBW Client Website"
+    columns = []
+    rows_in_list = []
+    rows = []
+    order_by = "modified desc"
 
-    webs = query.run(as_dict=True)
-    return webs
+    _list = get_controller(doctype)
+    if hasattr(_list, "default_list_data"):
+        columns = _list.default_list_data().get("columns")
+        rows = _list.default_list_data().get("rows")
+
+    # check if rows has all keys from columns if not add them
+    for column in columns:
+        if column.get("key") not in rows:
+            rows.append(column.get("key"))
+        column["label"] = _(column.get("label"))
+
+        if column.get("key") == "_liked_by" and column.get("width") == "10rem":
+            column["width"] = "50px"
+    rows_in_list = [row for row in rows]
+    rows = [row for row in rows if row not in ['action_button']]
+
+    data = frappe.db.get_all(
+        doctype,
+        fields=rows,
+        filters=filters,
+        order_by=order_by
+    ) or []
+
+    return {
+        "data": data,
+        "columns": columns,
+        "rows": rows_in_list,
+        "total_count": len(frappe.get_all(doctype, filters=filters)),
+        "row_count": len(data),
+    }
 
 
 @frappe.whitelist()

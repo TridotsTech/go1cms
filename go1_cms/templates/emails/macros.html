@@ -1,0 +1,77 @@
+{% macro button(label, link, primary = true) %}
+<table cellpadding="0" cellspacing="0" role="presentation">
+  <tbody>
+    <tr>
+      <td class="{{ 'button-primary-1' if primary else '' }}">
+        <a href="{{ link }}" rel="nofollow"> {{ label }} </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endmacro %} {% macro link(label, link) %}
+<a class="link" href="{{ link }}">{{ label }}</a>
+{% endmacro %} {% macro separator() %}
+<table class="w-full" cellpadding="0" cellspacing="0" role="presentation">
+  <tbody>
+    <tr>
+      <td class="py-8">
+        <div class="h-px bg-gray-300 leading-px"></div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endmacro %} {% macro signature() %}
+<p class="m-0">
+  Thanks,<br />
+  Team Frappe
+</p>
+{% endmacro %} {% macro footer() %}
+<div class="my-0">
+  <p class="my-0">- Số điện thoại: 090 150 8000</p>
+  <p class="my-0">
+    -
+    <a href="https://mbwcloud.com/lien-he/">Liên hệ hỗ trợ</a>
+  </p>
+  <p class="my-0">
+    -
+    <a
+      href="https://doc.mbwcloud.com/User_Guide_MBWCloud/n%E1%BA%A1p-ti%E1%BB%81n-v%C3%A0o-mbwcloud"
+      >Hướng dẫn nạp tiền</a
+    >
+  </p>
+  <p class="my-0">
+    -
+    <a href="https://doc.mbwcloud.com/User_Guide_MBWCloud/t%E1%BA%A1o-trang-web"
+      >Hướng dẫn tạo website</a
+    >
+  </p>
+  <p class="my-0">
+    -
+    <a
+      href="https://doc.mbwcloud.com/User_Guide_MBWCloud/x%C3%A2y-d%E1%BB%B1ng-%E1%BB%A9ng-d%E1%BB%A5ng-c%E1%BB%A7a-b%E1%BA%A1n"
+      >Hướng dẫn đăng ký app</a
+    >
+  </p>
+</div>
+{% endmacro %} {% macro footer_top_up() %}
+<div class="my-0">
+  <p class="my-0">- Số điện thoại: 090 150 8000</p>
+  <p class="my-0">
+    -
+    <a href="https://mbwcloud.com/lien-he/">Liên hệ hỗ trợ</a>
+  </p>
+  <p class="my-0">
+    -
+    <a href="https://doc.mbwcloud.com/User_Guide_MBWCloud/t%E1%BA%A1o-trang-web"
+      >Hướng dẫn tạo website</a
+    >
+  </p>
+  <p class="my-0">
+    -
+    <a
+      href="https://doc.mbwcloud.com/User_Guide_MBWCloud/x%C3%A2y-d%E1%BB%B1ng-%E1%BB%A9ng-d%E1%BB%A5ng-c%E1%BB%A7a-b%E1%BA%A1n"
+      >Hướng dẫn đăng ký app</a
+    >
+  </p>
+</div>
+{% endmacro %}

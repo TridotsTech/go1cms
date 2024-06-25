@@ -280,7 +280,8 @@ def update_fields_page_section(data):
                     ps.save()
 
 
-def update_fields_page(data, data_update):
+def update_fields_page(data):
+    data_update = {}
     if data.get('fields_cp') and type(data.get('fields_cp')) == list:
         for field_cp in data.get('fields_cp'):
             if field_cp.get("show_edit") and field_cp.get('allow_edit') and field_cp.get('fields'):
@@ -294,3 +295,4 @@ def update_fields_page(data, data_update):
                         if field.get("show_edit") and field.get("allow_edit"):
                             data_update[field.get('field_key')] = field.get(
                                 'content')
+    return data_update

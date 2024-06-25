@@ -33,8 +33,10 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <FieldsComponent v-model="_footer"></FieldsComponent>
-    <FieldsSectionComponent v-model="_footer"></FieldsSectionComponent>
+    <FieldsComponent v-model="_footer.fields_cp"></FieldsComponent>
+    <FieldsSectionComponent
+      v-model="_footer.fields_st_cp"
+    ></FieldsSectionComponent>
   </div>
 </template>
 

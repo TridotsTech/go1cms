@@ -1297,8 +1297,8 @@ function bind_layout_data(wrapper) {
 				<input type="radio"  value="${
           each_p.unique_id
         }" name="theme_radio" style="position:absolute;top:6px;right:0px;z-index:99;" ${
-        each_p.unique_id == seleted_layout_id
-      }?"checked":"">
+          each_p.unique_id == seleted_layout_id
+        }?"checked":"">
 			</label></div>`;
 
       let p_html = `<div class="palette-main-div" id=${r___id}>
@@ -3009,7 +3009,7 @@ var modify_section_data = Class.extend({
                   "</td>";
               } else {
                 row_html +=
-                  '<td style="border-color: #ddd;"><img src="' +
+                  '<td style="border-color: #ddd;word-break: break-word;"><img src="' +
                   f[fields[i].field_key] +
                   '" style="height:50px"/></td>';
               }
