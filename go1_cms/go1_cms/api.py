@@ -11,7 +11,7 @@ from frappe.utils import getdate, nowdate, now, get_url
 
 TEMPLATE_HEADER = {
     'Template 1': 'header.html',
-    'Template 2': 'header.html',
+    'Template 2': 'header_1.html',
     'Template 3': 'header.html',
     'Template 4': 'header.html',
 }

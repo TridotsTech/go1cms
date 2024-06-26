@@ -16,6 +16,12 @@ class MBWForm(Document):
                 "width": "473px"
             },
             {
+                "label": "Loại biểu mẫu",
+                "type": "Data",
+                "key": "form_type",
+                "width": "15rem"
+            },
+            {
                 "label": "Hành động",
                 "key": "action_button"
             }
@@ -27,6 +33,7 @@ class MBWForm(Document):
             "modified",
             "action_button",
             "form_name",
-            "id_client_website"
+            "id_client_website",
+            "form_type"
         ]
         return {'columns': columns, 'rows': rows}

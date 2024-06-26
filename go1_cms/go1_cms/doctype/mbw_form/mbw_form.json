@@ -8,6 +8,7 @@
  "field_order": [
   "form_name",
   "form_action",
+  "form_type",
   "column_break_gvpf",
   "id_client_website",
   "id_parent_copy",
@@ -63,11 +64,17 @@
    "fieldname": "id_parent_copy",
    "fieldtype": "Data",
    "label": "ID Parent Copy"
+  },
+  {
+   "fieldname": "form_type",
+   "fieldtype": "Select",
+   "label": "Lo\u1ea1i bi\u1ec3u m\u1eabu",
+   "options": "Form li\u00ean h\u1ec7\nForm Tuy\u1ec3n d\u1ee5ng"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-14 14:39:23.882511",
+ "modified": "2024-06-26 08:56:13.089380",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Form",

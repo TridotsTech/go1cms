@@ -7,6 +7,7 @@
     v-if="field.type === 'select'"
     type="select"
     class="form-control"
+    :disabled="field.disabled"
     :class="field.prefix ? 'prefix' : ''"
     :options="field.options"
     v-model="data"

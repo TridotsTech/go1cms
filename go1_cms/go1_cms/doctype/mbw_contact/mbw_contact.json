@@ -8,10 +8,15 @@
   "full_name",
   "last_name",
   "first_name",
+  "send_time",
   "column_break_vhqr",
   "email",
   "phone_number",
-  "message"
+  "message",
+  "section_break_qgmw",
+  "source",
+  "utm_source",
+  "utm_campaign"
  ],
  "fields": [
   {
@@ -28,6 +33,7 @@
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "H\u1ecd v\u00e0 t\u00ean"
   },
   {
@@ -38,23 +44,49 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Email"
   },
   {
    "fieldname": "phone_number",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i"
   },
   {
    "fieldname": "message",
    "fieldtype": "Text",
    "label": "Th\u00f4ng tin th\u00eam"
+  },
+  {
+   "fieldname": "send_time",
+   "fieldtype": "Datetime",
+   "label": "Th\u1eddi gian g\u1eedi"
+  },
+  {
+   "fieldname": "section_break_qgmw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Text",
+   "label": "Ngu\u1ed3n"
+  },
+  {
+   "fieldname": "utm_source",
+   "fieldtype": "Data",
+   "label": "UTM Source"
+  },
+  {
+   "fieldname": "utm_campaign",
+   "fieldtype": "Data",
+   "label": "UTM Campaign"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-22 08:23:55.230875",
+ "modified": "2024-06-26 08:51:39.347306",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Contact",

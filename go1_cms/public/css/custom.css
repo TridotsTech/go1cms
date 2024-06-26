@@ -2453,3 +2453,11 @@
 .ql-snow img {
   display: inline-block;
 }
+
+.icon_nav {
+  color: #c4161c;
+  font-size: 24px;
+  padding: 2px 10px;
+  border-radius: 8px;
+  background-color: #ffffff6b;
+}

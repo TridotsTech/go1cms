@@ -27,6 +27,24 @@ frappe.ui.form.on('Page Section', {
 		frm.trigger('web_options');
 
 	},
+	onload: function(frm) {
+		frm.set_query("menu", function() {
+			return {
+				"filters": {
+					"id_client_website": '',
+					"id_parent_copy": ''
+				}
+			};
+		});
+		frm.set_query("form", function() {
+			return {
+				"filters": {
+					"id_client_website": '',
+					"id_parent_copy": ''
+				}
+			};
+		});
+	},
 	content_type: function(frm){
 		if(frm.doc.content_type){
 			frm.set_value('custom_section_data', '[]');

@@ -1,7 +1,8 @@
 @font-face {
   font-family: "icomoon";
   src: url("../fonts/icomoon.eot");
-  src: url("../fonts/icomoon.eot?#iefix") format("embedded-opentype"),
+  src:
+    url("../fonts/icomoon.eot?#iefix") format("embedded-opentype"),
     url("../fonts/icomoon.woff") format("woff"),
     url("../fonts/icomoon.ttf") format("truetype"),
     url("../fonts/icomoon.svg#icomoon") format("svg");
@@ -14,8 +15,8 @@
 .dl-menuwrapper {
   width: 100%;
   max-width: 100%;
-  float: left;
-  position: relative;
+  /* float: left; */
+  /* position: relative; */
   -webkit-perspective: 1000px;
   perspective: 1000px;
   -webkit-perspective-origin: 50% 200%;
@@ -52,7 +53,9 @@
   background: #fff;
   top: 10px;
   left: 16%;
-  box-shadow: 0 10px 0 #fff, 0 20px 0 #fff;
+  box-shadow:
+    0 10px 0 #fff,
+    0 20px 0 #fff;
 }
 
 .dl-menuwrapper ul {
@@ -69,7 +72,7 @@
 .dl-menuwrapper li a {
   display: block;
   position: relative;
-  padding: 15px 20px;
+  padding: 20px 20px;
   font-size: 16px;
   line-height: 20px;
   font-weight: 300;
@@ -77,9 +80,9 @@
   outline: none;
 }
 
-.no-touch .dl-menuwrapper li a:hover {
+/* .no-touch .dl-menuwrapper li a:hover {
   background: rgba(255, 248, 213, 0.1);
-}
+} */
 
 .dl-menuwrapper li.dl-back > a {
   padding-left: 30px;
@@ -111,7 +114,7 @@
 
 .dl-menuwrapper .dl-menu {
   margin: 5px 0 0 0;
-  position: absolute;
+  /* position: absolute; */
   width: 100%;
   opacity: 0;
   pointer-events: none;

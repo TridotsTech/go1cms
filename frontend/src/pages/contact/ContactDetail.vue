@@ -14,7 +14,7 @@
               group: 'Xóa',
               items: [
                 {
-                  label: 'Xóa danh mục',
+                  label: 'Xóa liên hệ',
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -35,7 +35,7 @@
           theme="gray"
           size="md"
           label="Hủy"
-          @click="category.reload()"
+          @click="contact.reload()"
           :disabled="!dirty"
         ></Button>
         <Button
@@ -54,15 +54,15 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div v-if="_category" class="p-4 border border-gray-300 rounded-sm mb-4">
+    <div v-if="_contact" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
-        <Fields :sections="sections" :data="_category" />
+        <Fields :sections="sections" :data="_contact" />
       </div>
     </div>
   </div>
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: 'Xóa liên hệ',
       actions: [
         {
           label: 'Xóa',
@@ -77,15 +77,10 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
-          <b>"{{ _category?.category_title }}"</b>?
+          Bạn chắc chắn muốn xóa liên hệ:
+          <b>"{{ _contact?.email }}"</b>?
         </div>
         <div class="text-base">
-          <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
-          </p>
           <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
@@ -111,57 +106,106 @@ import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 const router = useRouter()
 const props = defineProps({
-  categoryId: {
+  contactId: {
     type: String,
     required: true,
   },
 })
 const msgError = ref()
-const _category = ref({})
+const _contact = ref({})
 const showModalDelete = ref(false)
 
 const sections = computed(() => {
   return [
     {
-      section: 'Category Name',
+      section: 'Section 1',
       columns: 1,
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên danh mục',
-          mandatory: true,
-          name: 'category_title',
+          label: 'Họ',
+          mandatory: false,
+          name: 'last_name',
           type: 'data',
-          placeholder: 'Nhập tên danh mục',
+          placeholder: 'Nhập tên họ',
+        },
+        {
+          label: 'Tên',
+          mandatory: false,
+          name: 'first_name',
+          type: 'data',
+          placeholder: 'Nhập tên',
+        },
+        {
+          label: 'Họ và tên',
+          mandatory: false,
+          name: 'full_name',
+          type: 'data',
+          placeholder: 'Nhập họ và tên',
+        },
+        {
+          label: 'Email',
+          mandatory: false,
+          name: 'email',
+          type: 'data',
+          placeholder: 'Nhập email',
+        },
+        {
+          label: 'Số điện thoại',
+          mandatory: false,
+          name: 'phone_number',
+          type: 'data',
+          placeholder: 'Nhập số điện thoại',
         },
       ],
     },
     {
-      section: 'Description',
-      class: 'md:grid-cols-2',
+      section: 'Section 2',
       columns: 1,
+      class: 'md:grid-cols-2',
       hideBorder: true,
       fields: [
         {
-          label: 'Mô tả',
-          name: 'description',
+          label: 'Thông tin thêm',
+          name: 'message',
           type: 'textarea',
-          placeholder: 'Nhập mô tả',
+          placeholder: 'Nhập thông tin',
           rows: 10,
+        },
+        {
+          label: 'Nguồn',
+          name: 'source',
+          type: 'textarea',
+          placeholder: 'Nhập nguồn',
+          rows: 10,
+        },
+        {
+          label: 'UTM Source',
+          mandatory: false,
+          name: 'utm_source',
+          type: 'data',
+          placeholder: 'Nhập utm source',
+        },
+        {
+          label: 'Utm Campaign',
+          mandatory: false,
+          name: 'utm_campaign',
+          type: 'data',
+          placeholder: 'Nhập utm campaign',
         },
       ],
     },
   ]
 })
 
-const category = createResource({
-  url: 'go1_cms.api.category.get_category',
+const contact = createResource({
+  url: 'go1_cms.api.mbw_contact.get_contact',
   params: {
-    name: props.categoryId,
+    name: props.contactId,
   },
   auto: true,
   transform: (data) => {
-    _category.value = {
+    _contact.value = {
       ...data,
     }
     return data
@@ -171,7 +215,7 @@ const category = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  return JSON.stringify(category.data) !== JSON.stringify(_category.value)
+  return JSON.stringify(contact.data) !== JSON.stringify(_contact.value)
 })
 
 watch(dirty, (val) => {
@@ -181,16 +225,16 @@ watch(dirty, (val) => {
 async function callUpdateDoc() {
   msgError.value = null
 
-  if (JSON.stringify(category.data) == JSON.stringify(_category.value)) {
+  if (JSON.stringify(contact.data) == JSON.stringify(_contact.value)) {
     warningMessage('Tài liệu không thay đổi')
     return
   }
 
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    const doc = await call('go1_cms.api.category.update_category', {
+    const doc = await call('go1_cms.api.mbw_contact.update_contact', {
       data: {
-        ..._category.value,
+        ..._contact.value,
       },
     })
     if (doc.name) {
@@ -199,15 +243,7 @@ async function callUpdateDoc() {
         icon: 'check',
         iconClasses: 'text-green-600',
       })
-
-      if (doc.name != props.categoryId) {
-        router.push({
-          name: 'Category Detail',
-          params: { categoryId: doc.name },
-        })
-      } else {
-        category.reload()
-      }
+      contact.reload()
     }
   } catch (err) {
     if (err.messages && err.messages.length) {
@@ -223,8 +259,8 @@ async function callUpdateDoc() {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.category.delete_category', {
-      name: props.categoryId,
+    await call('go1_cms.api.mbw_contact.delete_contact', {
+      name: props.contactId,
     }).then(() => {
       createToast({
         title: 'Xóa thành công',
@@ -233,7 +269,7 @@ async function deleteDoc(close) {
       })
       close()
       router.push({
-        name: 'Category',
+        name: 'Contacts',
       })
     })
   } catch (err) {
@@ -248,20 +284,20 @@ async function deleteDoc(close) {
 }
 
 watch(
-  () => props.categoryId,
+  () => props.contactId,
   (val) => {
-    category.update({
+    contact.update({
       params: { name: val },
     })
-    category.reload()
+    contact.reload()
   },
 )
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Quản lý danh mục', route: { name: 'Category' } }]
+  let items = [{ label: 'Danh sách liên hệ', route: { name: 'Contacts' } }]
   items.push({
-    label: category.data?.name,
+    label: contact.data?.email,
     route: {},
   })
   return items

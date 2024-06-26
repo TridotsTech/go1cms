@@ -152,6 +152,18 @@ const sections = computed(() => {
           placeholder: 'Nhập tên biểu mẫu',
         },
         {
+          label: 'Loại biểu mẫu',
+          mandatory: false,
+          name: 'form_type',
+          type: 'select',
+          placeholder: 'Chọn loại',
+          disabled: true,
+          options: [
+            { label: 'Form liên hệ', value: 'Form liên hệ' },
+            { label: 'Form Tuyển dụng', value: 'Form Tuyển dụng' },
+          ],
+        },
+        {
           label: 'Nội dung nút gửi',
           mandatory: false,
           name: 'btn_text',

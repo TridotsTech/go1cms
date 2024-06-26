@@ -3822,6 +3822,10 @@ var modify_section_data = Class.extend({
         fieldtype: "Link",
         fieldname: "form",
         label: __("Select Form"),
+        filters: {
+          id_client_website: "",
+          id_parent_copy: "",
+        },
         options: "MBW Form",
         default: this.fields.form || "",
         onchange: function () {},

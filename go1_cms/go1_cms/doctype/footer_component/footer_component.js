@@ -1300,6 +1300,10 @@ var modify_section_data = Class.extend({
         fieldtype: "Link",
         fieldname: "menu",
         label: __("Select Menu"),
+        filters: {
+          id_client_website: "",
+          id_parent_copy: "",
+        },
         options: "Menu",
         default: this.fields.menu || "",
         onchange: function () {},

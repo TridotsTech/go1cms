@@ -60,7 +60,7 @@
     position: relative;
 }
      .{{page_route}} .go1-cms-menu{
-        display: flex;
+        display: block;
         {%if header_settings.menu_alignment=="Left"%}
         justify-content: flex-start;
         {%endif%}
@@ -148,8 +148,11 @@
     }
      .{{page_route}} .mobile__header .go1-cms-menu a:hover{
         color: {{header_settings.m_hover_color}} ;
-
      }
+     .{{page_route}} .mobile__header .icon_nav{
+        color: {{header_settings.m_hover_color}} ;
+     }
+     
      .{{page_route}} .mobile__header .go1-cms-header .logo{
         height: {{header_settings.m_logo_height}} ;
     }
@@ -214,7 +217,7 @@
 }
 
 {% if header_settings.mobile_menu_background %}
-.mobile__header .mobile_menu.go1-cms-menu{
+.mobile__header .mobile_navbar{
    background-color: {{header_settings.mobile_menu_background}};
 }   
 #dl-menu ul li{

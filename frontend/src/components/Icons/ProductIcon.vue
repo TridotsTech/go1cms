@@ -7,7 +7,7 @@
   >
     <g fill="none" fill-rule="evenodd">
       <path
-        fill="#FFF"
+        fill="currentColor"
         fill-opacity=".01"
         fill-rule="nonzero"
         d="M24 0H0v24h24z"

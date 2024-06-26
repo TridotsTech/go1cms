@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-between overflow-x-auto gap-2 py-4">
-    <div class="flex items-center gap-2">
+    <!-- <div class="flex items-center gap-2">
       <Dropdown :options="viewsDropdownOptions">
         <template #default="{ open }">
           <Button :label="__(currentView.label)">
@@ -22,15 +22,15 @@
           </Button>
         </template>
       </Dropdown>
-      <!-- <Dropdown :options="viewActions">
+      <Dropdown :options="viewActions">
         <template #default>
           <Button icon="more-horizontal" />
         </template>
-      </Dropdown> -->
-    </div>
-    <div class="-mr-2 h-[70%] border-l" />
+      </Dropdown>
+    </div> -->
+    <!-- <div class="-mr-2 h-[70%] border-l" /> -->
     <FadedScrollableDiv
-      class="flex flex-1 items-center overflow-x-auto px-1 min-w-72"
+      class="flex flex-1 items-center overflow-x-auto min-w-72"
       orientation="horizontal"
     >
       <div

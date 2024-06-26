@@ -34,7 +34,7 @@
       <ErrorMessage :message="msgError" />
     </div>
     <FieldsComponent
-      title="Cấu hình chung"
+      title="Cấu hình biểu mẫu liên hệ"
       v-model="_email_setup.fields_cp"
     ></FieldsComponent>
   </div>
@@ -51,14 +51,14 @@ import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 
 const breadcrumbs = [
-  { label: 'Cấu hình liên hệ', route: { name: 'Contact Setup' } },
+  { label: 'Cấu hình biểu mẫu', route: { name: 'Form Setup' } },
 ]
 const _email_setup = ref({})
 const msgError = ref()
 
 // get detail
-const contact_setup = createResource({
-  url: 'go1_cms.api.contact_setup.get_setup',
+const form_setup = createResource({
+  url: 'go1_cms.api.form_setup.get_setup',
   method: 'GET',
   auto: true,
   transform: (data) => {
@@ -85,9 +85,7 @@ const dirty = computed(() => {
     }
     _email_setup.value.fields_cp[0].fields[1].show_edit = show_edit
   }
-  return (
-    JSON.stringify(contact_setup.data) !== JSON.stringify(_email_setup.value)
-  )
+  return JSON.stringify(form_setup.data) !== JSON.stringify(_email_setup.value)
 })
 
 watch(dirty, (val) => {
@@ -99,12 +97,12 @@ async function callUpdateDoc() {
   try {
     let data = JSON.parse(JSON.stringify(_email_setup.value))
 
-    let docUpdate = await call('go1_cms.api.contact_setup.update_setup', {
+    let docUpdate = await call('go1_cms.api.form_setup.update_setup', {
       data: data,
     })
 
     if (docUpdate.name) {
-      contact_setup.reload()
+      form_setup.reload()
 
       createToast({
         title: 'Cập nhật thành công',
@@ -124,6 +122,6 @@ async function callUpdateDoc() {
 }
 
 async function cacelSaveDoc() {
-  await contact_setup.reload()
+  await form_setup.reload()
 }
 </script>

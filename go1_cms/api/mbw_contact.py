@@ -1,6 +1,23 @@
 import frappe
 from frappe import _
 from premailer import transform
+from datetime import datetime
+
+
+@frappe.whitelist()
+def get_contact(name):
+    MbwContact = frappe.qb.DocType("MBW Contact")
+    query = (
+        frappe.qb.from_(MbwContact)
+        .select("*")
+        .where(MbwContact.name == name)
+    ).limit(1)
+
+    contact = query.run(as_dict=True)
+    if not len(contact):
+        frappe.throw(_("Contact not found"), frappe.DoesNotExistError)
+    contact = contact.pop()
+    return contact
 
 
 @frappe.whitelist(allow_guest=True)
@@ -8,25 +25,20 @@ def create_contact(**kwargs):
     data_insert = {}
     doc = frappe.new_doc("MBW Contact")
 
+    doc.last_name = kwargs.get("last_name") or ''
+    doc.first_name = kwargs.get("first_name") or ''
     if kwargs.get("full_name"):
         doc.full_name = kwargs.get("full_name")
-    if kwargs.get("last_name"):
-        doc.last_name = kwargs.get("last_name")
-    if kwargs.get("first_name"):
-        doc.first_name = kwargs.get("first_name")
-    if kwargs.get("email"):
-        doc.email = kwargs.get("email")
-    if kwargs.get("phone_number"):
-        doc.phone_number = kwargs.get("phone_number")
-    if kwargs.get("address"):
-        doc.address = kwargs.get("address")
-    if kwargs.get("message"):
-        doc.message = kwargs.get("message")
+    else:
+        doc.full_name = " ".join(
+            [n for n in [doc.last_name, doc.first_name] if n])
+    doc.email = kwargs.get("email") or ''
+    doc.phone_number = kwargs.get("phone_number") or ''
+    doc.address = kwargs.get("address") or ''
+    doc.message = kwargs.get("message") or ''
+    doc.send_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # insert contact
     doc.insert()
-
-    kwargs["full_name"] = kwargs.get(
-        "full_name") or kwargs.get("first_name", '')
 
     cms_settings = frappe.get_single('CMS Settings')
     # sync data leads
@@ -35,17 +47,10 @@ def create_contact(**kwargs):
                                      'name': ('IN', ['Mới', 'New'])}, pluck='name')
         if lead_status:
             doc_lead = frappe.new_doc("CRM Lead")
-            full_name = ''
-            if kwargs.get("full_name"):
-                full_name = kwargs.get("full_name")
-            else:
-                full_name = [n for n in [kwargs.get(
-                    "last_name"), kwargs.get("first_name")] if n]
-                full_name = " ".join(full_name)
-            doc_lead.first_name = full_name.strip() or 'Mới'
-            doc_lead.lead_name = full_name.strip()
-            doc_lead.email = kwargs.get("email", '')
-            doc_lead.mobile_no = kwargs.get("phone_number", '')
+            doc_lead.first_name = doc.full_name.strip() or 'Mới'
+            doc_lead.lead_name = doc.full_name.strip() or 'Mới'
+            doc_lead.email = doc.email or ''
+            doc_lead.mobile_no = doc.phone_number or ''
             if 'Mới' in lead_status:
                 doc_lead.status = 'Mới'
             elif 'New' in lead_status:
@@ -58,14 +63,44 @@ def create_contact(**kwargs):
         list_email = cms_settings.list_email_receipt
         recipients = [e.strip()
                       for e in str(cms_settings.list_email_receipt).split(';')]
-        subject = f"[MBW CMS] - Đã nhận được một liên hệ mới từ {kwargs.get('email') or ''}"
+        subject = f"Nhận được một liên hệ mới {doc.email or ''} + {doc.phone_number or ''}"
 
         frappe.sendmail(
             recipients=recipients,
             subject=subject,
             template="email_send_contact",
-            args=kwargs,
+            args=doc.as_dict(),
             # now=True,
         )
 
     return {"name": doc.name}
+
+
+@frappe.whitelist()
+def update_contact(data):
+    doc_name = data.get('name')
+    if not frappe.db.exists("MBW Contact", doc_name):
+        frappe.throw(_("Contact not found"), frappe.DoesNotExistError)
+
+    doc = frappe.get_doc('MBW Contact', doc_name)
+    doc.full_name = data.get('full_name')
+    doc.last_name = data.get('last_name')
+    doc.first_name = data.get('first_name')
+    doc.email = data.get('email')
+    doc.phone_number = data.get('phone_number')
+    doc.message = data.get('message')
+    doc.save()
+
+    result = {'name': doc.name}
+    return result
+
+
+@frappe.whitelist()
+def delete_contact(name):
+    if not frappe.db.exists("MBW Contact", name):
+        frappe.throw(_("Contact not found"), frappe.DoesNotExistError)
+
+    frappe.delete_doc('MBW Contact', name)
+
+    result = {'name': name}
+    return result

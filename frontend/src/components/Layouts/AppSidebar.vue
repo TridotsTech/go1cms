@@ -116,12 +116,10 @@
 import Section from '@/components/Section.vue'
 import DashboardIcon from '@/components/Icons/DashboardIcon.vue'
 import InboxIcon from '@/components/Icons/InboxIcon.vue'
-import PolicyIcon from '@/components/Icons/PolicyIcon.vue'
+import FormSetupIcon from '@/components/Icons/FormSetupIcon.vue'
 import NewsIcon from '@/components/Icons/NewsIcon.vue'
 import TemplatePageIcon from '@/components/Icons/TemplatePageIcon.vue'
 import WebpageIcon from '@/components/Icons/WebpageIcon.vue'
-import SetupContactIcon from '@/components/Icons/SetupContactIcon.vue'
-import TemplateWebsiteIcon from '@/components/Icons/TemplateWebsiteIcon.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
 import DomainIcon from '@/components/Icons/DomainIcon.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
@@ -141,9 +139,10 @@ import ArrowUpRightIcon from '@/components/Icons/ArrowUpRightIcon.vue'
 import PinIcon from '@/components/Icons/PinIcon.vue'
 import ChartIcon from '@/components/Icons/ChartIcon.vue'
 import UserDropdown from '@/components/UserDropdown.vue'
-import LeadsIcon from '@/components/Icons/LeadsIcon.vue'
+import PolicyIconV1 from '@/components/Icons/PolicyIconV1.vue'
 import DealsIcon from '@/components/Icons/DealsIcon.vue'
 import ContactsIcon from '@/components/Icons/ContactsIcon.vue'
+import ContactsIconV1 from '@/components/Icons/ContactsIconV1.vue'
 import OrganizationsIcon from '@/components/Icons/OrganizationsIcon.vue'
 import NoteIcon from '@/components/Icons/NoteIcon.vue'
 import SettingsIcon from '@/components/Icons/SettingsIcon.vue'
@@ -228,9 +227,9 @@ const allViews = computed(() => {
           to: 'Website Setup',
         },
         {
-          label: 'Cấu hình liên hệ',
-          icon: SetupContactIcon,
-          to: 'Contact Setup',
+          label: 'Cấu hình biểu mẫu',
+          icon: FormSetupIcon,
+          to: 'Form Setup',
         },
       ],
     })
@@ -288,6 +287,11 @@ const allViews = computed(() => {
           icon: FormIcon,
           to: 'Forms',
         },
+        {
+          label: 'Danh sách liên hệ',
+          icon: ContactsIconV1,
+          to: 'Contacts',
+        },
       ],
     })
   }
@@ -310,6 +314,8 @@ function parseView(views) {
 
 function getIcon(name) {
   switch (name) {
+    case 'PolicyIconV1':
+      return PolicyIconV1
     case 'WebpageIcon':
       return WebpageIcon
     case 'TemplatePageIcon':

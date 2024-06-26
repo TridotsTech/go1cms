@@ -119,6 +119,6 @@ watch(
   (val, old_value) => {
     if (!val || val === old_value) return
     updatedPageCount.value = val
-  }
+  },
 )
 </script>

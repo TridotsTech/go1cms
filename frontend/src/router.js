@@ -35,14 +35,25 @@ const routes = [
     component: () => import('@/pages/Domain.vue'),
   },
   {
-    path: '/website_setup',
+    path: '/website-setup',
     name: 'Website Setup',
     component: () => import('@/pages/WebsiteSetup.vue'),
   },
   {
-    path: '/contact_setup',
-    name: 'Contact Setup',
-    component: () => import('@/pages/ContactSetup.vue'),
+    path: '/form-setup',
+    name: 'Form Setup',
+    component: () => import('@/pages/FormSetup.vue'),
+  },
+  {
+    path: '/contacts',
+    name: 'Contacts',
+    component: () => import('@/pages/contact/Contacts.vue'),
+  },
+  {
+    path: '/contacts/:contactId',
+    name: 'Contact Detail',
+    component: () => import('@/pages/contact/ContactDetail.vue'),
+    props: true,
   },
   {
     path: '/dashboard',

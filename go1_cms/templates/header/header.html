@@ -659,9 +659,6 @@
     <div class="go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
         <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
             <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
-                <div class="nav-icon float-left mr-4" role="button">
-                    <i class="fa fa-bars"></i>
-                </div>
                 <!-- newly added for logo -->
                 <div class="m-logo">
                     {%for sec_item in header.get("items")%}
@@ -685,13 +682,17 @@
                     {%endfor%}
                 </div>
             </div>
+            <div class="nav-icon float-left" role="button">
+                <div class="icon_nav">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div>
     
             <!-- end -->
-            {%for sec_item in header.get("items")%}
+            <!-- {%for sec_item in header.get("items")%}
                 {%if sec_item.section_name == "Header Button"%}
                     {%if header.call_to_action_button==1%}
                         <div class="flex justify-end gap-4">
-                            <!-- btn 1 -->
                             {% if header.active_button %}
                                 {% if not header.show_icon_btn %}
                                     <div class="d__flex custom-button text-base">
@@ -714,7 +715,6 @@
                                     Icon
                                 {% endif %}
                             {% endif %}
-                            <!-- btn 2 -->
                             {% if header.active_button_2 %}
                                 {% if not header.show_icon_btn_2 %}
                                     <div class="d__flex custom-button text-base">
@@ -737,7 +737,6 @@
                                     Icon
                                 {% endif %}
                             {% endif %}
-                            <!-- btn 3 -->
                             {% if header.active_button_3 %}
                                 {% if not header.show_icon_btn_3 %}
                                     <div class="d__flex custom-button text-base">
@@ -760,7 +759,6 @@
                                     Icon
                                 {% endif %}
                             {% endif %}
-                            <!-- btn 4 -->
                             {% if header.active_button_4 %}
                                 {% if not header.show_icon_btn_4 %}
                                     <div class="d__flex custom-button text-base">
@@ -786,43 +784,141 @@
                         </div>
                     {%endif%}
                 {%endif%}
-            {%endfor%}
-            <div class="mobile_menu go1-cms-menu fixed left-0 top-0 w-80 z-[9999] h-full hidden" style="left:-1000px;overflow: auto;z-index: 999;">
-                    <div class="m-logo" style="border-bottom: 1px solid #ddd;">
-                    <img src="{{theme_settings.mobile_logo}}" class="logo"/>
-                </div>
+            {%endfor%} -->
+            <div class="mobile_navbar fixed overflow-auto left-0 top-0 w-80 z-[9999] h-full hidden" style="left:-1000px;">
+                <div class="mobile_menu go1-cms-menu">
+                    <div class="m-logo">
+                        <img src="{{theme_settings.mobile_logo}}" class="logo"/>
+                    </div>
                     {%for sec_item in header.get("items")%}
                     {%if sec_item.section_name == "Header Menu"%}
                     <!-- newly added for submenu start-->
                     {% if sec_item.get("menus") %}
-                    <div id="dl-menu" class="dl-menuwrapper">
-                            <ul class="dl-menu">
-                                {%for menu_item in sec_item.get("menus")%}
-                                    <li> <a href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
-                                        {%if menu_item.child_menu%}
-                                            <ul class="dl-submenu">
-                                                {%for sub_menu_item in menu_item.child_menu%}  
-                                                    <li> <a href="{{sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_menu_item.menu_label}}</a>
-                                                        {%if sub_menu_item.child_menu%}
-                                                            <ul class="dl-submenu">
-                                                                {%for sub_sub_menu_item in sub_menu_item.child_menu%}
-                                                                    <li><a href="{{sub_sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_sub_menu_item.menu_label}}</a></li>
-                                                                {% endfor %} 
-                                                            </ul>
-                                                        {% endif %}
-                                                    </li>  
-                                            {% endfor %} 
-                                        </ul>
-                                        {% endif %}
-                                    </li> 
-                                {%endfor%}
-                            </ul>
+                    <div id="dl-menu" class="dl-menuwrapper mt-8">
+                        <ul class="dl-menu">
+                            {%for menu_item in sec_item.get("menus")%}
+                                <li> <a class="menu_after" href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
+                                    {%if menu_item.child_menu%}
+                                        <ul class="dl-submenu">
+                                            {%for sub_menu_item in menu_item.child_menu%}  
+                                                <li> <a href="{{sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_menu_item.menu_label}}</a>
+                                                    {%if sub_menu_item.child_menu%}
+                                                        <ul class="dl-submenu">
+                                                            {%for sub_sub_menu_item in sub_menu_item.child_menu%}
+                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_sub_menu_item.menu_label}}</a></li>
+                                                            {% endfor %} 
+                                                        </ul>
+                                                    {% endif %}
+                                                </li>  
+                                        {% endfor %} 
+                                    </ul>
+                                    {% endif %}
+                                </li> 
+                            {%endfor%}
+                        </ul>
                     </div>
-                        {%endif%}
+                    {%endif%}
                     <!-- newly added for submenu end-->
-    
                     {%endif%}
                     {%endfor%}
+                </div>
+                <!-- button -->
+                {%for sec_item in header.get("items")%}
+                {%if sec_item.section_name == "Header Button"%}
+                    {%if header.call_to_action_button==1%}
+                        <div class="flex justify-start gap-4 px-4 mt-8">
+                            {% if header.active_button %}
+                                {% if not header.show_icon_btn %}
+                                    <div class="d__flex custom-button text-base">
+                                        {% if header.use_action == 'link' %}
+                                        <a href="{{ header.button_link }}" class="primary-btn btn-1 md button button-clear ion-activatable ion-focusable hydrated"
+                                            {% if header.link_target=="_blank" %}target="_blank" {%else%}target="_self" {% endif %}>
+                                            {% if header.show_btn_text %}
+                                            {{ header.button_text }}
+                                            {% endif %}
+                                        </a>
+                                        {% elif header.use_action == 'button' %}
+                                        <button type="button" class="primary-btn btn-1 md button button-clear ion-activatable ion-focusable hydrated">
+                                            {% if header.show_btn_text %}
+                                            {{ header.button_text }}
+                                            {% endif %}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    Icon
+                                {% endif %}
+                            {% endif %}
+                            {% if header.active_button_2 %}
+                                {% if not header.show_icon_btn_2 %}
+                                    <div class="d__flex custom-button text-base">
+                                        {% if header.use_action_2 == 'link' %}
+                                        <a href="{{ header.button_link_2 }}" class="primary-btn btn-2 md button button-clear ion-activatable ion-focusable hydrated"
+                                            {% if header.link_target_2=="_blank" %}target="_blank" {%else%}target="_self" {% endif %}>
+                                            {% if header.show_btn_text_2 %}
+                                            {{ header.button_text_2 }}
+                                            {% endif %}
+                                        </a>
+                                        {% elif header.use_action_2 == 'button' %}
+                                        <button type="button" class="primary-btn btn-2 md button button-clear ion-activatable ion-focusable hydrated">
+                                            {% if header.show_btn_text_2 %}
+                                            {{ header.button_text_2 }}
+                                            {% endif %}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    Icon
+                                {% endif %}
+                            {% endif %}
+                            {% if header.active_button_3 %}
+                                {% if not header.show_icon_btn_3 %}
+                                    <div class="d__flex custom-button text-base">
+                                        {% if header.use_action_3 == 'link' %}
+                                        <a href="{{ header.button_link_3 }}" class="primary-btn btn-3 md button button-clear ion-activatable ion-focusable hydrated"
+                                            {% if header.link_target_3=="_blank" %}target="_blank" {%else%}target="_self" {% endif %}>
+                                            {% if header.show_btn_text_3 %}
+                                            {{ header.button_text_3 }}
+                                            {% endif %}
+                                        </a>
+                                        {% elif header.use_action_3 == 'button' %}
+                                        <button type="button" class="primary-btn btn-3 md button button-clear ion-activatable ion-focusable hydrated">
+                                            {% if header.show_btn_text_3 %}
+                                            {{ header.button_text_3 }}
+                                            {% endif %}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    Icon
+                                {% endif %}
+                            {% endif %}
+                            {% if header.active_button_4 %}
+                                {% if not header.show_icon_btn_4 %}
+                                    <div class="d__flex custom-button text-base">
+                                        {% if header.use_action_4 == 'link' %}
+                                        <a href="{{ header.button_link_4 }}" class="primary-btn btn-4 md button button-clear ion-activatable ion-focusable hydrated"
+                                            {% if header.link_target_4=="_blank" %}target="_blank" {%else%}target="_self" {% endif %}>
+                                            {% if header.show_btn_text_4 %}
+                                            {{ header.button_text_4 }}
+                                            {% endif %}
+                                        </a>
+                                        {% elif header.use_action_4 == 'button' %}
+                                        <button type="button" class="primary-btn btn-4 md button button-clear ion-activatable ion-focusable hydrated">
+                                            {% if header.show_btn_text_4 %}
+                                            {{ header.button_text_4 }}
+                                            {% endif %}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    Icon
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {%endif%}
+                {%endif%}
+                {%endfor%}
             </div>
         </div>
         <div class="mobile-blackdrop"></div>
@@ -938,15 +1034,14 @@
     display: none;
 }
 .mobile_menu .m-logo{
-    border-bottom: 1px solid #ddd;
-    flex: 0 0 100%;
+    /* border-bottom: 1px solid #ddd; */
+    /* flex: 0 0 100%; */
     width: 100%;
-    float: left;
-    padding: 15px;
-    margin-top: 5px;
+    /* float: left; */
+    padding: 16px 24px;
 }
 
-.mobile_menu.visible{
+.mobile_menu, .mobile_navbar.visible{
     display: block;
  }
  .custom-button {
@@ -954,9 +1049,9 @@
     float: right;
     display: block;
 }
-.m-logo {
+/* .m-logo {
     float: left;
-}
+} */
 .custom-button .btn{
     font-size: 13px;
 }
@@ -1236,7 +1331,7 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         })
 
         function mobile_menu() {
-            var hidden = $('.mobile_menu');
+            var hidden = $('.mobile_navbar');
             if (hidden.hasClass('visible')) {
                 hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
                 $(".mobile-blackdrop").hide();

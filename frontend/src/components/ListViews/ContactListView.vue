@@ -33,12 +33,12 @@
                     size="sm"
                     label=""
                     icon="edit"
-                    :route="'/category/' + item.name"
+                    :route="'/contacts/' + item.name"
                   >
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa danh mục" :hover-delay="1" :placement="'top'">
+              <Tooltip text="Xóa liên hệ" :hover-delay="1" :placement="'top'">
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -80,14 +80,6 @@
               :label="item.value"
             />
           </div>
-          <!-- <div v-else-if="column.type === 'Check'">
-            <FormControl
-              type="checkbox"
-              :modelValue="item"
-              :disabled="true"
-              class="text-gray-900"
-            />
-          </div> -->
         </ListRowItem>
       </ListRow>
     </ListRows>
@@ -105,7 +97,7 @@
 
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: 'Xóa liên hệ',
       actions: [
         {
           label: 'Xóa',
@@ -120,15 +112,10 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
-          <b>"{{ selectedItem.category_title }}"</b>?
+          Bạn chắc chắn muốn xóa liên hệ:
+          <b class="break-words">"{{ selectedItem.email }}"</b>?
         </div>
         <div class="text-base">
-          <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
-          </p>
           <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
@@ -200,7 +187,7 @@ function handleShowModalDelete(item) {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.category.delete_category', {
+    await call('go1_cms.api.mbw_contact.delete_contact', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({

@@ -55,7 +55,7 @@ def get_setup():
         fields_sync = {
             'allow_edit':  True,
             'show_edit': True,
-            'section_title': 'Đồng bộ liên hệ sang Leads(App CRM)',
+            'section_title': 'Đồng bộ liên hệ sang Lead(App CRM)',
             'fields': [
                 {
                     'field_label': 'Cho phép đồng bộ',

@@ -1642,7 +1642,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                                     '<script>{0}</script>'.format(js), data_source)
 
                             else:
-                                section_html += '<script>{0}</script>'.format(js)
+                                section_html += '<script>{0}</script>'.format(
+                                    js)
                         else:
                             if page_no == 0:
                                 js_list += frappe.render_template(
