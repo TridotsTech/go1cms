@@ -14,6 +14,8 @@
   "column_break_2",
   "default_footer",
   "enable_noindex",
+  "id_client_website",
+  "id_parent_copy",
   "branding_section",
   "website_logo",
   "favicon",
@@ -709,10 +711,20 @@
    "fieldname": "mobile_width",
    "fieldtype": "Data",
    "label": "Mobile Max Width"
+  },
+  {
+   "fieldname": "id_client_website",
+   "fieldtype": "Data",
+   "label": "ID Client Website"
+  },
+  {
+   "fieldname": "id_parent_copy",
+   "fieldtype": "Data",
+   "label": "ID Parent Copy"
   }
  ],
  "links": [],
- "modified": "2024-06-18 09:00:55.038218",
+ "modified": "2024-06-27 09:06:22.645546",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

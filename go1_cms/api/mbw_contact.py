@@ -36,13 +36,16 @@ def create_contact(**kwargs):
     doc.phone_number = kwargs.get("phone_number") or ''
     doc.address = kwargs.get("address") or ''
     doc.message = kwargs.get("message") or ''
+    doc.source = kwargs.get("source") or ''
+    doc.utm_source = kwargs.get("utm_source") or ''
+    doc.utm_campaign = kwargs.get("utm_campaign") or ''
     doc.send_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # insert contact
     doc.insert()
 
     cms_settings = frappe.get_single('CMS Settings')
     # sync data leads
-    if cms_settings.sync_lead_data and frappe.db.exists({"doctype": "DocType", "name": "CRM Lead"}):
+    if cms_settings.sync_lead_data and 'crm' in frappe.get_installed_apps() and frappe.db.exists({"doctype": "DocType", "name": "CRM Lead"}):
         lead_status = frappe.get_all('CRM Lead Status', filters={
                                      'name': ('IN', ['Mới', 'New'])}, pluck='name')
         if lead_status:
@@ -51,6 +54,8 @@ def create_contact(**kwargs):
             doc_lead.lead_name = doc.full_name.strip() or 'Mới'
             doc_lead.email = doc.email or ''
             doc_lead.mobile_no = doc.phone_number or ''
+            if doc.utm_source and frappe.db.exists({"doctype": "CRM Lead Source", "name": doc.utm_source}):
+                doc_lead.source = doc.utm_source
             if 'Mới' in lead_status:
                 doc_lead.status = 'Mới'
             elif 'New' in lead_status:
@@ -63,7 +68,7 @@ def create_contact(**kwargs):
         list_email = cms_settings.list_email_receipt
         recipients = [e.strip()
                       for e in str(cms_settings.list_email_receipt).split(';')]
-        subject = f"Nhận được một liên hệ mới {doc.email or ''} + {doc.phone_number or ''}"
+        subject = f"Nhận được một liên hệ mới {doc.email or ''} - {doc.phone_number or ''}"
 
         frappe.sendmail(
             recipients=recipients,

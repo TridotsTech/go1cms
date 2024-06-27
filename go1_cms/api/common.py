@@ -131,6 +131,8 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
     web_theme.name = name + ' ' + sub_name
     web_theme.default_header = cp_header
     web_theme.default_footer = cp_footer
+    web_theme.id_parent_copy = name
+    web_theme.id_client_website = sub_name
     web_theme.is_active = 0
     web_theme.container_width = ''
     web_theme.save(ignore_permissions=True)

@@ -12,7 +12,7 @@
 					{%if col.columns%}
 					{%for each_col in col.columns%}
 					{%set col_index = loop.index %}
-					<div style="width: {{each_col.width}}" class="footer_sec">
+					<div style="width: {{each_col.width}}" class="footer_sec order-[{{ each_col.get('order', '1') }}] md:order-none">
 						{%for sec_item in footer_items%}
 						{%if col_index == (sec_item.column_index+1) %}
 						{%for m_sec_item in sec_item.get("items")%}

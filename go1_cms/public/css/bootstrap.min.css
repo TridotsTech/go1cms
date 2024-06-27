@@ -7329,7 +7329,7 @@ fieldset:disabled .btn {
 .align-self-stretch {
   align-self: stretch !important;
 }
-.order-first {
+/* .order-first {
   order: -1 !important;
 }
 .order-0 {
@@ -7352,7 +7352,7 @@ fieldset:disabled .btn {
 }
 .order-last {
   order: 6 !important;
-}
+} */
 /* .m-0 {
   margin: 0 !important;
 } */
