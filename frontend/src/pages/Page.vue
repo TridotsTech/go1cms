@@ -8,6 +8,19 @@
         class="gap-2 justify-end"
         :class="alreadyActions ? 'flex' : 'hidden'"
       >
+        <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+          <div>
+            <Button
+              variant="subtle"
+              theme="blue"
+              size="md"
+              label=""
+              icon="eye"
+              :link="_page?.web_page?.route"
+            >
+            </Button>
+          </div>
+        </Tooltip>
         <Dropdown
           v-if="_page?.web_page?.allow_delete"
           :options="[

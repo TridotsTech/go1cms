@@ -193,6 +193,49 @@
       src="/assets/go1_cms/js/owl1.carousel.js"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+      // cookie
+      function setCookie(name, value, minutes = 30) {
+        var expires = "";
+        if (minutes) {
+          var date = new Date();
+          date.setTime(date.getTime() + minutes * 60 * 1000);
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      }
+      function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+      // params
+      function getQueryParameter(name) {
+        let urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+      function setQueryParameter(key, value) {
+        let url = new URL(window.location);
+        url.searchParams.set(key, value);
+        window.history.pushState({}, "", url);
+      }
+      function removeQueryParameter(key) {
+        const url = new URL(window.location);
+        url.searchParams.delete(key);
+        window.history.pushState({}, "", url);
+      }
+      // number
+      function isNumeric(str) {
+        if (typeof str != "string") return false;
+        return !isNaN(str) && !isNaN(parseFloat(str));
+      }
+    </script>
   </head>
   <body class="{{p_route}}">
     {% if header %} {% include template_header %} {% endif %}
@@ -236,6 +279,31 @@
     ></script>
   </body>
 </html>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    var currentPath = window.location.pathname;
+    var arrCrPath = currentPath.split("/").map((el) => "/" + el);
+
+    $(".go1-cms-header .menu_after").each(function () {
+      var linkPath = $(this).attr("href");
+
+      if (arrCrPath[1] == "/") {
+        if (arrCrPath.length && linkPath.startsWith("/home")) {
+          $(this).addClass("active");
+        }
+      } else {
+        let idx = 1;
+        if (arrCrPath[1].startsWith("/template_") && arrCrPath.length > 2) {
+          idx = 2;
+        }
+        if (arrCrPath.length && arrCrPath[idx].startsWith(linkPath)) {
+          $(this).addClass("active");
+        }
+      }
+    });
+  });
+</script>
 
 <script type="text/javascript">
   tailwind.config = {
@@ -288,247 +356,221 @@
 </script>
 
 <script type="text/javascript">
-  // cookie
-   function setCookie(name, value, minutes=30) {
-     var expires = "";
-     if (minutes) {
-             var date = new Date();
-             date.setTime(date.getTime() + (minutes * 60 * 1000));
-             expires = "; expires=" + date.toUTCString();
-     }
-     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+  if(getQueryParameter('utm_source')){
+      setCookie('utm_source', getQueryParameter('utm_source'))
+      setCookie('utm_campaign', getQueryParameter('utm_campaign') || '')
+      setCookie('source', window.location.href)
+  }
+
+   var owl = $('.owl-carousel');
+   owl.owlCarousel({
+       items:3,
+       loop:true,
+       margin:10,
+       autoplay:true,
+       autoplayTimeout:1000,
+       autoplayHoverPause:true
+   });
+   $(document).ready(function() {
+     $("#testimonial-slider").owlCarousel({
+       items: 3,
+       itemsDesktop:[1000,3],
+       itemsDesktopSmall:[979,2],
+       itemsTablet:[768, 2],
+       itemsMobile:[650, 1],
+       pagination: true,
+       autoPlay: true
+     });
+   });
+
+  var page = 0;
+  var page_len = 3;
+  var allow_scroll = true;
+  let stop_scroll = false;
+  let query_params = window.location.href.split('?')[1];
+  let add_info = {};
+  if(query_params && query_params != "") {
+  	let query_splits = query_params.split('&');
+  	$(query_splits).each(function(k, v) {
+  		add_info[v.split('=')[0]] = v.split('=')[1];
+  	})
+  }
+  var body_scroll = true
+  if(document.body.scrollHeight <= document.documentElement.scrollHeight){
+  	body_scroll = false
+  		if (allow_scroll == true) {
+  				var hT = $('.page-sections-main').offset().top,
+  						hH = $('.page-sections-main').outerHeight(),
+  						wH = $(window).height(),
+  						wS = $(this).scrollTop();
+  				if (wS > ((hT + hH - wH) - 500)) {
+  						if (stop_scroll == false) {
+  								$('.page-loader').show();
+  						}
+  				}
+  				allow_scroll = false;
+  				page = page + 1;
+  				$.ajax({
+  						type: 'POST',
+  						Accept: 'application/json',
+  						ContentType: 'application/json;charset=utf-8',
+  						url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+  						data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+  						dataType: "json",
+  						headers: {
+  								'X-Frappe-CSRF-Token': '{{csrf_token}}'
+  						},
+  						success: function(data) {
+  								$('.page-loader').hide();
+  								if (data.message && data.message.length > 0) {
+  										allow_scroll = true;
+  										$(data.message).each(function(k, v) {
+  												$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+  										})
+  								} else {
+  										allow_scroll = false;
+  										stop_scroll = true;
+  								}
+  						}
+  				})
+  		}
+  }
+  $(window).scroll(function() {
+  		scrollFunction()
+  	 body_scroll = false
+  		if (allow_scroll == true) {
+  				//  console.log(allow_scroll,"allow_scroll")
+  				var hT = $('.page-sections-main').offset().top,
+  						hH = $('.page-sections-main').outerHeight(),
+  						wH = $(window).height(),
+  						wS = $(this).scrollTop();
+  				if (wS > ((hT + hH - wH) - 500)) {
+  						if (stop_scroll == false) {
+  								$('.page-loader').show();
+  						} else {
+  								return;
+  						}
+  				} else {
+  						return;
+  				}
+  				allow_scroll = false;
+  				page = page + 1;
+  				$.ajax({
+  						type: 'POST',
+  						Accept: 'application/json',
+  						ContentType: 'application/json;charset=utf-8',
+  						url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+  						data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+  						dataType: "json",
+  						headers: {
+  								'X-Frappe-CSRF-Token': '{{csrf_token}}'
+  						},
+  						success: function(data) {
+  								$('.page-loader').hide();
+  								if (data.message && data.message.length > 0) {
+  										allow_scroll = true;
+  										$(data.message).each(function(k, v) {
+  												$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+  										})
+  								} else {
+  										allow_scroll = false;
+  										stop_scroll = true;
+  								}
+  						}
+  				})
+  		}
+  })
+  if(body_scroll){
+    $('body').scroll(function(){
+  		if (allow_scroll == true) {
+
+  				var hT = $('.page-sections-main').offset().top,
+  						hH = $('.page-sections-main').outerHeight(),
+  						wH = $(window).height(),
+  						wS = $(this).scrollTop();
+
+
+  				if (wS > ((hT + hH - wH) - 500)) {
+  						if (stop_scroll == false) {
+  								$('.page-loader').show();
+  						} else {
+  								return;
+  						}
+  				} else {
+  						return;
+  				}
+  				allow_scroll = false;
+  				page = page + 1;
+  				 // page_len = page_len + 3
+
+  				$.ajax({
+  						type: 'POST',
+  						Accept: 'application/json',
+  						ContentType: 'application/json;charset=utf-8',
+  						url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
+  						data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+  						dataType: "json",
+  						headers: {
+  								'X-Frappe-CSRF-Token': '{{csrf_token}}'
+  						},
+  						success: function(data) {
+
+  								$('.page-loader').hide();
+  								if (data.message && data.message.length > 0) {
+  										allow_scroll = true;
+  										$(data.message).each(function(k, v) {
+  												$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
+  										})
+  								} else {
+  										allow_scroll = false;
+  										stop_scroll = true;
+  								}
+  						}
+  				})
+  		}
+  })
    }
-   function getCookie(name) {
-       var nameEQ = name + "=";
-       var ca = document.cookie.split(';');
-       for(var i = 0; i < ca.length; i++) {
-           var c = ca[i];
-           while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-           if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+   // btn to top 1
+   let mybutton = document.getElementById("btn-back-to-top-1");
+   if (mybutton) {
+       mybutton.addEventListener("click", backToTop);
+   }
+   function scrollFunction() {
+       {% if p_route %}
+       {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
+       let mybutton = document.getElementById("btn-back-to-top");
+       if (mybutton) {
+           {% if theme_settings.back_to_top %}
+               if(document.documentElement.clientWidth >= 768){
+                   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                       mybutton.style.display = "flex";
+                   }
+                   else {
+                       mybutton.style.display = "none";
+                   }
+                   // When the user clicks on the button, scroll to the top of the document
+                   mybutton.addEventListener("click", backToTop);
+               }
+           {% endif %}
+           {% if theme_settings.back_to_top_mobile %}
+           if(document.documentElement.clientWidth <= 768){
+                   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                       mybutton.style.display = "flex";
+                   }
+                   else {
+                       mybutton.style.display = "none";
+                   }
+                   // When the user clicks on the button, scroll to the top of the document
+                   mybutton.addEventListener("click", backToTop);
+               }
+           {% endif %}
        }
-       return null;
+       {% endif %}
+       {% endif %}
    }
-
-   function getQueryParameter(name) {
-       let urlParams = new URLSearchParams(window.location.search);
-       return urlParams.get(name);
+   function backToTop() {
+       document.body.scrollTop = 0;
+       document.documentElement.scrollTop = 0;
    }
-
-   if(getQueryParameter('utm_source')){
-       setCookie('utm_source', getQueryParameter('utm_source'))
-       setCookie('utm_campaign', getQueryParameter('utm_campaign') || '')
-       setCookie('source', window.location.href)
-   }
-
-    var owl = $('.owl-carousel');
-    owl.owlCarousel({
-        items:3,
-        loop:true,
-        margin:10,
-        autoplay:true,
-        autoplayTimeout:1000,
-        autoplayHoverPause:true
-    });
-    $(document).ready(function() {
-      $("#testimonial-slider").owlCarousel({
-        items: 3,
-        itemsDesktop:[1000,3],
-        itemsDesktopSmall:[979,2],
-        itemsTablet:[768, 2],
-        itemsMobile:[650, 1],
-        pagination: true,
-        autoPlay: true
-      });
-    });
-
-  	var page = 0;
-  	var page_len = 3;
-  	var allow_scroll = true;
-  	let stop_scroll = false;
-  	let query_params = window.location.href.split('?')[1];
-  	let add_info = {};
-  	if(query_params && query_params != "") {
-  		let query_splits = query_params.split('&');
-  		$(query_splits).each(function(k, v) {
-  			add_info[v.split('=')[0]] = v.split('=')[1];
-  		})
-  	}
-  	var body_scroll = true
-  	if(document.body.scrollHeight <= document.documentElement.scrollHeight){
-  		body_scroll = false
-  			if (allow_scroll == true) {
-  					var hT = $('.page-sections-main').offset().top,
-  							hH = $('.page-sections-main').outerHeight(),
-  							wH = $(window).height(),
-  							wS = $(this).scrollTop();
-  					if (wS > ((hT + hH - wH) - 500)) {
-  							if (stop_scroll == false) {
-  									$('.page-loader').show();
-  							}
-  					}
-  					allow_scroll = false;
-  					page = page + 1;
-  					$.ajax({
-  							type: 'POST',
-  							Accept: 'application/json',
-  							ContentType: 'application/json;charset=utf-8',
-  							url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-  							data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
-  							dataType: "json",
-  							headers: {
-  									'X-Frappe-CSRF-Token': '{{csrf_token}}'
-  							},
-  							success: function(data) {
-  									$('.page-loader').hide();
-  									if (data.message && data.message.length > 0) {
-  											allow_scroll = true;
-  											$(data.message).each(function(k, v) {
-  													$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
-  											})
-  									} else {
-  											allow_scroll = false;
-  											stop_scroll = true;
-  									}
-  							}
-  					})
-  			}
-  	}
-  	$(window).scroll(function() {
-  			scrollFunction()
-  		 body_scroll = false
-  			if (allow_scroll == true) {
-  					//  console.log(allow_scroll,"allow_scroll")
-  					var hT = $('.page-sections-main').offset().top,
-  							hH = $('.page-sections-main').outerHeight(),
-  							wH = $(window).height(),
-  							wS = $(this).scrollTop();
-  					if (wS > ((hT + hH - wH) - 500)) {
-  							if (stop_scroll == false) {
-  									$('.page-loader').show();
-  							} else {
-  									return;
-  							}
-  					} else {
-  							return;
-  					}
-  					allow_scroll = false;
-  					page = page + 1;
-  					$.ajax({
-  							type: 'POST',
-  							Accept: 'application/json',
-  							ContentType: 'application/json;charset=utf-8',
-  							url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-  							data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
-  							dataType: "json",
-  							headers: {
-  									'X-Frappe-CSRF-Token': '{{csrf_token}}'
-  							},
-  							success: function(data) {
-  									$('.page-loader').hide();
-  									if (data.message && data.message.length > 0) {
-  											allow_scroll = true;
-  											$(data.message).each(function(k, v) {
-  													$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
-  											})
-  									} else {
-  											allow_scroll = false;
-  											stop_scroll = true;
-  									}
-  							}
-  					})
-  			}
-  	})
-  	if(body_scroll){
-  	  $('body').scroll(function(){
-  			if (allow_scroll == true) {
-
-  					var hT = $('.page-sections-main').offset().top,
-  							hH = $('.page-sections-main').outerHeight(),
-  							wH = $(window).height(),
-  							wS = $(this).scrollTop();
-
-
-  					if (wS > ((hT + hH - wH) - 500)) {
-  							if (stop_scroll == false) {
-  									$('.page-loader').show();
-  							} else {
-  									return;
-  							}
-  					} else {
-  							return;
-  					}
-  					allow_scroll = false;
-  					page = page + 1;
-  					 // page_len = page_len + 3
-
-  					$.ajax({
-  							type: 'POST',
-  							Accept: 'application/json',
-  							ContentType: 'application/json;charset=utf-8',
-  							url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-  							data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
-  							dataType: "json",
-  							headers: {
-  									'X-Frappe-CSRF-Token': '{{csrf_token}}'
-  							},
-  							success: function(data) {
-
-  									$('.page-loader').hide();
-  									if (data.message && data.message.length > 0) {
-  											allow_scroll = true;
-  											$(data.message).each(function(k, v) {
-  													$('.page-sections-main').append(`<div id="${v.section}" class="section-item">${v.template}</div>`);
-  											})
-  									} else {
-  											allow_scroll = false;
-  											stop_scroll = true;
-  									}
-  							}
-  					})
-  			}
-  	})
-    }
-    // btn to top 1
-    let mybutton = document.getElementById("btn-back-to-top-1");
-    if (mybutton) {
-        mybutton.addEventListener("click", backToTop);
-    }
-    function scrollFunction() {
-        {% if p_route %}
-        {% if theme_settings.back_to_top or theme_settings.back_to_top_mobile %}
-        let mybutton = document.getElementById("btn-back-to-top");
-        if (mybutton) {
-            {% if theme_settings.back_to_top %}
-                if(document.documentElement.clientWidth >= 768){
-                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                        mybutton.style.display = "flex";
-                    }
-                    else {
-                        mybutton.style.display = "none";
-                    }
-                    // When the user clicks on the button, scroll to the top of the document
-                    mybutton.addEventListener("click", backToTop);
-                }
-            {% endif %}
-            {% if theme_settings.back_to_top_mobile %}
-            if(document.documentElement.clientWidth <= 768){
-                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                        mybutton.style.display = "flex";
-                    }
-                    else {
-                        mybutton.style.display = "none";
-                    }
-                    // When the user clicks on the button, scroll to the top of the document
-                    mybutton.addEventListener("click", backToTop);
-                }
-            {% endif %}
-        }
-        {% endif %}
-        {% endif %}
-    }
-    function backToTop() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
-    var csrf_token='{{csrf_token}}';
+   var csrf_token='{{csrf_token}}';
 </script>

@@ -32,19 +32,25 @@ class MbwBlogPost(WebsiteGenerator):
                 "label": "Tiêu đề",
                 "type": "Data",
                 "key": "title",
-                "width": "10rem"
+                "width": "20rem"
             },
             {
                 "label": "Danh mục",
-                "type": "Link",
-                "key": "blog_category",
+                "type": "Data",
+                "key": "category",
                 "width": "10rem"
+            },
+            {
+                "label": "Tags",
+                "type": "Link",
+                "key": "tags",
+                "width": "8rem"
             },
             {
                 "label": "Ngày đăng",
                 "type": "Date",
                 "key": "published_on",
-                "width": "315px"
+                "width": "10rem"
             },
             {
                 "label": "Hành động",
@@ -58,7 +64,8 @@ class MbwBlogPost(WebsiteGenerator):
             "_assign", "owner",
             "title",
             "modified",
-            "blog_category",
+            "category",
+            "tags",
             "published_on",
             "action_button"
         ]

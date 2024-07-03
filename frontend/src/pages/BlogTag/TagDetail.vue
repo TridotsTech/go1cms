@@ -14,7 +14,7 @@
               group: 'Xóa',
               items: [
                 {
-                  label: 'Xóa danh mục',
+                  label: 'Xóa tag',
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -35,7 +35,7 @@
           theme="gray"
           size="md"
           label="Hủy"
-          @click="category.reload()"
+          @click="tag.reload()"
           :disabled="!dirty"
         ></Button>
         <Button
@@ -54,15 +54,15 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div v-if="_category" class="p-4 border border-gray-300 rounded-sm mb-4">
+    <div v-if="_tag" class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
-        <Fields :sections="sections" :data="_category" />
+        <Fields :sections="sections" :data="_tag" />
       </div>
     </div>
   </div>
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: 'Xóa tag',
       actions: [
         {
           label: 'Xóa',
@@ -77,15 +77,10 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
-          <b>"{{ _category?.category_title }}"</b>?
+          Bạn chắc chắn muốn xóa tag:
+          <b>"{{ _tag?.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
-          </p>
           <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
@@ -111,13 +106,13 @@ import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 const router = useRouter()
 const props = defineProps({
-  categoryId: {
+  tagId: {
     type: String,
     required: true,
   },
 })
 const msgError = ref()
-const _category = ref({})
+const _tag = ref({})
 const showModalDelete = ref(false)
 
 const sections = computed(() => {
@@ -128,11 +123,11 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên danh mục',
+          label: 'Tên tag',
           mandatory: true,
-          name: 'category_title',
+          name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên danh mục',
+          placeholder: 'Nhập tên tag',
         },
       ],
     },
@@ -154,14 +149,14 @@ const sections = computed(() => {
   ]
 })
 
-const category = createResource({
-  url: 'go1_cms.api.category.get_category',
+const tag = createResource({
+  url: 'go1_cms.api.blog_tag.get_blog_tag',
   params: {
-    name: props.categoryId,
+    name: props.tagId,
   },
   auto: true,
   transform: (data) => {
-    _category.value = {
+    _tag.value = {
       ...data,
     }
     return data
@@ -171,7 +166,7 @@ const category = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  return JSON.stringify(category.data) !== JSON.stringify(_category.value)
+  return JSON.stringify(tag.data) !== JSON.stringify(_tag.value)
 })
 
 watch(dirty, (val) => {
@@ -180,18 +175,22 @@ watch(dirty, (val) => {
 
 async function callUpdateDoc() {
   msgError.value = null
-
   const regex = /[&\/\\#+()$~%.`'":*?<>{}]/g
-  if (regex.test(_category.value.category_title)) {
-    msgError.value = `Tên danh mục không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
+  if (regex.test(_tag.value.title)) {
+    msgError.value = `Tên tag không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
     return false
+  }
+
+  if (JSON.stringify(tag.data) == JSON.stringify(_tag.value)) {
+    warningMessage('Tài liệu không thay đổi')
+    return
   }
 
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    const doc = await call('go1_cms.api.category.update_category', {
+    const doc = await call('go1_cms.api.blog_tag.update_blog_tag', {
       data: {
-        ..._category.value,
+        ..._tag.value,
       },
     })
     if (doc.name) {
@@ -201,13 +200,13 @@ async function callUpdateDoc() {
         iconClasses: 'text-green-600',
       })
 
-      if (doc.name != props.categoryId) {
+      if (doc.name != props.tagId) {
         router.push({
-          name: 'Category Detail',
-          params: { categoryId: doc.name },
+          name: 'Blog Tags Detail',
+          params: { tagId: doc.name },
         })
       } else {
-        category.reload()
+        tag.reload()
       }
     }
   } catch (err) {
@@ -224,8 +223,8 @@ async function callUpdateDoc() {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.category.delete_category', {
-      name: props.categoryId,
+    await call('go1_cms.api.blog_tag.delete_blog_tag', {
+      name: props.tagId,
     }).then(() => {
       createToast({
         title: 'Xóa thành công',
@@ -234,7 +233,7 @@ async function deleteDoc(close) {
       })
       close()
       router.push({
-        name: 'Categories',
+        name: 'Blog Tags',
       })
     })
   } catch (err) {
@@ -249,20 +248,20 @@ async function deleteDoc(close) {
 }
 
 watch(
-  () => props.categoryId,
+  () => props.tagId,
   (val) => {
-    category.update({
+    tag.update({
       params: { name: val },
     })
-    category.reload()
+    tag.reload()
   },
 )
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Quản lý danh mục', route: { name: 'Categories' } }]
+  let items = [{ label: 'Quản lý tag', route: { name: 'Blog Tags' } }]
   items.push({
-    label: category.data?.name,
+    label: tag.data?.name,
     route: {},
   })
   return items

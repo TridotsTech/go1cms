@@ -15,6 +15,7 @@ from frappe.model.naming import make_autoname
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 from datetime import datetime
+import math
 
 
 class WebPageBuilder(WebsiteGenerator):
@@ -1665,20 +1666,94 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
 
 
 @frappe.whitelist(allow_guest=True)
-def get_more_post(name_section, page_no=1, page_len=8):
+def get_blog_list(name_section, **kwargs):
+    try:
+        page_no = int(kwargs.get('page_no', 1)) - 1
+    except:
+        page_no = 1
+
+    page_len = 9
+    text_search = kwargs.get('text_search', '')
+
     doc_section = frappe.get_doc('Page Section', name_section)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
     limit = doc_section.no_of_records if doc_section.no_of_records else page_len
+    recent_limit = 4
     offset = page_no*limit
-    query = '''SELECT * FROM `tab{doctype}` doc WHERE {condition} order by {sort_field} {sort_by} LIMIT {limit} OFFSET {offset}'''.format(
-        doctype=doc_section.reference_document, condition=doc_section.condition, sort_field=doc_section.sort_field, sort_by=doc_section.sort_by, limit=limit, offset=offset)
+    condition = doc_section.condition
+    if condition:
+        condition += f""" AND doc.title LIKE '%{text_search}%'"""
 
-    data = frappe.db.sql(query, as_dict=1)
-    for item in data:
+    query = '''SELECT * FROM `tab{doctype}` doc WHERE {condition} order by {sort_field} {sort_by} LIMIT {limit} OFFSET {offset}'''.format(
+        doctype=doc_section.reference_document, condition=condition, sort_field=doc_section.sort_field, sort_by=doc_section.sort_by, limit=limit, offset=offset)
+    query_count = '''SELECT COUNT(*) as total_page FROM `tab{doctype}` doc WHERE {condition}'''.format(
+        doctype=doc_section.reference_document, condition=condition)
+    query_recent_blog = '''SELECT * FROM `tab{doctype}` doc WHERE {condition} order by {sort_field} {sort_by} LIMIT {limit} OFFSET 0'''.format(
+        doctype=doc_section.reference_document, condition=doc_section.condition, sort_field=doc_section.sort_field, sort_by=doc_section.sort_by, limit=recent_limit)
+
+    blogs = frappe.db.sql(query, as_dict=1)
+    recent_blogs = frappe.db.sql(query_recent_blog, as_dict=1)
+    total_page = frappe.db.sql(query_count, as_dict=1)
+    page_no += 1
+
+    if total_page and limit > 0:
+        total_page = math.ceil(total_page[0].total_page/limit)
+    else:
+        total_page = 0
+    for item in blogs:
         published_on = item.get('published_on')
         item['published_on'] = published_on.strftime(
             "%d-%m-%Y")
-    return data
+    for item in recent_blogs:
+        published_on = item.get('published_on')
+        item['published_on'] = published_on.strftime(
+            "%d-%m-%Y")
+    return {'blogs': blogs, 'page': page_no, 'total_page': total_page, 'recent_blogs': recent_blogs}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_related_blogs(id_blog):
+    if frappe.db.exists("Mbw Blog Post", id_blog):
+        doc = frappe.get_doc('Mbw Blog Post', id_blog)
+        tags = frappe.db.get_all("MBW Blog Tag Item", filters={
+                                 "parent": id_blog, "parentfield": "tags"}, pluck="tag")
+        name_blogs = [n for n in frappe.db.get_all("MBW Blog Tag Item", filters={
+            "tag": ['in', tags], "parentfield": "tags"}, pluck="parent") or [] if n != id_blog]
+
+        page_length = 4
+        order_by = 'published_on desc'
+        fields = ['published_on', 'name', 'title',
+                  'route', 'blog_intro', 'meta_image']
+        # related blogs
+        related_filters = [['name', 'in', name_blogs], ['published', '=', 1]]
+        related_blogs = frappe.get_all(
+            "Mbw Blog Post",
+            fields=fields,
+            filters=related_filters,
+            order_by=order_by,
+            page_length=page_length,
+        ) or []
+        # recent blogs
+        recent_filters = [['published', '=', 1]]
+        recent_blogs = frappe.get_all(
+            "Mbw Blog Post",
+            fields=fields,
+            filters=recent_filters,
+            order_by=order_by,
+            page_length=page_length,
+        ) or []
+
+        for item in related_blogs:
+            published_on = item.get('published_on')
+            item['published_on'] = published_on.strftime(
+                "%d-%m-%Y")
+        for item in recent_blogs:
+            published_on = item.get('published_on')
+            item['published_on'] = published_on.strftime(
+                "%d-%m-%Y")
+        return {'related_blogs': related_blogs, 'recent_blogs': recent_blogs}
+    else:
+        return {}
 
 
 @frappe.whitelist(allow_guest=True)

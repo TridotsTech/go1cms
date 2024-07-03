@@ -11,7 +11,7 @@
           size="sm"
           label="Thêm mới"
           iconLeft="plus-circle"
-          route="/category/create"
+          route="/blog-tags/create"
         >
         </Button>
       </div>
@@ -27,9 +27,9 @@
       :options="{
         hideColumnsButton: true,
       }"
-      doctype="Mbw Blog Category"
+      doctype="MBW Blog Tag"
     />
-    <CategoryListView
+    <BlogTagListView
       v-if="category.data && rows.length"
       v-model="category.data.page_length_count"
       v-model:list="category"
@@ -46,7 +46,7 @@
       @columnWidthUpdated="() => triggerResize++"
       @updatePageCount="(count) => (updatedPageCount = count)"
       @applyFilter="(data) => viewControls.applyFilter(data)"
-    ></CategoryListView>
+    ></BlogTagListView>
     <div
       v-else-if="category.data"
       class="flex flex-1 items-center justify-center"
@@ -54,9 +54,9 @@
       <div
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
-        <PostIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có danh mục nào') }}</span>
-        <Button :label="__('Thêm mới')" route="/category/create">
+        <TagIcon class="h-10 w-10" />
+        <span>{{ __('Chưa có tag nào') }}</span>
+        <Button :label="__('Thêm mới')" route="/blog-tags/create">
           <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
         </Button>
       </div>
@@ -66,15 +66,15 @@
 
 <script setup>
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import PostIcon from '@/components/Icons/PostIcon.vue'
-import CategoryListView from '@/components/ListViews/CategoryListView.vue'
+import TagIcon from '@/components/Icons/TagIcon.vue'
+import BlogTagListView from '@/components/ListViews/BlogTagListView.vue'
 import ViewControls from '@/components/ViewControls.vue'
 import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
 const breadcrumbs = [
   { label: 'Quản lý bài viết', route: { name: 'Posts' } },
-  { label: 'Quản lý danh mục', route: { name: 'Category' } },
+  { label: 'Quản lý tag', route: { name: 'Blog Tags' } },
 ]
 
 // leads data is loaded in the ViewControls component

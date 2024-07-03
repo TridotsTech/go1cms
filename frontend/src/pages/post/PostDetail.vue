@@ -154,11 +154,17 @@ const sections = computed(() => {
           fields: [
             {
               label: 'Danh mục',
-              mandatory: true,
-              name: 'blog_category',
-              type: 'link',
+              name: 'category',
+              type: 'multilink',
               placeholder: 'Chọn danh mục',
               doctype: 'Mbw Blog Category',
+            },
+            {
+              label: 'Tags',
+              name: 'tags',
+              type: 'multilink',
+              placeholder: 'Chọn tag',
+              doctype: 'MBW Blog Tag',
             },
             {
               label: 'Giới thiệu bài viết',
@@ -260,11 +266,19 @@ const post = createResource({
   },
   auto: true,
   transform: (data) => {
+    data.category = data.category.map((cat) => ({
+      ...cat,
+      id: cat.name,
+      name: cat.category,
+    }))
+    data.tags = data.tags.map((tag) => ({
+      ...tag,
+      id: tag.name,
+      name: tag.tag,
+    }))
     data.published = data.published == 1
     data.upload_file_image = null
-    _post.value = {
-      ...data,
-    }
+    _post.value = JSON.parse(JSON.stringify(data))
     return data
   },
 })

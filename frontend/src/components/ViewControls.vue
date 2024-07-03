@@ -805,7 +805,12 @@ function saveView() {
 }
 
 function applyFilter({ event, idx, column, item, firstColumn }) {
-  if (column.key == 'action_button') return
+  let lstFieldIgnore = ['action_button']
+  if (props.doctype == 'Mbw Blog Post') {
+    lstFieldIgnore.push('category')
+    lstFieldIgnore.push('tags')
+  }
+  if (lstFieldIgnore.includes(column.key)) return
   let restrictedFieldtypes = ['Duration', 'Datetime', 'Time']
   if (restrictedFieldtypes.includes(column.type) || idx === 0) return
   if (idx === 1 && firstColumn.key == '_liked_by') return

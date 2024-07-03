@@ -369,12 +369,12 @@ select:disabled {
 button {
   -webkit-appearance: button;
 }
-[type="button"]:not(:disabled),
+/* [type="button"]:not(:disabled),
 [type="reset"]:not(:disabled),
 [type="submit"]:not(:disabled),
 button:not(:disabled) {
   cursor: pointer;
-}
+} */
 ::-moz-focus-inner {
   padding: 0;
   border-style: none;

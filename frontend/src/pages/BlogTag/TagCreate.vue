@@ -10,7 +10,7 @@
           theme="gray"
           size="md"
           label="Hủy"
-          route="/categories"
+          route="/blog-tags"
         ></Button>
         <Button
           variant="solid"
@@ -29,7 +29,7 @@
     </div>
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
       <div class="mb-5">
-        <Fields :sections="sections" :data="_category" />
+        <Fields :sections="sections" :data="_tag" />
       </div>
     </div>
   </div>
@@ -39,7 +39,7 @@
 import Fields from '@/components/Fields.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, call, ErrorMessage } from 'frappe-ui'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { createToast, errorMessage } from '@/utils'
 import { globalStore } from '@/stores/global'
@@ -47,11 +47,11 @@ const { changeLoadingValue } = globalStore()
 
 const router = useRouter()
 const breadcrumbs = [
-  { label: 'Quản lý danh mục', route: { name: 'Categories' } },
-  { label: 'Thêm mới', route: { name: 'Category Create' } },
+  { label: 'Quản lý tag', route: { name: 'Blog Tags' } },
+  { label: 'Thêm mới', route: { name: 'Blog Tags Create' } },
 ]
 
-let _category = ref({})
+let _tag = ref({})
 const msgError = ref()
 
 const sections = computed(() => {
@@ -62,11 +62,11 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên danh mục',
+          label: 'Tên tag',
           mandatory: true,
-          name: 'category_title',
+          name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên danh mục',
+          placeholder: 'Nhập tên tag',
         },
       ],
     },
@@ -89,18 +89,17 @@ const sections = computed(() => {
 
 async function callInsertDoc() {
   msgError.value = null
-
   const regex = /[&\/\\#+()$~%.`'":*?<>{}]/g
-  if (regex.test(_category.value.category_title)) {
-    msgError.value = `Tên danh mục không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
+  if (regex.test(_tag.value.title)) {
+    msgError.value = `Tên tag không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
     return false
   }
 
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    const doc = await call('go1_cms.api.category.create_category', {
+    const doc = await call('go1_cms.api.blog_tag.create_blog_tag', {
       data: {
-        ..._category.value,
+        ..._tag.value,
       },
     })
     createToast({
@@ -110,8 +109,8 @@ async function callInsertDoc() {
     })
     doc.name &&
       router.push({
-        name: 'Category Detail',
-        params: { categoryId: doc.name },
+        name: 'Blog Tags Detail',
+        params: { tagId: doc.name },
       })
   } catch (err) {
     msgError.value = err.messages.join(', ')

@@ -17,33 +17,13 @@
         :key="row.name_web"
         v-slot="{ idx, column, item }"
         :row="row"
-        class="custom_hight_listview"
       >
         <ListRowItem
           :item="item"
           @click="(event) => emit('applyFilter', { event, idx, column, item })"
         >
-          <template #prefix></template>
-          <div v-if="column.key === 'category'">
-            <Badge
-              class="mr-2"
-              v-for="cat in item"
-              :variant="'subtle'"
-              size="md"
-              :label="cat.category"
-              theme="green"
-            />
-          </div>
-          <div v-else-if="column.key === 'tags'">
-            <Badge
-              v-for="tag in item"
-              :variant="'subtle'"
-              size="md"
-              :label="tag.tag"
-              theme="orange"
-            />
-          </div>
-          <div v-else-if="column.key === 'action_button'">
+          <template #prefix> </template>
+          <div v-if="column.key === 'action_button'">
             <div class="flex align-middle gap-4">
               <Tooltip text="Chi tiết" :hover-delay="1" :placement="'top'">
                 <div>
@@ -53,12 +33,12 @@
                     size="sm"
                     label=""
                     icon="edit"
-                    :route="'/posts/' + item.name"
+                    :route="'/blog-tags/' + item.name"
                   >
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa bài viết" :hover-delay="1" :placement="'top'">
+              <Tooltip text="Xóa tag" :hover-delay="1" :placement="'top'">
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -75,7 +55,7 @@
           </div>
           <Tooltip
             :text="item.label"
-            v-else-if="
+            v-if="
               [
                 'modified',
                 'creation',
@@ -101,20 +81,20 @@
             />
           </div>
           <!-- <div v-else-if="column.type === 'Check'">
-            <FormControl
-              type="checkbox"
-              :modelValue="item"
-              :disabled="true"
-              class="text-gray-900"
-            />
-          </div> -->
+              <FormControl
+                type="checkbox"
+                :modelValue="item"
+                :disabled="true"
+                class="text-gray-900"
+              />
+            </div> -->
         </ListRowItem>
       </ListRow>
     </ListRows>
   </ListView>
   <ListFooter
     v-if="pageLengthCount"
-    class="border-t px-5 py-2"
+    class="border-t py-2"
     v-model="pageLengthCount"
     :options="{
       rowCount: options.rowCount,
@@ -125,7 +105,7 @@
 
   <Dialog
     :options="{
-      title: 'Xóa bài viết',
+      title: 'Xóa tag',
       actions: [
         {
           label: 'Xóa',
@@ -140,11 +120,11 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa bài viết:
+          Bạn chắc chắn muốn xóa tag:
           <b>"{{ selectedItem.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600"> Không thể hoàn tác</b>.</p>
+          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
     </template>
@@ -215,7 +195,7 @@ function handleShowModalDelete(item) {
 async function deleteDoc(close) {
   changeLoadingValue(true, 'Đang xóa...')
   try {
-    await call('go1_cms.api.post.delete_post', {
+    await call('go1_cms.api.blog_tag.delete_blog_tag', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
@@ -234,11 +214,3 @@ async function deleteDoc(close) {
   changeLoadingValue(false)
 }
 </script>
-
-<style>
-.custom_hight_listview > button > span > div:first-child {
-  height: auto !important;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-</style>

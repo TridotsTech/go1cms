@@ -27,6 +27,13 @@
     :onCreate="field.create"
     :filters="field.filters"
   />
+  <MultiselectLink
+    v-else-if="field.type === 'multilink'"
+    class="form-control"
+    v-model="data"
+    :doctype="field.doctype"
+    :placeholder="__(field.placeholder)"
+  />
   <Link
     v-else-if="field.type === 'user'"
     class="form-control"
@@ -200,6 +207,7 @@ import IndicatorIcon from '@/components/Icons/IndicatorIcon.vue'
 import ImageEmptyIcon from '@/components/Icons/ImageEmptyIcon.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Link from '@/components/Controls/Link.vue'
+import MultiselectLink from '@/components/Controls/MultiselectLink.vue'
 import { usersStore } from '@/stores/users'
 import { Tooltip, TextEditor, DatePicker } from 'frappe-ui'
 import { ref, watch, onMounted } from 'vue'

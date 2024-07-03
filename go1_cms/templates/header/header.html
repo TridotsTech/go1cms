@@ -99,12 +99,12 @@
                             {%for menu_item in sec_item.get("menus")%}
                             {% if not menu_item.is_mega_menu or not menu_item.child_menu %}
                             <li class="drop__down__header menu-item" style="position: relative;">
-                                <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
+                                <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
                                     href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                             </li>
                             {%else%}
                             <li class="drop__down__header menu-item mega-menu-li" style="position: relative;">
-                                <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
+                                <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                                 {%if menu_item.child_menu%}
                                 {% set col_count=menu_item.no_of_column %}
                                 <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{ col_count }}-list"
@@ -288,12 +288,12 @@
                             {%for menu_item in sec_item.get("menus")%}
                             {% if not menu_item.is_mega_menu or not menu_item.child_menu %}
                             <li class="drop__down__header menu-item" style="position: relative;">
-                                <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
+                                <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
                                     href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                             </li>
                             {%else%}
                             <li class=" drop__down__header menu-item mega-menu-li" style="position: relative;">
-                                <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
+                                <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                                 {%if menu_item.child_menu%}
                                 {% set col_count=menu_item.no_of_column %}
                                 <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{ col_count }}-list"
@@ -482,12 +482,12 @@
                                 {%for menu_item in sec_item.get("menus")%}
                                 {% if not menu_item.is_mega_menu or not menu_item.child_menu %}
                                 <li class="drop__down__header menu-item" style="position: relative;">
-                                    <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
+                                    <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col"
                                         href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                                 </li>
                                 {%else%}
                                 <li class="drop__down__header menu-item mega-menu-li" style="position: relative;">
-                                    <a class="menu_after m-0 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
+                                    <a class="menu_after mx-1 text-center font just-c d__flex main__category mouse web_header transition-colors duration-300 flex-col" href="{{ menu_item.redirect_url }}">{{ menu_item.menu_label }}</a>
                                     {%if menu_item.child_menu%}
                                     {% set col_count=menu_item.no_of_column %}
                                     <ul class="mega-dropdown sub-categoryy go1-cms-dropdown mega-menu-{{ col_count }}-list"

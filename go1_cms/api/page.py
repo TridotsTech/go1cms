@@ -87,7 +87,8 @@ def get_info_page(name):
     web_page_info = {
         'name_page': web_item.name_page,
         'doc_page': web_item.page_id,
-        'allow_delete': web_item.allow_delete == 1
+        'allow_delete': web_item.allow_delete == 1,
+        'route': '/' + web_page.route
     }
     return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'web_page': web_page_info}
 

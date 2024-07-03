@@ -55,6 +55,9 @@ def get_filterable_fields(doctype: str):
         "Datetime",
     ]
 
+    if doctype == "Mbw Blog Post":
+        allowed_fieldtypes.append('Table')
+
     c = get_controller(doctype)
     restricted_fields = []
     if hasattr(c, "get_non_filterable_fields"):
@@ -66,6 +69,9 @@ def get_filterable_fields(doctype: str):
     DocField = frappe.qb.DocType("DocField")
     doc_fields = get_fields_meta(
         DocField, doctype, allowed_fieldtypes, restricted_fields)
+    for i in doc_fields:
+        if i.get('fieldtype') == 'Table':
+            i['fieldtype'] = "Data"
     res.extend(doc_fields)
 
     # append Custom Fields
@@ -74,26 +80,30 @@ def get_filterable_fields(doctype: str):
         CustomField, doctype, allowed_fieldtypes, restricted_fields)
     res.extend(custom_fields)
 
+    if doctype in ["Menu", "MBW Form"]:
+        res = [r for r in res if r.fieldname not in [
+            'id_client_website', 'id_parent_copy']]
+
     # append standard fields (getting error when using frappe.model.std_fields)
     standard_fields = [
-        {"fieldname": "name", "fieldtype": "Link",
-            "label": "ID", "options": doctype},
-        {
-            "fieldname": "owner",
-            "fieldtype": "Link",
-            "label": "Created By",
-            "options": "User"
-        },
-        {
-            "fieldname": "modified_by",
-            "fieldtype": "Link",
-            "label": "Last Updated By",
-            "options": "User",
-        },
-        {"fieldname": "_user_tags", "fieldtype": "Data", "label": "Tags"},
-        {"fieldname": "_liked_by", "fieldtype": "Data", "label": "Liked By"},
-        {"fieldname": "_comments", "fieldtype": "Text", "label": "Comments"},
-        {"fieldname": "_assign", "fieldtype": "Text", "label": "Assigned To"},
+        # {"fieldname": "name", "fieldtype": "Link",
+        #     "label": "ID", "options": doctype},
+        # {
+        #     "fieldname": "owner",
+        #     "fieldtype": "Link",
+        #     "label": "Created By",
+        #     "options": "User"
+        # },
+        # {
+        #     "fieldname": "modified_by",
+        #     "fieldtype": "Link",
+        #     "label": "Last Updated By",
+        #     "options": "User",
+        # },
+        # {"fieldname": "_user_tags", "fieldtype": "Data", "label": "Tags"},
+        # {"fieldname": "_liked_by", "fieldtype": "Data", "label": "Liked By"},
+        # {"fieldname": "_comments", "fieldtype": "Text", "label": "Comments"},
+        # {"fieldname": "_assign", "fieldtype": "Text", "label": "Assigned To"},
         {"fieldname": "creation", "fieldtype": "Datetime", "label": "Created On"},
         {"fieldname": "modified", "fieldtype": "Datetime", "label": "Last Updated On"},
     ]
@@ -289,13 +299,76 @@ def get_list_data(
     if group_by_field and group_by_field not in rows:
         rows.append(group_by_field)
 
+    # remove field is table
+    table_fields = []
+    if doctype == 'Mbw Blog Post':
+        if 'category' in rows:
+            table_fields.append('category')
+            rows.remove("category")
+        if 'tags' in rows:
+            table_fields.append('tags')
+            rows.remove("tags")
+
+    new_filters = []
+    # handle filter field table
+    name_filter = []
+    if doctype == 'Mbw Blog Post':
+        # category
+        category_filter = filters.pop("category", None)
+        if category_filter:
+            if category_filter[0] == 'in':
+                category_filter[1] = [c.strip()
+                                      for c in category_filter[1].split(';')]
+            name_filter.extend(frappe.db.get_all("Mbw Blog Category Item", filters={
+                "category": category_filter, "parentfield": "category"}, pluck="parent") or [])
+        # tags
+        tags_filter = filters.pop("tags", None)
+        if tags_filter:
+            if tags_filter[0] == 'in':
+                tags_filter[1] = [c.strip()
+                                  for c in tags_filter[1].split(';')]
+            name_filter.extend(frappe.db.get_all("MBW Blog Tag Item", filters={
+                "tag": tags_filter, "parentfield": "tags"}, pluck="parent") or [])
+
+        if category_filter or tags_filter:
+            filt = ['name', 'in', list(set(name_filter))]
+            new_filters.append(filt)
+
+    for x, y in filters.items():
+        filt = [x]
+        if type(y) == list:
+            if 'in' in y[0] or 'not in' in y[0]:
+                y[1] = [c.strip()
+                        for c in y[1].split(';')]
+            filt.extend(y)
+        else:
+            filt.extend(['=', y])
+        new_filters.append(filt)
+
     data = frappe.get_list(
         doctype,
         fields=rows,
-        filters=filters,
+        filters=new_filters,
         order_by=order_by,
         page_length=page_length,
     ) or []
+
+    # convert field is table and add rows field
+    for f in table_fields:
+        if doctype == 'Mbw Blog Post':
+            if f == 'category':
+                for d in data:
+                    data_f = frappe.db.get_all("Mbw Blog Category Item", filters={"parent": d.name, "parentfield": "category"}, fields=[
+                        'category'
+                    ], order_by="idx")
+                    d[f] = data_f
+            elif f == "tags":
+                for d in data:
+                    data_f = frappe.db.get_all("MBW Blog Tag Item", filters={"parent": d.name, "parentfield": "tags"}, fields=[
+                        'tag'
+                    ], order_by="idx")
+                    d[f] = data_f
+            rows.append(f)
 
     fields = frappe.get_meta(doctype).fields
     fields = [field for field in fields if field.fieldtype not in no_value_fields]
@@ -379,7 +452,7 @@ def get_list_data(
         "page_length_count": page_length_count,
         "is_default": is_default,
         "views": get_views(doctype),
-        "total_count": len(frappe.get_list(doctype, filters=filters)),
+        "total_count": len(frappe.get_list(doctype, filters=new_filters)),
         "row_count": len(data),
     }
 

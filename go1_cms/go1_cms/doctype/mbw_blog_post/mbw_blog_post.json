@@ -8,7 +8,6 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "blog_category",
   "blogger",
   "route",
   "read_time",
@@ -20,6 +19,9 @@
   "enable_email_notification",
   "disable_comments",
   "disable_likes",
+  "section_break_ffwp",
+  "category",
+  "tags",
   "section_break_zewn",
   "blog_intro",
   "content_type",
@@ -37,15 +39,6 @@
   "google_preview"
  ],
  "fields": [
-  {
-   "fieldname": "blog_category",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Blog Category",
-   "options": "Mbw Blog Category",
-   "reqd": 1
-  },
   {
    "fieldname": "blogger",
    "fieldtype": "Link",
@@ -212,6 +205,22 @@
    "label": "Title",
    "no_copy": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_ffwp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Table",
+   "label": "Category",
+   "options": "Mbw Blog Category Item"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Table",
+   "label": "Tags",
+   "options": "MBW Blog Tag Item"
   }
  ],
  "has_web_view": 1,
@@ -219,7 +228,7 @@
  "is_published_field": "published",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-05-23 10:25:03.177375",
+ "modified": "2024-07-01 11:43:36.216199",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Mbw Blog Post",

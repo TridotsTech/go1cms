@@ -32,39 +32,50 @@
             v-for="(f, i) in filters"
             :key="i"
             id="filter-list"
-            class="mb-3 flex items-center justify-between gap-2"
           >
-            <div class="flex items-center gap-2">
-              <div class="w-13 pl-2 text-end text-base text-gray-600">
-                {{ i == 0 ? __('Where') : __('And') }}
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <div class="w-13 pl-2 text-end text-base text-gray-600">
+                  {{ i == 0 ? __('Where') : __('And') }}
+                </div>
+                <div id="fieldname" class="!min-w-[140px]">
+                  <Autocomplete
+                    :value="f.field.fieldname"
+                    :options="filterableFields.data"
+                    @change="(e) => updateFilter(e, i)"
+                    :placeholder="__('Nhập từ tìm kiếm')"
+                  />
+                </div>
+                <div id="operator">
+                  <FormControl
+                    type="select"
+                    v-model="f.operator"
+                    @change="(e) => updateOperator(e, f)"
+                    :options="
+                      getOperators(f.field.fieldtype, f.field.fieldname)
+                    "
+                    :placeholder="__('Equals')"
+                  />
+                </div>
+                <div id="value" class="!min-w-[140px]">
+                  <component
+                    :is="getValSelect(f)"
+                    v-model="f.value"
+                    @change="(v) => updateValue(v, f)"
+                    :placeholder="__('Nhập từ tìm kiếm')"
+                  />
+                </div>
               </div>
-              <div id="fieldname" class="!min-w-[140px]">
-                <Autocomplete
-                  :value="f.field.fieldname"
-                  :options="filterableFields.data"
-                  @change="(e) => updateFilter(e, i)"
-                  :placeholder="__('First Name')"
-                />
-              </div>
-              <div id="operator">
-                <FormControl
-                  type="select"
-                  v-model="f.operator"
-                  @change="(e) => updateOperator(e, f)"
-                  :options="getOperators(f.field.fieldtype, f.field.fieldname)"
-                  :placeholder="__('Equals')"
-                />
-              </div>
-              <div id="value" class="!min-w-[140px]">
-                <component
-                  :is="getValSelect(f)"
-                  v-model="f.value"
-                  @change="(v) => updateValue(v, f)"
-                  :placeholder="__('John Doe')"
-                />
-              </div>
+              <Button variant="ghost" icon="x" @click="removeFilter(i)" />
             </div>
-            <Button variant="ghost" icon="x" @click="removeFilter(i)" />
+            <div
+              v-if="['in', 'not in'].includes(f.operator)"
+              class="mb-3 flex items-center justify-end gap-2"
+            >
+              <p class="text-sm text-gray-700">
+                <strong>Chú ý:</strong> Mỗi từ tiềm kiếm cách nhau bởi dấu `;`.
+              </p>
+            </div>
           </div>
           <div
             v-else

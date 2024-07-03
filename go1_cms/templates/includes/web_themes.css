@@ -658,7 +658,7 @@ li {
     position: relative;
 }
     .go1-cms-menu{
-        display: block;
+        display: flex;
         {%if doc.header_settings.menu_alignment=="Left"%}
         justify-content: flex-start;
         {%endif%}

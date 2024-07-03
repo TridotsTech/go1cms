@@ -22,9 +22,9 @@ def get_category(name):
 def create_category(data):
     category_title = data.get('category_title')
     if not category_title:
-        frappe.throw(_("Tiêu đề không được để trống"))
+        frappe.throw(_("Tên danh mục không được để trống"))
     if frappe.db.exists("Mbw Blog Category", {"category_title": category_title}):
-        frappe.throw(_("Tiêu đề đã tồn tại"))
+        frappe.throw(_("Tên danh mục đã tồn tại"))
 
     doc_new = frappe.new_doc('Mbw Blog Category')
     doc_new.category_title = category_title
@@ -43,10 +43,10 @@ def update_category(data):
         frappe.throw(_("Category not found"), frappe.DoesNotExistError)
 
     if not category_title:
-        frappe.throw(_("Tiêu đề không được để trống"))
+        frappe.throw(_("Tên danh mục không được để trống"))
 
     if frappe.db.exists("Mbw Blog Category", {"category_title": category_title, "name": ("!=", doc_name)}):
-        frappe.throw(_("Tiêu đề đã tồn tại"))
+        frappe.throw(_("Tên danh mục đã tồn tại"))
 
     doc = frappe.get_doc('Mbw Blog Category', doc_name)
     if doc.name != category_title:

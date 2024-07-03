@@ -97,19 +97,35 @@ const routes = [
     props: true,
   },
   {
-    path: '/category',
-    name: 'Category',
-    component: () => import('@/pages/category/Category.vue'),
+    path: '/categories',
+    name: 'Categories',
+    component: () => import('@/pages/category/Categories.vue'),
   },
   {
-    path: '/category/create',
+    path: '/categories/create',
     name: 'Category Create',
     component: () => import('@/pages/category/CategoryCreate.vue'),
   },
   {
-    path: '/category/:categoryId',
+    path: '/categories/:categoryId',
     name: 'Category Detail',
     component: () => import('@/pages/category/CategoryDetail.vue'),
+    props: true,
+  },
+  {
+    path: '/blog-tags',
+    name: 'Blog Tags',
+    component: () => import('@/pages/BlogTag/Tags.vue'),
+  },
+  {
+    path: '/blog-tags/create',
+    name: 'Blog Tags Create',
+    component: () => import('@/pages/BlogTag/TagCreate.vue'),
+  },
+  {
+    path: '/blog-tags/:tagId',
+    name: 'Blog Tags Detail',
+    component: () => import('@/pages/BlogTag/TagDetail.vue'),
     props: true,
   },
   {

@@ -51,7 +51,7 @@
 <script setup>
 import Fields from '@/components/Fields.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
-import { Breadcrumbs, ErrorMessage, call, createResource } from 'frappe-ui'
+import { Breadcrumbs, ErrorMessage, call } from 'frappe-ui'
 import { createToast, errorMessage } from '@/utils'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -64,7 +64,7 @@ const breadcrumbs = [
   { label: 'Thêm mới', route: { name: 'Post Create' } },
 ]
 
-let _post = ref({})
+let _post = ref({ category: [], tags: [] })
 const msgError = ref()
 
 const sections = computed(() => {
@@ -93,11 +93,17 @@ const sections = computed(() => {
           fields: [
             {
               label: 'Danh mục',
-              mandatory: true,
-              name: 'blog_category',
-              type: 'link',
+              name: 'category',
+              type: 'multilink',
               placeholder: 'Chọn danh mục',
               doctype: 'Mbw Blog Category',
+            },
+            {
+              label: 'Tags',
+              name: 'tags',
+              type: 'multilink',
+              placeholder: 'Chọn tag',
+              doctype: 'MBW Blog Tag',
             },
             {
               label: 'Giới thiệu bài viết',

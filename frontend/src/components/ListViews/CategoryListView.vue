@@ -33,7 +33,7 @@
                     size="sm"
                     label=""
                     icon="edit"
-                    :route="'/category/' + item.name"
+                    :route="'/categories/' + item.name"
                   >
                   </Button>
                 </div>

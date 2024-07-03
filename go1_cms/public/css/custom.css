@@ -2461,3 +2461,29 @@
   border-radius: 8px;
   background-color: #ffffff6b;
 }
+
+.mobile_navbar .go1-cms-menu {
+  display: block;
+}
+
+/* pagination */
+.pagination .pagination__arrow__left.active,
+.pagination .pagination__arrow__left__start.active,
+.pagination .pagination__arrow__right.active,
+.pagination .pagination__arrow__right__end.active {
+  color: black;
+  cursor: pointer;
+}
+.pagination .pagination__page:hover {
+  background-color: #f0f0f0;
+}
+.pagination .pagination__page.active {
+  font-weight: bold;
+  color: #c4161c;
+  border-width: 2px;
+  border-color: #c4161c;
+}
+.pagination .pagination__page.active:hover {
+  background-color: initial;
+  opacity: 0.75;
+}
