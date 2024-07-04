@@ -168,10 +168,6 @@ export function getTypeField(name) {
       return 'link'
     case 'Text':
       return 'text'
-    case 'Small Text':
-      return 'textarea'
-    case 'Long Text':
-      return 'textarea'
     case 'Attach':
       return 'upload_image'
     default:

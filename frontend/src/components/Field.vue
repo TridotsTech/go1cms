@@ -147,9 +147,12 @@
       <strong>Chú thích: </strong>{{ field.description }}
     </p>
   </div>
-  <Ckeditor v-else-if="field.type === 'texteditor'" v-model="data"></Ckeditor>
   <Ckeditor
-    v-else-if="['Long Text', 'contenteditor'].includes(field.type)"
+    v-else-if="['texteditor', 'Text Editor'].includes(field.type)"
+    v-model="data"
+  ></Ckeditor>
+  <Ckeditor
+    v-else-if="['Long Text'].includes(field.type)"
     modeConfig="textarea"
     v-model="data"
   ></Ckeditor>

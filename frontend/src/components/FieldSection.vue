@@ -43,9 +43,16 @@
                           class="h-15 w-20 border"
                         />
                       </td>
-                      <td v-else class="border p-2">
-                        {{ element[fj.field_key] }}
-                      </td>
+                      <td
+                        v-else
+                        v-html="element[fj.field_key]"
+                        class="border p-2"
+                        :class="
+                          ['Text Editor', 'Long Text'].includes(fj.field_type)
+                            ? 'ck-content'
+                            : ''
+                        "
+                      ></td>
                     </template>
                     <td>
                       <div class="p-2 flex gap-2">
