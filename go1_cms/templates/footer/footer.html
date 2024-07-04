@@ -39,7 +39,7 @@
 <div class="go1-cms-footer-copyright">
 	<div class="container">
 		<div class="go1-cms-copyright-content">
-			<div class="d_flex">
+			<div class="flex flex-col md:flex-row gap-6 items-center md:justify-normal">
 				{%if footer.copyright_layout == "One Column"%}
 				<div class="col-md-12">
 					<div style="display: flex;align-items: center;{%if footer.cp_fc_alignment=="
@@ -110,20 +110,17 @@
 						{%endif%}
 					</div>
 				</div>
-				<div class="col-md">
-					<div class="footer-col-2" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="
-						Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left" %}justify-content:
-						start;{%endif%}">
-
+				<div class="col-md order-first md:order-none">
+					<div class="footer-col-2 order-first" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left" %}justify-content:start;{%endif%}">
 						{%if footer.sc_ct_type == "Custom" %}
 						<div class="go1-cms-copyright-sc-content">
 							{{footer.cp_sc_content}}
 						</div>
 						{%elif footer.sc_ct_type == "Social Links" %}
-						<ul class="d__flex" style="gap:10px">
+						<ul class="flex" style="gap:10px">
 							{%for menu_item in theme_settings.social_links%}
 							<li>
-								<a href="{{menu_item.link_url}}" class="d__flex go1-cms-footer-text m-0">
+								<a href="{{menu_item.link_url}}" class="flex go1-cms-footer-text m-0">
 									{%if not menu_item.icon%}
 									<i class="fa fa-chevron-right" style="margin-right:5px"></i>
 									<span>{{menu_item.social_type}}</span>
@@ -136,7 +133,7 @@
 						</ul>
 						{% elif footer.sc_ct_type == "Mbw Policy" %}
 						{% if theme_settings.mbw_policy %}
-						<ul>
+						<ul class="flex flex-col md:flex-row">
 							{%for menu_item in theme_settings.mbw_policy%}
 							<li><a href="{{menu_item.link}}">{{menu_item.name}}</a></li>
 							{% endfor %}
