@@ -13,7 +13,7 @@
       v-model:resizeColumn="triggerResize"
       v-model:updatedPageCount="updatedPageCount"
       :options="{
-        hideColumnsButton: true,
+        hideColumnsButton: false,
       }"
       doctype="MBW Contact"
     />

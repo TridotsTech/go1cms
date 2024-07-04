@@ -21,6 +21,7 @@ import {
   FeatherIcon,
   Tooltip,
 } from 'frappe-ui'
+import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
 
 import translationPlugin from './translation'
 import { createDialog } from './utils/dialogs'
@@ -37,6 +38,7 @@ let globalComponents = {
   Badge,
   FeatherIcon,
   Tooltip,
+  LoadingIndicator,
 }
 
 // create a pinia instance

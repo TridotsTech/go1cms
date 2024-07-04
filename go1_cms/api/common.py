@@ -185,7 +185,7 @@ def get_field_section_component(web_edit, web_section):
                 {
                     'field_label': 'Nội dung trang',
                     'field_key': 'html_content',
-                    'field_type': 'texeditor',
+                    'field_type': 'texteditor',
                     'content': info_item.get('html_content'),
                     'allow_edit': True,
                     'show_edit': True,
@@ -206,6 +206,10 @@ def get_field_section_component(web_edit, web_section):
                             for item_ct in field['content']:
                                 item_ct['upload_file_image_' +
                                         item_f.get('field_key')] = None
+                            if item_f.get('field_type') in ['Long Text']:
+                                item_f['field_type'] = 'contenteditor'
+                            elif item_f.get('field_type') in ['Text Editor']:
+                                item_f['field_type'] = 'texteditor'
 
                 if field.get('field_type') == "Button" and field.get('content'):
                     f_json = []
@@ -220,6 +224,10 @@ def get_field_section_component(web_edit, web_section):
                         })
                         idx_sc += 1
                     field['fields_json'] = f_json
+            elif field.get('field_type') in ['Long Text']:
+                field['field_type'] = 'contenteditor'
+            elif field.get('field_type') in ['Text Editor']:
+                field['field_type'] = 'texteditor'
 
             if field.get('group_name'):
                 if not d.get(str(field.get('group_name'))):
@@ -270,7 +278,7 @@ def update_fields_page_section(data):
                 d_update = {}
                 update_ps = False
                 for field in fcp.get('fields_ps'):
-                    if field.get('field_type') == "texeditor" and field.get('field_key') == "html_content":
+                    if field.get('field_type') == "texteditor" and field.get('field_key') == "html_content":
                         update_ps = True
                     d_update[field.get('field_key')] = field.get(
                         'content')

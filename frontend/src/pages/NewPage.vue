@@ -114,7 +114,6 @@
 </template>
 
 <script setup>
-import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
 import FieldsSectionComponent from '@/components/FieldsPage/FieldsSectionComponent.vue'
@@ -166,8 +165,6 @@ watch(dirty, (val) => {
 const breadcrumbs = [{ label: 'Thêm trang mới', route: { name: 'New Page' } }]
 
 async function callUpdateDoc() {
-  console.log(_page.value)
-  return
   changeLoadingValue(true, 'Đang lưu...')
   try {
     let data = JSON.parse(JSON.stringify(_page.value))

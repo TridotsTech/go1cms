@@ -1,5 +1,7 @@
 <template>
-  <ckeditor :editor="editor" v-model="data" :config="editorConfig"></ckeditor>
+  <div>
+    <ckeditor :editor="editor" v-model="data" :config="editorConfig"></ckeditor>
+  </div>
 </template>
 
 <script setup>
@@ -59,13 +61,21 @@ import { Base64UploadAdapter } from '@ckeditor/ckeditor5-upload'
 import '@ckeditor/ckeditor5-build-classic/build/translations/vi'
 
 const props = defineProps({
-  placeholder: String,
+  placeholder: {
+    type: String,
+    default: 'Nhập nội dung ở đây...',
+  },
+  modeConfig: {
+    type: String,
+    default: 'full',
+  },
 })
 
 const data = defineModel()
 
 const editor = ClassicEditor
-const editorConfig = {
+
+var editorConfig = {
   plugins: [
     Base64UploadAdapter,
     MediaEmbed,
@@ -129,11 +139,6 @@ const editorConfig = {
       'fontFamily',
       'fontColor',
       'fontBackgroundColor',
-      // {
-      //   label: 'Font color',
-      //   icon: 'plus',
-      //   items: ['fontColor', 'fontBackgroundColor'],
-      // },
       '|',
       'bold',
       'italic',
@@ -178,34 +183,13 @@ const editorConfig = {
       '|',
       'sourceEditing',
     ],
+    shouldNotGroupWhenFull: true,
   },
   fontFamily: {
     supportAllValues: true,
   },
   fontSize: {
-    options: [
-      'default',
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      18,
-      20,
-      21,
-      22,
-      24,
-      26,
-      28,
-      32,
-      36,
-      40,
-      42,
-      44,
-      48,
-    ],
+    options: ['default', 10, 12, 13, 14, 16, 18, 20, 22, 24, 26, 28, 32],
     supportAllValues: true,
   },
   image: {
@@ -270,10 +254,133 @@ const editorConfig = {
       'toggleTableCaption',
     ],
   },
+  placeholder: props.placeholder,
   language: 'vi',
+}
+
+if (props.modeConfig == 'textarea') {
+  editorConfig = {
+    plugins: [
+      Base64UploadAdapter,
+      MediaEmbed,
+      Indent,
+      IndentBlock,
+      List,
+      ListProperties,
+      TodoList,
+      TextTransformation,
+      HtmlEmbed,
+      Essentials,
+      Bold,
+      Code,
+      Italic,
+      Strikethrough,
+      Subscript,
+      Superscript,
+      Underline,
+      AutoLink,
+      Link,
+      Paragraph,
+      Heading,
+      SourceEditing,
+      BlockQuote,
+      PictureEditing,
+      CodeBlock,
+      RemoveFormat,
+      HorizontalLine,
+      SpecialCharacters,
+      SpecialCharactersEssentials,
+      CloudServices,
+      Font,
+      Highlight,
+      Alignment,
+    ],
+    toolbar: {
+      items: [
+        'undo',
+        'redo',
+        '|',
+        'heading',
+        '|',
+        'fontSize',
+        'fontFamily',
+        'fontColor',
+        'fontBackgroundColor',
+        '|',
+        'bold',
+        'italic',
+        'underline',
+        {
+          label: 'Formatting',
+          icon: 'text',
+          items: [
+            'strikethrough',
+            'subscript',
+            'superscript',
+            'code',
+            'horizontalLine',
+            '|',
+            'removeFormat',
+          ],
+        },
+        'specialCharacters',
+        '|',
+        'link',
+        {
+          label: 'Insert',
+          icon: 'plus',
+          items: ['highlight', 'blockQuote', 'codeBlock', 'htmlEmbed'],
+        },
+        '|',
+        'alignment',
+        '|',
+        'bulletedList',
+        'numberedList',
+        'todoList',
+        'outdent',
+        'indent',
+        '|',
+        'sourceEditing',
+      ],
+      shouldNotGroupWhenFull: true,
+    },
+    fontFamily: {
+      supportAllValues: true,
+    },
+    fontSize: {
+      options: ['default', 10, 12, 13, 14, 16, 18, 20, 22, 24, 26, 28, 32],
+      supportAllValues: true,
+    },
+    list: {
+      properties: {
+        styles: true,
+        startIndex: true,
+        reversed: true,
+      },
+    },
+    link: {
+      decorators: {
+        addTargetToExternalLinks: true,
+        defaultProtocol: 'https://',
+        toggleDownloadable: {
+          mode: 'manual',
+          label: 'Downloadable',
+          attributes: {
+            download: 'file',
+          },
+        },
+      },
+    },
+    placeholder: props.placeholder,
+    language: 'vi',
+  }
 }
 </script>
 <style>
+.ck.ck-reset.ck-list {
+  max-height: 200px;
+  overflow: auto;
+}
 .ck.ck-editor__editable_inline {
   padding-bottom: 20px;
 }

@@ -136,11 +136,7 @@
       </div>
     </template>
   </UploadFileImage>
-  <div
-    v-else-if="
-      ['Small Text', 'Text', 'Long Text', 'textarea'].includes(field.type)
-    "
-  >
+  <div v-else-if="['Small Text', 'textarea'].includes(field.type)">
     <FormControl
       type="textarea"
       :placeholder="__(field.placeholder)"
@@ -151,11 +147,14 @@
       <strong>Chú thích: </strong>{{ field.description }}
     </p>
   </div>
-  <div v-else-if="field.type === 'texeditor'">
-    <Ckeditor v-model="data"></Ckeditor>
-  </div>
+  <Ckeditor v-else-if="field.type === 'texteditor'" v-model="data"></Ckeditor>
+  <Ckeditor
+    v-else-if="['Long Text', 'contenteditor'].includes(field.type)"
+    modeConfig="textarea"
+    v-model="data"
+  ></Ckeditor>
   <!-- <TextEditor
-    v-else-if="field.type === 'texeditor'"
+    v-else-if="field.type === 'texteditor'"
     variant="outline"
     editor-class="!prose-sm overflow-auto min-h-[180px] max-h-80 py-1.5 px-2 border border-gray-300 bg-white hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400 text-gray-800 transition-colors min-w-full"
     :fixedMenu="true"
@@ -163,7 +162,7 @@
     @change="(val) => (data = val)"
   ></TextEditor> -->
   <!-- <CustomQuillEditor
-    v-else-if="field.type === 'texeditor'"
+    v-else-if="field.type === 'texteditor'"
     classHeightscreen="max-h-80"
     classQuill="overflow-auto min-h-80"
     v-model="data"

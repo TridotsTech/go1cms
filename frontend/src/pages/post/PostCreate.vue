@@ -149,7 +149,7 @@ const sections = computed(() => {
         {
           label: 'Nội dung bài viết',
           name: 'content',
-          type: 'texeditor',
+          type: 'texteditor',
           placeholder: 'Nhập nội dung',
         },
       ],

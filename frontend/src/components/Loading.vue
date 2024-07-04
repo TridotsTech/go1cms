@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
 import { storeToRefs } from 'pinia'
 import { globalStore } from '@/stores/global'
 const { loadingValue } = storeToRefs(globalStore())

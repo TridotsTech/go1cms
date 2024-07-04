@@ -36,6 +36,7 @@
           </div>
           <div v-else-if="column.key === 'tags'">
             <Badge
+              class="mr-2"
               v-for="tag in item"
               :variant="'subtle'"
               size="md"

@@ -21,11 +21,11 @@ def sort_options(doctype: str):
     ]
 
     standard_fields = [
-        {"label": "Name", "value": "name"},
-        {"label": "Created On", "value": "creation"},
-        {"label": "Last Modified", "value": "modified"},
-        {"label": "Modified By", "value": "modified_by"},
-        {"label": "Owner", "value": "owner"},
+        # {"label": "Name", "value": "name"},
+        {"label": "Thời gian tạo", "value": "creation"},
+        {"label": "Lần sửa đổi cuối", "value": "modified"},
+        # {"label": "Modified By", "value": "modified_by"},
+        # {"label": "Owner", "value": "owner"},
     ]
 
     for field in standard_fields:
@@ -384,18 +384,18 @@ def get_list_data(
     ]
 
     std_fields = [
-        {"label": "Name", "type": "Data", "value": "name"},
-        {"label": "Created On", "type": "Datetime", "value": "creation"},
-        {"label": "Last Modified", "type": "Datetime", "value": "modified"},
-        {
-            "label": "Modified By",
-            "type": "Link",
-                    "value": "modified_by",
-                    "options": "User",
-        },
-        {"label": "Assigned To", "type": "Text", "value": "_assign"},
-        {"label": "Owner", "type": "Link", "value": "owner", "options": "User"},
-        {"label": "Like", "type": "Data", "value": "_liked_by"},
+        # {"label": "Name", "type": "Data", "value": "name"},
+        {"label": "Thời gian tạo", "type": "Datetime", "value": "creation"},
+        {"label": "Lần sửa đổi cuối", "type": "Datetime", "value": "modified"},
+        # {
+        #     "label": "Modified By",
+        #     "type": "Link",
+        #             "value": "modified_by",
+        #             "options": "User",
+        # },
+        # {"label": "Assigned To", "type": "Text", "value": "_assign"},
+        # {"label": "Owner", "type": "Link", "value": "owner", "options": "User"},
+        # {"label": "Like", "type": "Data", "value": "_liked_by"},
     ]
 
     for field in std_fields:

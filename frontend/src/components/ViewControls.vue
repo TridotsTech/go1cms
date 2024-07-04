@@ -377,7 +377,10 @@ const export_type = ref('Excel')
 const export_all = ref(false)
 
 async function exportRows() {
-  let fields = JSON.stringify(list.value.data.columns.map((f) => f.key))
+  let fields = list.value.data.columns.filter(
+    (f) => !['action_button'].includes(f.key),
+  )
+  fields = JSON.stringify(fields.map((f) => f.key))
   let filters = JSON.stringify(list.value.params.filters)
   let order_by = list.value.params.order_by
   let page_length = list.value.params.page_length
@@ -813,7 +816,7 @@ function applyFilter({ event, idx, column, item, firstColumn }) {
   if (lstFieldIgnore.includes(column.key)) return
   let restrictedFieldtypes = ['Duration', 'Datetime', 'Time']
   if (restrictedFieldtypes.includes(column.type) || idx === 0) return
-  if (idx === 1 && firstColumn.key == '_liked_by') return
+  if (idx === 1 && firstColumn?.key == '_liked_by') return
 
   event.stopPropagation()
   event.preventDefault()

@@ -67,6 +67,11 @@
         ></DraggableNested>
       </div>
     </div>
+    <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="flex justify-center h-screen mt-40 text-gray-700">
+        <LoadingIndicator class="h-8 w-8" />
+      </div>
+    </div>
   </div>
   <Dialog
     :options="{

@@ -33,10 +33,17 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <FieldsComponent v-model="_header.fields_cp"></FieldsComponent>
-    <FieldsSectionComponent
-      v-model="_header.fields_st_cp"
-    ></FieldsSectionComponent>
+    <div v-if="JSON.stringify(_header) != '{}'">
+      <FieldsComponent v-model="_header.fields_cp"></FieldsComponent>
+      <FieldsSectionComponent
+        v-model="_header.fields_st_cp"
+      ></FieldsSectionComponent>
+    </div>
+    <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="flex justify-center h-screen mt-40 text-gray-700">
+        <LoadingIndicator class="h-8 w-8" />
+      </div>
+    </div>
   </div>
 </template>
 

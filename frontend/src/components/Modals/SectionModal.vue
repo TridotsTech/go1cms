@@ -2,7 +2,7 @@
   <Dialog
     v-model="show"
     :options="{
-      size: 'xl',
+      size: '3xl',
       actions: [
         {
           label: editMode ? 'Cập nhật' : 'Thêm',

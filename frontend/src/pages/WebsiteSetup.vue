@@ -33,10 +33,17 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <FieldsComponent
-      title="Thiết lập chung"
-      v-model="_webSetup.fields_cp"
-    ></FieldsComponent>
+    <div v-if="JSON.stringify(_webSetup) != '{}'">
+      <FieldsComponent
+        title="Thiết lập chung"
+        v-model="_webSetup.fields_cp"
+      ></FieldsComponent>
+    </div>
+    <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
+      <div class="flex justify-center h-screen mt-40 text-gray-700">
+        <LoadingIndicator class="h-8 w-8" />
+      </div>
+    </div>
   </div>
 </template>
 

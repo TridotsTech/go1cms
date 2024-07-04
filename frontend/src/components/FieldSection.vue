@@ -113,7 +113,7 @@
         </div>
       </div>
     </template>
-    <template v-else-if="field.field_type == 'texeditor'">
+    <template v-else-if="field.field_type == 'texteditor'">
       <div class="lg:col-span-2">
         <Field
           :field="{
