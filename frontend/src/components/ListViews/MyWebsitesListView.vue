@@ -556,10 +556,12 @@ async function deleteDoc(close) {
         icon: 'check',
         iconClasses: 'text-green-600',
       })
-      list.value.reload()
       close()
       if (selectedItem.value.edit == 1) {
+        changeNameWebsiteEdit(null)
         window.location.reload()
+      } else {
+        list.value.reload()
       }
     })
   } catch (err) {

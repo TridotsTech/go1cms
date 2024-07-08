@@ -37,7 +37,7 @@
               <span class="img-bg h-60 block relative overflow-hidden">
                 <span
                   v-if="temp.image_preview"
-                  class="img-skin rounded-t-md h-full bg-cover w-full bg-no-repeat absolute transition-all"
+                  class="img-skin rounded-t-md h-full bg-cover bg-top w-full bg-no-repeat absolute transition-all"
                   :style="{
                     backgroundImage: `url('${temp.image_preview}')`,
                   }"

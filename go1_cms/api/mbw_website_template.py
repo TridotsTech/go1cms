@@ -28,16 +28,10 @@ def get_web_templates(repo):
 @frappe.whitelist()
 def get_web_template(name):
     WebTemplate = frappe.qb.DocType("MBW Website Template")
-    query = (
-        frappe.qb.from_(WebTemplate)
-        .select("*")
-        .where(WebTemplate.name == name)
-    ).limit(1)
-
-    template = query.run(as_dict=True)
-    if not len(template):
+    if not frappe.db.exists('MBW Website Template', name):
         frappe.throw(_("Template not found"), frappe.DoesNotExistError)
-    template = template.pop()
+    template = frappe.get_doc('MBW Website Template', name)
+
     return template
 
 

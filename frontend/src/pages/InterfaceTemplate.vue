@@ -17,12 +17,80 @@
       </div>
     </template>
   </LayoutHeader>
-  <div class="p-6 overflow-auto">
-    <div class="pb-4" v-html="template.data?.content"></div>
+  <div v-if="template.data" class="p-6">
+    <div v-if="template.data?.images.length" class="mb-10">
+      <Carousel
+        class="rounded-md"
+        id="gallery"
+        :items-to-show="1"
+        v-model="currentSlide"
+        :mouseDrag="false"
+        :touchDrag="touchDrag"
+      >
+        <Slide v-for="slide in template.data?.images" :key="slide">
+          <div class="carousel__item cursor-zoom-in">
+            <photo-provider>
+              <photo-consumer
+                :intro="`Ảnh xem trước ${slide.idx}`"
+                :key="slide.idx"
+                :src="slide.image"
+              >
+                <img class="h-96 view-box" :src="slide.image" alt="" />
+              </photo-consumer>
+            </photo-provider>
+          </div>
+        </Slide>
+      </Carousel>
+      <Carousel
+        class="mt-4 overflow-auto"
+        id="thumbnails"
+        v-model="currentSlide"
+        :items-to-show="1"
+        :breakpoints="breakpoints"
+        :touchDrag="touchDrag"
+      >
+        <Slide v-for="slide in template.data?.images" :key="slide">
+          <div
+            class="carousel__item cursor-pointer mx-6 px-6 py-2 border-2 rounded-md w-[200px]"
+            :class="currentSlide == slide.idx - 1 ? 'border-red-500' : ''"
+            @click="slideTo(slide.idx - 1)"
+          >
+            <img class="h-24" :src="slide.image" alt="" />
+          </div>
+        </Slide>
+        <template #addons>
+          <Navigation />
+        </template>
+      </Carousel>
+
+      <div class="text-center font-bold text-lg text-gray-700 my-10 italic">
+        Ảnh xem trước
+      </div>
+    </div>
+    <div class="mb-6" v-html="template.data?.content"></div>
+  </div>
+  <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
+    <div class="flex justify-center h-screen mt-40 text-gray-700">
+      <LoadingIndicator class="h-8 w-8" />
+    </div>
   </div>
 </template>
 
 <script setup>
+import { Carousel, Navigation, Slide } from 'vue3-carousel'
+import 'vue3-carousel/dist/carousel.css'
+
+import LayoutHeader from '@/components/LayoutHeader.vue'
+import { Breadcrumbs, createResource, call } from 'frappe-ui'
+import { ref, computed, watch } from 'vue'
+import { createToast, errorMessage } from '@/utils'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+import { globalStore } from '@/stores/global'
+const { changeLoadingValue } = globalStore()
+import { useStorage } from '@vueuse/core'
+const isSidebarCollapsed = useStorage('isSidebarCollapsed', false)
+
 const props = defineProps({
   interfaceId: {
     type: String,
@@ -30,14 +98,25 @@ const props = defineProps({
   },
 })
 
-import LayoutHeader from '@/components/LayoutHeader.vue'
-import { Breadcrumbs, createResource, call } from 'frappe-ui'
-import { ref, computed, onMounted } from 'vue'
-import { createToast, errorMessage } from '@/utils'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-import { globalStore } from '@/stores/global'
-const { changeLoadingValue } = globalStore()
+// slider
+const currentSlide = ref(0)
+const breakpoints = ref({
+  640: { itemsToShow: 2 },
+  1024: { itemsToShow: 3 },
+  1280: { itemsToShow: 4 },
+  1536: { itemsToShow: 5 },
+})
+
+const slideTo = (val) => {
+  currentSlide.value = val
+}
+const touchDrag = ref(false)
+
+watch(isSidebarCollapsed, () => {
+  setTimeout(() => {
+    touchDrag.value = !touchDrag.value
+  }, 150)
+})
 
 // get detail
 const template = createResource({

@@ -27,6 +27,9 @@ import translationPlugin from './translation'
 import { createDialog } from './utils/dialogs'
 import { initSocket } from './socket'
 
+import vue3PhotoPreview from 'vue3-photo-preview'
+import 'vue3-photo-preview/dist/index.css'
+
 let globalComponents = {
   Button,
   TextInput,
@@ -55,6 +58,7 @@ app.use(CKEditor)
 app.use(pinia)
 app.use(router)
 app.use(translationPlugin)
+app.use(vue3PhotoPreview)
 for (let key in globalComponents) {
   app.component(key, globalComponents[key])
 }

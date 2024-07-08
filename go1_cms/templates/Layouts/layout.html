@@ -52,6 +52,55 @@
       as="style"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript">
+      tailwind.config = {
+        theme: {
+          container: {
+            center: true,
+            padding: {
+              DEFAULT: "calc(1.5rem * 0.5)",
+            },
+          },
+          screens: {
+            sm: "576px",
+            md: "768px",
+            lg: "992px",
+            xl: "1200px",
+            "2xl": "1400px",
+          },
+        },
+        plugins: [
+          function ({ addBase, theme }) {
+            addBase({
+              h1: {
+                fontSize: theme("fontSize.4xl"),
+                fontWeight: theme("fontWeight.bold"),
+              },
+              h2: {
+                fontSize: theme("fontSize.3xl"),
+                fontWeight: theme("fontWeight.bold"),
+              },
+              h3: {
+                fontSize: theme("fontSize.2xl"),
+                fontWeight: theme("fontWeight.bold"),
+              },
+              h4: {
+                fontSize: theme("fontSize.xl"),
+                fontWeight: theme("fontWeight.semibold"),
+              },
+              h5: {
+                fontSize: theme("fontSize.lg"),
+                fontWeight: theme("fontWeight.medium"),
+              },
+              h6: {
+                fontSize: theme("fontSize.base"),
+                fontWeight: theme("fontWeight.medium"),
+              },
+            });
+          },
+        ],
+      };
+    </script>
     <link
       rel="stylesheet"
       type="text/css"
@@ -303,56 +352,6 @@
       }
     });
   });
-</script>
-
-<script type="text/javascript">
-  tailwind.config = {
-    theme: {
-      container: {
-        center: true,
-        padding: {
-          DEFAULT: "calc(1.5rem * 0.5)",
-        },
-      },
-      screens: {
-        sm: "576px",
-        md: "768px",
-        lg: "992px",
-        xl: "1200px",
-        "2xl": "1400px",
-      },
-    },
-    plugins: [
-      function ({ addBase, theme }) {
-        addBase({
-          h1: {
-            fontSize: theme("fontSize.4xl"),
-            fontWeight: theme("fontWeight.bold"),
-          },
-          h2: {
-            fontSize: theme("fontSize.3xl"),
-            fontWeight: theme("fontWeight.bold"),
-          },
-          h3: {
-            fontSize: theme("fontSize.2xl"),
-            fontWeight: theme("fontWeight.bold"),
-          },
-          h4: {
-            fontSize: theme("fontSize.xl"),
-            fontWeight: theme("fontWeight.semibold"),
-          },
-          h5: {
-            fontSize: theme("fontSize.lg"),
-            fontWeight: theme("fontWeight.medium"),
-          },
-          h6: {
-            fontSize: theme("fontSize.base"),
-            fontWeight: theme("fontWeight.medium"),
-          },
-        });
-      },
-    ],
-  };
 </script>
 
 <script type="text/javascript">

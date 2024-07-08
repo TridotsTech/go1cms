@@ -814,7 +814,7 @@ function get_fields_list(wrapper, doc, frm_type, edit_doc) {
         fieldtype: "Select",
         label: __("Field Type"),
         default: (edit_doc && edit_doc.field_type) || "",
-        options: ["Text", "Long Text", "Small Text", "Attach"],
+        options: ["Text", "Int", "Long Text", "Small Text", "Attach"],
         reqd: 1,
       },
       {

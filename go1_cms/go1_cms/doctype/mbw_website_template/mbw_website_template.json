@@ -15,6 +15,7 @@
   "footer_component",
   "section_break_bblf",
   "page_templates",
+  "images",
   "content"
  ],
  "fields": [
@@ -30,7 +31,7 @@
   {
    "fieldname": "image_preview",
    "fieldtype": "Attach Image",
-   "label": "\u1ea2nh trang m\u1eabu"
+   "label": "\u1ea2nh b\u00eca"
   },
   {
    "fieldname": "content",
@@ -74,11 +75,18 @@
    "fieldtype": "Link",
    "label": "Web Theme",
    "options": "Web Theme"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Danh s\u00e1ch m\u1eabu \u1ea3nh",
+   "options": "MBW Website Template Preview Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-06 11:24:34.389875",
+ "make_attachments_public": 1,
+ "modified": "2024-07-08 09:50:20.380593",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

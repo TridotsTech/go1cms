@@ -185,7 +185,7 @@
     >
   </div>
   <FormControl
-    v-else-if="field.type === 'number'"
+    v-else-if="['number', 'Int'].includes(field.type)"
     type="number"
     :placeholder="__(field.placeholder)"
     v-model="data"

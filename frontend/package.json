@@ -58,6 +58,8 @@
     "vue": "^3.4.12",
     "vue-fullscreen": "^2.6.1",
     "vue-router": "^4.2.2",
+    "vue3-carousel": "^0.3.3",
+    "vue3-photo-preview": "^0.3.0",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

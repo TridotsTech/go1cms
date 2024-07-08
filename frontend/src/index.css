@@ -24,23 +24,12 @@
   }
 }
 
-@keyframes scaleHeightToTop {
-  from {
-    background-position: 0 100%;
-  }
-
-  to {
-    background-position: 0 0;
-  }
-}
-
 @keyframes scaleHeightToBottom {
   from {
-    background-position: 0 0;
+    background-position: top;
   }
-
   to {
-    background-position: 0 100%;
+    background-position: bottom;
   }
 }
 
