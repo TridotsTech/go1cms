@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "PS-.YY.-.#####",
+ "autoname": "PS-.YY.-.##########",
  "creation": "2022-08-16 11:09:30.920452",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -603,7 +603,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-18 15:16:09.584934",
+ "modified": "2024-07-10 14:16:46.578964",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",

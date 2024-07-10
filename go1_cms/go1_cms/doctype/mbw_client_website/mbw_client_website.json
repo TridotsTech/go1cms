@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "CW-.YY.-.##########",
  "creation": "2024-04-24 10:31:57.949124",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -28,8 +29,10 @@
   {
    "fieldname": "name_web",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "T\u00ean Website"
+   "label": "T\u00ean Website",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -90,10 +93,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-27 08:47:57.017954",
+ "modified": "2024-07-10 14:46:38.934242",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

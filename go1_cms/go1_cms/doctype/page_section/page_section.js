@@ -31,16 +31,14 @@ frappe.ui.form.on('Page Section', {
 		frm.set_query("menu", function() {
 			return {
 				"filters": {
-					"id_client_website": '',
-					"id_parent_copy": ''
+					"is_template": 1,
 				}
 			};
 		});
 		frm.set_query("form", function() {
 			return {
 				"filters": {
-					"id_client_website": '',
-					"id_parent_copy": ''
+					'is_template': 1
 				}
 			};
 		});

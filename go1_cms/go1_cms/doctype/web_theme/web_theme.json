@@ -8,11 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "h_f_section",
+  "default_footer",
   "default_header",
-  "is_active",
   "file_path",
   "column_break_2",
-  "default_footer",
+  "is_active",
   "enable_noindex",
   "id_client_website",
   "id_parent_copy",
@@ -119,8 +119,7 @@
   {
    "fieldname": "website_logo",
    "fieldtype": "Attach",
-   "label": "Primary Logo",
-   "reqd": 1
+   "label": "Primary Logo"
   },
   {
    "fieldname": "default_header",
@@ -141,8 +140,7 @@
   {
    "fieldname": "favicon",
    "fieldtype": "Attach",
-   "label": "Favicon",
-   "reqd": 1
+   "label": "Favicon"
   },
   {
    "fieldname": "default_footer",
@@ -478,8 +476,7 @@
   {
    "fieldname": "mobile_logo",
    "fieldtype": "Attach",
-   "label": "Mobile Logo",
-   "reqd": 1
+   "label": "Mobile Logo"
   },
   {
    "fieldname": "cl3",
@@ -724,7 +721,8 @@
   }
  ],
  "links": [],
- "modified": "2024-06-27 09:06:22.645546",
+ "make_attachments_public": 1,
+ "modified": "2024-07-10 13:46:14.546930",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

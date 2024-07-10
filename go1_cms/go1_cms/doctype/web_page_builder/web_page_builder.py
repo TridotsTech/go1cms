@@ -16,6 +16,7 @@ from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 from datetime import datetime
 import math
+import time
 
 
 class WebPageBuilder(WebsiteGenerator):
@@ -2187,18 +2188,26 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
             },
         }, target_doc, ignore_permissions=True)
         if doc.section_type == "Form" and doc.form:
-            target_doc_form = None
-            doc_form = frappe.new_doc("MBW Form")
-            doc_form = get_mapped_doc("MBW Form", doc.form,	{
-                "MBW Form": {
-                    "doctype": "MBW Form"
-                },
-            }, target_doc_form, ignore_permissions=True)
-            doc_form.id_client_website = id_client_website
-            doc_form.id_parent_copy = doc.form
-            doc_form.save(ignore_permissions=True)
-            # set new id form
-            doc.form = doc_form.name
+            form_set = frappe.db.get_value(
+                'MBW Form', {'id_parent_copy': doc.form}, ['name'], as_dict=1)
+            if not form_set:
+                target_doc_form = None
+                doc_form = frappe.new_doc("MBW Form")
+                doc_form = get_mapped_doc("MBW Form", doc.form,	{
+                    "MBW Form": {
+                        "doctype": "MBW Form"
+                    },
+                }, target_doc_form, ignore_permissions=True)
+                arr_time = str(time.time()).split('.')
+                doc_form.name = "US-F-{0}".format(arr_time[0] + arr_time[1])
+                doc_form.id_client_website = id_client_website
+                doc_form.id_parent_copy = doc.form
+                doc_form.save(ignore_permissions=True)
+                # set new id form
+                doc.form = doc_form.name
+            else:
+                # set new id form
+                doc.form = form_set.name
         doc.save(ignore_permissions=True)
         m_page_sec = frappe.new_doc("Mobile Page Section")
         m_page_sec.section_title = x.section_title
@@ -2228,14 +2237,16 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
                         "doctype": "MBW Form"
                     },
                 }, target_doc_form, ignore_permissions=True)
+                arr_time = str(time.time()).split('.')
+                doc_form.name = "US-F-{0}".format(arr_time[0] + arr_time[1])
                 doc_form.id_client_website = id_client_website
                 doc_form.id_parent_copy = doc.form
                 doc_form.save(ignore_permissions=True)
-                form_set_name = doc_form.name
+                # set new id form
+                doc.form = doc_form.name
             else:
-                form_set_name = form_set.name
-            # set new id form
-            doc.form = form_set_name
+                # set new id form
+                doc.form = form_set.name
         doc.save(ignore_permissions=True)
         m_page_sec = frappe.new_doc("Mobile Page Section")
         m_page_sec.section_title = x.section_title

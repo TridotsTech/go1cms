@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "hash",
+ "autoname": "prompt",
  "creation": "2024-06-13 14:00:54.733273",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -12,6 +12,7 @@
   "column_break_gvpf",
   "id_client_website",
   "id_parent_copy",
+  "is_template",
   "c\u00e1c_tr\u01b0\u1eddng_section",
   "form_fields",
   "n\u00fat_bi\u1ec3u_m\u1eabu_section",
@@ -70,15 +71,21 @@
    "fieldtype": "Select",
    "label": "Lo\u1ea1i bi\u1ec3u m\u1eabu",
    "options": "Form li\u00ean h\u1ec7\nForm Tuy\u1ec3n d\u1ee5ng"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "label": "Is Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-26 08:56:13.089380",
+ "modified": "2024-07-10 14:19:52.799815",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Form",
- "naming_rule": "Random",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {

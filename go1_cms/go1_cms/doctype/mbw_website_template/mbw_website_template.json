@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:template_name",
+ "autoname": "WT-.YY.-.##########",
  "creation": "2024-04-17 10:13:48.137654",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -25,8 +25,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "T\u00ean m\u1eabu",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "image_preview",
@@ -86,11 +85,11 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-08 09:50:20.380593",
+ "modified": "2024-07-10 14:44:58.271956",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -106,7 +105,9 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "template_name"
 }

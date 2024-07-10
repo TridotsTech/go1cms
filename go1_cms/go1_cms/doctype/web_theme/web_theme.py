@@ -279,20 +279,26 @@ def generate_webtheme_css_file(path, sitename, self):
                                     " .sticky_header .go1-cms-menu li a:hover{color:" + \
                                     doc_obj.header_settings.menu_hover_color+";}"
 
-        if not os.path.exists(os.path.join(path, css_file_name)):
-            res = frappe.get_doc({
-                "doctype": "File",
-                "file_name": css_file_name,
-                "is_private": 1,
-            })
         # frappe.log_error(webtheme_css,"<< webtheme_css >>")
         if webtheme_css and doc_obj.page_css_jinja:
             webtheme_css += frappe.render_template(
                 doc_obj.page_css_jinja, {'doc': doc_obj})
 
-        if webtheme_css:
+        if not frappe.db.exists('File', {"file_name": css_file_name, "attached_to_doctype": "Web Theme", "attached_to_name": self.name, }):
+            res = frappe.get_doc({
+                "doctype": "File",
+                "file_name": css_file_name,
+                "is_private": 0,
+                "attached_to_doctype": "Web Theme",
+                "attached_to_name": self.name,
+                "folder": "Home",
+                'content': webtheme_css
+            })
+            res.save()
+        elif webtheme_css:
             with open(os.path.join(path, (css_file_name)), "w") as f:
                 f.write(minify_string(webtheme_css))
+
         fpath = os.path.join(path, (css_file_name))
         if self.file_path != fpath:
             frappe.db.set_value('Web Theme', self.name, 'file_path', fpath)

@@ -228,6 +228,7 @@ def get_list_data(
             'MBW Client Website', filters={"edit": 1})
         if web_edit:
             filters['id_client_website'] = web_edit.name
+            filters['is_template'] = 0
 
     custom_view_name = view.get('custom_view_name') if view else None
     view_type = view.get('view_type') if view else None

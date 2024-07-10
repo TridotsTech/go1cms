@@ -1,12 +1,13 @@
 import frappe
 from frappe import _
+import time
 
 
 @frappe.whitelist()
 def get_menu_suggest():
     web_edit = frappe.db.get_value('MBW Client Website', {"edit": 1}, ['name'])
     if web_edit:
-        menus = frappe.db.get_all("Menu", filters={"id_client_website": web_edit}, fields=[
+        menus = frappe.db.get_all("Menu", filters={"id_client_website": web_edit, 'is_template': 0}, fields=[
             'name', 'id_parent_copy'
         ])
         menus_name = []
@@ -59,6 +60,7 @@ def create_menu(data):
         'MBW Client Website', {"edit": 1}, ['name'], as_dict=1)
     doc_new = frappe.new_doc('Menu')
     doc_new.title = title
+    doc_new.name = "US-M-{0}".format(str(time.time()).split('.')[0])
     if web_edit:
         doc_new.id_client_website = web_edit.name
     doc_new.insert()

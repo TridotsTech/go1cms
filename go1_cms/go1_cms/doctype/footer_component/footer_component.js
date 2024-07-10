@@ -1301,8 +1301,7 @@ var modify_section_data = Class.extend({
         fieldname: "menu",
         label: __("Select Menu"),
         filters: {
-          id_client_website: "",
-          id_parent_copy: "",
+          is_template: 1,
         },
         options: "Menu",
         default: this.fields.menu || "",

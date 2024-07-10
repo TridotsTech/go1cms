@@ -119,7 +119,7 @@ class MBWClientWebsite(Document):
                 # update redirect url menu
                 menus = frappe.db.get_all(
                     "Menu",
-                    filters={"id_client_website": self.name},
+                    filters={"id_client_website": self.name, 'is_template': 0},
                     fields=['name']
                 )
 
@@ -181,7 +181,7 @@ class MBWClientWebsite(Document):
         # delete menu
         menus = frappe.db.get_all(
             "Menu",
-            filters={"id_client_website": self.name},
+            filters={"id_client_website": self.name, 'is_template': 0},
             fields=['name']
         )
         for n in menus:
@@ -190,7 +190,7 @@ class MBWClientWebsite(Document):
         # delete MBW Form
         mbw_forms = frappe.db.get_all(
             "MBW Form",
-            filters={"id_client_website": self.name},
+            filters={"id_client_website": self.name, 'is_template': 0},
             fields=['name']
         )
         for f in mbw_forms:

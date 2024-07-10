@@ -2304,8 +2304,7 @@ var modify_section_data = Class.extend({
         fieldname: "form",
         label: __("Select Form"),
         filters: {
-          id_client_website: "",
-          id_parent_copy: "",
+          is_template: 1,
         },
         options: "MBW Form",
         default: this.fields.form || "",

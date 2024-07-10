@@ -2,6 +2,7 @@ import frappe
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
 import json
+import time
 
 FIELD_TYPE_JSON = ["List", 'Button']
 
@@ -16,7 +17,8 @@ def copy_header_component(name, sub_name):
     }, target_doc, ignore_permissions=True)
     doc_header_comp.idx = None
     doc_header_comp.web_section = []
-    doc_header_comp.title = doc_header_comp.title + ' ' + sub_name
+    doc_header_comp.title = "US-H-{0} {1}".format(
+        doc_header_comp.title, sub_name)
 
     web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style', 'idx', 'column_index'], order_by="idx")
@@ -37,7 +39,8 @@ def copy_header_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            # doc_menu.title = doc_menu.title + ' ' + sub_name
+            arr_time = str(time.time()).split('.')
+            doc_menu.name = "US-M-{0}".format(arr_time[0] + arr_time[1])
             doc_menu.id_parent_copy = doc.menu
             doc_menu.title = doc_menu.title
             doc_menu.id_client_website = sub_name
@@ -73,7 +76,8 @@ def copy_footer_component(name, sub_name):
     }, target_doc, ignore_permissions=True)
     doc_footer_comp.idx = None
     doc_footer_comp.web_section = []
-    doc_footer_comp.title = doc_footer_comp.title + ' ' + sub_name
+    doc_footer_comp.title = "US-F-{0} {1}".format(
+        doc_footer_comp.title, sub_name)
 
     web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style', 'idx', 'column_index'], order_by="idx")
@@ -94,7 +98,8 @@ def copy_footer_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            # doc_menu.title = doc_menu.title + ' ' + sub_name
+            arr_time = str(time.time()).split('.')
+            doc_menu.name = "US-M-{0}".format(arr_time[0] + arr_time[1])
             doc_menu.id_parent_copy = doc.menu
             doc_menu.title = doc_menu.title
             doc_menu.id_client_website = sub_name
@@ -128,7 +133,7 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
             "doctype": "Web Theme"
         },
     }, target_doc, ignore_permissions=True)
-    web_theme.name = name + ' ' + sub_name
+    web_theme.name = "US-WT-{0} {1}".format(name, sub_name)
     web_theme.default_header = cp_header
     web_theme.default_footer = cp_footer
     web_theme.id_parent_copy = name
@@ -175,7 +180,8 @@ def get_field_section_component(web_edit, web_section):
                     'show_edit': True,
                     'doctype': "Menu",
                     'filters': {
-                        'id_client_website': web_edit.name
+                        'id_client_website': web_edit.name,
+                        'is_template': 0,
                     }
 
                 }
