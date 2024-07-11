@@ -6,13 +6,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "is_template",
+  "section_break_vrkc",
   "form_name",
   "form_action",
   "form_type",
-  "column_break_gvpf",
+  "column_break_mupz",
   "id_client_website",
   "id_parent_copy",
-  "is_template",
   "c\u00e1c_tr\u01b0\u1eddng_section",
   "form_fields",
   "n\u00fat_bi\u1ec3u_m\u1eabu_section",
@@ -53,10 +54,6 @@
    "options": "MBW Form Item"
   },
   {
-   "fieldname": "column_break_gvpf",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "id_client_website",
    "fieldtype": "Data",
    "label": "ID Client Website"
@@ -73,15 +70,23 @@
    "options": "Form li\u00ean h\u1ec7\nForm Tuy\u1ec3n d\u1ee5ng"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "is_template",
    "fieldtype": "Check",
    "label": "Is Template"
+  },
+  {
+   "fieldname": "section_break_vrkc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mupz",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 14:19:52.799815",
+ "modified": "2024-07-11 10:05:50.841362",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Form",

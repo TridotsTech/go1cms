@@ -2,9 +2,20 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Menu", {
-  // on_update: function(frm) {
-  // 	console.log('kk')
-  // }
+  refresh: function (frm) {
+    if (frm.doc.__unsaved) {
+      frm.set_value("__newname", "SYS-M-");
+    }
+  },
+  is_template: function (frm) {
+    if (frm.doc.__unsaved) {
+      if (frm.doc.is_template == 1) {
+        frm.set_value("__newname", "SYS-M-");
+      } else {
+        frm.set_value("__newname", "US-M-");
+      }
+    }
+  },
 });
 
 frappe.ui.form.on("Menus Item", {

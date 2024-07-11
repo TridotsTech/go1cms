@@ -5,7 +5,7 @@
         <div class="text-base text-gray-700 font-bold mb-2">
           {{ field.field_label }}
         </div>
-        <div class="flex flex-col overflow-y-auto">
+        <div class="flex flex-col overflow-auto max-h-[500px]">
           <table class="text-base">
             <tr class="border">
               <th class="border p-2 w-auto">STT</th>

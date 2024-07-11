@@ -7,10 +7,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "is_template",
+  "section_break_puvg",
   "title",
   "is_static_menu",
-  "is_template",
-  "column_break_iuqv",
+  "column_break_gtok",
   "id_client_website",
   "id_parent_copy",
   "section_break_hhec",
@@ -36,10 +37,6 @@
    "label": "ID Client Website"
   },
   {
-   "fieldname": "column_break_iuqv",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "id_parent_copy",
    "fieldtype": "Data",
    "label": "ID Parent Copy"
@@ -54,15 +51,23 @@
    "label": "Title"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "is_template",
    "fieldtype": "Check",
    "label": "Is Template"
+  },
+  {
+   "fieldname": "section_break_puvg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_gtok",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 15:32:29.784965",
+ "modified": "2024-07-11 10:06:22.349844",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menu",

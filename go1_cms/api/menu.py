@@ -1,6 +1,8 @@
 import frappe
 from frappe import _
-import time
+from go1_cms.api.common import (
+    getStrTimestamp
+)
 
 
 @frappe.whitelist()
@@ -60,7 +62,8 @@ def create_menu(data):
         'MBW Client Website', {"edit": 1}, ['name'], as_dict=1)
     doc_new = frappe.new_doc('Menu')
     doc_new.title = title
-    doc_new.name = "US-M-{0}".format(str(time.time()).split('.')[0])
+    doc_new.name = "US-M-{0}".format(getStrTimestamp())
+    doc_new.is_template = 0
     if web_edit:
         doc_new.id_client_website = web_edit.name
     doc_new.insert()

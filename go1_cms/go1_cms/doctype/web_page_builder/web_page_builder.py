@@ -19,6 +19,14 @@ import math
 import time
 
 
+def getStrTimestamp():
+    arr_time = str(time.time()).split('.')
+    while (len(arr_time[1]) < 7):
+        arr_time[1] += '0'
+
+    return arr_time[0] + arr_time[1]
+
+
 class WebPageBuilder(WebsiteGenerator):
     def autoname(self):
         if check_domain('saas'):
@@ -2198,10 +2206,10 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
                         "doctype": "MBW Form"
                     },
                 }, target_doc_form, ignore_permissions=True)
-                arr_time = str(time.time()).split('.')
-                doc_form.name = "US-F-{0}".format(arr_time[0] + arr_time[1])
+                doc_form.name = "US-F-{0}".format(getStrTimestamp())
                 doc_form.id_client_website = id_client_website
                 doc_form.id_parent_copy = doc.form
+                doc_form.is_template = 0
                 doc_form.save(ignore_permissions=True)
                 # set new id form
                 doc.form = doc_form.name
@@ -2237,10 +2245,10 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
                         "doctype": "MBW Form"
                     },
                 }, target_doc_form, ignore_permissions=True)
-                arr_time = str(time.time()).split('.')
-                doc_form.name = "US-F-{0}".format(arr_time[0] + arr_time[1])
+                doc_form.name = "US-F-{0}".format(getStrTimestamp())
                 doc_form.id_client_website = id_client_website
                 doc_form.id_parent_copy = doc.form
+                doc_form.is_template = 0
                 doc_form.save(ignore_permissions=True)
                 # set new id form
                 doc.form = doc_form.name

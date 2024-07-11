@@ -7,6 +7,14 @@ import time
 FIELD_TYPE_JSON = ["List", 'Button']
 
 
+def getStrTimestamp():
+    arr_time = str(time.time()).split('.')
+    while (len(arr_time[1]) < 7):
+        arr_time[1] += '0'
+
+    return arr_time[0] + arr_time[1]
+
+
 def copy_header_component(name, sub_name):
     target_doc = None
     doc_header_comp = frappe.new_doc("Header Component")
@@ -39,11 +47,11 @@ def copy_header_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            arr_time = str(time.time()).split('.')
-            doc_menu.name = "US-M-{0}".format(arr_time[0] + arr_time[1])
+            doc_menu.name = "US-M-{0}".format(getStrTimestamp())
             doc_menu.id_parent_copy = doc.menu
             doc_menu.title = doc_menu.title
             doc_menu.id_client_website = sub_name
+            doc_menu.is_template = 0
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)
@@ -98,11 +106,11 @@ def copy_footer_component(name, sub_name):
                     "doctype": "Menu"
                 },
             }, target_doc, ignore_permissions=True)
-            arr_time = str(time.time()).split('.')
-            doc_menu.name = "US-M-{0}".format(arr_time[0] + arr_time[1])
+            doc_menu.name = "US-M-{0}".format(getStrTimestamp())
             doc_menu.id_parent_copy = doc.menu
             doc_menu.title = doc_menu.title
             doc_menu.id_client_website = sub_name
+            doc_menu.is_template = 0
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
         doc.save(ignore_permissions=True)

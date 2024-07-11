@@ -10,6 +10,7 @@
   "section_title",
   "route",
   "class_name",
+  "is_template",
   "section_info_section",
   "section_group",
   "is_full_width",
@@ -599,11 +600,17 @@
    "fieldname": "html_content",
    "fieldtype": "Text Editor",
    "label": "Html Content"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "label": "Is Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 14:16:46.578964",
+ "modified": "2024-07-11 08:45:03.898167",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",
