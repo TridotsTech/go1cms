@@ -2377,6 +2377,7 @@ var add_new_section = Class.extend({
                   template: me.selected_section[0].template,
                   business: cur_frm.doc.business,
                   section_name: custom_title,
+                  is_template: 0,
                 },
                 callback: function (r) {
                   if (r.message) {
@@ -5492,6 +5493,7 @@ var add_page_template = Class.extend({
       args: {},
       async: false,
       callback: function (r) {
+        console.log(r);
         me.sections = r.message;
       },
     });

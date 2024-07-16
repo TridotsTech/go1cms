@@ -1,3 +1,5 @@
+from slugify import slugify
+import os
 import frappe
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
@@ -25,10 +27,11 @@ def copy_header_component(name, sub_name):
     }, target_doc, ignore_permissions=True)
     doc_header_comp.idx = None
     doc_header_comp.web_section = []
-    doc_header_comp.title = "US-H-{0} {1}".format(
-        doc_header_comp.title, sub_name)
+    doc_header_comp.is_template = 0
+    doc_header_comp.title = "US-H-{0}-{1}".format(
+        doc_header_comp.title, getStrTimestamp())
 
-    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section"}, fields=[
+    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section", "parenttype": "Header Component"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style', 'idx', 'column_index'], order_by="idx")
     web_secs = []
     for x in web_sections:
@@ -84,10 +87,11 @@ def copy_footer_component(name, sub_name):
     }, target_doc, ignore_permissions=True)
     doc_footer_comp.idx = None
     doc_footer_comp.web_section = []
-    doc_footer_comp.title = "US-F-{0} {1}".format(
-        doc_footer_comp.title, sub_name)
+    doc_footer_comp.is_template = 0
+    doc_footer_comp.title = "US-H-{0}-{1}".format(
+        doc_footer_comp.title, getStrTimestamp())
 
-    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section"}, fields=[
+    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": name, "parentfield": "web_section", "parenttype": "Footer Component"}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style', 'idx', 'column_index'], order_by="idx")
     web_secs = []
     for x in web_sections:
@@ -141,12 +145,11 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
             "doctype": "Web Theme"
         },
     }, target_doc, ignore_permissions=True)
-    web_theme.name = "US-WT-{0} {1}".format(name, sub_name)
+    web_theme.name = "US-WT-{0}-{1}".format(name, getStrTimestamp())
     web_theme.default_header = cp_header
     web_theme.default_footer = cp_footer
-    web_theme.id_parent_copy = name
-    web_theme.id_client_website = sub_name
     web_theme.is_active = 0
+    web_theme.is_template = 0
     web_theme.container_width = ''
     web_theme.save(ignore_permissions=True)
     # frappe.db.commit()
@@ -312,3 +315,168 @@ def update_fields_page(data):
                             data_update[field.get('field_key')] = field.get(
                                 'content')
     return data_update
+
+
+def v(i):
+    import datetime
+    if isinstance(i, (datetime.datetime, datetime.date, datetime.time)):
+        return str(i)
+    return i
+
+
+def remove_nulls(d):
+    if isinstance(d, dict):
+        return {k: remove_nulls(v) for k, v in d.items() if v is not None}
+    elif isinstance(d, list):
+        return [remove_nulls(item) for item in d]
+    else:
+        return d
+
+
+def write_page_section(parent, path, parenttype):
+    web_sections = frappe.db.get_all("Mobile Page Section", filters={
+                                     "parent": parent, "parentfield": "web_section", "parenttype": parenttype}, fields=['section', 'column_index', 'idx'], order_by="idx")
+
+    page_sections = []
+    for sec in web_sections:
+        doc = frappe.get_doc('Page Section', sec.section).as_dict()
+        doc['idx'] = sec.idx
+        doc['column_index'] = sec.column_index
+        # remove fields is None
+        doc = remove_nulls(doc)
+        page_sections.append(doc)
+
+    # check folder not exists then create folder
+    if not os.path.exists(path):
+        os.mkdir(path)
+    # write file
+    json_file_name = "section.json"
+    with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
+        json.dump(page_sections, f, ensure_ascii=False, default=v)
+
+
+def write_file_page_template(name, version='page_template_v1'):
+    folder_name = slugify(text=name, separator='_')
+    path = os.path.join(frappe.get_module_path("go1_cms"),
+                        'mbw_json_data', version, folder_name)
+
+    page_temp = frappe.get_doc('Page Template', name).as_dict()
+    page_temp['web_section'] = []
+    page_temp['mobile_section'] = []
+    # remove fields is None
+    page_temp = remove_nulls(page_temp)
+
+    # check folder not exists then create folder
+    if not os.path.exists(path):
+        os.mkdir(path)
+    # write file
+    json_file_name = "page_template.json"
+    with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
+        json.dump([page_temp], f, ensure_ascii=False, default=v)
+
+    # sections
+    write_page_section(name, path, "Page Template")
+
+
+def write_file_header_component(name, version='header_component_v1'):
+    folder_name = slugify(text=name, separator='_')
+    path = os.path.join(frappe.get_module_path("go1_cms"),
+                        'mbw_json_data', version, folder_name)
+
+    header_comp = frappe.get_doc('Header Component', name).as_dict()
+    header_comp['web_section'] = []
+    # remove fields is None
+    header_comp = remove_nulls(header_comp)
+
+    # check folder not exists then create folder
+    if not os.path.exists(path):
+        os.mkdir(path)
+    # write file
+    json_file_name = "page_template.json"
+    with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
+        json.dump([header_comp], f, ensure_ascii=False, default=v)
+
+    # sections
+    write_page_section(name, path, 'Header Component')
+
+
+def write_file_footer_component(name, version='footer_component_v1'):
+    folder_name = slugify(text=name, separator='_')
+    path = os.path.join(frappe.get_module_path("go1_cms"),
+                        'mbw_json_data', version, folder_name)
+
+    footer_comp = frappe.get_doc('Footer Component', name).as_dict()
+    footer_comp['web_section'] = []
+    # remove fields is None
+    footer_comp = remove_nulls(footer_comp)
+
+    # check folder not exists then create folder
+    if not os.path.exists(path):
+        os.mkdir(path)
+    # write file
+    json_file_name = "page_template.json"
+    with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
+        json.dump([footer_comp], f, ensure_ascii=False, default=v)
+
+    # sections
+    write_page_section(name, path, 'Footer Component')
+
+
+def create_file_template():
+    # header
+    header_comps = frappe.db.get_all(
+        'Header Component', {'is_template': 1}, pluck="name")
+    for h in header_comps:
+        write_file_header_component(h)
+    # footer
+    header_comps = frappe.db.get_all(
+        'Footer Component', {'is_template': 1}, pluck="name")
+    for f in header_comps:
+        write_file_footer_component(f)
+
+    # page template
+    page_temps = frappe.db.get_all('Page Template',  pluck="name")
+    for p in page_temps:
+        write_file_page_template(p)
+
+
+def handle_write_file_multiple_doctype_template():
+    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template',
+                'CMS Settings', 'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger']
+    temps = []
+    for d in doctypes:
+        if d not in ['CMS Settings']:
+            filters = []
+            if d in ["Menu", "Web Theme", "MBW Form"]:
+                filters = [['is_template', '=', 1]]
+
+            temps.append({
+                "doc_names": frappe.db.get_all(d, filters, pluck="name"),
+                "doctype": d
+            })
+        else:
+            temps.append({
+                "doc_names": [d],
+                "doctype": d
+            })
+
+    for temp in temps:
+        data = []
+        for doc in temp.get('doc_names'):
+            d_j = frappe.get_doc(temp.get('doctype'), doc).as_dict()
+            # remove fields is None
+            d_j = remove_nulls(d_j)
+            data.append(d_j)
+
+        # write file
+        path = os.path.join(frappe.get_module_path("go1_cms"), 'mbw_json_data')
+        folder_name = slugify(text=temp.get('doctype'), separator='_')
+        json_file_name = "{0}.json".format(folder_name)
+        with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, default=v)
+
+
+def get_all_folder_in_dir(version):
+    path = os.path.join(frappe.get_module_path("go1_cms"),
+                        'mbw_json_data', version)
+    return os.listdir(path)

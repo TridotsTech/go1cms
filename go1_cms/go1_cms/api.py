@@ -62,8 +62,8 @@ def get_scroll_content(route, page_no=0, page_len=3, device_type=None):
     context = {}
     start = int(page_no) * int(page_len)
     page_builder = frappe.get_doc('Web Page Builder', {"route": route})
-    page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent", "section_title"], filters={
-                                  "parent": page_builder.name, 'parentfield': 'web_section'}, order_by='idx')
+    page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent", "section_title"], filters={"parent": page_builder.name, 'parentfield': 'web_section', "parenttype": "Web Page Builder"},
+                                  order_by='idx')
     page_section = page_section[start:int(page_len) + int(start)]
     page_template = ""
     catalog_settings = get_settings_from_domain('Catalog Settings')

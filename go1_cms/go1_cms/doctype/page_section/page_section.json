@@ -602,7 +602,7 @@
    "label": "Html Content"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "is_template",
    "fieldtype": "Check",
    "label": "Is Template"
@@ -610,7 +610,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-11 08:45:03.898167",
+ "modified": "2024-07-11 14:40:48.733060",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",

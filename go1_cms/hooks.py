@@ -65,10 +65,6 @@ email_css = ["/assets/go1_cms/email/email.css"]
 # website_generators = ["Web Page"]
 
 # Installation
-# ------------
-# before_migrate = "go1_cms.go1_cms.after_install.after_install"
-
-
 # before_install = "go1_cms.install.before_install"
 # after_install = "go1_cms.install.after_install"
 after_install = "go1_cms.go1_cms.after_install.after_install"
@@ -205,30 +201,29 @@ get_translated_dict = {
 }
 
 fixtures = [
-    # "Web Theme",
-    # "Header Component",
     # "Header Layout",
-    # "Header Template",
-    # "Footer Component",
     # "Footer Layout",
-    # "Footer Template",
-    # "Page Section",
-    # "Section Component",
-    # "Section Template",
-    # "Web Page Builder",
-    # "Testimonial",
     # "Section Template Group",
-    # "Section Component Group",
+    # * "Custom Query",
+    # "Section Template",
+    # * "Color Palette",
+    # * "Section Component Group",
+    # * "Section Component",
+    # "CMS Settings",
+    # * "Background Mask",
+    # * "Background Gradient",
+    # * "CSS Font",
     # "Menu",
-    # "FAQ",
-    # "Custom Query",
-    # "CSS Font",
-    # "Color Palette",
-    # "Background Mask",
-    # "Background Gradient",
-
+    # "Header Component",
+    # "Footer Component",
+    # "Web Theme",
+    # * "FAQ",
+    # * "Testimonial",
     # {
-    #     "doctype": "Custom Field",
-    #     "filters": [["module", "in", ("Go1 CMS")]]
-    # }
+    #     "doctype": "Page Section",
+    #     "filters": [["is_template", "=", 1]]
+    # },
+    # "Page Template",
+    # "MBW Website Template",
+    # "Blogger",
 ]

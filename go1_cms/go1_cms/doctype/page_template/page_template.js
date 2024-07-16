@@ -20,14 +20,14 @@ frappe.ui.form.on("Page Template", {
       }
     }
     if (frm.doc.__islocal) {
-      if (
-        has_common(frappe.user_roles, ["Vendor"]) &&
-        frappe.session.user != "Administrator"
-      ) {
-        frm.set_value("business", frappe.boot.user.defaults.business);
-      } else {
-        frm.set_value("business", "");
-      }
+      // if (
+      //   has_common(frappe.user_roles, ["Vendor"]) &&
+      //   frappe.session.user != "Administrator"
+      // ) {
+      //   frm.set_value("business", frappe.boot.user.defaults.business);
+      // } else {
+      //   frm.set_value("business", "");
+      // }
     }
     if (frappe.session.user != "Administrator") {
       frm.set_df_property("header_template", "hidden", 1);
@@ -36,18 +36,18 @@ frappe.ui.form.on("Page Template", {
       // frm.set_df_property('route', 'hidden', 1)
       frm.set_df_property("theme", "hidden", 1);
     }
-    if (has_common(frappe.user_roles, ["Vendor"])) {
-      frm.set_df_property("business", "hidden", 1);
-    }
+    // if (has_common(frappe.user_roles, ["Vendor"])) {
+    //   frm.set_df_property("business", "hidden", 1);
+    // }
     let editor = Jodit.instances.jeditor_webform;
     if (editor) {
       editor.value = frm.doc.content || "";
     }
     frm.trigger("load_custom_editor");
-    let args = {
-      dt: "Catalog Settings",
-      business: frm.doc.business,
-    };
+    // let args = {
+    //   dt: "Catalog Settings",
+    //   business: frm.doc.business,
+    // };
   },
 
   load_custom_editor: function (frm) {
@@ -922,8 +922,9 @@ var add_new_section = Class.extend({
                   "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.convert_template_to_section",
                 args: {
                   template: me.selected_section[0].template,
-                  business: cur_frm.doc.business,
+                  // business: cur_frm.doc.business,
                   section_name: custom_title,
+                  is_template: 1,
                 },
                 callback: function (r) {
                   if (r.message) {
@@ -2659,7 +2660,7 @@ var modify_section_data = Class.extend({
           docs: results,
           lists_data: JSON.stringify(me.list_section_data),
           section: me.section,
-          business: cur_frm.doc.business,
+          // business: cur_frm.doc.business,
         },
         freeze: true,
         callback: function (r) {
@@ -3661,7 +3662,7 @@ var modify_section_data = Class.extend({
           me.fields.name,
           me.fields.reference_document,
           me.fields.no_of_records,
-          me.fields.business
+          null
         );
       },
       () => {
@@ -3688,7 +3689,7 @@ var modify_section_data = Class.extend({
       args: {
         dt: dt,
         records: records,
-        business: cur_frm.doc.business,
+        // business: cur_frm.doc.business,
       },
       async: false,
       callback: function (r) {
@@ -3706,7 +3707,7 @@ var modify_section_data = Class.extend({
       args: {
         dt: dt,
         records: no_of_records,
-        business: cur_frm.doc.business,
+        business: business,
         name: name,
       },
       async: false,
@@ -3788,7 +3789,7 @@ var modify_section_data = Class.extend({
       args: {
         dt: dt,
         dn: dn,
-        business: cur_frm.doc.business,
+        // business: cur_frm.doc.business,
       },
       async: false,
       callback: function (r) {

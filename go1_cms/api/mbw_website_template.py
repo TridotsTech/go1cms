@@ -43,6 +43,7 @@ def add_web_template(name):
             frappe.throw(_("Template not found"), frappe.DoesNotExistError)
 
         website = frappe.new_doc("MBW Client Website")
+        website.name_web = "New"
         website.save(ignore_permissions=True)
         website.reload()
 

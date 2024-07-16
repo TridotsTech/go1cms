@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "column_break_tjyj",
+  "is_template",
   "layout_section",
   "pick_layout",
   "layout_json",
@@ -469,11 +471,21 @@
    "fieldname": "image_copyright",
    "fieldtype": "Attach Image",
    "label": "Image copyright"
+  },
+  {
+   "fieldname": "column_break_tjyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "label": "Is Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 11:07:31.723898",
+ "modified": "2024-07-11 14:30:48.402079",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",

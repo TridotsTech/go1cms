@@ -14,8 +14,7 @@
   "column_break_2",
   "is_active",
   "enable_noindex",
-  "id_client_website",
-  "id_parent_copy",
+  "is_template",
   "branding_section",
   "website_logo",
   "favicon",
@@ -710,19 +709,15 @@
    "label": "Mobile Max Width"
   },
   {
-   "fieldname": "id_client_website",
-   "fieldtype": "Data",
-   "label": "ID Client Website"
-  },
-  {
-   "fieldname": "id_parent_copy",
-   "fieldtype": "Data",
-   "label": "ID Parent Copy"
+   "default": "1",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "label": "Is Template"
   }
  ],
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-10 13:46:14.546930",
+ "modified": "2024-07-13 10:25:09.825505",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

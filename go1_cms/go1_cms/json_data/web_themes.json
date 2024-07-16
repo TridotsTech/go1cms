@@ -1,5 +1,5 @@
 [
-{
+  {
     "name": "Default Theme",
     "owner": "Administrator",
     "creation": "2022-09-20 20:52:24.411911",
@@ -43,7 +43,7 @@
     "page_js": "$(document).ready(function(){\n  $(\".owl-carousel\").owlCarousel();\n});\n\n  AOS.init();",
     "doctype": "Web Theme",
     "global_fonts": [
-    {
+      {
         "name": "08e1856805",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -59,8 +59,8 @@
         "font_weight": "700",
         "font_family_name": "'Outfit', sans-serif",
         "doctype": "Global Fonts"
-    },
-    {
+      },
+      {
         "name": "db684dec74",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -76,8 +76,8 @@
         "font_weight": "500",
         "font_family_name": "'Outfit', sans-serif",
         "doctype": "Global Fonts"
-    },
-    {
+      },
+      {
         "name": "561aa0d592",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -93,8 +93,8 @@
         "font_weight": "400",
         "font_family_name": "'Outfit', sans-serif",
         "doctype": "Global Fonts"
-    },
-    {
+      },
+      {
         "name": "880525bc36",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -110,9 +110,10 @@
         "font_weight": "500",
         "font_family_name": "'Outfit', sans-serif",
         "doctype": "Global Fonts"
-    }],
+      }
+    ],
     "buttons_table": [
-    {
+      {
         "name": "4a040a0a72",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -128,8 +129,8 @@
         "css_design": "\"--go1-button-primary-btn-bg:#fcc63c;--go1-button-primary-btn-hc:#fcc63c;--go1-typography-primary-btn-f:'Outfit', sans-serif;--go1-typography-primary-btn-c:#000000;--go1-typography-primary-btn-ta:Center;--go1-typography-primary-btn-w:500;--go1-primary-btn-border-c:#663399;--go1-primary-btn-top-lr:7px;--go1-primary-btn-bottom-lr:7px;--go1-primary-btn-top-rr:7px;--go1-primary-btn-bottom-rr:7px;\"",
         "style_json": "{\"font-size\":{},\"btn-background-color\":\"#fcc63c\",\"hover-color\":\"#fcc63c\",\"font-family\":\"Outfit\",\"color\":\"#000000\",\"text-align\":\"Center\",\"font-weight\":\"500\",\"border-color\":\"#663399\",\"border-top-left-radius\":\"7-px\",\"border-bottom-left-radius\":\"7-px\",\"border-top-right-radius\":\"7-px\",\"border-bottom-right-radius\":\"7-px\"}",
         "doctype": "Web Theme Button"
-    },
-    {
+      },
+      {
         "name": "4132645a25",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -145,8 +146,8 @@
         "css_design": "\"--go1-typography-secondary-btn-c:#232D41;--go1-secondary-btn-border-c:#ffbf0c;\"",
         "style_json": "{\"color\":\"#232D41\",\"border-color\":\"#ffbf0c\"}",
         "doctype": "Web Theme Button"
-    },
-    {
+      },
+      {
         "name": "302238d895",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -162,10 +163,11 @@
         "css_design": "\";\"",
         "style_json": "{}",
         "doctype": "Web Theme Button"
-    }],
+      }
+    ],
     "google_fonts": [],
     "css_list": [
-    {
+      {
         "name": "34f3a6acb8",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -178,8 +180,8 @@
         "docstatus": 0,
         "css_file": "/files/owl.carousel.min.css",
         "doctype": "Css List"
-    },
-    {
+      },
+      {
         "name": "48ce70a6ea",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -192,9 +194,10 @@
         "docstatus": 0,
         "css_file": "/files/aos.css",
         "doctype": "Css List"
-    }],
+      }
+    ],
     "heading": [
-    {
+      {
         "name": "03d5e9cb92",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -210,8 +213,8 @@
         "css_design": "\"--go1-typography-h1-f:Primary(Font Family);--go1-typography-h1-c:#121828;--go1-typography-h1-h:1.2;--go1-typography-h1-s-pc:68px;--go1-typography-h1-w:700;\"",
         "style_json": "{\"font-size\":{\"pc-font-size\":\"68-px\"},\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.2\",\"font-weight\":\"700\"}",
         "doctype": "Typography Heading"
-    },
-    {
+      },
+      {
         "name": "c45496f7b0",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -227,8 +230,8 @@
         "css_design": "\"--go1-typography-h2-f:Primary(Font Family);--go1-typography-h2-c:#121828;--go1-typography-h2-h:1.2;--go1-typography-h2-s-pc:36px;--go1-typography-h2-w:700;\"",
         "style_json": "{\"font-size\":{\"pc-font-size\":\"36-px\"},\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.2\",\"font-weight\":\"700\"}",
         "doctype": "Typography Heading"
-    },
-    {
+      },
+      {
         "name": "be449730d8",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -244,8 +247,8 @@
         "css_design": "\"--go1-typography-h3-f:Primary(Font Family);--go1-typography-h3-c:#121828;--go1-typography-h3-h:1.2;--go1-typography-h3-s-pc:45px;--go1-typography-h3-w:500;\"",
         "style_json": "{\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"45-px\"},\"font-weight\":\"500\"}",
         "doctype": "Typography Heading"
-    },
-    {
+      },
+      {
         "name": "ce3d72a7cc",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -261,8 +264,8 @@
         "css_design": "\"--go1-typography-h4-f:Primary(Font Family);--go1-typography-h4-c:#121828;--go1-typography-h4-h:1.5;--go1-typography-h4-s-pc:20px;--go1-typography-h4-s-tab:20px;--go1-typography-h4-s-mbl:18px;--go1-typography-h4-w:500;\"",
         "style_json": "{\"font-size\":{\"pc-font-size\":\"20-px\",\"tab-font-size\":\"20-px\",\"mbl-font-size\":\"18-px\"},\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.5\",\"font-weight\":\"500\"}",
         "doctype": "Typography Heading"
-    },
-    {
+      },
+      {
         "name": "77c3c1b890",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -278,8 +281,8 @@
         "css_design": "\"--go1-typography-h5-f:Primary(Font Family);--go1-typography-h5-c:#121828;--go1-typography-h5-h:1.2;--go1-typography-h5-s-pc:22px;--go1-typography-h5-w:500;\"",
         "style_json": "{\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"22-px\"},\"font-weight\":\"500\"}",
         "doctype": "Typography Heading"
-    },
-    {
+      },
+      {
         "name": "363f2fab67",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -295,9 +298,10 @@
         "css_design": "\"--go1-typography-h6-f:Primary(Font Family);--go1-typography-h6-c:#121828;--go1-typography-h6-h:1.2;--go1-typography-h6-s-pc:18px;--go1-typography-h6-w:500;\"",
         "style_json": "{\"font-family\":\"Primary(Font Family)\",\"color\":\"#121828\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"18-px\"},\"font-weight\":\"500\"}",
         "doctype": "Typography Heading"
-    }],
+      }
+    ],
     "text": [
-    {
+      {
         "name": "dd921c5e95",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -313,8 +317,8 @@
         "css_design": "\"--go1-typography-p-f:Text(Font Family);--go1-typography-p-c:#4e565f;--go1-typography-p-h:2;--go1-typography-p-s-pc:16px;--go1-typography-p-w:400;--go1-typography-p-Paragraph-c:#4e565f;\"",
         "style_json": "{\"font-size\":{\"pc-font-size\":\"16-px\"},\"font-family\":\"Text(Font Family)\",\"color\":\"#4e565f\",\"line-height\":\"2\",\"font-weight\":\"400\"}",
         "doctype": "Typography Text"
-    },
-    {
+      },
+      {
         "name": "79690ab65f",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -330,8 +334,8 @@
         "css_design": "\"--go1-typography-a-f:Text(Font Family);--go1-typography-a-c:#4e565f;--go1-typography-a-h:1.2;--go1-typography-a-s-pc:18px;--go1-typography-a-w:400;--go1-typography-a-Anchor-c:#4e565f;\"",
         "style_json": "{\"font-family\":\"Text(Font Family)\",\"color\":\"#4e565f\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"18-px\"},\"font-weight\":\"400\"}",
         "doctype": "Typography Text"
-    },
-    {
+      },
+      {
         "name": "eb5934dbc9",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -347,8 +351,8 @@
         "css_design": "\"--go1-typography-blockquote-f:Text(Font Family);--go1-typography-blockquote-c:#4e565f;--go1-typography-blockquote-h:1.2;--go1-typography-blockquote-s-pc:18px;--go1-typography-blockquote-w:400;--go1-typography-blockquote-Quote-c:#4e565f;\"",
         "style_json": "{\"font-family\":\"Text(Font Family)\",\"color\":\"#4e565f\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"18-px\"},\"font-weight\":\"400\"}",
         "doctype": "Typography Text"
-    },
-    {
+      },
+      {
         "name": "4ba834dd3b",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -364,8 +368,8 @@
         "css_design": "\"--go1-typography-pre-f:Text(Font Family);--go1-typography-pre-c:#4e565f;--go1-typography-pre-h:1.2;--go1-typography-pre-s-pc:18px;--go1-typography-pre-w:400;--go1-typography-pre-Formatted-c:#4e565f;\"",
         "style_json": "{\"font-family\":\"Text(Font Family)\",\"color\":\"#4e565f\",\"line-height\":\"1.2\",\"font-size\":{\"pc-font-size\":\"18-px\"},\"font-weight\":\"400\"}",
         "doctype": "Typography Text"
-    },
-    {
+      },
+      {
         "name": "50e5e5b121",
         "owner": "Administrator",
         "creation": "2022-09-20 20:52:24.411911",
@@ -381,7 +385,9 @@
         "css_design": "\"--go1-typography-li-f:Text(Font Family);--go1-typography-li-c:#4e565f;--go1-typography-li-s-pc:18px;--go1-typography-li-w:400;\"",
         "style_json": "{\"font-family\":\"Text(Font Family)\",\"color\":\"#4e565f\",\"font-size\":{\"pc-font-size\":\"18-px\"},\"font-weight\":\"400\"}",
         "doctype": "Typography Text"
-    }],
+      }
+    ],
     "social_links": [],
     "__last_sync_on": "2022-09-26T07:32:51.782Z"
-}]
+  }
+]

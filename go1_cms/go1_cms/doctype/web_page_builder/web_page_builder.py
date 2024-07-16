@@ -739,7 +739,7 @@ def get_section_columns(section, dt):
 
 
 @frappe.whitelist()
-def convert_template_to_section(template, business=None, section_name=None):
+def convert_template_to_section(template, business=None, section_name=None, is_template=1):
     doc = get_mapped_doc("Section Template", template, {
         "Section Template": {
             "doctype": "Page Section"
@@ -755,6 +755,7 @@ def convert_template_to_section(template, business=None, section_name=None):
     doc.section_name = section_name
     doc.custom_title = section_name
     doc.choose_from_template = 1
+    doc.is_template = is_template
     doc.section_template = template
     if business:
         doc.business = business
@@ -2225,6 +2226,7 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
         m_page_sec.parentfield = "mobile_section"
         m_page_sec.parenttype = "Web Page Builder"
         m_page_sec.section = doc.name
+        m_page_sec.is_template = 0
         mobile_secs.append(m_page_sec)
     for x in web_sections:
         target_doc = None
@@ -2264,6 +2266,7 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
         m_page_sec.parentfield = "web_section"
         m_page_sec.parenttype = "Web Page Builder"
         m_page_sec.section = doc.name
+        m_page_sec.is_template = 0
         web_secs.append(m_page_sec)
     return {"web_sections": web_secs, "mobile_sections": mobile_secs, "info": page_template}
 

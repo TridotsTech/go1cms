@@ -1,5 +1,5 @@
 [
-{
+  {
     "name": "Default Header",
     "owner": "Administrator",
     "creation": "2022-09-20 20:28:08.267410",
@@ -54,9 +54,9 @@
     "m_hover_color": "#222222",
     "page_type": "Responsive",
     "doctype": "Header Component",
-    "update_theme":0,
+    "update_theme": 0,
     "top_menus": [
-    {
+      {
         "name": "376a57c2ff",
         "owner": "Administrator",
         "creation": "2022-09-20 20:28:08.267410",
@@ -70,8 +70,8 @@
         "menu_label": "go1cms@gmail.com",
         "position": "Left",
         "doctype": "Menus Item"
-    },
-    {
+      },
+      {
         "name": "8ea20ae4e2",
         "owner": "Administrator",
         "creation": "2022-09-20 20:28:08.267410",
@@ -85,6 +85,8 @@
         "menu_label": "Blog",
         "position": "Right",
         "doctype": "Menus Item"
-    }],
+      }
+    ],
     "__last_sync_on": "2022-09-26T07:29:29.164Z"
-}]
+  }
+]

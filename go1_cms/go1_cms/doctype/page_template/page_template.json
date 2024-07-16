@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "field:page_title",
  "creation": "2022-08-09 12:49:01.439526",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -223,11 +223,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-18 16:58:52.541540",
+ "modified": "2024-07-12 11:06:19.976813",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Template",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -243,10 +243,8 @@
    "write": 1
   }
  ],
- "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "page_title",
  "track_changes": 1
 }

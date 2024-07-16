@@ -1,5 +1,5 @@
 [
-{
+  {
     "name": "Default Footer",
     "owner": "Administrator",
     "creation": "2022-09-21 11:36:42.518201",
@@ -46,6 +46,7 @@
     "page_type": "Responsive",
     "doctype": "Footer Component",
     "table_3": [],
-     "update_theme":0,
+    "update_theme": 0,
     "__last_sync_on": "2022-09-26T07:32:54.806Z"
-}]
+  }
+]

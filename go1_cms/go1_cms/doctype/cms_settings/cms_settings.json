@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "settings_section",
+  "is_updated",
   "enable_go1_builder",
   "generate_html",
   "styles_to_update",
@@ -106,12 +107,18 @@
    "fieldname": "sync_lead_data",
    "fieldtype": "Check",
    "label": "Synchronize lead data"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_updated",
+   "fieldtype": "Check",
+   "label": "Is Updated"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-25 09:10:32.261506",
+ "modified": "2024-07-16 10:11:30.661070",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",
