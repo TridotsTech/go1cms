@@ -134,7 +134,7 @@ def insert_section_groups():
     # file_name = "section_groups.json"
     # read_module_path(file_name)
 
-    file_name = "section_template_group"
+    file_name = "section_template_group.json"
     read_module_path_mbw(file_name)
 
 
