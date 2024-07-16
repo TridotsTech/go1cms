@@ -515,15 +515,16 @@ def read_module_path_mbw(file_name):
                     data_update = {}
                     for x, y in i.items():
                         if x not in ['name']:
-                            if type(y) not in [list] and frappe.get_meta(i.get('doctype')).has_field(x):
-                                data_update[x] = y
-                            else:
-                                # delete old data table
-                                for child in doc[x]:
-                                    frappe.delete_doc(
-                                        child.get('doctype'), child.get('name'))
-                                for child in y:
-                                    frappe.get_doc(child).insert()
+                            if frappe.get_meta(i.get('doctype')).has_field(x):
+                                if type(y) not in [list]:
+                                    data_update[x] = y
+                                else:
+                                    # delete old data table
+                                    for child in doc[x]:
+                                        frappe.delete_doc(
+                                            child.get('doctype'), child.get('name'))
+                                    for child in y:
+                                        frappe.get_doc(child).insert()
 
                     frappe.db.set_value(
                         i.get('doctype'), i.get('name'), data_update)
