@@ -192,8 +192,7 @@
   {
    "fieldname": "section_name",
    "fieldtype": "Data",
-   "label": "Section Name",
-   "read_only": 1
+   "label": "Section Name"
   },
   {
    "depends_on": "eval:doc.section_type == \"Lists\"",
@@ -610,7 +609,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-11 14:40:48.733060",
+ "modified": "2024-07-16 16:10:38.585663",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",
