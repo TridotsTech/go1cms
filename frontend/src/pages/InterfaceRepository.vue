@@ -54,9 +54,7 @@
               </span>
             </div>
             <div class="p-6 pt-4">
-              <h2 class="text-xl font-bold">
-                {{ temp.name }}
-              </h2>
+              <h2 class="text-xl font-bold">{{ temp.template_name }}</h2>
               <div class="mt-4 flex justify-end">
                 <Button
                   :variant="'outline'"
