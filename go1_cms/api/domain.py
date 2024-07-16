@@ -9,16 +9,9 @@ from go1_cms.api.common import (
 
 @frappe.whitelist()
 def get_setup():
-    # create_file_template()
-    # handle_write_file_multiple_doctype_template()
+    create_file_template()
+    handle_write_file_multiple_doctype_template()
 
-    # a = frappe.get_doc('My Demo').as_dict().get('r', 123)
-    # b = frappe.db.get_single_value("My Demo", "r")
-
-    # print(a, type(a))
-    # print(b, type(b))
-    # frappe.db.set_value('Demo', 'Demo', 'is_update', 1)
-    # frappe.db.commit()
     try:
         cms_settings = frappe.get_single('CMS Settings')
 

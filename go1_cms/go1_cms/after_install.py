@@ -515,7 +515,7 @@ def read_module_path_mbw(file_name):
                     data_update = {}
                     for x, y in i.items():
                         if x not in ['name']:
-                            if type(y) not in [list]:
+                            if type(y) not in [list] and frappe.get_meta(i.get('doctype')).has_field(x):
                                 data_update[x] = y
                             else:
                                 # delete old data table
