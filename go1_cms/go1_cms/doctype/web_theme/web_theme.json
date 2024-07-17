@@ -712,12 +712,13 @@
    "default": "1",
    "fieldname": "is_template",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Is Template"
   }
  ],
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-13 10:25:09.825505",
+ "modified": "2024-07-17 15:21:29.324697",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",
