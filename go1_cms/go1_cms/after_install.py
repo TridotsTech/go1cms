@@ -553,14 +553,16 @@ def unzip_section_images():
                 # skip hidden files
                 continue
             origin = get_files_path()
-            item_file_path = os.path.join(origin, file.filename.split("/")[1])
-            if not os.path.exists(item_file_path):
-                file_doc = frappe.new_doc("File")
-                file_doc.content = z.read(file.filename)
-                file_doc.file_name = filename
-                file_doc.folder = "Home"
-                file_doc.is_private = 0
-                file_doc.save()
+            arr_filename = file.filename.split("/")
+            if len(arr_filename) == 3:
+                item_file_path = os.path.join(origin, arr_filename[2])
+                if not os.path.exists(item_file_path):
+                    file_doc = frappe.new_doc("File")
+                    file_doc.content = z.read(file.filename)
+                    file_doc.file_name = filename
+                    file_doc.folder = "Home"
+                    file_doc.is_private = 0
+                    file_doc.save()
 
 
 @frappe.whitelist()
