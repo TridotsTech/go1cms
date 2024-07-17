@@ -70,10 +70,9 @@ email_css = ["/assets/go1_cms/email/email.css"]
 after_install = "go1_cms.go1_cms.after_install.after_install"
 
 # Uninstallation
-# ------------
-
 # before_uninstall = "go1_cms.uninstall.before_uninstall"
 # after_uninstall = "go1_cms.uninstall.after_uninstall"
+before_uninstall = "go1_cms.go1_cms.before_uninstall.before_uninstall"
 
 # Desk Notifications
 # ------------------
