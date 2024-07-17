@@ -807,7 +807,7 @@ def update_website_context(context):
                 footer_items.append(d)
         context.footer_items = footer_items
         get_device_type(context)
-        if context.header.template_header:
+        if context.header and context.header.template_header:
             context.template_header = f"/templates/header/{TEMPLATE_HEADER[context.header.template_header]}"
         else:
             context.template_header = "/templates/header/header.html"
