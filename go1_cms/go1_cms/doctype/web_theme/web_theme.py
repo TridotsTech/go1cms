@@ -8,6 +8,12 @@ from frappe.model.document import Document
 
 
 class WebTheme(Document):
+    def before_rename(self, old, new, merge=False):
+        path = get_files_path()
+        css_file_name = old.lower().replace(' ', '-')+".css"
+        if os.path.exists(os.path.join(path, (css_file_name))):
+            os.remove(os.path.join(path, (css_file_name)))
+
     def validate(self):
         try:
             if self.is_active == 1:
@@ -284,18 +290,21 @@ def generate_webtheme_css_file(path, sitename, self):
             webtheme_css += frappe.render_template(
                 doc_obj.page_css_jinja, {'doc': doc_obj})
 
-        if not frappe.db.exists('File', {"file_name": css_file_name, "attached_to_doctype": "Web Theme", "attached_to_name": self.name, }):
-            res = frappe.get_doc({
-                "doctype": "File",
-                "file_name": css_file_name,
-                "is_private": 0,
-                "attached_to_doctype": "Web Theme",
-                "attached_to_name": self.name,
-                "folder": "Home",
-                'content': webtheme_css
-            })
-            res.save()
-        elif webtheme_css:
+        # if not frappe.db.exists('File', {"file_name": css_file_name, "attached_to_doctype": "Web Theme", "attached_to_name": self.name, }):
+        #     res = frappe.get_doc({
+        #         "doctype": "File",
+        #         "file_name": css_file_name,
+        #         "is_private": 0,
+        #         "attached_to_doctype": "Web Theme",
+        #         "attached_to_name": self.name,
+        #         "folder": "Home",
+        #         'content': webtheme_css
+        #     })
+        #     res.save()
+        # elif webtheme_css:
+        #     with open(os.path.join(path, (css_file_name)), "w") as f:
+        #         f.write(minify_string(webtheme_css))
+        if webtheme_css:
             with open(os.path.join(path, (css_file_name)), "w") as f:
                 f.write(minify_string(webtheme_css))
 

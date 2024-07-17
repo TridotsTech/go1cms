@@ -423,24 +423,31 @@ def write_file_footer_component(name, version='footer_component_v1'):
 
 
 def create_file_template():
+    print('==========================create_file_template===========================')
+
     # header
     header_comps = frappe.db.get_all(
         'Header Component', {'is_template': 1}, pluck="name")
     for h in header_comps:
+        print('Header Component', h)
         write_file_header_component(h)
     # footer
     header_comps = frappe.db.get_all(
         'Footer Component', {'is_template': 1}, pluck="name")
     for f in header_comps:
+        print('Footer Component', f)
         write_file_footer_component(f)
 
     # page template
     page_temps = frappe.db.get_all('Page Template',  pluck="name")
     for p in page_temps:
+        print('Page Template', p)
         write_file_page_template(p)
+    print('=========================Done create_file_template============================')
 
 
 def handle_write_file_multiple_doctype_template():
+    print('=======================handle_write_file_multiple_doctype_template=======================')
     doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template',
                 'CMS Settings', 'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger']
     temps = []
@@ -463,6 +470,7 @@ def handle_write_file_multiple_doctype_template():
     for temp in temps:
         data = []
         for doc in temp.get('doc_names'):
+            print(temp.get('doctype'), doc)
             d_j = frappe.get_doc(temp.get('doctype'), doc).as_dict()
             # remove fields is None
             d_j = remove_nulls(d_j)
@@ -474,6 +482,7 @@ def handle_write_file_multiple_doctype_template():
         json_file_name = "{0}.json".format(folder_name)
         with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, default=v)
+    print('=======================DONE handle_write_file_multiple_doctype_template=======================')
 
 
 def get_all_folder_in_dir(version):

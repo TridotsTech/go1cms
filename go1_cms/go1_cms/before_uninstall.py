@@ -31,9 +31,6 @@ def delete_section_images():
                 # * delete file
                 filters = [
                     ['file_url', '=', item_file_path],
-                    ['attached_to_doctype', 'is', 'set'],
-                    ['attached_to_name', 'is', 'set'],
-                    ['attached_to_doctype', 'is', 'set']
                 ]
                 files = frappe.get_all('File', filters=filters, pluck="name")
                 for f in files:
