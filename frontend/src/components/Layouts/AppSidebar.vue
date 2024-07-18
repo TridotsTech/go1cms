@@ -297,19 +297,19 @@ const allViews = computed(() => {
     })
   }
 
-  if (views.data?.developer_mode == 1) {
-    _views.push({
-      name: 'Tạo tệp Json website mẫu',
-      opened: true,
-      views: [
-        {
-          label: 'Trình tạo',
-          icon: JsonIcon,
-          to: 'Setup File Template',
-        },
-      ],
-    })
-  }
+  // if (views.data?.developer_mode == 1) {
+  //   _views.push({
+  //     name: 'Tạo tệp Json website mẫu',
+  //     opened: true,
+  //     views: [
+  //       {
+  //         label: 'Trình tạo',
+  //         icon: JsonIcon,
+  //         to: 'Setup File Template',
+  //       },
+  //     ],
+  //   })
+  // }
 
   return _views
 })
