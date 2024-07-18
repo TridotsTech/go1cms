@@ -78,17 +78,17 @@
                             <div>
                                 {%if header.sticky_header %}
                                 {% if theme_settings.website_logo %}
-                                <a href="/"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
+                                <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                                 {%if header.is_transparent_header %}
                                 {%if theme_settings.secondary_logo %}
-                                <a href="/"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
+                                <a href="{{ route_web }}"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                                 {%if not header.sticky_header and not header.is_transparent_header%}
                                 {% if theme_settings.website_logo %}
-                                <a href="/"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
+                                <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                             </div>
@@ -267,17 +267,17 @@
                             <div>
                                 {%if header.sticky_header %}
                                 {% if theme_settings.website_logo %}
-                                <a href="/"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
+                                <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                                 {%if header.is_transparent_header %}
                                 {%if theme_settings.secondary_logo %}
-                                <a href="/"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
+                                <a href="{{ route_web }}"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                                 {%if not header.sticky_header and not header.is_transparent_header%}
                                 {% if theme_settings.website_logo %}
-                                <a href="/"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
+                                <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                                 {%endif%}
                             </div>
@@ -461,18 +461,18 @@
                         {%if sec_item.section_name == "Header Logo"%}
                             {%if header.sticky_header %}
                             {% if theme_settings.website_logo %}
-                                <a href="/"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
+                                <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
                             {%endif%}
                             {%endif%}
                             {%if header.is_transparent_header %}
                                 {%if theme_settings.secondary_logo %}
-                                    <a href="/"> <img class="logo transparent-logo"
+                                    <a href="{{ route_web }}"> <img class="logo transparent-logo"
                                             src="{{ theme_settings.secondary_logo }}" /></a>
                                 {%endif%}
                             {%endif%}
                             {%if not header.sticky_header and not header.is_transparent_header%}
                                 {% if theme_settings.website_logo %}
-                                    <a href="/"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
+                                    <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                             {%endif%}
                         {%endif%}

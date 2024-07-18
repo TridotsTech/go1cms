@@ -695,17 +695,17 @@ def key_func(k):
 def update_website_context(context):
     context.no_cache = 1
     try:
-        if frappe.local.session.data.csrf_token:
-            context.csrf_token = frappe.local.session.data.csrf_token
-        else:
-            context.csrf_token = ''
+        context.route_web = '#'        
+        context.csrf_token = frappe.local.session.data.csrf_token or ''
+
         # get theme
         if context.doc and context.doc.doctype == "Web Page Builder" and context.doc.web_client_id:
             cl_web = frappe.get_all(
-                "MBW Client Website", filters={"name": context.doc.web_client_id}, fields=['web_theme'])
+                "MBW Client Website", filters={"name": context.doc.web_client_id}, fields=['web_theme', 'route_web'])
             if cl_web:
                 theme_list = frappe.get_all(
                     "Web Theme", filters={"name": cl_web[0].web_theme}, fields=['*'])
+                context.route_web = cl_web[0].route_web
         else:
             theme_list = frappe.get_all(
                 "Web Theme", filters={"is_active": 1}, fields=['*'])

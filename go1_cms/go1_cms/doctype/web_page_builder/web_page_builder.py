@@ -1574,7 +1574,9 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
             data_source['data'] = get_all_restaurant_data(
                 data_source['data'], distance, check_nearby, latitude, longitude, sid=res.get('sid'), order_type=order_type)
             data_source['order_type'] = order_type
+
         if allow:
+            data_source['csrf_token'] = frappe.local.session.data.csrf_token or ''
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
             data_source['html_content'] = html_content or ''

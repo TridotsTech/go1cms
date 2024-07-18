@@ -318,6 +318,8 @@ import {
 import { createToast, errorMessage } from '@/utils'
 import { ref, watch } from 'vue'
 import { globalStore } from '@/stores/global'
+import { viewsStore } from '@/stores/views'
+const { views } = viewsStore()
 
 const { changeLoadingValue, changeNameWebsiteEdit } = globalStore()
 const props = defineProps({
@@ -558,8 +560,8 @@ async function deleteDoc(close) {
       })
       close()
       if (selectedItem.value.edit == 1) {
-        changeNameWebsiteEdit(null)
-        window.location.reload()
+        views.reload()
+        setTimeout(() => window.location.reload(), 200)
       } else {
         list.value.reload()
       }

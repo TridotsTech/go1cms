@@ -13,14 +13,14 @@ export const viewsStore = defineStore('cms-views', (doctype) => {
     cache: 'cms-views',
     initialData: [],
     auto: true,
-    transform(views) {
-      for (let view of views.views) {
+    transform(data) {
+      for (let view of data.views) {
         viewsByName[view.name] = view
         if (view.is_default && view.dt) {
           defaultView.value[view.dt + ' ' + view.type] = view
         }
       }
-      return views
+      return data
     },
   })
 

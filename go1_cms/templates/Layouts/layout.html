@@ -346,6 +346,9 @@
         if (arrCrPath[1].startsWith("/template_") && arrCrPath.length > 2) {
           idx = 2;
         }
+        if (idx == 2 && linkPath.split("/").length > 2) {
+          linkPath = "/" + linkPath.split("/")[2];
+        }
         if (arrCrPath.length && arrCrPath[idx].startsWith(linkPath)) {
           $(this).addClass("active");
         }

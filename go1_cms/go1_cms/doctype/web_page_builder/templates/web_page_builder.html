@@ -92,7 +92,6 @@ if custom_js %} {{ custom_js }} {% endif %}
       }
       allow_scroll = false;
       page = page + 1;
-      console.log("{{csrf_token}}");
       $.ajax({
         type: "POST",
         Accept: "application/json",
