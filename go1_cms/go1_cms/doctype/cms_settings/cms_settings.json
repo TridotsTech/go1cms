@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "settings_section",
+  "developer_mode",
   "is_updated",
   "enable_go1_builder",
   "generate_html",
@@ -113,12 +114,18 @@
    "fieldname": "is_updated",
    "fieldtype": "Check",
    "label": "Is Updated"
+  },
+  {
+   "default": "0",
+   "fieldname": "developer_mode",
+   "fieldtype": "Check",
+   "label": "Developer Mode"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-16 10:11:30.661070",
+ "modified": "2024-07-18 10:50:34.083636",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",

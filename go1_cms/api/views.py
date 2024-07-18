@@ -30,11 +30,15 @@ def get_views(doctype):
         query = query.where(View.dt == doctype)
     views = query.run(as_dict=True)
 
+    developer_mode = frappe.db.get_single_value(
+        'CMS Settings', 'developer_mode')
+
     result = {
         'website_primary': 1 if check_doc else 0,
         'type_category': type_category,
         'list_page': list_page,
         'name_web': name_web,
-        'views': views
+        'views': views,
+        'developer_mode': developer_mode
     }
     return result

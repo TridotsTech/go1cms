@@ -1,17 +1,12 @@
 import frappe
 from frappe import _
 from go1_cms.api.common import (
-    update_fields_page,
-    create_file_template,
-    handle_write_file_multiple_doctype_template,
+    update_fields_page
 )
 
 
 @frappe.whitelist()
 def get_setup():
-    # create_file_template()
-    # handle_write_file_multiple_doctype_template()
-
     try:
         cms_settings = frappe.get_single('CMS Settings')
 

@@ -121,6 +121,7 @@ import NewsIcon from '@/components/Icons/NewsIcon.vue'
 import TemplatePageIcon from '@/components/Icons/TemplatePageIcon.vue'
 import WebpageIcon from '@/components/Icons/WebpageIcon.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
+import JsonIcon from '@/components/Icons/JsonIcon.vue'
 import DomainIcon from '@/components/Icons/DomainIcon.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
 import HeaderIcon from '@/components/Icons/HeaderIcon.vue'
@@ -291,6 +292,20 @@ const allViews = computed(() => {
           label: 'Danh sách liên hệ',
           icon: ContactsIconV1,
           to: 'Contacts',
+        },
+      ],
+    })
+  }
+
+  if (views.data?.developer_mode == 1) {
+    _views.push({
+      name: 'Tạo tệp Json website mẫu',
+      opened: true,
+      views: [
+        {
+          label: 'Trình tạo',
+          icon: JsonIcon,
+          to: 'Setup File Template',
         },
       ],
     })
