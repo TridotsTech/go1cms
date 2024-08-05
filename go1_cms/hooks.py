@@ -153,9 +153,11 @@ doc_events = {
 # }
 
 scheduler_events = {
-    "hourly": [
-        "go1_cms.scheduled_tasks.delete_old_captcha"
-    ]
+    "cron": {
+        "*/10 * * * *": [
+            "go1_cms.scheduled_tasks.delete_old_captcha"
+        ]
+    }
 }
 
 # Testing
@@ -216,6 +218,6 @@ get_translated_dict = {
     ("doctype", "Global Defaults"): "frappe.geo.country_info.get_translated_dict"
 }
 
-fixtures = [
-    {"doctype": "Custom Field", "filters": [{"module": "Go1 CMS"}]},
-]
+# fixtures = [
+#     {"doctype": "Custom Field", "filters": [{"module": "Go1 CMS"}]},
+# ]

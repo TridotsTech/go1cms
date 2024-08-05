@@ -3,7 +3,7 @@ from frappe.utils import now, add_to_date
 
 
 def delete_old_captcha():
-    old_datetime = add_to_date(now(), minutes=-30)
+    old_datetime = add_to_date(now(), minutes=-10)
     old_tasks = frappe.get_all(
         'CMS Captcha', filters={'modified': ['<', old_datetime]}, fields=['name'])
 

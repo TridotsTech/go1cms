@@ -311,8 +311,11 @@ def upload_cv(name_job, **kwargs):
         current_user = frappe.session.user
         try:
             frappe.set_user('Administrator')
-            frappe.delete_doc('CMS Captcha', captcha_name)
+            if frappe.db.exists("CMS Captcha", captcha_name):
+                frappe.delete_doc("CMS Captcha", captcha_name)
             frappe.db.commit()
+        except:
+            pass
         finally:
             frappe.set_user(current_user)
 
