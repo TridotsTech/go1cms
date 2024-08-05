@@ -6,14 +6,21 @@
           {{ field.field_label }}
         </div>
         <div class="flex flex-col overflow-auto max-h-[500px]">
-          <table class="text-base">
-            <tr class="border">
-              <th class="border p-2 w-auto">STT</th>
-              <template v-for="f in field.fields_json">
-                <th class="border p-2 min-w-48">{{ f.field_label }}</th>
-              </template>
-              <th class="border p-2 min-w-32"></th>
-            </tr>
+          <table
+            class="table-section text-base border-spacing-0 border-collapse"
+          >
+            <thead>
+              <tr class="box-border border-b bg-gray-50 min-h-16">
+                <th class="p-2 w-auto sticky left-0 py-5">STT</th>
+                <template v-for="f in field.fields_json">
+                  <th class="p-2 min-w-48">
+                    {{ f.field_label }}
+                  </th>
+                </template>
+                <th class="p-2 min-w-32 sticky right-0 py-5"></th>
+              </tr>
+            </thead>
+
             <template v-if="field.content?.length">
               <Draggable
                 :list="field.content"
@@ -23,8 +30,8 @@
                 handle=".handle"
               >
                 <template #item="{ element, index }">
-                  <tr class="border">
-                    <td class="border p-2 text-center">
+                  <tr class="border-collapse hover:bg-gray-50 table-item">
+                    <td class="p-2 text-center sticky left-0 z-[1] bg-white">
                       <div class="flex items-center gap-2">
                         <DragVerticalIconV1
                           class="h-8 text-gray-700 cursor-move handle"
@@ -35,7 +42,7 @@
                     <template v-for="fj in field.fields_json">
                       <td
                         v-if="fj.field_type == 'Attach'"
-                        class="border p-2 text-center"
+                        class="shadow-inner p-2 text-center"
                       >
                         <img
                           :src="element[fj.field_key]"
@@ -46,7 +53,7 @@
                       <td
                         v-else
                         v-html="element[fj.field_key]"
-                        class="border p-2"
+                        class="p-2 shadow-inner"
                         :class="
                           ['Text Editor', 'Long Text'].includes(fj.field_type)
                             ? 'ck-content'
@@ -54,7 +61,7 @@
                         "
                       ></td>
                     </template>
-                    <td>
+                    <td class="sticky right-0 z-[1]">
                       <div class="p-2 flex gap-2">
                         <Button
                           variant="solid"
@@ -261,3 +268,15 @@ function applySort(field) {
   field['content'] = field.content.map((el, idx) => ({ ...el, idx: idx + 1 }))
 }
 </script>
+
+<style>
+.table-item:hover > td {
+  background-color: rgb(249 250 251);
+}
+.table-section td:first-child,
+.table-section td:last-child,
+.table-section th:first-child,
+.table-section th:last-child {
+  background-color: rgb(248 248 248);
+}
+</style>

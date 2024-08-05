@@ -9,7 +9,7 @@ import datetime
 import math
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(methods=['POST'], allow_guest=True)
 def upload_file():
     if frappe.session.user == "Guest":
         return

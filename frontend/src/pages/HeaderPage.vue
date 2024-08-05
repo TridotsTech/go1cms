@@ -4,6 +4,23 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
     <template #right-header>
+      <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+        <div>
+          <Button
+            variant="subtle"
+            theme="blue"
+            size="md"
+            label=""
+            icon="eye"
+            :link="
+              views.data?.config_domain?.use_other_domain
+                ? views.data?.config_domain?.domain + _header?.web_page?.route
+                : _header?.web_page?.route
+            "
+          >
+          </Button>
+        </div>
+      </Tooltip>
       <div
         class="gap-2 justify-end"
         :class="alreadyActions ? 'flex' : 'hidden'"
@@ -14,7 +31,7 @@
           size="md"
           label="Hủy"
           :disabled="!dirty"
-          @click="cacelSaveDoc"
+          @click="cancelSaveDoc"
         ></Button>
         <Button
           :variant="'solid'"
@@ -56,6 +73,8 @@ import { ref, computed, watch } from 'vue'
 import { createToast, errorMessage, handleUploadFieldImage } from '@/utils'
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
+import { viewsStore } from '@/stores/views'
+const { views } = viewsStore()
 
 const breadcrumbs = [{ label: 'Đầu trang', route: { name: 'Header Page' } }]
 const _header = ref({})
@@ -120,7 +139,7 @@ async function callUpdateDoc() {
   changeLoadingValue(false)
 }
 
-async function cacelSaveDoc() {
+async function cancelSaveDoc() {
   await header.reload()
 }
 </script>

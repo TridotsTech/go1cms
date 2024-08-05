@@ -157,6 +157,16 @@ class WebPageBuilder(WebsiteGenerator):
     def get_context(self, context):
         doc = None
         add_info = {}
+        if not context.metatags:
+            context.title = self.meta_title
+            context.metatags = {
+                "description": self.meta_description or '',
+                "keywords": self.meta_keywords or '',
+                "og:title": self.meta_title or '',
+                "og:description": self.meta_description or '',
+                "og:image": '',
+            }
+
         if frappe.form_dict:
             add_info = frappe.form_dict
         if check_domain('saas') and context.get('web_domain'):
@@ -220,7 +230,7 @@ class WebPageBuilder(WebsiteGenerator):
                 "order_time", urllib.parse.unquote(preferred_time))
         if source_doc:
             html_list, js_list = get_page_html(
-                doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=context.device_type, blog_name=context.blog_name, add_info=add_info)
+                doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=context.device_type, doc_name=context.doc_name, add_info=add_info)
         context.html_list = html_list
         context.js_list = js_list
 
@@ -262,12 +272,12 @@ class WebPageBuilder(WebsiteGenerator):
         # frappe.log_error(doc,"doc111")
         context.doc = doc
         # frappe.log_error(context.doc.name,"context.doc")
-        if doc.meta_title:
-            context.meta_title = doc.meta_title
-        if doc.meta_description:
-            context.meta_description = doc.meta_description
-        if doc.meta_keywords:
-            context.meta_keywords = doc.meta_keywords
+        # if doc.meta_title:
+        #     context.meta_title = doc.meta_title
+        # if doc.meta_description:
+        #     context.meta_description = doc.meta_description
+        # if doc.meta_keywords:
+        #     context.meta_keywords = doc.meta_keywords
         enable_generate_html = frappe.db.get_single_value(
             "CMS Settings", "generate_html")
         if enable_generate_html:
@@ -1538,7 +1548,7 @@ def get_source_doc(doc, device_type):
     return source_doc, sections, html
 
 
-def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, add_info=None, page_no=0, page_len=3):
+def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, add_info=None, page_no=0, page_len=3):
     section_list = sections[int(page_no):int(page_len)]
     data = get_page_section(source_doc)
     html_list = []
@@ -1589,9 +1599,9 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                             field.field_options).split('\n')
                 data_source['form_data'] = form_data
 
-            if blog_name and frappe.db.exists("Mbw Blog Post", blog_name):
+            if doc_name and frappe.db.exists("Mbw Blog Post", doc_name):
                 blog_detail = frappe.get_doc(
-                    'Mbw Blog Post', blog_name)
+                    'Mbw Blog Post', doc_name)
                 blog_detail.published_on = blog_detail.published_on.strftime(
                     "%d-%m-%Y")
                 data_source['blog_detail'] = blog_detail
@@ -1604,6 +1614,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                         'route': "#"
                     })
                     data_source['breadcrumb'] = breadcrumb
+            elif doc_name and frappe.db.exists("Job Opening", doc_name):
+                job_open = frappe.get_doc('Job Opening', doc_name)
+                data_source['name'] = job_open.job_title
+                data_source['job_opening'] = doc_name
             # customer_data = bind_customer_cart()
             # data_source["cart"] = customer_data.get("cart_items")
             # data_source["my_boxes"] = customer_data.get("my_boxes")
@@ -1675,110 +1689,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, blog_name=None, 
                 frappe.log_error(frappe.get_traceback(
                 ), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html")
     return html_list, js_list
-
-
-@frappe.whitelist(allow_guest=True)
-def get_blog_list(name_section, **kwargs):
-    try:
-        page_no = int(kwargs.get('page_no', 1)) - 1
-    except:
-        page_no = 1
-
-    page_len = 9
-    text_search = kwargs.get('text_search', '')
-
-    doc_section = frappe.get_doc('Page Section', name_section)
-    sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
-    limit = doc_section.no_of_records if doc_section.no_of_records else page_len
-    recent_limit = 4
-    offset = page_no*limit
-    condition = doc_section.condition
-    if condition:
-        condition += f""" AND doc.title LIKE '%{text_search}%'"""
-
-    query = '''SELECT * FROM `tab{doctype}` doc WHERE {condition} order by {sort_field} {sort_by} LIMIT {limit} OFFSET {offset}'''.format(
-        doctype=doc_section.reference_document, condition=condition, sort_field=doc_section.sort_field, sort_by=doc_section.sort_by, limit=limit, offset=offset)
-    query_count = '''SELECT COUNT(*) as total_page FROM `tab{doctype}` doc WHERE {condition}'''.format(
-        doctype=doc_section.reference_document, condition=condition)
-    query_recent_blog = '''SELECT * FROM `tab{doctype}` doc WHERE {condition} order by {sort_field} {sort_by} LIMIT {limit} OFFSET 0'''.format(
-        doctype=doc_section.reference_document, condition=doc_section.condition, sort_field=doc_section.sort_field, sort_by=doc_section.sort_by, limit=recent_limit)
-
-    blogs = frappe.db.sql(query, as_dict=1)
-    recent_blogs = frappe.db.sql(query_recent_blog, as_dict=1)
-    total_page = frappe.db.sql(query_count, as_dict=1)
-    page_no += 1
-
-    if total_page and limit > 0:
-        total_page = math.ceil(total_page[0].total_page/limit)
-    else:
-        total_page = 0
-    for item in blogs:
-        published_on = item.get('published_on')
-        item['published_on'] = published_on.strftime(
-            "%d-%m-%Y")
-    for item in recent_blogs:
-        published_on = item.get('published_on')
-        item['published_on'] = published_on.strftime(
-            "%d-%m-%Y")
-    return {'blogs': blogs, 'page': page_no, 'total_page': total_page, 'recent_blogs': recent_blogs}
-
-
-@frappe.whitelist(allow_guest=True)
-def get_related_blogs(id_blog):
-    if frappe.db.exists("Mbw Blog Post", id_blog):
-        doc = frappe.get_doc('Mbw Blog Post', id_blog)
-        tags = frappe.db.get_all("MBW Blog Tag Item", filters={
-                                 "parent": id_blog, "parentfield": "tags"}, pluck="tag")
-        name_blogs = [n for n in frappe.db.get_all("MBW Blog Tag Item", filters={
-            "tag": ['in', tags], "parentfield": "tags"}, pluck="parent") or [] if n != id_blog]
-
-        page_length = 4
-        order_by = 'published_on desc'
-        fields = ['published_on', 'name', 'title',
-                  'route', 'blog_intro', 'meta_image']
-        # related blogs
-        related_filters = [['name', 'in', name_blogs], ['published', '=', 1]]
-        related_blogs = frappe.get_all(
-            "Mbw Blog Post",
-            fields=fields,
-            filters=related_filters,
-            order_by=order_by,
-            page_length=page_length,
-        ) or []
-        # recent blogs
-        recent_filters = [['published', '=', 1]]
-        recent_blogs = frappe.get_all(
-            "Mbw Blog Post",
-            fields=fields,
-            filters=recent_filters,
-            order_by=order_by,
-            page_length=page_length,
-        ) or []
-
-        for item in related_blogs:
-            published_on = item.get('published_on')
-            item['published_on'] = published_on.strftime(
-                "%d-%m-%Y")
-        for item in recent_blogs:
-            published_on = item.get('published_on')
-            item['published_on'] = published_on.strftime(
-                "%d-%m-%Y")
-        return {'related_blogs': related_blogs, 'recent_blogs': recent_blogs}
-    else:
-        return {}
-
-
-@frappe.whitelist(allow_guest=True)
-def get_detail_post(name_section, name):
-    try:
-        doc_section = frappe.get_doc('Page Section', name_section)
-        data = frappe.get_doc(doc_section.reference_document, name).as_dict()
-        published_on = data.get('published_on')
-        data['published_on'] = published_on.strftime(
-            "%d-%m-%Y")
-        return {'status': 200, 'data': data}
-    except:
-        return {'status': 0}
 
 
 @frappe.whitelist(allow_guest=True)

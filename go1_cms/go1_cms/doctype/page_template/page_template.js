@@ -1926,7 +1926,8 @@ var modify_section_data = Class.extend({
         field.fieldname = v.name;
         field.fieldtype = v.field_type;
         if (v.field_type == "Attach") {
-          field.fieldtype = "Attach Image";
+          // field.fieldtype = "Attach Image";
+          field.fieldtype = "Data";
         } else if (v.field_type == "Text") {
           field.fieldtype = "Data";
         } else if (v.fieldtype == "Small Text") {
@@ -2937,7 +2938,8 @@ var modify_section_data = Class.extend({
       let obj = {};
       obj.fieldname = v.field_key;
       obj.label = v.field_label;
-      if (v.field_type == "Attach") obj.fieldtype = "Attach";
+      // if (v.field_type == "Attach") obj.fieldtype = "Attach";
+      if (v.field_type == "Attach") obj.fieldtype = "Data";
       else if (v.field_type == "Text") obj.fieldtype = "Data";
       else if (v.field_type == "Small Text") obj.fieldtype = "Text";
       else if (v.field_type == "Attach Video") obj.fieldtype = "Attach";

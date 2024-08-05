@@ -37,6 +37,11 @@ update_website_context = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+
+# doctype_js = {
+#     "Job Opening": "templates/controllers/js/job_opening.js"
+# }
+
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -100,6 +105,10 @@ before_uninstall = "go1_cms.go1_cms.before_uninstall.before_uninstall"
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
+override_doctype_class = {
+    "Job Opening": "go1_cms.overrides.job_opening.CustomJobOpening"
+}
+
 # Document Events
 # ---------------
 # Hook on document methods and events
@@ -116,8 +125,10 @@ doc_events = {
     },
     "Color Palette": {
         "on_update": "go1_cms.go1_cms.api.update_web_themes",
-    }
-
+    },
+    # "Job Opening": {
+    #     "validate": "go1_cms.go1_cms.api.insert_job_opening_website"
+    # }
 }
 
 # Scheduled Tasks
@@ -140,6 +151,12 @@ doc_events = {
 # 		"go1_cms.tasks.monthly"
 # 	]
 # }
+
+scheduler_events = {
+    "hourly": [
+        "go1_cms.scheduled_tasks.delete_old_captcha"
+    ]
+}
 
 # Testing
 # -------
@@ -200,29 +217,5 @@ get_translated_dict = {
 }
 
 fixtures = [
-    # "Header Layout",
-    # "Footer Layout",
-    # "Section Template Group",
-    # * "Custom Query",
-    # "Section Template",
-    # * "Color Palette",
-    # * "Section Component Group",
-    # * "Section Component",
-    # "CMS Settings",
-    # * "Background Mask",
-    # * "Background Gradient",
-    # * "CSS Font",
-    # "Menu",
-    # "Header Component",
-    # "Footer Component",
-    # "Web Theme",
-    # * "FAQ",
-    # * "Testimonial",
-    # {
-    #     "doctype": "Page Section",
-    #     "filters": [["is_template", "=", 1]]
-    # },
-    # "Page Template",
-    # "MBW Website Template",
-    # "Blogger",
+    {"doctype": "Custom Field", "filters": [{"module": "Go1 CMS"}]},
 ]

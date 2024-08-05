@@ -2564,10 +2564,9 @@ var modify_section_data = Class.extend({
       },
       async: false,
       callback: function (r) {
-        // console.log("----------sec--------")
+        // console.log("----------sec--------");
         // console.log(r.message);
         if (r.message) {
-          let value;
           if (r.message.section_name) title = r.message.section_name;
           else if (r.message.section_title) title = r.message.section_title;
         }
@@ -2577,6 +2576,7 @@ var modify_section_data = Class.extend({
     // console.log(this.content_type)
     if (this.content_type == "Data") fields = this.get_fields_list();
     else fields = [{ fieldname: "pattern_html", fieldtype: "HTML" }];
+    console.log(fields);
     if (this.content_type == "Data" && fields.length == 0)
       frappe.throw("There is no editable part available for this section.");
     this.dialog = new frappe.ui.Dialog({
@@ -3445,7 +3445,8 @@ var modify_section_data = Class.extend({
         field.fieldname = v.name;
         field.fieldtype = v.field_type;
         if (v.field_type == "Attach") {
-          field.fieldtype = "Attach Image";
+          // field.fieldtype = "Attach Image";
+          field.fieldtype = "Data";
         } else if (v.field_type == "Text") {
           field.fieldtype = "Data";
         } else if (v.fieldtype == "Small Text") {
@@ -3483,10 +3484,10 @@ var modify_section_data = Class.extend({
         if (distinct_groups.length == 1) {
           if (me.fields.content.length > 5) {
             if ((k + 1) % 3 != 0) {
-              field_list.push({
-                fieldtype: "Column Break",
-                fieldname: "cb" + k,
-              });
+              // field_list.push({
+              //   fieldtype: "Column Break",
+              //   fieldname: "cb" + k,
+              // });
             } else {
               field_list.push({
                 fieldtype: "Section Break",
@@ -4456,7 +4457,8 @@ var modify_section_data = Class.extend({
       let obj = {};
       obj.fieldname = v.field_key;
       obj.label = v.field_label;
-      if (v.field_type == "Attach") obj.fieldtype = "Attach";
+      // if (v.field_type == "Attach") obj.fieldtype = "Attach";
+      if (v.field_type == "Attach") obj.fieldtype = "Data";
       else if (v.field_type == "Text") obj.fieldtype = "Data";
       else if (v.field_type == "Small Text") obj.fieldtype = "Text";
       else if (v.field_type == "Attach Video") obj.fieldtype = "Attach";

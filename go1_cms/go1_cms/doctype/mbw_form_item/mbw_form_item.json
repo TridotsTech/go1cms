@@ -29,7 +29,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Lo\u1ea1i tr\u01b0\u1eddng",
-   "options": "checkbox\nemail\ntext\nfile\nselect\ntextarea\nradio"
+   "options": "checkbox\nemail\ntext\nfile\nselect\ntextarea\nradio\nrange"
   },
   {
    "fieldname": "column_break_iqxr",
@@ -74,7 +74,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-15 08:18:03.817467",
+ "modified": "2024-07-23 11:01:19.842568",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Form Item",

@@ -644,7 +644,7 @@ function add_new_list_item(wrapper, doc) {
   var fieldslist = JSON.parse(doc.fields_json);
   var fields = [];
   for (var i = 0; i < fieldslist.length; i++) {
-    if (fieldslist[i].field_type == "Text") {
+    if (["Text", "Attach"].includes(fieldslist[i].field_type)) {
       fields.push({
         fieldname: fieldslist[i].field_key,
         fieldtype: "Data",

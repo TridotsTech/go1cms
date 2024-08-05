@@ -15,7 +15,7 @@
           size="md"
           label="Hủy"
           :disabled="!dirty"
-          @click="cacelSaveDoc"
+          @click="cancelSaveDoc"
         ></Button>
         <Button
           :variant="'solid'"
@@ -203,7 +203,7 @@ async function callUpdateDoc() {
   changeLoadingValue(false)
 }
 
-async function cacelSaveDoc() {
+async function cancelSaveDoc() {
   await page.reload()
 }
 

@@ -11,7 +11,7 @@ from go1_cms.api.common import (
 @frappe.whitelist()
 def get_info_header_component():
     web_edit = frappe.db.get_value(
-        'MBW Client Website', {"edit": 1}, ['name', 'header_component'], as_dict=1)
+        'MBW Client Website', {"edit": 1}, ['name', 'header_component', 'route_web'], as_dict=1)
     if not web_edit or not web_edit.header_component:
         frappe.throw(_("Header not found"), frappe.DoesNotExistError)
     if not frappe.db.exists("Header Component", web_edit.header_component):
@@ -210,8 +210,11 @@ def get_info_header_component():
         'name': 'header-1'
     }
     fields_cp.append(fields_btn)
+    web_page = {
+        'route': web_edit.route_web
+    }
 
-    return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'docname': header_component.name}
+    return {'fields_cp': fields_cp, 'fields_st_cp': fields_st_cp, 'docname': header_component.name, 'web_page': web_page}
 
 
 @frappe.whitelist()

@@ -8,13 +8,30 @@
         class="gap-2 justify-end"
         :class="alreadyActions ? 'flex' : 'hidden'"
       >
+        <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+          <div>
+            <Button
+              variant="subtle"
+              theme="blue"
+              size="md"
+              label=""
+              icon="eye"
+              :link="
+                views.data?.config_domain?.use_other_domain
+                  ? views.data?.config_domain?.domain + _footer?.web_page?.route
+                  : _footer?.web_page?.route
+              "
+            >
+            </Button>
+          </div>
+        </Tooltip>
         <Button
           variant="subtle"
           theme="gray"
           size="md"
           label="Hủy"
           :disabled="!dirty"
-          @click="cacelSaveDoc"
+          @click="cancelSaveDoc"
         ></Button>
         <Button
           :variant="'solid'"
@@ -56,6 +73,8 @@ import { ref, computed, watch } from 'vue'
 import { createToast, errorMessage, handleUploadFieldImage } from '@/utils'
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
+import { viewsStore } from '@/stores/views'
+const { views } = viewsStore()
 
 const breadcrumbs = [{ label: 'Chân trang', route: { name: 'Footer Page' } }]
 const _footer = ref({})
@@ -120,7 +139,7 @@ async function callUpdateDoc() {
   changeLoadingValue(false)
 }
 
-async function cacelSaveDoc() {
+async function cancelSaveDoc() {
   await footer.reload()
 }
 </script>

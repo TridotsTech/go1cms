@@ -5,6 +5,8 @@ from frappe import _
 from frappe.model.mapper import get_mapped_doc
 import json
 import time
+import datetime
+from frappe.utils import DATETIME_FORMAT, now, cint
 
 FIELD_TYPE_JSON = ["List", 'Button']
 
@@ -318,7 +320,6 @@ def update_fields_page(data):
 
 
 def v(i):
-    import datetime
     if isinstance(i, (datetime.datetime, datetime.date, datetime.time)):
         return str(i)
     return i
@@ -489,3 +490,57 @@ def get_all_folder_in_dir(version):
     path = os.path.join(frappe.get_module_path("go1_cms"),
                         'mbw_json_data', version)
     return os.listdir(path)
+
+
+def pretty_date(iso_datetime: datetime.datetime | str) -> str:
+    """
+    Takes an ISO time and returns a string representing how
+    long ago the date represents.
+    Ported from PrettyDate by John Resig
+    """
+    from frappe import _
+
+    if not iso_datetime:
+        return ""
+    import math
+
+    if isinstance(iso_datetime, str):
+        iso_datetime = datetime.datetime.strptime(
+            iso_datetime, DATETIME_FORMAT)
+    now_dt = datetime.datetime.strptime(now(), DATETIME_FORMAT)
+    dt_diff = now_dt - iso_datetime
+
+    # available only in python 2.7+
+    # dt_diff_seconds = dt_diff.total_seconds()
+
+    dt_diff_seconds = dt_diff.days * 86400.0 + dt_diff.seconds
+
+    dt_diff_days = math.floor(dt_diff_seconds / 86400.0)
+
+    # differnt cases
+    if dt_diff_seconds < 60.0:
+        return _("just now")
+    elif dt_diff_seconds < 120.0:
+        return _("1m ago")
+    elif dt_diff_seconds < 3600.0:
+        return _("{0}m ago").format(cint(math.floor(dt_diff_seconds / 60.0)))
+    elif dt_diff_seconds < 7200.0:
+        return _("1h ago")
+    elif dt_diff_seconds < 86400.0:
+        return _("{0}h ago").format(cint(math.floor(dt_diff_seconds / 3600.0)))
+    elif dt_diff_days == 1.0:
+        return _("Yesterday")
+    elif dt_diff_days < 7.0:
+        return _("{0}d ago").format(cint(dt_diff_days))
+    elif dt_diff_days < 14:
+        return _("1w ago")
+    elif dt_diff_days < 31.0:
+        return _("{0}w ago").format(dt_diff_days // 7)
+    elif dt_diff_days < 61.0:
+        return _("1mo ago")
+    elif dt_diff_days < 365.0:
+        return _("{0}mo ago").format(dt_diff_days // 30)
+    elif dt_diff_days < 730.0:
+        return _("1y ago")
+    else:
+        return f"{cint(math.floor(dt_diff_days / 365.0))}y ago"

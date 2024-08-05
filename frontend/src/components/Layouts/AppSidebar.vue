@@ -108,20 +108,17 @@
         </template>
       </SidebarLink>
     </div>
-    <Notifications />
+    <!-- <Notifications /> -->
   </div>
 </template>
 
 <script setup>
 import Section from '@/components/Section.vue'
-import DashboardIcon from '@/components/Icons/DashboardIcon.vue'
-import InboxIcon from '@/components/Icons/InboxIcon.vue'
 import FormSetupIcon from '@/components/Icons/FormSetupIcon.vue'
 import NewsIcon from '@/components/Icons/NewsIcon.vue'
 import TemplatePageIcon from '@/components/Icons/TemplatePageIcon.vue'
 import WebpageIcon from '@/components/Icons/WebpageIcon.vue'
 import MyWebsiteIcon from '@/components/Icons/MyWebsiteIcon.vue'
-import JsonIcon from '@/components/Icons/JsonIcon.vue'
 import DomainIcon from '@/components/Icons/DomainIcon.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
 import HeaderIcon from '@/components/Icons/HeaderIcon.vue'
@@ -132,22 +129,14 @@ import NewPageIcon from '@/components/Icons/NewPageIcon.vue'
 import PostIcon from '@/components/Icons/PostIcon.vue'
 import FormIcon from '@/components/Icons/FormIcon.vue'
 import DescriptionIcon from '@/components/Icons/DescriptionIcon.vue'
-import Favicon from '@/components/Icons/Favicon.vue'
-import IntegrationIcon from '@/components/Icons/IntegrationIcon.vue'
-import StatusWebsiteIcon from '@/components/Icons/StatusWebsiteIcon.vue'
-import AccountIcon from '@/components/Icons/AccountIcon.vue'
-import ArrowUpRightIcon from '@/components/Icons/ArrowUpRightIcon.vue'
 import PinIcon from '@/components/Icons/PinIcon.vue'
 import ChartIcon from '@/components/Icons/ChartIcon.vue'
 import UserDropdown from '@/components/UserDropdown.vue'
 import PolicyIconV1 from '@/components/Icons/PolicyIconV1.vue'
-import DealsIcon from '@/components/Icons/DealsIcon.vue'
 import ContactsIcon from '@/components/Icons/ContactsIcon.vue'
 import ContactsIconV1 from '@/components/Icons/ContactsIconV1.vue'
 import OrganizationsIcon from '@/components/Icons/OrganizationsIcon.vue'
-import NoteIcon from '@/components/Icons/NoteIcon.vue'
 import SettingsIcon from '@/components/Icons/SettingsIcon.vue'
-import PhoneIcon from '@/components/Icons/PhoneIcon.vue'
 import MenuIcon from '@/components/Icons/MenuIcon.vue'
 import CollapseSidebar from '@/components/Icons/CollapseSidebar.vue'
 import NotificationsIcon from '@/components/Icons/NotificationsIcon.vue'

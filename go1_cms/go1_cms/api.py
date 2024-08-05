@@ -2,6 +2,7 @@
 # Copyright (c) 2019, Tridots and contributors
 # For license information, please see license.txt
 from __future__ import unicode_literals
+from slugify import slugify
 import frappe
 import os
 import re
@@ -695,7 +696,7 @@ def key_func(k):
 def update_website_context(context):
     context.no_cache = 1
     try:
-        context.route_web = '#'        
+        context.route_web = '#'
         context.csrf_token = frappe.local.session.data.csrf_token or ''
 
         # get theme
@@ -730,6 +731,13 @@ def update_website_context(context):
             theme_list[0].css_list = frappe.db.get_all(
                 "Css List", filters={"parent": theme_list[0].name}, fields=['css_file'])
             context.theme_settings = theme_list[0]
+
+        if context.theme_settings and context.metatags:
+            context.metatags['og:image'] = context.metatags.get(
+                'og:image', '') or context.theme_settings.website_logo
+            context.metatags['theme-color'] = context.metatags.get(
+                'theme-color', '') or context.theme_settings.body_theme_color or ''
+
         if default_header:
             if default_header.layout_json:
                 default_header.layout_json = json.loads(
@@ -741,7 +749,12 @@ def update_website_context(context):
         context.header = default_header
         context.footer = default_footer
         context.layout_template = "/templates/Layouts/layout.html"
-        context.page_url = get_url()
+        path1 = frappe.local.request.path
+        if context.metatags:
+            context.metatags["og:url"] = get_url() + path1
+            context.metatags["og:type"] = "website"
+            context.metatags["viewport"] = "width=device-width, initial-scale=1"
+
         if context.doc:
             if context.doc.doctype == "Web Page Builder":
                 if context.doc.enable_sub_header:

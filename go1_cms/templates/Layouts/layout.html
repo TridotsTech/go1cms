@@ -2,22 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <title>{{ title }}</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <meta name="description" content="{{_(meta_description)}}" />
-    <meta name="keywords" content="{{_(meta_keywords)}}" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="theme-color"
-      content="{% if theme_settings %}{{theme_settings.body_theme_color}}{% endif %}"
-    />
-    <meta property="og:url" content="{{page_url}}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="{{_(meta_title)}}" />
-    <meta property="og:description" content="{{_(meta_description)}}" />
-    <meta
-      property="og:image"
-      content="{% if theme_settings %}{{theme_settings.website_logo}}{% endif %}"
-    />
+    {% block meta_block %} {% include "templates/Layouts/meta_block.html" %} {%
+    endblock %}
     <!-- favicon -->
     <link
       rel="apple-touch-icon-precomposed"

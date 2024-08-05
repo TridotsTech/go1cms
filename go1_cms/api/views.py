@@ -32,6 +32,12 @@ def get_views(doctype):
 
     developer_mode = frappe.db.get_single_value(
         'CMS Settings', 'developer_mode')
+    config_domain = {
+        'use_other_domain': frappe.db.get_single_value(
+            'CMS Settings', 'use_other_domain'),
+        'domain': frappe.db.get_single_value(
+            'CMS Settings', 'domain')
+    }
 
     result = {
         'website_primary': 1 if check_doc else 0,
@@ -39,6 +45,7 @@ def get_views(doctype):
         'list_page': list_page,
         'name_web': name_web,
         'views': views,
-        'developer_mode': developer_mode
+        'developer_mode': developer_mode,
+        'config_domain': config_domain
     }
     return result

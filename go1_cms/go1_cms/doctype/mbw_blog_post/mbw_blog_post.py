@@ -123,15 +123,22 @@ class MbwBlogPost(WebsiteGenerator):
         self.read_time = ceil(total_words / 250)
 
     def get_context(self, context):
-        context.blog_name = self.name
+        context.doc_name = self.name
+        context.title = self.title
+        context.metatags = {
+            "description": self.blog_intro or '',
+            "keywords": self.meta_keywords or '',
+            "og:title": self.meta_title or '',
+            "og:description": self.meta_description or '',
+            "og:image": self.meta_image or '',
+        }
 
         web_client = frappe.db.get_value(
             'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
         if web_client:
             page_blog = frappe.db.get_value('MBW Client Website Item', {
                                             'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'News detail page'}, ['page_id'], as_dict=1)
-            if page_blog:
-                if frappe.db.exists('Web Page Builder', page_blog.page_id, cache=True):
-                    doc_wpb = frappe.get_doc(
-                        'Web Page Builder', page_blog.page_id)
-                    doc_wpb.get_context(context)
+            if page_blog and frappe.db.exists('Web Page Builder', page_blog.page_id, cache=True):
+                doc_wpb = frappe.get_doc(
+                    'Web Page Builder', page_blog.page_id)
+                doc_wpb.get_context(context)
