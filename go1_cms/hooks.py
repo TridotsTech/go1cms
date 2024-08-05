@@ -153,11 +153,9 @@ doc_events = {
 # }
 
 scheduler_events = {
-    "cron": {
-        "*/10 * * * *": [
-            "go1_cms.scheduled_tasks.delete_old_captcha"
-        ]
-    }
+    "daily": [
+        "go1_cms.scheduled_tasks.delete_old_captcha"
+    ],
 }
 
 # Testing

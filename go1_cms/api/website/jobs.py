@@ -1,6 +1,6 @@
 from mimetypes import guess_type
 import frappe
-from frappe import _
+from frappe import _, local
 from pypika import Interval, functions as fn
 from frappe.utils import pretty_date
 from go1_cms.api.common import (
@@ -192,7 +192,7 @@ def get_job_related(name):
 
 
 @frappe.whitelist(methods=['GET'], allow_guest=True)
-def get_captcha(captcha_name=None):
+def get_captcha():
     captcha = ImageCaptcha()
     captcha_text = ''.join(random.choices(
         string.ascii_uppercase + string.digits, k=6))
@@ -202,14 +202,17 @@ def get_captcha(captcha_name=None):
 
     # Chuyển đổi dữ liệu hình ảnh sang Base64
     image_base64 = base64.b64encode(data.getvalue()).decode('utf-8')
-    check_doc = frappe.db.exists("CMS Captcha", captcha_name)
+
+    ip = local.request.remote_addr
+    check_doc = frappe.db.exists("CMS Captcha", ip)
     if check_doc:
-        doc = frappe.get_doc('CMS Captcha', captcha_name)
+        doc = frappe.get_doc('CMS Captcha', ip)
         doc.captcha_text = captcha_text
         doc.captcha_image = image_base64
         doc.save(ignore_permissions=True)
     else:
         new_doc = frappe.new_doc('CMS Captcha')
+        new_doc.ip = ip
         new_doc.captcha_text = captcha_text
         new_doc.captcha_image = image_base64
         new_doc.insert(ignore_permissions=True)
@@ -217,7 +220,6 @@ def get_captcha(captcha_name=None):
 
     return {
         'captcha_image': "data:image/png;base64," + image_base64,
-        'captcha_name': captcha_name if check_doc else new_doc.name
     }
 
 
@@ -228,20 +230,20 @@ def upload_cv(name_job, **kwargs):
     phone_number = kwargs.get('phone_number', None)
     message = kwargs.get('message', None)
     files = frappe.request.files
-    captcha_name = kwargs.get('captcha_name', None)
     captcha_text = kwargs.get('captcha_text', None)
     form_name = kwargs.get('form_name', None)
     job_opening = kwargs.get('job_opening', None)
+    ip = local.request.remote_addr
 
     if not form_name or not frappe.db.exists("MBW Form", form_name):
         frappe.throw('Mã biểu mẫu không đúng')
 
-    if not captcha_text or not captcha_name or not frappe.db.exists("CMS Captcha", captcha_name):
+    if not frappe.db.exists("CMS Captcha", ip):
         return {
             'status': '0',
             'msg': 'Mã captcha đã hết hạn'
         }
-    if frappe.db.get_value('CMS Captcha', captcha_name, 'captcha_text') != captcha_text:
+    if not captcha_text or frappe.db.get_value('CMS Captcha', ip, 'captcha_text') != captcha_text:
         return {
             'status': '1',
             'msg': 'Mã captcha không đúng'
@@ -311,8 +313,8 @@ def upload_cv(name_job, **kwargs):
         current_user = frappe.session.user
         try:
             frappe.set_user('Administrator')
-            if frappe.db.exists("CMS Captcha", captcha_name):
-                frappe.delete_doc("CMS Captcha", captcha_name)
+            if frappe.db.exists("CMS Captcha", ip):
+                frappe.delete_doc("CMS Captcha", ip)
             frappe.db.commit()
         except:
             pass

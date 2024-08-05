@@ -17,7 +17,7 @@
       </div>
     </template>
   </LayoutHeader>
-  <div v-if="template.data" class="p-6">
+  <div v-if="template.data" class="p-6 overflow-auto">
     <div v-if="template.data?.images.length" class="mb-10">
       <Carousel
         class="rounded-md"
@@ -160,8 +160,9 @@ const breadcrumbs = computed(() => {
   let items = [
     { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
   ]
+
   items.push({
-    label: template.data?.name,
+    label: template.data?.template_name,
     route: {
       name: 'Interface Template',
       params: { interfaceId: props.interfaceId },
