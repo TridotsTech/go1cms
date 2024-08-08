@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-06 17:05:32.892385",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "session_id",
+  "ip",
+  "link_site_access",
+  "column_break_wpyr",
+  "time_access",
+  "time_out"
+ ],
+ "fields": [
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Session ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ip",
+   "fieldtype": "Data",
+   "label": "IP"
+  },
+  {
+   "fieldname": "column_break_wpyr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_access",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Th\u1eddi gian truy c\u1eadp v\u00e0o"
+  },
+  {
+   "fieldname": "time_out",
+   "fieldtype": "Datetime",
+   "label": "Th\u1eddi gian truy c\u1eadp ra"
+  },
+  {
+   "fieldname": "link_site_access",
+   "fieldtype": "Small Text",
+   "label": "Link web truy c\u1eadp"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 08:28:51.569224",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CMS Session",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

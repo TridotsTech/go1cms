@@ -1,0 +1,87 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-06 09:15:42.690231",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "session_id",
+  "ip",
+  "time_access",
+  "column_break_fmfk",
+  "site_title",
+  "site_type",
+  "route",
+  "link_site_access"
+ ],
+ "fields": [
+  {
+   "fieldname": "ip",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "IP"
+  },
+  {
+   "fieldname": "time_access",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Th\u1eddi gian truy c\u1eadp v\u00e0o"
+  },
+  {
+   "fieldname": "site_title",
+   "fieldtype": "Data",
+   "label": "Ti\u00eau \u0111\u1ec1 trang"
+  },
+  {
+   "fieldname": "link_site_access",
+   "fieldtype": "Small Text",
+   "label": "Link web truy c\u1eadp"
+  },
+  {
+   "fieldname": "column_break_fmfk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "site_type",
+   "fieldtype": "Data",
+   "label": "Lo\u1ea1i trang"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Small Text",
+   "label": "Route"
+  },
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Session ID",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-07 14:14:35.048916",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CMS Access",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

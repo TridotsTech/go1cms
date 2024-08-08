@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-06 10:18:16.701948",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "ip",
+  "time_request",
+  "column_break_bfhr",
+  "form_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "ip",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "IP",
+   "reqd": 1
+  },
+  {
+   "fieldname": "form_type",
+   "fieldtype": "Data",
+   "label": "Lo\u1ea1i bi\u1ec3u m\u1eabu"
+  },
+  {
+   "fieldname": "column_break_bfhr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_request",
+   "fieldtype": "Datetime",
+   "label": "Th\u1eddi gian g\u1eedi"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-06 14:29:28.207114",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CMS Totals Signed Form",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

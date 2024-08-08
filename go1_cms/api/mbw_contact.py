@@ -1,7 +1,10 @@
 import frappe
-from frappe import _
+from frappe import _, local
 from premailer import transform
 from datetime import datetime
+from go1_cms.api.website.log_page import (
+    log_page_view
+)
 
 
 @frappe.whitelist()
@@ -78,6 +81,8 @@ def create_contact(**kwargs):
             # now=True,
         )
 
+    frappe.enqueue(log_page_view, queue='default', ip=local.request.remote_addr,
+                   form_type="Form liên hệ")
     return {"name": doc.name}
 
 

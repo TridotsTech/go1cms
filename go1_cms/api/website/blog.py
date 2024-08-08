@@ -1,7 +1,18 @@
 import frappe
 from frappe import _
-from pypika import Interval, functions as fn
+from pypika import functions as fn
 import math
+
+
+@frappe.whitelist(allow_guest=True)
+def get_categories():
+    categories = frappe.db.get_all('Mbw Blog Category', fields=[
+        'category_title as label', 'category_title as value'], order_by='creation')
+    categories.insert(0, {
+        "label": "Tất cả",
+        "value": "",
+    })
+    return {'data': categories}
 
 
 @frappe.whitelist(allow_guest=True)
@@ -13,8 +24,12 @@ def get_blog_list(name_section, **kwargs):
 
     page_len = 9
     text_search = kwargs.get('text_search', '')
+    blog_category = kwargs.get('blog_category', '')
+    if blog_category:
+        blog_category = [blog_category]
 
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
+    MbwBlogCategoryItem = frappe.qb.DocType('Mbw Blog Category Item')
 
     doc_section = frappe.get_doc('Page Section', name_section)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
@@ -23,13 +38,19 @@ def get_blog_list(name_section, **kwargs):
     sort_by = frappe.qb.desc if doc_section.sort_by == "DESC" else frappe.qb.asc
 
     # get data
-    m_query = (frappe.qb.from_(MbwBlogPost)).where(MbwBlogPost.published == 1)
+    m_query = (frappe.qb.from_(MbwBlogCategoryItem)).inner_join(
+        MbwBlogPost).on(MbwBlogCategoryItem.parent == MbwBlogPost.name).where(MbwBlogPost.published == 1)
+
     if text_search:
         m_query = m_query.where(
             MbwBlogPost.title.like('%' + text_search+'%'))
 
+    if blog_category:
+        m_query = m_query.where(
+            MbwBlogCategoryItem.category.isin(blog_category))
+
     q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
-        limit).orderby(MbwBlogPost[sort_field], order=sort_by)
+        limit).orderby(MbwBlogPost[sort_field], order=sort_by).distinct()
 
     blogs = q_data.run(as_dict=True)
     for item in blogs:
@@ -37,7 +58,8 @@ def get_blog_list(name_section, **kwargs):
         item['published_on'] = published_on.strftime(
             "%d-%m-%Y")
 
-    q_count = m_query.select(fn.Count('*').as_('total'))
+    q_count = m_query.select(
+        fn.Count(MbwBlogPost.name).as_('total').distinct())
     rs_count = q_count.run(as_dict=True)
     if rs_count and limit > 0:
         total_page = math.ceil(rs_count[0].total/limit)

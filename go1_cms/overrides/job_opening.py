@@ -13,18 +13,20 @@ class CustomJobOpening(JobOpening):
         context.doc_name = self.name
 
         web_client = frappe.db.get_value(
-            'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
+            'MBW Client Website', {"type_web": "Bản chính"}, pluck='name', as_dict=1)
         if web_client:
-            page_blog = frappe.db.get_value('MBW Client Website Item', {
-                'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'Job detail page'}, ['page_id'], as_dict=1)
+            page_id = frappe.db.get_value('MBW Client Website Item', {
+                'parent': web_client, 'parentfield': 'page_websites', 'page_type': 'Job detail page'}, pluck='page_id', as_dict=1)
 
-            if page_blog and frappe.db.exists('Web Page Builder', page_blog.page_id, cache=True):
+            web_test = frappe.db.exists('Web Page Builder', {
+                'route': 'jobs/software-developer'}, cache=True)
+            if page_id and frappe.db.exists('Web Page Builder', page_id, cache=True):
                 doc_wpb = frappe.get_doc(
-                    'Web Page Builder', page_blog.page_id)
+                    'Web Page Builder', page_id)
                 doc_wpb.get_context(context)
-            elif frappe.db.exists('Web Page Builder', 'test-job-detail', cache=True):
+            elif web_test:
                 doc_wpb = frappe.get_doc(
-                    'Web Page Builder', 'test-job-detail')
+                    'Web Page Builder', web_test)
                 doc_wpb.get_context(context)
 
         super().get_context(context)

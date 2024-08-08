@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"clagZzjDqa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Go1 CMS</span>\",\"col\":12}},{\"id\":\"Kvn4LYcq9o\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Page Builder\",\"col\":3}},{\"id\":\"ZvveMBB3U-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Section Templates\",\"col\":3}},{\"id\":\"Y7UhRr18dQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Header Templates\",\"col\":3}},{\"id\":\"1vGMQYmE7d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Footer Templates\",\"col\":3}},{\"id\":\"eSnTcJtdXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Content\",\"col\":3}},{\"id\":\"NoCegjv7FW\",\"type\":\"card\",\"data\":{\"card_name\":\"Sections\",\"col\":3}},{\"id\":\"c5f2D-s5zV\",\"type\":\"card\",\"data\":{\"card_name\":\"Header &amp; Footer Section\",\"col\":3}},{\"id\":\"p61wBBoqHc\",\"type\":\"card\",\"data\":{\"card_name\":\"Design\",\"col\":3}},{\"id\":\"MAfEcpdHAG\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":3}},{\"id\":\"VHb54Rsnsa\",\"type\":\"card\",\"data\":{\"card_name\":\"Template\",\"col\":3}},{\"id\":\"37SAiY7CQ9\",\"type\":\"card\",\"data\":{\"card_name\":\"Website\",\"col\":3}},{\"id\":\"YVlvPEcCsA\",\"type\":\"card\",\"data\":{\"card_name\":\"Contact\",\"col\":3}}]",
+ "content": "[{\"id\":\"clagZzjDqa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Go1 CMS</span>\",\"col\":12}},{\"id\":\"Kvn4LYcq9o\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Page Builder\",\"col\":3}},{\"id\":\"ZvveMBB3U-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Section Templates\",\"col\":3}},{\"id\":\"Y7UhRr18dQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Header Templates\",\"col\":3}},{\"id\":\"1vGMQYmE7d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Footer Templates\",\"col\":3}},{\"id\":\"eSnTcJtdXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Content\",\"col\":3}},{\"id\":\"NoCegjv7FW\",\"type\":\"card\",\"data\":{\"card_name\":\"Sections\",\"col\":3}},{\"id\":\"c5f2D-s5zV\",\"type\":\"card\",\"data\":{\"card_name\":\"Header &amp; Footer Section\",\"col\":3}},{\"id\":\"p61wBBoqHc\",\"type\":\"card\",\"data\":{\"card_name\":\"Design\",\"col\":3}},{\"id\":\"MAfEcpdHAG\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":3}},{\"id\":\"VHb54Rsnsa\",\"type\":\"card\",\"data\":{\"card_name\":\"Template\",\"col\":3}},{\"id\":\"37SAiY7CQ9\",\"type\":\"card\",\"data\":{\"card_name\":\"Website\",\"col\":3}},{\"id\":\"YVlvPEcCsA\",\"type\":\"card\",\"data\":{\"card_name\":\"Contact\",\"col\":3}},{\"id\":\"HDivr2Hhbt\",\"type\":\"card\",\"data\":{\"card_name\":\"Access\",\"col\":4}}]",
  "creation": "2022-10-28 08:57:40.088555",
  "custom_blocks": [],
  "docstatus": 0,
@@ -379,9 +379,48 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Access",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CMS Session",
+   "link_count": 0,
+   "link_to": "CMS Session",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CMS Access",
+   "link_count": 0,
+   "link_to": "CMS Access",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CMS Totals Signed Form",
+   "link_count": 0,
+   "link_to": "CMS Totals Signed Form",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-07-31 09:00:09.986660",
+ "modified": "2024-08-07 13:53:30.126511",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Go1 CMS",

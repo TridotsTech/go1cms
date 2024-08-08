@@ -1,10 +1,14 @@
 from mimetypes import guess_type
 import frappe
 from frappe import _, local
-from pypika import Interval, functions as fn
+from pypika import functions as fn
 from frappe.utils import pretty_date
 from go1_cms.api.common import (
-    pretty_date
+    pretty_date,
+    convert_str_to_list
+)
+from go1_cms.api.website.log_page import (
+    log_page_view
 )
 from datetime import datetime
 import math
@@ -14,26 +18,6 @@ import string
 import random
 import base64
 from frappe.utils import cint
-import json
-
-
-def convert_str_to_list(val):
-    if type(val) == list:
-        return val
-    elif type(val) != str:
-        val = json.dumps(val)
-
-    s = []
-    try:
-        json_object = json.loads(val)
-        if type(json_object) == list:
-            s = json_object
-        else:
-            s = [val]
-    except ValueError as e:
-        s = [val]
-
-    return s
 
 
 @frappe.whitelist(allow_guest=True)
@@ -42,12 +26,20 @@ def get_filter_job():
                                  'employee_type_name as label', 'employee_type_name as value'], order_by='creation')
     job_location = frappe.db.get_all(
         'Branch', fields=['branch as label', 'branch as value'], order_by='creation asc')
-    job_department = job_location = frappe.db.get_all(
+    job_department = frappe.db.get_all(
         'Department', fields=['department_name as label', 'name as value'], order_by='creation asc')
+
+    job_designation = frappe.db.get_all('Designation', fields=[
+        'designation_name as label', 'designation_name as value'], order_by='creation')
+    job_designation.insert(0, {
+        "label": "Tất cả",
+        "value": "",
+    })
     return {
         'job_type': job_type,
         'job_location': job_location,
         'job_department': job_department,
+        'job_designation': job_designation,
         'range_salary': {
             'from': 0,
             'to': 0
@@ -115,7 +107,7 @@ def get_all_job(name_section, **kwargs):
             m_query = m_query.where(q)
     q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
                             JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
-                            JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department, JobOpening.route
+                            JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department, JobOpening.route, JobOpening.vacancies, JobOpening.job_requisition
                             ).offset(offset).limit(limit).orderby(JobOpening[sort_field], order=sort_by)
 
     jobs = q_data.run(as_dict=True)
@@ -142,7 +134,7 @@ def get_all_job(name_section, **kwargs):
 def get_job_detail(name):
     if frappe.db.exists("Job Opening", name):
         doc = frappe.db.get_value('Job Opening', name, [
-                                  'name', 'company', 'job_title', 'designation', 'status', 'posted_on', 'closes_on', 'closed_on', 'employment_type', 'department', 'location', 'publish_applications_received', 'description', 'currency', 'lower_range', 'upper_range', 'salary_per', 'publish_salary_range', 'route'], as_dict=1)
+                                  'name', 'company', 'job_title', 'designation', 'status', 'posted_on', 'closes_on', 'closed_on', 'employment_type', 'department', 'location', 'publish_applications_received', 'description', 'currency', 'lower_range', 'upper_range', 'salary_per', 'publish_salary_range', 'route', 'job_requisition', 'vacancies'], as_dict=1)
         return doc
     else:
         frappe.throw(_('Không tìm thấy công việc ứng tuyển'),
@@ -181,7 +173,7 @@ def get_job_related(name):
             m_query = m_query.where(q)
         q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
                                 JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
-                                JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department
+                                JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department, JobOpening.vacancies, JobOpening.job_requisition
                                 ).limit(4).orderby(JobOpening.posted_on, order=frappe.qb.desc)
 
         jobs = q_data.run(as_dict=True)
@@ -266,6 +258,7 @@ def upload_cv(name_job, **kwargs):
         new_doc.save(ignore_permissions=True)
         new_doc.reload()
 
+        filename = ''
         if 'file_cv' in files:
             file_cv = files["file_cv"]
             content = file_cv.stream.read()
@@ -310,17 +303,11 @@ def upload_cv(name_job, **kwargs):
         new_doc.resume_attachment = new_file.file_url
         new_doc.save(ignore_permissions=True)
 
-        current_user = frappe.session.user
-        try:
-            frappe.set_user('Administrator')
-            if frappe.db.exists("CMS Captcha", ip):
-                frappe.delete_doc("CMS Captcha", ip)
-            frappe.db.commit()
-        except:
-            pass
-        finally:
-            frappe.set_user(current_user)
+        if frappe.db.exists("CMS Captcha", ip):
+            frappe.db.delete("CMS Captcha", {'ip': ip})
 
+        frappe.enqueue(log_page_view, queue='default', ip=ip,
+                       form_type="Form Tuyển dụng")
         return {'status': 200, 'name': new_doc.name}
     else:
         frappe.throw(_('Không tìm thấy công việc ứng tuyển'),

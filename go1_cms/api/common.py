@@ -544,3 +544,22 @@ def pretty_date(iso_datetime: datetime.datetime | str) -> str:
         return _("1y ago")
     else:
         return f"{cint(math.floor(dt_diff_days / 365.0))}y ago"
+
+
+def convert_str_to_list(val):
+    if type(val) == list:
+        return val
+    elif type(val) != str:
+        val = json.dumps(val)
+
+    s = []
+    try:
+        json_object = json.loads(val)
+        if type(json_object) == list:
+            s = json_object
+        else:
+            s = [val]
+    except ValueError as e:
+        s = [val]
+
+    return s
