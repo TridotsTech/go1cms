@@ -1601,9 +1601,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
 
             if doc_name and frappe.db.exists("Mbw Blog Post", doc_name):
                 blog_detail = frappe.get_doc(
-                    'Mbw Blog Post', doc_name)
+                    'Mbw Blog Post', doc_name).as_dict()
                 blog_detail.published_on = blog_detail.published_on.strftime(
                     "%d-%m-%Y")
+                data_source['title_breadcrumb'] = blog_detail.title
                 data_source['blog_detail'] = blog_detail
 
                 breadcrumb = data_source.get('breadcrumb')
@@ -1615,9 +1616,9 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                     })
                     data_source['breadcrumb'] = breadcrumb
             elif doc_name and frappe.db.exists("Job Opening", doc_name):
-                job_open = frappe.get_doc('Job Opening', doc_name)
-                data_source['name'] = job_open.job_title
-                data_source['job_opening'] = doc_name
+                job_open = frappe.get_doc('Job Opening', doc_name).as_dict()
+                data_source['title_breadcrumb'] = job_open.job_title
+                data_source['job_opening'] = job_open
             # customer_data = bind_customer_cart()
             # data_source["cart"] = customer_data.get("cart_items")
             # data_source["my_boxes"] = customer_data.get("my_boxes")
@@ -2094,9 +2095,9 @@ def get_shuffled_category_products(category, no_of_records):
 @frappe.whitelist()
 def import_sections_from_template(page_id, doctype="Page Template", id_client_website=''):
     page_template = frappe.get_doc(doctype, page_id)
-    mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section"}, fields=[
+    mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section", "parenttype": doctype}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
-    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "web_section"}, fields=[
+    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "web_section", "parenttype": doctype}, fields=[
         'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
     mobile_secs = []
     web_secs = []
@@ -2186,6 +2187,11 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
 @frappe.whitelist()
 def save_as_template(page_id, title):
     from frappe.model.mapper import get_mapped_doc
+    mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section", "parenttype": "Web Page Builder"}, fields=[
+        'idx', 'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
+    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "web_section", "parenttype": "Web Page Builder"}, fields=[
+        'idx', 'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
+
     web_page = frappe.get_doc("Web Page Builder", page_id)
     page_template = frappe.new_doc("Page Template")
     page_template_doc = None
@@ -2196,10 +2202,7 @@ def save_as_template(page_id, title):
     }, page_template_doc, ignore_permissions=True)
     page_template.page_title = title
     page_template.save(ignore_permissions=True)
-    mobile_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "mobile_section"}, fields=[
-        'idx', 'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
-    web_sections = frappe.db.get_all("Mobile Page Section", filters={"parent": page_id, "parentfield": "web_section"}, fields=[
-        'idx', 'section', 'section_title', 'section_type', 'content_type', 'allow_update_to_style'], order_by="idx")
+
     mobile_secs = []
     web_secs = []
     for x in mobile_sections:

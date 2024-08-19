@@ -1,9 +1,10 @@
 # Copyright (c) 2024, Tridotstech and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 
 
 class CMSSession(Document):
-	pass
+    def on_update(self):
+        frappe.publish_realtime('dashboard_update', message={})

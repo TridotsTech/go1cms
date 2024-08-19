@@ -82,7 +82,7 @@ class MbwBlogPost(WebsiteGenerator):
     #         )
 
     def validate(self):
-        if not self.route:
+        if not self.route or not self.route.startswith("tin-tuc/"):
             self.route = "tin-tuc/" + slugify(self.title) + f"-{self.name}"
 
         if not self.blog_intro:
@@ -133,12 +133,20 @@ class MbwBlogPost(WebsiteGenerator):
             "og:image": self.meta_image or '',
         }
 
-        web_client = frappe.db.get_value(
-            'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
-        if web_client:
-            page_blog = frappe.db.get_value('MBW Client Website Item', {
-                                            'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'News detail page'}, ['page_id'], as_dict=1)
-            if page_blog and frappe.db.exists('Web Page Builder', page_blog.page_id, cache=True):
+        if not self.route.endswith('blog-123-blog-456-blog'):
+            web_client = frappe.db.get_value(
+                'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
+            if web_client:
+                web_item = frappe.db.get_value('MBW Client Website Item', {
+                    'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'News detail page'}, ['page_id'], as_dict=1)
+                if web_item and frappe.db.exists('Web Page Builder', web_item.page_id, cache=True):
+                    doc_wpb = frappe.get_doc(
+                        'Web Page Builder', web_item.page_id)
+                    doc_wpb.get_context(context)
+        else:
+            web_test = frappe.db.exists('Web Page Builder', {
+                'route': 'blog-123-blog-456-blog'}, cache=True)
+            if web_test:
                 doc_wpb = frappe.get_doc(
-                    'Web Page Builder', page_blog.page_id)
+                    'Web Page Builder', web_test)
                 doc_wpb.get_context(context)

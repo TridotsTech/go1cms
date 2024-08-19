@@ -30,6 +30,9 @@ import { initSocket } from './socket'
 import vue3PhotoPreview from 'vue3-photo-preview'
 import 'vue3-photo-preview/dist/index.css'
 
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+
 let globalComponents = {
   Button,
   TextInput,
@@ -42,18 +45,17 @@ let globalComponents = {
   FeatherIcon,
   Tooltip,
   LoadingIndicator,
+  VueDatePicker,
 }
 
 // create a pinia instance
 let pinia = createPinia()
 
 let app = createApp(App)
+const socket = initSocket()
 
 setConfig('resourceFetcher', frappeRequest)
 
-// if (!import.meta.env.DEV) {
-//   app.use(FrappeUI)
-// }
 app.use(CKEditor)
 app.use(pinia)
 app.use(router)
@@ -63,25 +65,24 @@ for (let key in globalComponents) {
   app.component(key, globalComponents[key])
 }
 
+app.provide('$socket', socket)
+
 app.config.globalProperties.$dialog = createDialog
 
-let socket
-if (import.meta.env.DEV) {
-  frappeRequest({
-    url: '/api/method/go1_cms.www.cms.get_context_for_dev',
-  }).then((values) => {
-    for (let key in values) {
-      window[key] = values[key]
-    }
-    socket = initSocket()
-    app.config.globalProperties.$socket = socket
+router.isReady().then(() => {
+  if (import.meta.env.DEV) {
+    frappeRequest({
+      url: '/api/method/go1_cms.www.cms.get_context_for_dev',
+    }).then((values) => {
+      for (let key in values) {
+        window[key] = values[key]
+      }
+      app.mount('#app')
+    })
+  } else {
     app.mount('#app')
-  })
-} else {
-  socket = initSocket()
-  app.config.globalProperties.$socket = socket
-  app.mount('#app')
-}
+  }
+})
 
 if (import.meta.env.DEV) {
   window.$dialog = createDialog

@@ -23,7 +23,7 @@ export const globalStore = defineStore('cms-global', () => {
 
   //
   const app = getCurrentInstance()
-  const { $dialog } = app.appContext.config.globalProperties
+  const { $dialog, $socket } = app.appContext.config.globalProperties
 
   let twilioEnabled = ref(false)
   let callMethod = () => {}
@@ -46,6 +46,7 @@ export const globalStore = defineStore('cms-global', () => {
     loadingValue,
     changeLoadingValue,
     $dialog,
+    $socket,
     twilioEnabled,
     makeCall,
     setTwilioEnabled,

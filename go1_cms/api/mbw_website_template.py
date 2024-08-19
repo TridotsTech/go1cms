@@ -138,7 +138,7 @@ def add_web_template(name):
         # check template edit
         template_edit = frappe.db.exists('MBW Client Website', {'edit': 1})
 
-        website.name_web = template.name
+        website.name_web = template.template_name
         website.published = 1
         website.web_theme = web_theme
         website.edit = 0 if template_edit else 1

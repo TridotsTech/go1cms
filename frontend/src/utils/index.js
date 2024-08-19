@@ -105,6 +105,22 @@ export function formatNumberIntoCurrency(value) {
   return ''
 }
 
+export function formatNumber(val, decimal = 1) {
+  let rs = 0
+  if (val) {
+    if (Number.isInteger(val)) {
+      rs = new Intl.NumberFormat('en-US').format(val)
+    } else {
+      rs = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimal,
+        maximumFractionDigits: decimal,
+      }).format(val)
+    }
+  }
+
+  return rs
+}
+
 export function startCase(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -377,4 +393,72 @@ export const toBase64 = (file) =>
 
 export function scrollToTop(refToTop) {
   refToTop.value.scrollTo(0, 0)
+}
+
+export function areDeeplyEqual(obj1, obj2) {
+  if (obj1 === obj2) return true
+
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) return false
+
+    return obj1.every((elem, index) => {
+      return areDeeplyEqual(elem, obj2[index])
+    })
+  }
+
+  if (
+    typeof obj1 === 'object' &&
+    typeof obj2 === 'object' &&
+    obj1 !== null &&
+    obj2 !== null
+  ) {
+    if (Array.isArray(obj1) || Array.isArray(obj2)) return false
+
+    const keys1 = Object.keys(obj1)
+    const keys2 = Object.keys(obj2)
+
+    if (
+      keys1.length !== keys2.length ||
+      !keys1.every((key) => keys2.includes(key))
+    )
+      return false
+
+    for (let key in obj1) {
+      let isEqual = areDeeplyEqual(obj1[key], obj2[key])
+      if (!isEqual) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return false
+}
+
+export function getCurrentDateInVietnam() {
+  const today = new Date()
+  // Thêm 7 giờ vào thời gian UTC để có thời gian Việt Nam
+  today.setUTCHours(today.getUTCHours() + 7)
+
+  const year = today.getUTCFullYear()
+  const month = String(today.getUTCMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0 nên cần +1
+  const day = String(today.getUTCDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+export function getDateMinusDays(dateString, days, operator = '-') {
+  const today = new Date(dateString)
+  if (operator == '-') {
+    today.setDate(today.getDate() - days)
+  } else {
+    today.setDate(today.getDate() + days)
+  }
+
+  const year = today.getUTCFullYear()
+  const month = String(today.getUTCMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0 nên cần +1
+  const day = String(today.getUTCDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }

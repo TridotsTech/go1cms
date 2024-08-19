@@ -74,12 +74,13 @@ def log_page_access(session_id, path_url, page=""):
 @frappe.whitelist(allow_guest=True)
 def log_page_leave(session_id, path_url, page=""):
     ip = local.request.remote_addr
-    access_id = frappe.db.exists('CMS Session', [
+    session_name = frappe.db.exists('CMS Session', [
         ['ip', '=', ip], ['session_id', '=', session_id], ['time_out', 'is', 'not set']])
 
-    if access_id:
-        frappe.db.set_value('CMS Session', access_id, {
-            'time_out': datetime.now(),
-        })
+    if session_name:
+        doc = frappe.get_doc('CMS Session', session_name)
+        doc.time_out = datetime.now()
+        doc.save(ignore_permissions=True)
+
         return {'status': 1}
     return {'status': 0}

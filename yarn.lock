@@ -1373,6 +1373,13 @@
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.4.27.tgz"
   integrity sha512-DL3NmY2OFlqmYYrzp39yi3LDkKxa5vZVwxWdQ3rG0ekuWscHraeIbnI8t+aZK7qhYqEqWKTUdijadunb9pnrgA==
 
+"@vuepic/vue-datepicker@^9.0.2":
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/@vuepic/vue-datepicker/-/vue-datepicker-9.0.2.tgz#8e05d226744c78ffc616bca226029d5a03547923"
+  integrity sha512-VDAexzBJSvpErld1cZdGsBc+W/iU+Z+I98YNtEEboSSHUKHRi1s/h8s5D+wciZHLxgQ6P/tj6loNi4W7DgkYSQ==
+  dependencies:
+    date-fns "^3.6.0"
+
 "@vueuse/core@10.9.0", "@vueuse/core@^10.3.0", "@vueuse/core@^10.4.1", "@vueuse/core@^10.5.0":
   version "10.9.0"
   resolved "https://registry.npmjs.org/@vueuse/core/-/core-10.9.0.tgz"
@@ -1756,6 +1763,11 @@ date-fns@2.30.0:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
+date-fns@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-3.6.0.tgz#f20ca4fe94f8b754951b24240676e8618c0206bf"
+  integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
+
 debug@4, debug@~4.3.1, debug@~4.3.2:
   version "4.3.4"
   resolved "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz"
@@ -1799,6 +1811,14 @@ eastasianwidth@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
+
+echarts@^5.5.1:
+  version "5.5.1"
+  resolved "https://registry.npmjs.org/echarts/-/echarts-5.5.1.tgz"
+  integrity sha512-Fce8upazaAXUVUVsjgV6mBnGuqgO+JNDlcgF79Dksy4+wgGpQB2lmYoO4TSweFg/mZITdpGHomw/cNBJZj1icA==
+  dependencies:
+    tslib "2.3.0"
+    zrender "5.6.0"
 
 electron-to-chromium@^1.4.668:
   version "1.4.763"
@@ -1966,10 +1986,10 @@ fraction.js@^4.3.7:
   resolved "https://registry.npmjs.org/fraction.js/-/fraction.js-4.3.7.tgz"
   integrity sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==
 
-frappe-ui@^0.1.61:
-  version "0.1.61"
-  resolved "https://registry.npmjs.org/frappe-ui/-/frappe-ui-0.1.61.tgz"
-  integrity sha512-9XAHnG84W48KaSjpZj1Rph762vLEAAwhESaWa3pexMNv7McrtnONsmdseT11eoWjfxOcpJ1Dqn78mQ3rkMKlgA==
+frappe-ui@^0.1.65:
+  version "0.1.65"
+  resolved "https://registry.npmjs.org/frappe-ui/-/frappe-ui-0.1.65.tgz"
+  integrity sha512-KPzoovgvOqtscjAcqRw1kgHYrzXUo87Y16/uH9UM28LQLUi03N4VJCHX/2Qw6a4qqvuHlkDDiRu8Lpv7I+P3Bw==
   dependencies:
     "@headlessui/vue" "^1.7.14"
     "@popperjs/core" "^2.11.2"
@@ -2309,6 +2329,11 @@ minimatch@^9.0.1:
   version "7.1.1"
   resolved "https://registry.npmjs.org/minipass/-/minipass-7.1.1.tgz"
   integrity sha512-UZ7eQ+h8ywIRAW1hIEl2AqdwzJucU/Kp59+8kkZeSvafXhZjul247BvIJjEVFVeON6d7lM46XX1HXCduKAS8VA==
+
+moment@^2.30.1:
+  version "2.30.1"
+  resolved "https://registry.npmjs.org/moment/-/moment-2.30.1.tgz"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
 ms@2.1.2:
   version "2.1.2"
@@ -2830,7 +2855,7 @@ signal-exit@^4.0.1:
 
 slugify@^1.6.6:
   version "1.6.6"
-  resolved "https://registry.yarnpkg.com/slugify/-/slugify-1.6.6.tgz#2d4ac0eacb47add6af9e04d3be79319cbcc7924b"
+  resolved "https://registry.npmjs.org/slugify/-/slugify-1.6.6.tgz"
   integrity sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==
 
 socket.io-client@^4.5.1, socket.io-client@^4.7.5:
@@ -2872,7 +2897,6 @@ source-map@~0.6.1:
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -2891,7 +2915,6 @@ string-width@^5.0.1, string-width@^5.1.2:
     strip-ansi "^7.0.1"
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  name strip-ansi-cjs
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -3011,6 +3034,11 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
+tslib@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz"
+  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
+
 tslib@^2.0.0, tslib@^2.4.0:
   version "2.6.2"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
@@ -3096,12 +3124,12 @@ vue-router@^4.2.2:
 
 vue3-carousel@^0.3.3:
   version "0.3.3"
-  resolved "https://registry.yarnpkg.com/vue3-carousel/-/vue3-carousel-0.3.3.tgz#72cdddbeb5ab64dc6fc7d54ab133b644e4a72f8f"
+  resolved "https://registry.npmjs.org/vue3-carousel/-/vue3-carousel-0.3.3.tgz"
   integrity sha512-VsuOBE4LG9lxAiYGR9U7ps4RyJ4oFQGzk79/49ybvoxzNpahPAVWIDHKK3a1lOv0CSplFq6u4FvaFLZ8x3FgWg==
 
 vue3-photo-preview@^0.3.0:
   version "0.3.0"
-  resolved "https://registry.yarnpkg.com/vue3-photo-preview/-/vue3-photo-preview-0.3.0.tgz#082941ccbaad8504adcc6bd6a02560eb125d515e"
+  resolved "https://registry.npmjs.org/vue3-photo-preview/-/vue3-photo-preview-0.3.0.tgz"
   integrity sha512-DeZ076yN85RcfWdhcgSYVEj5Y721mi6rmDoShDb4Bt7z7Q5Rfs4Y8PlP66OIrsyE0x4KVLdE0auJGxrxXRJXjA==
   dependencies:
     lodash-es "^4.17.21"
@@ -3228,3 +3256,10 @@ yaml@^2.3.4:
   version "2.4.2"
   resolved "https://registry.npmjs.org/yaml/-/yaml-2.4.2.tgz"
   integrity sha512-B3VqDZ+JAg1nZpaEmWtTXUlBneoGx6CPM9b0TENK6aoSu5t73dItudwdgmi6tHlIZZId4dZ9skcAQ2UbcyAeVA==
+
+zrender@5.6.0:
+  version "5.6.0"
+  resolved "https://registry.npmjs.org/zrender/-/zrender-5.6.0.tgz"
+  integrity sha512-uzgraf4njmmHAbEUxMJ8Oxg+P3fT04O+9p7gY+wJRVxo8Ge+KmYv0WJev945EH4wFuc4OY2NLXz46FZrWS9xJg==
+  dependencies:
+    tslib "2.3.0"

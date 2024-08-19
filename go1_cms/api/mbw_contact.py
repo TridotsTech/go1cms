@@ -44,7 +44,7 @@ def create_contact(**kwargs):
     doc.utm_campaign = kwargs.get("utm_campaign") or ''
     doc.send_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # insert contact
-    doc.insert()
+    doc.insert(ignore_permissions=True)
 
     cms_settings = frappe.get_single('CMS Settings')
     # sync data leads
@@ -64,7 +64,7 @@ def create_contact(**kwargs):
             elif 'New' in lead_status:
                 doc_lead.status = 'New'
             # insert lead
-            doc_lead.insert()
+            doc_lead.insert(ignore_permissions=True)
 
     # send email
     if cms_settings.allow_send_email_contact and cms_settings.list_email_receipt:

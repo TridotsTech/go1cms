@@ -31,10 +31,10 @@ def get_filter_job():
 
     job_designation = frappe.db.get_all('Designation', fields=[
         'designation_name as label', 'designation_name as value'], order_by='creation')
-    job_designation.insert(0, {
-        "label": "Tất cả",
-        "value": "",
-    })
+    # job_designation.insert(0, {
+    #     "label": "Tất cả",
+    #     "value": "",
+    # })
     return {
         'job_type': job_type,
         'job_location': job_location,
@@ -51,6 +51,7 @@ def get_filter_job():
 def get_all_job(name_section, **kwargs):
     try:
         page_no = int(kwargs.get('page_no', 1)) - 1
+        page_no = 0 if page_no < 1 else page_no
     except:
         page_no = 0
 
@@ -59,6 +60,7 @@ def get_all_job(name_section, **kwargs):
 
     job_location = convert_str_to_list(kwargs.get('job_location', []))
     job_department = convert_str_to_list(kwargs.get('job_department', []))
+    job_designation = convert_str_to_list(kwargs.get('job_designation', []))
     range_salary = convert_str_to_list(
         kwargs.get('range_salary', [None, None]))
     job_type = convert_str_to_list(kwargs.get('job_type', []))
@@ -85,6 +87,8 @@ def get_all_job(name_section, **kwargs):
         m_query = m_query.where(JobOpening.employment_type.isin(job_type))
     if job_department:
         m_query = m_query.where(JobOpening.department.isin(job_department))
+    if job_designation:
+        m_query = m_query.where(JobOpening.designation.isin(job_designation))
 
     if isinstance(range_salary, list):
         q = None
@@ -97,7 +101,7 @@ def get_all_job(name_section, **kwargs):
             salary_to = int(salary_to)
 
         if salary_from != None and salary_to == None:
-            q = (JobOpening.lower_range >= salary_from)
+            q = (JobOpening.upper_range >= salary_from)
         elif salary_from == None and salary_to != None:
             q = (JobOpening.lower_range <= salary_to)
         elif salary_from != None and salary_to != None:
@@ -107,7 +111,7 @@ def get_all_job(name_section, **kwargs):
             m_query = m_query.where(q)
     q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
                             JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
-                            JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department, JobOpening.route, JobOpening.vacancies, JobOpening.job_requisition
+                            JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.salary_per, JobOpening.department, JobOpening.route, JobOpening.vacancies, JobOpening.job_requisition, JobOpening.designation, JobOpening.currency
                             ).offset(offset).limit(limit).orderby(JobOpening[sort_field], order=sort_by)
 
     jobs = q_data.run(as_dict=True)
@@ -146,7 +150,7 @@ def get_job_related(name):
     jobs = []
     if frappe.db.exists("Job Opening", name):
         doc = frappe.db.get_value('Job Opening', name, [
-            'name', 'company', 'job_title', 'designation', 'status', 'posted_on', 'closes_on', 'closed_on', 'employment_type', 'department', 'location', 'publish_applications_received', 'description', 'currency', 'lower_range', 'upper_range', 'salary_per', 'publish_salary_range', 'route'], as_dict=1)
+            'name', 'job_title', 'designation', 'status', 'employment_type', 'location'], as_dict=1)
 
         JobOpening = frappe.qb.DocType('Job Opening')
         m_query = (frappe.qb.from_(JobOpening).where(
@@ -162,9 +166,6 @@ def get_job_related(name):
         if doc.employment_type:
             q = (q | (JobOpening.employment_type == doc.employment_type)) if q else (
                 JobOpening.employment_type == doc.employment_type)
-        if doc.department:
-            q = (q | (JobOpening.department == doc.department)) if q else (
-                JobOpening.department == doc.department)
         if doc.job_title:
             q = (q | (JobOpening.job_title.like('%' + doc.job_title+'%'))) if q else (
                 JobOpening.job_title.like('%' + doc.job_title+'%'))
@@ -173,7 +174,7 @@ def get_job_related(name):
             m_query = m_query.where(q)
         q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
                                 JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
-                                JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.department, JobOpening.vacancies, JobOpening.job_requisition
+                                JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.salary_per, JobOpening.department, JobOpening.vacancies, JobOpening.job_requisition, JobOpening.designation, JobOpening.currency
                                 ).limit(4).orderby(JobOpening.posted_on, order=frappe.qb.desc)
 
         jobs = q_data.run(as_dict=True)

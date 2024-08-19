@@ -51,7 +51,7 @@
    "fieldname": "page_type",
    "fieldtype": "Select",
    "label": "Lo\u1ea1i trang",
-   "options": "\nNews detail page\nNew page"
+   "options": "\nNews detail page\nJob detail page\nNew page"
   },
   {
    "default": "1",
@@ -69,7 +69,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-18 16:31:31.072706",
+ "modified": "2024-08-14 10:26:46.445989",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Item",
