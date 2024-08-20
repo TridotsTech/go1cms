@@ -318,32 +318,42 @@
 </html>
 
 <script>
-  $(document).ready(function () {
-    if (!localStorage.getItem("sessionID")) {
-      localStorage.setItem("sessionID", Date.now());
-    }
-    $.post("/api/method/go1_cms.api.website.log_page.log_page_session", {
-      session_id: localStorage.getItem("sessionID"),
-      path_url: window.location.href,
-    });
-    $.post("/api/method/go1_cms.api.website.log_page.log_page_access", {
-      session_id: localStorage.getItem("sessionID"),
-      path_url: window.location.href,
-      page: window.location.pathname,
-    });
+  let previousUrl = window.location.href;
 
-    // log_page_leave
-    window.addEventListener("beforeunload", function (e) {
-      $.post("/api/method/go1_cms.api.website.log_page.log_page_leave", {
-        session_id: localStorage.getItem("sessionID"),
-        path_url: window.location.href,
-        page: window.location.pathname,
-      }).done(function (res) {
-        if (res.message?.status == 1) {
-          localStorage.removeItem("sessionID");
-        }
-      });
-    });
+  if (!localStorage.getItem("sessionID")) {
+    localStorage.setItem("sessionID", Date.now());
+  }
+  $.post("/api/method/go1_cms.api.website.log_page.log_page_session", {
+    session_id: localStorage.getItem("sessionID"),
+    path_url: window.location.href,
+  });
+  $.post("/api/method/go1_cms.api.website.log_page.log_page_access", {
+    session_id: localStorage.getItem("sessionID"),
+    path_url: window.location.href,
+    page: window.location.pathname,
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      fetch("/api/method/go1_cms.api.website.log_page.log_page_leave", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: localStorage.getItem("sessionID"),
+          path_url: window.location.href,
+          page: window.location.pathname,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message?.status == 1) {
+            localStorage.removeItem("sessionID");
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
   });
 </script>
 

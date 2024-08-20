@@ -76,7 +76,6 @@ def log_page_leave(session_id, path_url, page=""):
     ip = local.request.remote_addr
     session_name = frappe.db.exists('CMS Session', [
         ['ip', '=', ip], ['session_id', '=', session_id], ['time_out', 'is', 'not set']])
-
     if session_name:
         doc = frappe.get_doc('CMS Session', session_name)
         doc.time_out = datetime.now()
