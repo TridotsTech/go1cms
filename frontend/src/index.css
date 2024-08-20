@@ -40,3 +40,7 @@
 .ql-editor img {
   display: inline-block;
 }
+
+:root {
+  --dp-font-family: inherit;
+}
