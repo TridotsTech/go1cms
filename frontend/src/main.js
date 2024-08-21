@@ -5,7 +5,6 @@ import { createPinia } from 'pinia'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import {
-  FrappeUI,
   Button,
   Input,
   TextInput,

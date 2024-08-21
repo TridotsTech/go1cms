@@ -155,9 +155,10 @@ def calc_summary_report(time_start, time_end):
 
 def calc_so_nguoi_truy_cap_hien_tai():
     qr_truy_cap_hien_tai = f"""
-    SELECT COUNT(*) AS current_active_users
+    SELECT COUNT(ip) AS current_active_users
     FROM `tabCMS Session`
-    WHERE time_out IS NULL
+    WHERE active = 1
+    AND time_out >= NOW() - INTERVAL 30 MINUTE
     """
     return frappe.db.sql(qr_truy_cap_hien_tai, as_dict=1)[
         0]['current_active_users']

@@ -318,43 +318,75 @@
 </html>
 
 <script>
-  let previousUrl = window.location.href;
+  function reFreshTimeSession() {
+    let startTime = new Date().getTime();
+    localStorage.setItem("sessionStartTime", startTime);
+  }
 
-  if (!localStorage.getItem("sessionID")) {
+  // Hàm kiểm tra nếu session đã hết hạn
+  function checkSessionExpiry(duration = 30 * 60 * 1000) {
+    // default 30 phút tính bằng miligiây
+    let currentTime = new Date().getTime(); // Lấy thời gian hiện tại
+    let startTime = localStorage.getItem("sessionStartTime"); // Lấy thời gian bắt đầu từ localStorage
+
+    if (startTime) {
+      let elapsedTime = currentTime - startTime; // Tính thời gian đã trôi qua
+      if (elapsedTime > duration) {
+        return false;
+      }
+    } else {
+      reFreshTimeSession();
+    }
+    return true;
+  }
+
+  function reFreshSessionID() {
     localStorage.setItem("sessionID", Date.now());
   }
-  $.post("/api/method/go1_cms.api.website.log_page.log_page_session", {
-    session_id: localStorage.getItem("sessionID"),
-    path_url: window.location.href,
-  });
+
+  function callSaveLog(path_url = window.location.href, active = 1) {
+    let sessionOld = undefined;
+    if (!checkSessionExpiry()) {
+      sessionOld = localStorage.getItem("sessionID");
+      reFreshSessionID();
+      reFreshTimeSession();
+    }
+
+    fetch("/api/method/go1_cms.api.website.log_page.log_page_leave", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: localStorage.getItem("sessionID"),
+        path_url: path_url,
+        active: active,
+        session_old: sessionOld,
+      }),
+    });
+  }
+
+  if (!localStorage.getItem("sessionID")) {
+    reFreshSessionID();
+  }
   $.post("/api/method/go1_cms.api.website.log_page.log_page_access", {
     session_id: localStorage.getItem("sessionID"),
     path_url: window.location.href,
     page: window.location.pathname,
   });
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      fetch("/api/method/go1_cms.api.website.log_page.log_page_leave", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          session_id: localStorage.getItem("sessionID"),
-          path_url: window.location.href,
-          page: window.location.pathname,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.message?.status == 1) {
-            localStorage.removeItem("sessionID");
-          }
-        })
-        .catch((error) => console.error("Error:", error));
-    }
-  });
+  callSaveLog();
+  document.addEventListener(
+    "visibilitychange",
+    (e) => {
+      if (document.hidden) {
+        callSaveLog(undefined, 0);
+      } else {
+        callSaveLog();
+      }
+    },
+    false
+  );
 </script>
 
 <script type="text/javascript">

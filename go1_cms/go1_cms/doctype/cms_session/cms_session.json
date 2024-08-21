@@ -10,7 +10,8 @@
   "link_site_access",
   "column_break_wpyr",
   "time_access",
-  "time_out"
+  "time_out",
+  "active"
  ],
  "fields": [
   {
@@ -46,11 +47,17 @@
    "fieldname": "link_site_access",
    "fieldtype": "Small Text",
    "label": "Link web truy c\u1eadp"
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Ho\u1ea1t \u0111\u1ed9ng"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-08 08:28:51.569224",
+ "modified": "2024-08-21 09:55:53.875137",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Session",
