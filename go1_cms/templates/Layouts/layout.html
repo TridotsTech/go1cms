@@ -376,6 +376,10 @@
   });
 
   callSaveLog();
+  window.addEventListener("beforeunload", function (e) {
+    callSaveLog(undefined, 0);
+  });
+
   document.addEventListener(
     "visibilitychange",
     (e) => {
