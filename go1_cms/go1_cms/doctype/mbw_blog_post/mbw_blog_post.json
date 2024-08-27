@@ -212,9 +212,10 @@
   },
   {
    "fieldname": "category",
-   "fieldtype": "Table",
+   "fieldtype": "Link",
    "label": "Category",
-   "options": "Mbw Blog Category Item"
+   "options": "Mbw Blog Category",
+   "reqd": 1
   },
   {
    "fieldname": "tags",
@@ -228,7 +229,7 @@
  "is_published_field": "published",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-01 11:43:36.216199",
+ "modified": "2024-08-26 10:08:55.863741",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Mbw Blog Post",

@@ -786,6 +786,9 @@
                 {%endif%}
             {%endfor%} -->
             <div class="mobile_navbar fixed overflow-auto left-0 top-0 w-80 z-[9999] h-full hidden" style="left:-1000px;">
+                <div class="absolute top-3 right-3"><button id="close_nav_mobile">
+                    <img src="/assets/go1_cms/images/cancel_spa.svg" alt="">
+                </button></div>
                 <div class="mobile_menu go1-cms-menu">
                     <div class="m-logo">
                         <img src="{{theme_settings.mobile_logo}}" class="logo"/>
@@ -1326,6 +1329,9 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
                 mobile_menu();
             })
             $(".mobile-blackdrop").click(function () {
+                mobile_menu();
+            })
+            $('#close_nav_mobile').click(function () {
                 mobile_menu();
             })
         })

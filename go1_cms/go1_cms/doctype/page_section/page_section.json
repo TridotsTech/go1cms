@@ -28,6 +28,8 @@
   "section_name",
   "section_break_fedx",
   "html_content",
+  "search_section_section",
+  "route_search",
   "image_options_section",
   "image_option",
   "image_link_documents",
@@ -124,7 +126,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Section Type",
-   "options": "\nSlider\nStatic Section\nPredefined Section\nCustom Section\nMenu\nForm\nHtml Content",
+   "options": "\nSlider\nStatic Section\nPredefined Section\nCustom Section\nMenu\nForm\nSearch\nHtml Content",
    "reqd": 1
   },
   {
@@ -606,11 +608,22 @@
    "fieldname": "is_template",
    "fieldtype": "Check",
    "label": "Is Template"
+  },
+  {
+   "depends_on": "eval:  doc.section_type == \"Search\"",
+   "fieldname": "search_section_section",
+   "fieldtype": "Section Break",
+   "label": "Search Section"
+  },
+  {
+   "fieldname": "route_search",
+   "fieldtype": "Data",
+   "label": "Route Search"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-22 10:45:55.020437",
+ "modified": "2024-08-23 09:38:11.725270",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Section",

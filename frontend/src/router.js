@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { usersStore } from '@/stores/users'
+import { userResource } from '@/stores/user'
 import { sessionStore } from '@/stores/session'
 
 const routes = [
@@ -198,10 +198,9 @@ let router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { users } = usersStore()
   const { isLoggedIn } = sessionStore()
 
-  isLoggedIn && (await users.promise)
+  isLoggedIn && (await userResource.promise)
 
   if (from.meta?.scrollPos) {
     from.meta.scrollPos.top = document.querySelector('#list-rows')?.scrollTop

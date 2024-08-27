@@ -32,6 +32,7 @@ const lineChartOptions = computed(() => {
       formatter: function (params) {
         let data = params[0]
         let html = `
+          <div class="font-bold">${data.axisValue}</div>
           <div>Số lượt xem: <span class="font-bold">${data.value}</span></div>
         `
         if (data?.data.compare != undefined) {
@@ -106,8 +107,16 @@ const lineChartOptions = computed(() => {
       max: 4,
       axisLabel: {
         fontFamily: 'inherit',
+        formatter: function (value) {
+          const maxLength = 15
+          if (value.length > maxLength) {
+            return value.substring(0, maxLength) + '...'
+          }
+          return value
+        },
       },
     },
+
     series: series,
   }
 })

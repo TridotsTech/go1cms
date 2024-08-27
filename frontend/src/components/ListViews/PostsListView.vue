@@ -26,11 +26,11 @@
           <template #prefix></template>
           <div v-if="column.key === 'category'">
             <Badge
+              v-if="item"
               class="mr-2"
-              v-for="cat in item"
               :variant="'subtle'"
               size="md"
-              :label="cat.category"
+              :label="item"
               theme="green"
             />
           </div>

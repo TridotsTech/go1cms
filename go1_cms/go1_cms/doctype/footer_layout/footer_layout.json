@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "FL-.####",
+ "autoname": "field:title",
  "creation": "2022-09-13 13:54:34.601980",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -20,7 +20,9 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Title"
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "column_break_2",
@@ -51,11 +53,11 @@
  "image_field": "preview",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-11 09:58:08.912904",
+ "modified": "2024-08-23 15:31:12.186011",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Layout",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -71,6 +73,7 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -97,6 +97,7 @@ const lineChartOptions = computed(() => {
       data: props.options.columns,
       axisLabel: {
         fontFamily: 'inherit',
+        rotate: 50,
       },
     },
     yAxis: {

@@ -24,22 +24,19 @@ def get_blog_list(name_section, **kwargs):
 
     page_len = 9
     text_search = kwargs.get('text_search', '')
-    blog_category = kwargs.get('blog_category', '')
-    if blog_category:
-        blog_category = [blog_category]
-
+    blog_category = kwargs.get('blog_category', 'Tin tức')
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
-    MbwBlogCategoryItem = frappe.qb.DocType('Mbw Blog Category Item')
 
     doc_section = frappe.get_doc('Page Section', name_section)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
     limit = doc_section.no_of_records if doc_section.no_of_records else page_len
     offset = page_no*limit
-    sort_by = frappe.qb.desc if doc_section.sort_by == "DESC" else frappe.qb.asc
+    sort_by = frappe.qb.desc
+    if kwargs.get('sort_by', 'ASC').lower() == "asc":
+        sort_by = frappe.qb.asc
 
     # get data
-    m_query = (frappe.qb.from_(MbwBlogCategoryItem)).inner_join(
-        MbwBlogPost).on(MbwBlogCategoryItem.parent == MbwBlogPost.name).where(MbwBlogPost.published == 1)
+    m_query = (frappe.qb.from_(MbwBlogPost)).where(MbwBlogPost.published == 1)
 
     if text_search:
         m_query = m_query.where(
@@ -47,9 +44,9 @@ def get_blog_list(name_section, **kwargs):
 
     if blog_category:
         m_query = m_query.where(
-            MbwBlogCategoryItem.category.isin(blog_category))
+            MbwBlogPost.category == blog_category)
 
-    q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
+    q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.blogger, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
         limit).orderby(MbwBlogPost[sort_field], order=sort_by).distinct()
 
     blogs = q_data.run(as_dict=True)
@@ -75,8 +72,9 @@ def get_blog_list(name_section, **kwargs):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_recent_blog(name_section):
+def get_recent_blog(name_section, **kwargs):
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
+    blog_category = kwargs.get('blog_category', 'Tin tức')
 
     doc_section = frappe.get_doc('Page Section', name_section)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
@@ -84,8 +82,9 @@ def get_recent_blog(name_section):
     offset = 0
     sort_by = frappe.qb.desc
 
-    m_query = (frappe.qb.from_(MbwBlogPost)).where(MbwBlogPost.published == 1)
-    q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
+    m_query = (frappe.qb.from_(MbwBlogPost)).where(
+        (MbwBlogPost.published == 1) & (MbwBlogPost.category == blog_category))
+    q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.blogger, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
         limit).orderby(MbwBlogPost[sort_field], order=sort_by)
 
     blogs = q_data.run(as_dict=True)
@@ -108,10 +107,11 @@ def get_related_blogs(name):
 
         page_length = 4
         order_by = 'published_on desc'
-        fields = ['published_on', 'name', 'title',
+        fields = ['published_on', 'name', 'title', 'blogger',
                   'route', 'blog_intro', 'meta_image']
         # related blogs
-        related_filters = [['name', 'in', name_blogs], ['published', '=', 1]]
+        related_filters = [['name', 'in', name_blogs], ['published', '=', 1], [
+            'category', '=', frappe.db.get_value('Mbw Blog Post', name, 'category')]]
         related_blogs = frappe.get_all(
             "Mbw Blog Post",
             fields=fields,

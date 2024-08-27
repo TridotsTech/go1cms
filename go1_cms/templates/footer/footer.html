@@ -16,9 +16,9 @@
 						{%for sec_item in footer_items%}
 						{%if col_index == (sec_item.column_index+1) %}
 						{%for m_sec_item in sec_item.get("items")%}
-						{{ m_sec_item.web_template }}
-						{%if m_sec_item.section_name=="Footer About Interior"%}
-
+						{{ m_sec_item.web_template or '' }}
+						{%if m_sec_item.section_name=="Footer Contact Spa"%}
+						
 						{% endif %}
 						{%endfor%}
 						{%endif%}

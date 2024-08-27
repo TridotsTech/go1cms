@@ -8,8 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "h_f_section",
-  "default_footer",
   "default_header",
+  "default_footer",
   "file_path",
   "column_break_2",
   "is_active",
@@ -718,7 +718,7 @@
  ],
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-17 15:21:29.324697",
+ "modified": "2024-08-23 15:42:32.225017",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",

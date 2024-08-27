@@ -1,66 +1,88 @@
-
-{%if header.enable_top_menu%}
-<div class="go1-cms-top-bar z-auto lg:z-[-1]" >
-    <div class="container d__flex">
-    {%if header.layout == "One Column"%}
-        <div class="col-md-12 d__flex flex-center">
-            {%if header.top_menu%}
-                {%for item in header.top_menu.left_items%}
-                    <div class="top_menu d__flex">
-                    <a   href="{{item.redirect_url}}" target="blank">
-                        {%if item.icon%}
-                        <img  src="{{item.icon}}" style="margin-right:5px" />
-                        {%endif%}
-                       {{item.menu_label}}
-                    </a>
-                </div>
-                {%endfor%}
-                 {%for item in header.top_menu.right_items%}
-                  <div class="top_menu d__flex">
-                    <a    href="{{item.redirect_url}}" target="blank">
-                        {%if item.icon%}
-                        <img  src="{{item.icon}}" style="margin-right:5px" />
-                        {%endif%}
-                       {{item.menu_label}}
-                    </a>
-                </div>
-                {%endfor%}
-            {%endif%}
-        </div>
-
-    {%endif%}
-    {%if header.layout == "Two Column"%}
-        <div class="col-md-6 d__flex">
-            {%for item in header.top_menu.left_items%}
-                    <div class="top_menu d__flex">
-                    <a  href="{{item.redirect_url}}" target="blank">
-                        {%if item.icon%}
-                        <img  src="{{item.icon}}" style="margin-right:5px" />
-                        {%endif%}
-                       {{item.menu_label}}
-                    </a>
-                </div>
-                {%endfor%}
-        </div>
-        <div class="col-md-6 d__flex flex-right">
-            {%for item in header.top_menu.right_items%}
-                  <div class="top_menu d__flex">
-                    <a  href="{{item.redirect_url}}" target="blank">
-                        {%if item.icon%}
-                        <img  src="{{item.icon}}" style="margin-right:5px" />
-                        {%endif%}
-                       {{item.menu_label}}
-                    </a>
-                </div>
-                {%endfor%}
-        </div>
-    {%endif%}
-</div>
-</div>
-{%endif%}
 <div class="desktop__header hidden lg:block {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
+    {%for sec_item in header.get("items")%}
+    {% if sec_item.section_name == 'Header Announcement Bar'  %}
+    <div class="go1-cms-top-bar z-auto lg:z-[-1]">
+        <div class="container">
+            <div class="flex justify-center gap-3 items-center">
+                {% for item in sec_item.get('info') %}
+                    {% if not loop.last %}
+                    <div class="top_menu flex">
+                        <a href="{{item.route}}">
+                            <span class="flex items-center">
+                                {%if item.icon%}
+                                <img  src="{{item.icon}}" style="margin-right:5px" />
+                                {%endif%}
+                                <span>
+                                    {{item.label}}
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="font-bold text-xl">|</div>
+                    {% else %}
+                    <div class="top_menu flex">
+                        <a href="{{item.route}}">
+                            <span class="flex items-center">
+                                {%if item.icon%}
+                                <img  src="{{item.icon}}" style="margin-right:5px" />
+                                {%endif%}
+                                <span>
+                                    {{item.label}}
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
     <div class="web__header go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
         <div class="container">
+            {%for sec_item in header.get("items")%}
+                {%if sec_item.section_name == "Header Logo"%}
+                    <div class="mb-8 flex justify-center">
+                        {%if header.sticky_header %}
+                        {% if theme_settings.website_logo %}
+                        <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
+                        {%endif%}
+                        {%endif%}
+                        {%if header.is_transparent_header %}
+                        {%if theme_settings.secondary_logo %}
+                        <a href="{{ route_web }}"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
+                        {%endif%}
+                        {%endif%}
+                        {%if not header.sticky_header and not header.is_transparent_header%}
+                        {% if theme_settings.website_logo %}
+                        <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
+                        {%endif%}
+                        {%endif%}
+                    </div>
+                {% elif sec_item.section_name == "Header Search" %}
+                    <div class="mb-6 flex justify-center">
+                        <div class="relative min-w-[45vw]">
+                            <input id="header_input_search" value="" class="py-2 pl-4 pr-16 w-full rounded-[50px] border border-white bg-[{{ header.header_background }}] text-white placeholder-white focus-visible:outline-none" type="text" placeholder="{{ sec_item.search_placeholder }}">
+                            <button id="header_btn_search" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                <img src="/assets/go1_cms/images/search_spa.svg" alt="">
+                            </button>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#header_btn_search').click(()=>{
+                                        let url = '{{ sec_item.route_search }}'
+                                        let val = $('#header_input_search').val()
+                                        url = url.replace('{text_search}', val)
+                                        window.location.href = url
+                                    })
+                                })
+                            </script>
+                        </div>
+                    </div>
+                {%endif%}
+            {% endfor %}
+
             {%if header.layout_json%}
             <div class="d__flex">
                 {%for col in header.layout_json%}
@@ -72,27 +94,9 @@
                 <div class="w-full flex justify-between gap-2">
                     <div class="flex items-center gap-4">
                         {%for sec_item in header.get("items")%}
+                        {% if sec_item.section_name in ['Header Menu', 'Header Button'] %}
                         {%set col_index = loop.index %}
                         {%if col_index <= col.itemLeft %}
-                        {%if sec_item.section_name == "Header Logo"%}
-                            <div>
-                                {%if header.sticky_header %}
-                                {% if theme_settings.website_logo %}
-                                <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                                {%if header.is_transparent_header %}
-                                {%if theme_settings.secondary_logo %}
-                                <a href="{{ route_web }}"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                                {%if not header.sticky_header and not header.is_transparent_header%}
-                                {% if theme_settings.website_logo %}
-                                <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                            </div>
-                        {%endif%}
                         {%if sec_item.section_name == "Header Menu"%}
                         <ul class="default_header d__flex go1-cms-menu">
                             {% if sec_item.get("menus") %}
@@ -257,31 +261,14 @@
                         
                         {%endif%}
                         {%endif%}
+                        {%endif%}
                         {%endfor%}
                     </div>
                     <div class="flex items-center gap-4">
                         {%for sec_item in header.get("items")%}
+                        {% if sec_item.section_name in ['Header Menu', 'Header Button'] %}
                         {%set col_index = loop.index %}
                         {%if col_index > col.itemLeft %}
-                        {%if sec_item.section_name == "Header Logo"%}
-                            <div>
-                                {%if header.sticky_header %}
-                                {% if theme_settings.website_logo %}
-                                <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                                {%if header.is_transparent_header %}
-                                {%if theme_settings.secondary_logo %}
-                                <a href="{{ route_web }}"> <img class="logo transparent-logo" src="{{ theme_settings.secondary_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                                {%if not header.sticky_header and not header.is_transparent_header%}
-                                {% if theme_settings.website_logo %}
-                                <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
-                                {%endif%}
-                                {%endif%}
-                            </div>
-                        {%endif%}
                         {%if sec_item.section_name == "Header Menu"%}
                         <ul class="default_header d__flex go1-cms-menu">
                             {% if sec_item.get("menus") %}
@@ -446,13 +433,14 @@
                         
                         {%endif%}
                         {%endif%}
+                        {%endif%}
                         {%endfor%}
                     </div>
                 </div>
                 {% endif %}
 
                 {% elif col.columns | length == 3 %}
-                
+ 
                 {%for each_col in col.columns%}
                 {%set col_index = loop.index %}
                 <div style="width: {{ each_col.width }}">
@@ -658,7 +646,12 @@
 <div class="mobile__header w-full block lg:hidden {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     <div class="go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
         <div class="container"  style="display: flex;justify-content: space-between;align-items: center;">
-            <div style="display: flex;justify-content: space-between;align-items: center;gap: 5px;">
+            <div style="display: flex;justify-content: space-between;align-items: center;gap: 10px;">
+                <div class="nav-icon float-left" role="button">
+                    <div class="icon_nav">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                </div>
                 <!-- newly added for logo -->
                 <div class="m-logo">
                     {%for sec_item in header.get("items")%}
@@ -682,21 +675,7 @@
                     {%endfor%}
                 </div>
             </div>
-            <div class="nav-icon float-left" role="button">
-                <div class="icon_nav">
-                    <i class="fa fa-bars"></i>
-                </div>
-            </div>
-    
-            <!-- end -->
-            <div class="mobile_navbar fixed overflow-auto left-0 top-0 w-80 z-[9999] h-full hidden" style="left:-1000px;">
-                <div class="absolute top-3 right-3"><button id="close_nav_mobile">
-                    <img src="/assets/go1_cms/images/cancel_spa.svg" alt="">
-                </button></div>
-                <div class="m-logo flex justify-center py-10">
-                    <img src="{{theme_settings.mobile_logo}}" class="logo"/>
-                </div>
-                <!-- button -->
+            <div>
                 {%for sec_item in header.get("items")%}
                 {%if sec_item.section_name == "Header Button"%}
                     {%if header.call_to_action_button==1%}
@@ -793,7 +772,17 @@
                     {%endif%}
                 {%endif%}
                 {%endfor%}
-                <div class="mobile_menu go1-cms-menu">
+            </div>
+    
+            <!-- end -->
+            <div class="mobile_navbar fixed overflow-auto left-0 top-0 w-80 z-[9999] h-full hidden" style="left:-1000px;">
+                <div class="absolute top-3 right-3"><button id="close_nav_mobile">
+                    <img src="/assets/go1_cms/images/cancel_spa.svg" alt="">
+                </button></div>
+                <div class="m-logo flex justify-center py-10">
+                    <img src="{{theme_settings.mobile_logo}}" class="logo"/>
+                </div>
+                <div class="m-6 mobile_menu go1-cms-menu">
                     {%for sec_item in header.get("items")%}
                     {%if sec_item.section_name == "Header Menu"%}
                     <!-- newly added for submenu start-->
@@ -801,7 +790,7 @@
                     <div id="dl-menu" class="dl-menuwrapper mt-8">
                         <ul class="dl-menu">
                             {%for menu_item in sec_item.get("menus")%}
-                                <li> <a class="menu_after text-center" href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
+                                <li> <a class="menu_after" href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
                                     {%if menu_item.child_menu%}
                                         <ul class="dl-submenu">
                                             {%for sub_menu_item in menu_item.child_menu%}  
@@ -825,6 +814,32 @@
                     <!-- newly added for submenu end-->
                     {%endif%}
                     {%endfor%}
+                </div>
+                <div class="m-6 p-4 rounded-lg" style="background-color: rgba(255, 255, 255, 0.15);">
+                    {%for sec_item in header.get("items")%}
+                    {% if sec_item.section_name == 'Header Announcement Bar'  %}
+                    <div class="z-auto lg:z-[-1]">
+                        <div class="container">
+                            <div class="flex flex-col gap-3">
+                                {% for item in sec_item.get('info') %}
+                                    <div class="top_menu flex">
+                                        <a href="{{item.route}}" class="text-[{{ header.top_text_color }}]">
+                                            <span class="flex items-center">
+                                                {%if item.icon%}
+                                                <img  src="{{item.icon}}" style="margin-right:5px" />
+                                                {%endif%}
+                                                <span>
+                                                    {{item.label}}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>

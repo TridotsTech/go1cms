@@ -17,6 +17,7 @@ from urllib.parse import urljoin, unquote, urlencode
 from datetime import datetime
 import math
 import time
+from slugify import slugify
 
 
 def getStrTimestamp():
@@ -1611,6 +1612,11 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                 if breadcrumb:
                     breadcrumb.append({
                         'idx': len(breadcrumb) + 1,
+                        'menu': blog_detail.category,
+                        'route': f"/{slugify(blog_detail.category)}"
+                    })
+                    breadcrumb.append({
+                        'idx': len(breadcrumb) + 1,
                         'menu': blog_detail.title,
                         'route': "#"
                     })
@@ -1619,6 +1625,15 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                 job_open = frappe.get_doc('Job Opening', doc_name).as_dict()
                 data_source['title_breadcrumb'] = job_open.job_title
                 data_source['job_opening'] = job_open
+
+                breadcrumb = data_source.get('breadcrumb')
+                if breadcrumb:
+                    breadcrumb.append({
+                        'idx': len(breadcrumb) + 1,
+                        'menu': job_open.job_title,
+                        'route': "#"
+                    })
+                    data_source['breadcrumb'] = breadcrumb
             # customer_data = bind_customer_cart()
             # data_source["cart"] = customer_data.get("cart_items")
             # data_source["my_boxes"] = customer_data.get("my_boxes")

@@ -149,9 +149,6 @@
      .{{page_route}} .mobile__header .go1-cms-menu a:hover{
         color: {{header_settings.m_hover_color}} ;
      }
-     .{{page_route}} .mobile__header .icon_nav{
-        color: {{header_settings.m_hover_color}} ;
-     }
      
      .{{page_route}} .mobile__header .go1-cms-header .logo{
         height: {{header_settings.m_logo_height}} ;

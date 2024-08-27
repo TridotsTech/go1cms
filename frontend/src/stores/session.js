@@ -1,12 +1,9 @@
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
-import { usersStore } from './users'
-import router from '@/router'
+import { userResource } from './user'
 import { ref, computed } from 'vue'
 
 export const sessionStore = defineStore('cms-session', () => {
-  const { users } = usersStore()
-
   function sessionUser() {
     let cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
     let _sessionUser = cookies.get('user_id')
@@ -21,24 +18,23 @@ export const sessionStore = defineStore('cms-session', () => {
 
   const login = createResource({
     url: 'login',
-    onError(err) {
-      // console.log(err.messages)
+    onError() {
       throw new Error('Invalid email or password')
     },
     onSuccess() {
-      users.reload()
+      userResource.reload()
       user.value = sessionUser()
       login.reset()
-      router.replace({ path: '/' })
+      window.location.href = '/cms'
     },
   })
 
   const logout = createResource({
     url: 'logout',
     onSuccess() {
-      users.reset()
+      userResource.reset()
       user.value = null
-      router.replace({ name: 'Login' })
+      window.location.href = '/cms/login'
     },
   })
 

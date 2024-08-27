@@ -13,7 +13,7 @@ from frappe.utils import getdate, nowdate, now, get_url
 TEMPLATE_HEADER = {
     'Template 1': 'header.html',
     'Template 2': 'header_1.html',
-    'Template 3': 'header.html',
+    'Template 3': 'header_2.html',
     'Template 4': 'header.html',
 }
 
@@ -592,7 +592,7 @@ def get_page_builder_data(page, customer=None, application_type="mobile", busine
 
 def get_header_info(header_id):
     header_list = frappe.db.get_all("Header Component", filters={"name": header_id}, fields=[
-        'is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top', 'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button',  'is_transparent_header', 'sticky_header_background', 'menu_text_color', 'template_header', 'active_button', 'button_text', 'sub_text', 'icon_button', 'show_btn_text', 'show_sub_text', 'show_icon_btn', 'button_link', 'link_target', 'use_action', 'active_button_2', 'button_text_2', 'sub_text_2', 'icon_button_2', 'show_btn_text_2', 'show_sub_text_2', 'show_icon_btn_2', 'button_link_2', 'link_target_2', 'use_action_2', 'active_button_3', 'button_text_3', 'sub_text_3', 'icon_button_3', 'show_btn_text_3', 'show_sub_text_3', 'show_icon_btn_3', 'button_link_3', 'link_target_3', 'use_action_3', 'active_button_4', 'button_text_4', 'sub_text_4', 'icon_button_4', 'show_btn_text_4', 'show_sub_text_4', 'show_icon_btn_4', 'button_link_4', 'link_target_4', 'use_action_4', 'menu_item_spacing'
+        'is_transparent_header', 'title', 'is_menu_full_width', 'layout_json', 'enable_top_menu', 'sticky_on_top', 'is_dismissable', 'layout', 'sticky_header', 'call_to_action_button',  'is_transparent_header', 'sticky_header_background', 'menu_text_color', 'template_header', 'active_button', 'button_text', 'sub_text', 'icon_button', 'show_btn_text', 'show_sub_text', 'show_icon_btn', 'button_link', 'link_target', 'use_action', 'active_button_2', 'button_text_2', 'sub_text_2', 'icon_button_2', 'show_btn_text_2', 'show_sub_text_2', 'show_icon_btn_2', 'button_link_2', 'link_target_2', 'use_action_2', 'active_button_3', 'button_text_3', 'sub_text_3', 'icon_button_3', 'show_btn_text_3', 'show_sub_text_3', 'show_icon_btn_3', 'button_link_3', 'link_target_3', 'use_action_3', 'active_button_4', 'button_text_4', 'sub_text_4', 'icon_button_4', 'show_btn_text_4', 'show_sub_text_4', 'show_icon_btn_4', 'button_link_4', 'link_target_4', 'use_action_4', 'menu_item_spacing', 'header_background', 'top_text_color', 'm_hover_color'
     ])
     if header_list:
         path = frappe.utils.get_files_path()
@@ -602,9 +602,10 @@ def get_header_info(header_id):
                 data = json.loads(f.read())
                 from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
                 for item in data:
+                    page_st = frappe.get_value(
+                        "Page Section", item.get('section'), ['menu', 'custom_css', 'route_search'], as_dict=1)
+                    item["route_search"] = page_st['route_search']
                     if item.get('section_type') == "Menu":
-                        page_st = frappe.get_value(
-                            "Page Section", item.get('section'), ['menu', 'custom_css'], as_dict=1)
                         item["custom_css"] = page_st['custom_css']
                         page_section_menu = page_st['menu']
                         menu = frappe.db.get_all("Menu", filters={"name": page_section_menu}, fields=[

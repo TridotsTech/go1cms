@@ -82,8 +82,10 @@ class MbwBlogPost(WebsiteGenerator):
     #         )
 
     def validate(self):
-        if not self.route or not self.route.startswith("tin-tuc/"):
-            self.route = "tin-tuc/" + slugify(self.title) + f"-{self.name}"
+        route_prefix = slugify(self.category)
+
+        if not self.route:
+            self.route = f"{route_prefix}/{slugify(self.title)}-{self.name}"
 
         if not self.blog_intro:
             content = get_html_content_based_on_type(

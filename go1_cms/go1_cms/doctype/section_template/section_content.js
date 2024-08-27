@@ -391,6 +391,7 @@ function fields_json(item, html) {
   wrapper.find(".btn-add-edit-data").click(() => {
     // if(JSON.parse(item.content).length>0){
     view_list_items(html, item);
+    view_data_dialog.show();
     // }
     // else{
     //     frappe.msgprint(__('There is no data'));
@@ -398,7 +399,17 @@ function fields_json(item, html) {
   });
 }
 function get_items_html(wrapper, doc) {}
-let view_data_dialog;
+let view_data_dialog = new frappe.ui.Dialog({
+  title: __("List Items"),
+  fields: [
+    {
+      fieldname: "list_html",
+      fieldtype: "HTML",
+      label: "Items",
+    },
+  ],
+});
+view_data_dialog.$wrapper.find(".modal-dialog").css("max-width", "900px");
 
 function view_list_items(wrapper, doc) {
   var fields = [];
@@ -441,7 +452,7 @@ function view_list_items(wrapper, doc) {
       list_html
         .find("thead #head-cols")
         .append(
-          `<th style='border-color: #ddd;border-bottom: 0;'>Actions</th>`
+          `<th style='border-color: #ddd;border-bottom: 0;'>Actions1</th>`
         );
     }
 
@@ -462,26 +473,34 @@ function view_list_items(wrapper, doc) {
           }
         }
         row_html += ' <td style="width: 25%;border-color: #ddd;">';
-        // row_html+=' <button class="btn btn-sm btn-primary"><span class="fa fa-edit"></span></button>';
+        row_html +=
+          ' <button class="btn btn-sm btn-primary"><span class="fa fa-edit"></span></button>';
         row_html +=
           ' <button class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>';
         row_html += " </td>";
         row_html += "</tr>";
 
         let row = $(row_html);
+
+        row.find(".btn-primary").click(function () {
+          edit_list_item(wrapper, doc, index);
+        });
         row.find(".btn-danger").click(function () {
           var updated_date = [];
-          let content = values.filter((obj) => obj.idx != index);
+          // let content = values.filter((obj) => obj.idx != index);
           // $(content).each(function(i, j) {
           //     console.log(j)
           //     j.idx = (i + 1);
           // });
+          let idx = 1;
           for (var i = 0; i < values.length; i++) {
             if (i != index) {
+              values[i]["idx"] = idx;
               updated_date.push(values[i]);
+              idx++;
             }
           }
-          console.log(updated_date);
+          // console.log(updated_date);
           doc.content = JSON.stringify(updated_date);
           frappe.model.set_value(
             "Section Content",
@@ -492,6 +511,7 @@ function view_list_items(wrapper, doc) {
           view_data_dialog.$wrapper
             .find("#list_html_table tbody tr:eq(" + index + ")")
             .remove();
+          view_list_items(wrapper, doc);
         });
         list_html.find("tbody").append(row);
       });
@@ -508,18 +528,18 @@ function view_list_items(wrapper, doc) {
       add_new_list_item(wrapper, doc);
     });
   }
-  view_data_dialog = new frappe.ui.Dialog({
-    title: __("List Items"),
-    fields: [
-      {
-        fieldname: "list_html",
-        fieldtype: "HTML",
-        label: "Items",
-      },
-    ],
-  });
-  view_data_dialog.show();
-  cur_frm.set_value("route", "");
+  // view_data_dialog = new frappe.ui.Dialog({
+  //   title: __("List Items"),
+  //   fields: [
+  //     {
+  //       fieldname: "list_html",
+  //       fieldtype: "HTML",
+  //       label: "Items",
+  //     },
+  //   ],
+  // });
+  // view_data_dialog.show();
+  // cur_frm.set_value("route", "");
   view_data_dialog.fields_dict.list_html.$wrapper.html(list_html);
 }
 function view_list_item(wrapper, doc) {
@@ -560,7 +580,7 @@ function view_list_item(wrapper, doc) {
       list_html
         .find("thead #head-cols")
         .append(
-          `<th style='border-color: #ddd;border-bottom: 0;'>Actions</th>`
+          `<th style='border-color: #ddd;border-bottom: 0;'>Actions2</th>`
         );
     }
 
@@ -681,7 +701,70 @@ function add_new_list_item(wrapper, doc) {
     frappe.model.set_value("Section Content", doc.name, "content", doc.content);
     data_dialog.hide();
     cur_frm.set_value("route", "");
-    update_list_items(wrapper, doc);
+    // update_list_items(wrapper, doc);
+    view_list_items(wrapper, doc);
+  });
+}
+function edit_list_item(wrapper, doc, index) {
+  var fieldslist = JSON.parse(doc.fields_json);
+  fieldslist.unshift({
+    field_label: "STT",
+    field_key: "idx",
+    field_type: "Int",
+    idx: fieldslist.length + 1,
+  });
+  var fields = [];
+  for (var i = 0; i < fieldslist.length; i++) {
+    if (["Text", "Attach"].includes(fieldslist[i].field_type)) {
+      fields.push({
+        fieldname: fieldslist[i].field_key,
+        fieldtype: "Data",
+        label: fieldslist[i].field_label,
+        // reqd: 1,
+      });
+    } else {
+      fields.push({
+        fieldname: fieldslist[i].field_key,
+        fieldtype: fieldslist[i].field_type,
+        label: fieldslist[i].field_label,
+        // reqd: 1,
+      });
+    }
+  }
+  let data_dialog = new frappe.ui.Dialog({
+    title: __("Edit List Item"),
+    fields: fields,
+  });
+  var old_content = JSON.parse(doc.content);
+  let content = old_content.find((obj) => obj.idx == index + 1);
+
+  $(fieldslist).each(function (k, v) {
+    data_dialog.set_value(v.field_key, content[v.field_key]);
+  });
+  data_dialog.show();
+  data_dialog.set_primary_action(__("Save"), () => {
+    let values = data_dialog.get_values();
+    if (doc.content) {
+      if (content.idx != values.idx) {
+        for (var idx = index; idx >= values.idx; idx--) {
+          let new_content = old_content[idx - 1];
+          new_content["idx"] = idx + 1;
+          old_content[idx] = new_content;
+        }
+      }
+      old_content[values.idx - 1] = values;
+      doc.content = JSON.stringify(old_content);
+    } else {
+      var ct_arry = [];
+      values.idx = 1;
+      ct_arry.push(values);
+      doc.content = JSON.stringify(ct_arry);
+    }
+    frappe.model.set_value("Section Content", doc.name, "content", doc.content);
+    data_dialog.hide();
+    cur_frm.set_value("route", "");
+    // update_list_items(wrapper, doc);
+    view_list_items(wrapper, doc);
   });
 }
 function update_list_items(wrapper, doc) {
@@ -722,7 +805,7 @@ function update_list_items(wrapper, doc) {
       list_html
         .find("thead #head-cols")
         .append(
-          `<th style='border-color: #ddd;border-bottom: 0;'>Actions</th>`
+          `<th style='border-color: #ddd;border-bottom: 0;'>Actions3</th>`
         );
     }
 
@@ -743,7 +826,8 @@ function update_list_items(wrapper, doc) {
           }
         }
         row_html += ' <td style="width: 25%;border-color: #ddd;">';
-        // row_html+=' <button class="btn btn-sm btn-primary"><span class="fa fa-edit"></span></button>';
+        row_html +=
+          ' <button class="btn btn-sm btn-primary"><span class="fa fa-edit"></span></button>';
         row_html +=
           ' <button class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>';
         row_html += " </td>";
@@ -863,8 +947,9 @@ function get_fields_list(wrapper, doc, frm_type, edit_doc) {
       JSON.stringify(prev_vals)
     );
     dialog.hide();
-    if (!cur_frm.doc.__islocal) cur_frm.save();
-    else {
+    if (!cur_frm.doc.__islocal) {
+      cur_frm.save();
+    } else {
       fields_json(doc, wrapper);
     }
   });

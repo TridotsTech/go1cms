@@ -160,9 +160,10 @@ const sections = computed(() => {
             {
               label: 'Danh mục',
               name: 'category',
-              type: 'multilink',
+              type: 'link',
               placeholder: 'Chọn danh mục',
               doctype: 'Mbw Blog Category',
+              mandatory: true,
             },
             {
               label: 'Tags',
@@ -271,11 +272,6 @@ const post = createResource({
   },
   auto: true,
   transform: (data) => {
-    data.category = data.category.map((cat) => ({
-      ...cat,
-      id: cat.name,
-      name: cat.category,
-    }))
     data.tags = data.tags.map((tag) => ({
       ...tag,
       id: tag.name,
@@ -287,23 +283,6 @@ const post = createResource({
     return data
   },
 })
-
-// function removeDOMSInHtmlString(htmlString, classRm = '.ql-editor') {
-//   if (!htmlString) return htmlString
-
-//   const parser = new DOMParser()
-//   const doc = parser.parseFromString(htmlString, 'text/html')
-//   const editor = doc.querySelector(classRm)
-
-//   if (editor) {
-//     while (editor.firstChild) {
-//       editor.parentNode.insertBefore(editor.firstChild, editor)
-//     }
-//     editor.remove()
-//   }
-
-//   return doc.body.innerHTML
-// }
 
 // handle allow actions
 const alreadyActions = ref(false)
@@ -322,6 +301,15 @@ async function callUpdateDoc() {
 
   if (JSON.stringify(post.data) == JSON.stringify(_post_cp)) {
     warningMessage('Tài liệu không thay đổi')
+    return
+  }
+
+  if (!_post_cp.title) {
+    errorMessage('Vui lòng điền tên bài viết')
+    return
+  }
+  if (!_post_cp.category) {
+    errorMessage('Vui lòng chọn danh mục')
     return
   }
 

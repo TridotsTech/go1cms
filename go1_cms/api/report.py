@@ -158,6 +158,7 @@ def calc_so_nguoi_truy_cap_hien_tai():
     SELECT COUNT(ip) AS current_active_users
     FROM `tabCMS Session`
     WHERE active = 1
+    AND time_out IS NOT NULL
     AND time_out >= NOW() - INTERVAL 30 MINUTE
     """
     return frappe.db.sql(qr_truy_cap_hien_tai, as_dict=1)[
@@ -168,7 +169,8 @@ def calc_so_nguoi_truy_cap_30p_qua():
     qr_truy_cap_30p = f"""
     SELECT COUNT(DISTINCT ip) AS users_last_30_minutes
     FROM `tabCMS Session`
-    WHERE time_access >= NOW() - INTERVAL 30 MINUTE
+    WHERE time_out IS NOT NULL
+    AND time_out >= NOW() - INTERVAL 30 MINUTE
     """
     return frappe.db.sql(qr_truy_cap_30p, as_dict=1)[
         0]['users_last_30_minutes']

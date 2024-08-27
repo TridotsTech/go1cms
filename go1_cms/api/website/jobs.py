@@ -2,7 +2,6 @@ from mimetypes import guess_type
 import frappe
 from frappe import _, local
 from pypika import functions as fn
-from frappe.utils import pretty_date
 from go1_cms.api.common import (
     pretty_date,
     convert_str_to_list

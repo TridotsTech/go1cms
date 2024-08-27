@@ -15,11 +15,6 @@ def get_post(name):
     if not len(post):
         frappe.throw(_("Blog not found"), frappe.DoesNotExistError)
     post = post.pop()
-    # category
-    category = frappe.db.get_all("Mbw Blog Category Item", filters={"parent": name, "parentfield": "category"}, fields=[
-        'name', 'category', 'idx'
-    ], order_by="idx")
-    post['category'] = category
     # tags
     tags = frappe.db.get_all("MBW Blog Tag Item", filters={"parent": name, "parentfield": "tags"}, fields=[
         'name', 'tag', 'idx'
@@ -39,14 +34,7 @@ def create_post(data):
     doc_new.meta_title = data.get('meta_title')
     doc_new.meta_description = data.get('meta_description')
     doc_new.meta_keywords = data.get('meta_keywords')
-    # add category
-    category = []
-    for cat in data.get('category', []):
-        if frappe.db.exists({"doctype": "Mbw Blog Category", "name": cat.get('name')}):
-            new_cat = frappe.new_doc("Mbw Blog Category Item")
-            new_cat.category = cat.get('name')
-            category.append(new_cat)
-    doc_new.category = category
+    doc_new.category = data.get('category')
     # add tags
     tags = []
     for tag in data.get('tags', []):
@@ -78,32 +66,12 @@ def update_post(data):
         frappe.throw(_("Tên bài viết không được để trống"))
 
     doc = frappe.get_doc('Mbw Blog Post', doc_name)
-    # remove category not in list
-    for cat in doc.category:
-        if not next((item for item in data.get('category', []) if item.get('name') == cat.category), None):
-            frappe.delete_doc('Mbw Blog Category Item', cat.name)
     # remove tags not in list
     for tag in doc.tags:
         if not next((item for item in data.get('tags', []) if item.get('name') == tag.tag), None):
             frappe.delete_doc('MBW Blog Tag Item', tag.name)
 
     doc.reload()
-    # add new category
-    category = doc.category
-    idx = 1
-    for cat in data.get('category', []):
-        category_exs = next(
-            (item for item in category if cat.get('name') == item.category), None)
-        if not category_exs:
-            if frappe.db.exists({"doctype": "Mbw Blog Category", "name": cat.get('name')}):
-                new_cat = frappe.new_doc("Mbw Blog Category Item")
-                new_cat.category = cat.get('name')
-                new_cat.idx = len(category) + 1
-                category.append(new_cat)
-        else:
-            category_exs.idx = idx
-        idx += 1
-
     # add new tag
     tags = doc.tags
     idx = 1
@@ -127,6 +95,7 @@ def update_post(data):
     doc.meta_keywords = data.get('meta_keywords')
     doc.blog_tag = data.get('blog_tag')
     doc.meta_image = data.get('meta_image')
+    doc.category = data.get('category')
     doc.content = data.get('content') or ''
     doc.route = data.get('route')
     doc.published = 1 if data.get(

@@ -303,9 +303,6 @@ def get_list_data(
     # remove field is table
     table_fields = []
     if doctype == 'Mbw Blog Post':
-        if 'category' in rows:
-            table_fields.append('category')
-            rows.remove("category")
         if 'tags' in rows:
             table_fields.append('tags')
             rows.remove("tags")
@@ -320,8 +317,9 @@ def get_list_data(
             if category_filter[0] == 'in':
                 category_filter[1] = [c.strip()
                                       for c in category_filter[1].split(';')]
-            name_filter.extend(frappe.db.get_all("Mbw Blog Category Item", filters={
-                "category": category_filter, "parentfield": "category"}, pluck="parent") or [])
+            new_filters.append(
+                ['category', category_filter[0], category_filter[1]])
+
         # tags
         tags_filter = filters.pop("tags", None)
         if tags_filter:
@@ -331,7 +329,7 @@ def get_list_data(
             name_filter.extend(frappe.db.get_all("MBW Blog Tag Item", filters={
                 "tag": tags_filter, "parentfield": "tags"}, pluck="parent") or [])
 
-        if category_filter or tags_filter:
+        if tags_filter:
             filt = ['name', 'in', list(set(name_filter))]
             new_filters.append(filt)
 
@@ -357,13 +355,7 @@ def get_list_data(
     # convert field is table and add rows field
     for f in table_fields:
         if doctype == 'Mbw Blog Post':
-            if f == 'category':
-                for d in data:
-                    data_f = frappe.db.get_all("Mbw Blog Category Item", filters={"parent": d.name, "parentfield": "category"}, fields=[
-                        'category'
-                    ], order_by="idx")
-                    d[f] = data_f
-            elif f == "tags":
+            if f == "tags":
                 for d in data:
                     data_f = frappe.db.get_all("MBW Blog Tag Item", filters={"parent": d.name, "parentfield": "tags"}, fields=[
                         'tag'

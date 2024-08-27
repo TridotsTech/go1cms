@@ -64,7 +64,7 @@ const breadcrumbs = [
   { label: 'Thêm mới', route: { name: 'Post Create' } },
 ]
 
-let _post = ref({ category: [], tags: [] })
+let _post = ref({ tags: [] })
 const msgError = ref()
 
 const sections = computed(() => {
@@ -94,9 +94,10 @@ const sections = computed(() => {
             {
               label: 'Danh mục',
               name: 'category',
-              type: 'multilink',
+              type: 'link',
               placeholder: 'Chọn danh mục',
               doctype: 'Mbw Blog Category',
+              mandatory: true,
             },
             {
               label: 'Tags',
@@ -199,6 +200,15 @@ const sections1 = computed(() => {
 
 async function callInsertDoc() {
   msgError.value = null
+  if (!_post.value.title) {
+    errorMessage('Vui lòng điền tên bài viết')
+    return
+  }
+  if (!_post.value.category) {
+    errorMessage('Vui lòng chọn danh mục')
+    return
+  }
+
   changeLoadingValue(true, 'Đang lưu...')
   try {
     const docCreate = await call('go1_cms.api.post.create_post', {

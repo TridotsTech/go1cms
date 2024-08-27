@@ -18,6 +18,9 @@ export const usersStore = defineStore('cms-users', () => {
     transform(users) {
       for (let user of users) {
         usersByName[user.name] = user
+        if (user.name === 'Administrator') {
+          usersByName[user.email] = user
+        }
       }
       return users
     },
@@ -37,6 +40,8 @@ export const usersStore = defineStore('cms-users', () => {
         name: email,
         email: email,
         full_name: email.split('@')[0],
+        first_name: email.split('@')[0],
+        last_name: '',
         user_image: null,
         role: null,
       }

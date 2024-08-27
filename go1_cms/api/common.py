@@ -519,31 +519,31 @@ def pretty_date(iso_datetime: datetime.datetime | str) -> str:
 
     # differnt cases
     if dt_diff_seconds < 60.0:
-        return _("just now")
+        return _("Hiện tại")
     elif dt_diff_seconds < 120.0:
-        return _("1m ago")
+        return _("1 phút trước")
     elif dt_diff_seconds < 3600.0:
-        return _("{0}m ago").format(cint(math.floor(dt_diff_seconds / 60.0)))
+        return _("{0} phút trước").format(cint(math.floor(dt_diff_seconds / 60.0)))
     elif dt_diff_seconds < 7200.0:
-        return _("1h ago")
+        return _("1 giờ trước")
     elif dt_diff_seconds < 86400.0:
-        return _("{0}h ago").format(cint(math.floor(dt_diff_seconds / 3600.0)))
+        return _("{0} giờ trước").format(cint(math.floor(dt_diff_seconds / 3600.0)))
     elif dt_diff_days == 1.0:
-        return _("Yesterday")
+        return _("Hôm qua")
     elif dt_diff_days < 7.0:
-        return _("{0}d ago").format(cint(dt_diff_days))
+        return _("{0} ngày trước").format(cint(dt_diff_days))
     elif dt_diff_days < 14:
-        return _("1w ago")
+        return _("1 tuần trước")
     elif dt_diff_days < 31.0:
-        return _("{0}w ago").format(dt_diff_days // 7)
+        return _("{0} tuần trước").format(dt_diff_days // 7)
     elif dt_diff_days < 61.0:
-        return _("1mo ago")
+        return _("1 tháng trước")
     elif dt_diff_days < 365.0:
-        return _("{0}mo ago").format(dt_diff_days // 30)
+        return _("{0} tháng trước").format(dt_diff_days // 30)
     elif dt_diff_days < 730.0:
-        return _("1y ago")
+        return _("1 năm trước")
     else:
-        return f"{cint(math.floor(dt_diff_days / 365.0))}y ago"
+        return f"{cint(math.floor(dt_diff_days / 365.0))} năm trước"
 
 
 def convert_str_to_list(val):
