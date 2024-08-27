@@ -1149,6 +1149,9 @@ def update_website_themes(doc):
             fields=['name']
         )
         for x in themes:
-            theme = frappe.get_doc("Web Theme", x.name)
-            theme.save(ignore_permissions=True)
-            theme.reload()
+            try:
+                theme = frappe.get_doc("Web Theme", x.name)
+                theme.save(ignore_permissions=True)
+                theme.reload()
+            except:
+                pass

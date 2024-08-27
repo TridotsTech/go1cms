@@ -8,6 +8,9 @@ from go1_cms.api.common import (
     copy_web_theme
 )
 from slugify import slugify
+from go1_cms.api.client_website import (
+    update_edit_client_website
+)
 
 
 @frappe.whitelist()
@@ -136,18 +139,23 @@ def add_web_template(name):
 
         # update client website
         # check template edit
-        template_edit = frappe.db.exists('MBW Client Website', {'edit': 1})
+        # template_edit = frappe.db.exists('MBW Client Website', {'edit': 1})
+        # website.edit = 0 if template_edit else 1
 
         website.name_web = template.template_name
         website.published = 1
         website.web_theme = web_theme
-        website.edit = 0 if template_edit else 1
+        website.edit = 0
+        website.type_web = 'Bản chính'
         website.type_template = template.type_template
         website.header_component = cp_header
         website.footer_component = cp_footer
         website.page_websites = page_websites
         website.save(ignore_permissions=True)
 
-        return {'name': website.name, 'template_edit': template_edit}
+        # update edit website
+        update_edit_client_website(website.name)
+
+        return {'name': website.name, 'template_edit': None}
     except Exception as ex:
         frappe.throw(_("Lỗi hệ thống"))

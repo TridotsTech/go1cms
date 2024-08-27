@@ -1587,6 +1587,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
             data_source['order_type'] = order_type
 
         if allow:
+            data_source['blog_detail'] = frappe._dict({})
+            data_source['job_opening'] = frappe._dict({})
             data_source['csrf_token'] = frappe.local.session.data.csrf_token or ''
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
