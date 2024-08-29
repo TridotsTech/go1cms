@@ -748,7 +748,7 @@ li {
     {% if doc.header_settings.mobile_menu_background %}
     .mobile__header .mobile_navbar{
         background-color: {{doc.header_settings.mobile_menu_background}} ;
-    }   
+    }
     #dl-menu ul li{
         background-color: {{doc.header_settings.mobile_menu_background}} ;
     }

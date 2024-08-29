@@ -14,7 +14,7 @@ TEMPLATE_HEADER = {
     'Template 1': 'header.html',
     'Template 2': 'header_1.html',
     'Template 3': 'header_2.html',
-    'Template 4': 'header.html',
+    'Template 4': 'header_3.html',
 }
 
 

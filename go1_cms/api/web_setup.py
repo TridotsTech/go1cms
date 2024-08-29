@@ -50,7 +50,7 @@ def get_setup():
             'section_title': 'Website logo',
             'fields': [
                 {
-                    'field_label': 'Logo chính (192 x 192px)',
+                    'field_label': 'Logo Web (192 x 192px)',
                     'field_key': 'website_logo',
                     'field_type': 'Attach',
                     'content': web_theme.website_logo,
@@ -59,16 +59,7 @@ def get_setup():
                     'upload_file_image': None
                 },
                 {
-                    'field_label': 'Logo phụ (192 x 192px)',
-                    'field_key': 'secondary_logo',
-                    'field_type': 'Attach',
-                    'content': web_theme.secondary_logo,
-                    'allow_edit': True,
-                    'show_edit': True,
-                    'upload_file_image': None
-                },
-                {
-                    'field_label': 'Logo mobile chính (192 x 192px)',
+                    'field_label': 'Logo mobile (192 x 192px)',
                     'field_key': 'mobile_logo',
                     'field_type': 'Attach',
                     'content': web_theme.mobile_logo,
@@ -76,16 +67,6 @@ def get_setup():
                     'show_edit': True,
                     'upload_file_image': None
                 },
-                {
-                    'field_label': 'Logo mobile phụ (192 x 192px)',
-                    'field_key': 'secondary_mobile_logo',
-                    'field_type': 'Attach',
-                    'content': web_theme.secondary_mobile_logo,
-                    'allow_edit': True,
-                    'show_edit': True,
-                    'upload_file_image': None
-                },
-
             ],
             'name': 'logo-2'
         }

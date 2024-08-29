@@ -124,7 +124,8 @@ def generate_webtheme_css_file(path, sitename, self):
         # end
         # render the css template
         template = frappe.get_template("templates/includes/web_themes.css")
-        global_header_css = None
+        global_header_css = ''
+
         if doc_obj.default_header:
             doc_obj.header_settings = frappe.get_doc(
                 "Header Component", doc_obj.default_header)
@@ -137,11 +138,11 @@ def generate_webtheme_css_file(path, sitename, self):
                 doc_obj.header_settings.m_font_family = frappe.db.get_value(
                     "CSS Font", doc_obj.header_settings.m_font_family, "font_family")
             """ End """
-            header_template = frappe.get_template(
-                "templates/includes/header.css")
-            header_css = header_template.render(
-                {'header_settings': doc_obj.header_settings, 'mobile_width': doc_obj.mobile_width})
-            global_header_css = header_css
+            # header_template = frappe.get_template(
+            #     "templates/includes/header.css")
+            # header_css = header_template.render(
+            #     {'header_settings': doc_obj.header_settings, 'mobile_width': doc_obj.mobile_width})
+            # global_header_css += header_css
             is_custom_header = 1
         if doc_obj.default_footer:
             doc_obj.footer_css = frappe.get_doc(
@@ -153,6 +154,12 @@ def generate_webtheme_css_file(path, sitename, self):
             if doc_obj.footer_css.f_txt_font_family:
                 doc_obj.footer_css.f_txt_font_family = frappe.db.get_value(
                     "CSS Font", doc_obj.footer_css.f_txt_font_family, "font_family")
+            # End
+            # template = frappe.get_template(
+            #     "templates/includes/footer.css")
+            # footer_css = template.render(
+            #     {'footer_settings': doc_obj.footer_css, "page_route": ''})
+            # global_header_css += footer_css
             # frappe.log_error(doc_obj.footer_css.as_dict(),'doc_obj.footer_css')
             # frappe.log_error(doc_obj.footer_css.f_txt_font_family,'doc_obj.footer_css.f_txt_font_family')
             """ End """
@@ -187,6 +194,7 @@ def generate_webtheme_css_file(path, sitename, self):
                 """ SELECT route,name,header_component,footer_component,edit_header_style,is_transparent_header,menu_text_color,menu_hover_bg,menu_hover_text_color FROM `tabWeb Page Builder` WHERE (web_client_id IS NULL OR web_client_id='')""", as_dict=1)
             # pages = frappe.db.get_all("Web Page Builder", filters={"published": 1}, fields=[
             #     'route', 'name', 'header_component', 'footer_component', 'edit_header_style', 'is_transparent_header', 'menu_text_color', 'menu_hover_bg', 'menu_hover_text_color'])
+
         header_settings = None
         for page in pages:
             web_sections = frappe.db.sql("""SELECT P.class_name,P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""", {
@@ -194,7 +202,7 @@ def generate_webtheme_css_file(path, sitename, self):
 
             # header
             header_settings = None
-            if page.header_component:
+            if page.header_component == doc_obj.default_header:
                 template = frappe.get_template(
                     "templates/includes/header.css")
                 header_settings = frappe.get_doc(
@@ -213,12 +221,11 @@ def generate_webtheme_css_file(path, sitename, self):
                 # frappe.log_error(header_settings.as_dict(),"<< header_settings >>")
                 # frappe.log_error(p_route,"<< p_route >>")
                 header_css = template.render(
-                    {'header_settings': header_settings, "page_route": p_route})
+                    {'header_settings': header_settings, "page_route": p_route, 'mobile_width': doc_obj.mobile_width})
                 # frappe.log_error(header_css,"<< header_css >>")
                 webtheme_css += header_css
-
             # footer
-            if page.footer_component:
+            if page.footer_component == doc_obj.default_footer:
                 p_route = page.route
                 if "/" in p_route:
                     p_route = p_route.split('/')[1]

@@ -209,7 +209,7 @@
    color: {{header_settings.m_hover_color}};
 
 }
-.mobile__header .go1-cms-header .logo{
+.{{page_route}} .mobile__header .go1-cms-header .logo{
    height: {{header_settings.m_logo_height}};
 }
 

@@ -176,7 +176,6 @@
 
 <script setup>
 import NestedPopover from '@/components/NestedPopover.vue'
-import { DateRangePicker, DatePicker } from 'frappe-ui'
 import { getCurrentDateInVietnam, getDateMinusDays } from '@/utils'
 import { ref, watch, onMounted } from 'vue'
 import moment from 'moment'
@@ -274,7 +273,9 @@ function handleSetLabelCompare() {
     case 'tuy_chon':
       if (timeRangeEndCurrent.value) {
         let p = timeRangeEndCurrent.value
-        str_time = `${moment(p[0]).format('DD/MM/YYYY')} - ${moment(p[1]).format('DD/MM/YYYY')}`
+        str_time = `${moment(p[0]).format('DD/MM/YYYY')} - ${moment(
+          p[1]
+        ).format('DD/MM/YYYY')}`
         setLabelCompare(str_time)
       }
       break
@@ -330,12 +331,16 @@ function setQueryParams() {
   }
   if (selectedPeriod.value.value == 'tuy_chon') {
     let p = timeRangeStartCurrent.value
-    p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format('YYYY-MM-DD')}`
+    p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format(
+      'YYYY-MM-DD'
+    )}`
     query.time_range_start = p
   }
   if (selectedCompare.value.value == 'tuy_chon') {
     let p = timeRangeEndCurrent.value
-    p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format('YYYY-MM-DD')}`
+    p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format(
+      'YYYY-MM-DD'
+    )}`
     query.time_range_end = p
   }
 
@@ -349,7 +354,7 @@ function getQueryParams() {
   // period
   let default_period = { value: '7_ngay_qua', label: '7 ngày qua' }
   let period = optionsPeriods.find(
-    (el) => el.value == route.query.selected_period,
+    (el) => el.value == route.query.selected_period
   )
 
   selectedPeriod.value = period ? period : default_period
@@ -359,7 +364,9 @@ function getQueryParams() {
     let t = route.query.time_range_start.split(',')
     if (t.length == 2) {
       timeRangeStartCurrent.value = [new Date(t[0]), new Date(t[1])]
-      let textLeft = `${moment(new Date(t[0])).format('DD/MM/YYYY')} - ${moment(new Date(t[1])).format('DD/MM/YYYY')}`
+      let textLeft = `${moment(new Date(t[0])).format('DD/MM/YYYY')} - ${moment(
+        new Date(t[1])
+      ).format('DD/MM/YYYY')}`
       setLablePeriod(textLeft)
     }
   }
@@ -372,7 +379,7 @@ function getQueryParams() {
     label: 'Không so sánh',
   }
   let compare = optionsCompare.find(
-    (el) => el.value == route.query.selected_compare,
+    (el) => el.value == route.query.selected_compare
   )
 
   selectedCompare.value = compare ? compare : default_compare
@@ -387,7 +394,9 @@ function getQueryParams() {
   } else {
     let t = timeRangeEndCurrent.value
     if (t) {
-      timeRangeEnd.value = `${moment(new Date(t[0])).format('YYYY-MM-DD')},${moment(new Date(t[1])).format('YYYY-MM-DD')}`
+      timeRangeEnd.value = `${moment(new Date(t[0])).format(
+        'YYYY-MM-DD'
+      )},${moment(new Date(t[1])).format('YYYY-MM-DD')}`
     }
   }
 
@@ -467,8 +476,12 @@ function changeFilter(d_time) {
   let toDate = d_time?.to
   let fromDate1 = getDateMinusDays(fromDate, d_time.numberOfDays)
   let toDate1 = getDateMinusDays(fromDate, 1)
-  let textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(new Date(toDate)).format('DD/MM/YYYY')}`
-  let textRight = `${moment(new Date(fromDate1)).format('DD/MM/YYYY')} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
+  let textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
+    new Date(toDate)
+  ).format('DD/MM/YYYY')}`
+  let textRight = `${moment(new Date(fromDate1)).format(
+    'DD/MM/YYYY'
+  )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
   setLabelText(textLeft, textRight)
   setValueTime(fromDate, toDate, fromDate1, toDate1)
 }
@@ -517,8 +530,12 @@ function changeValueTime() {
       toDate = today
       fromDate1 = getDateMinusDays(fromDate, 7)
       toDate1 = getDateMinusDays(fromDate, 1)
-      textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(new Date(toDate)).format('DD/MM/YYYY')}`
-      textRight = `${moment(new Date(fromDate1)).format('DD/MM/YYYY')} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
+      textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
+        new Date(toDate)
+      ).format('DD/MM/YYYY')}`
+      textRight = `${moment(new Date(fromDate1)).format(
+        'DD/MM/YYYY'
+      )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
       setLabelText(textLeft, textRight)
       setValueTime(fromDate, toDate, fromDate1, toDate1)
       break
@@ -527,8 +544,12 @@ function changeValueTime() {
       toDate = today
       fromDate1 = getDateMinusDays(fromDate, 30)
       toDate1 = getDateMinusDays(fromDate, 1)
-      textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(new Date(toDate)).format('DD/MM/YYYY')}`
-      textRight = `${moment(new Date(fromDate1)).format('DD/MM/YYYY')} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
+      textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
+        new Date(toDate)
+      ).format('DD/MM/YYYY')}`
+      textRight = `${moment(new Date(fromDate1)).format(
+        'DD/MM/YYYY'
+      )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
       setLabelText(textLeft, textRight)
       setValueTime(fromDate, toDate, fromDate1, toDate1)
       break
@@ -597,7 +618,9 @@ function calculateDaysBetweenDates(strStart, strEnd) {
 
 watch(timeRangeStartCurrent, (val) => {
   if (val) {
-    let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(val[1]).format('YYYY-MM-DD')}`
+    let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(
+      val[1]
+    ).format('YYYY-MM-DD')}`
     timeRangeStart.value = str_time
   } else {
     msgError.value.rangeStart = 'Vui lòng chọn khoảng thời gian'
@@ -606,7 +629,9 @@ watch(timeRangeStartCurrent, (val) => {
 
 watch(timeRangeEndCurrent, (val) => {
   if (val) {
-    let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(val[1]).format('YYYY-MM-DD')}`
+    let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(
+      val[1]
+    ).format('YYYY-MM-DD')}`
     timeRangeEnd.value = str_time
   } else {
     msgError.value.rangeEnd = 'Vui lòng chọn khoảng thời gian'

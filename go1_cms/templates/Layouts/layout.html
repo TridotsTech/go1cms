@@ -335,6 +335,7 @@
         return false;
       }
     } else {
+      reFreshSessionID();
       reFreshTimeSession();
     }
     return true;
@@ -351,28 +352,43 @@
       reFreshSessionID();
       reFreshTimeSession();
     }
-
-    fetch("/api/method/go1_cms.api.website.log_page.log_page_leave", {
+    $.ajax({
+      url: "/api/method/go1_cms.api.website.log_page.log_page_leave",
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "X-Frappe-CSRF-Token": "{{csrf_token}}",
       },
-      body: JSON.stringify({
+      data: {
         session_id: localStorage.getItem("sessionID"),
         path_url: path_url,
         active: active,
         session_old: sessionOld,
-      }),
+      },
+      success: function (response) {},
+      error: function (error) {
+        console.error("There was an error with the request:", error);
+      },
     });
   }
 
   if (!localStorage.getItem("sessionID")) {
     reFreshSessionID();
   }
-  $.post("/api/method/go1_cms.api.website.log_page.log_page_access", {
-    session_id: localStorage.getItem("sessionID"),
-    path_url: window.location.href,
-    page: window.location.pathname,
+  $.ajax({
+    url: "/api/method/go1_cms.api.website.log_page.log_page_access",
+    method: "POST",
+    headers: {
+      "X-Frappe-CSRF-Token": "{{csrf_token}}",
+    },
+    data: {
+      session_id: localStorage.getItem("sessionID"),
+      path_url: window.location.href,
+      page: window.location.pathname,
+    },
+    success: function (response) {},
+    error: function (error) {
+      console.error("There was an error with the request:", error);
+    },
   });
 
   callSaveLog();

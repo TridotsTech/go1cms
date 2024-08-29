@@ -7,4 +7,4 @@ from frappe.model.document import Document
 
 class CMSTotalsSignedForm(Document):
     def on_update(self):
-        frappe.publish_realtime('dashboard_update', message={})
+        frappe.publish_realtime('dashboard_update', {})

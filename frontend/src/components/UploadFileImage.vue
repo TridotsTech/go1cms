@@ -51,15 +51,18 @@ reader.addEventListener(
   () => {
     refImg.value.src = reader.result
   },
-  false
+  false,
 )
 
 function validateFile(files) {
   if (files && files[0]) {
     let file = files[0]
     let extn = file.name.split('.').pop().toLowerCase()
-    if (!['png', 'jpg', 'jpeg'].includes(extn)) {
+    if (!['png', 'jpg', 'jpeg', 'svg'].includes(extn)) {
       messageError.value = 'Chỉ cho phép hình ảnh PNG và JPG'
+      return
+    } else {
+      messageError.value = ''
     }
     inputFile.value = file
     nameFile.value = file.name

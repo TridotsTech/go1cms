@@ -311,15 +311,6 @@ def get_list_data(
     # handle filter field table
     name_filter = []
     if doctype == 'Mbw Blog Post':
-        # category
-        category_filter = filters.pop("category", None)
-        if category_filter:
-            if category_filter[0] == 'in':
-                category_filter[1] = [c.strip()
-                                      for c in category_filter[1].split(';')]
-            new_filters.append(
-                ['category', category_filter[0], category_filter[1]])
-
         # tags
         tags_filter = filters.pop("tags", None)
         if tags_filter:
