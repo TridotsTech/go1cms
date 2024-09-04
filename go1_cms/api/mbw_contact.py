@@ -25,7 +25,18 @@ def get_contact(name):
 
 @frappe.whitelist(allow_guest=True)
 def create_contact(**kwargs):
-    data_insert = {}
+    # if not frappe.db.exists('Page Section', kwargs.get('name_section')):
+    #     frappe.throw(_("Không thể gửi liên hệ"), frappe.DoesNotExistError)
+
+    # page_st = frappe.get_value(
+    #     "Page Section", kwargs.get('name_section'), ['form'], as_dict=1)
+    # form_fields = frappe.db.get_all("MBW Form Item", filters={'parent': page_st.form}, fields=[
+    #     'field_label', 'field_name', 'field_hidden', 'field_mandatory'
+    # ])
+    # for f in form_fields:
+    #     if f.field_hidden == 0 and f.field_mandatory == 1 and not kwargs.get(f.field_name):
+    #         frappe.throw(f"{f.field_label} không được để trống")
+
     doc = frappe.new_doc("MBW Contact")
 
     doc.last_name = kwargs.get("last_name") or ''

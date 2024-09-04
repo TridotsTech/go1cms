@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>{{ title }}</title>
+    <title>{{ meta_title or title }}</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     {% block meta_block %} {% include "templates/Layouts/meta_block.html" %} {%
     endblock %}

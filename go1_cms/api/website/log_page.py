@@ -12,7 +12,7 @@ def log_page_view(ip, form_type=''):
         'ip': ip,
         'form_type': form_type,
         'time_request': datetime.now()
-    }).insert()
+    }).insert(ignore_permissions=True)
 
 
 @frappe.whitelist(allow_guest=True)

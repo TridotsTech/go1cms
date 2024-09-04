@@ -7,8 +7,10 @@ import json
 import math
 
 from webshop.webshop.product_data_engine.filters import ProductFiltersBuilder
-from webshop.webshop.product_data_engine.query import ProductQuery
+# from webshop.webshop.product_data_engine.query import ProductQuery
 from webshop.webshop.doctype.override_doctype.item_group import get_child_groups_for_website
+
+from go1_cms.go1_cms.product_data_engine.query import ProductQuery
 
 
 @frappe.whitelist(allow_guest=True)
@@ -43,10 +45,10 @@ def get_product_filter_data(**kwargs):
         query_args = frappe._dict(kwargs)
 
         text_search = query_args.get("text_search")
-        field_filters = query_args.get("field_filters", '{}')
+        field_filters = query_args.get("field_filters", {})
         if isinstance(field_filters, str):
             field_filters = json.loads(field_filters)
-        attribute_filters = query_args.get("attribute_filters", '{}')
+        attribute_filters = query_args.get("attribute_filters", {})
         if isinstance(attribute_filters, str):
             attribute_filters = json.loads(attribute_filters)
         page_no = cint(query_args.page_no) - \
@@ -79,13 +81,6 @@ def get_product_filter_data(**kwargs):
             start=page_no*page_length,
             item_group=item_group,
         )
-        result_all = engine.query(
-            attribute_filters,
-            field_filters,
-            search_term=text_search,
-            start=0,
-            item_group=item_group,
-        )
     except Exception:
         frappe.log_error("Product query with filter failed")
         return {"exc": "Something went wrong!"}
@@ -99,8 +94,7 @@ def get_product_filter_data(**kwargs):
         filters["discount_filters"] = filter_engine.get_discount_filters(
             discounts)
 
-    items_count = result_all["items_count"]
-
+    items_count = result["items_count"]
     if items_count and page_length > 0:
         total_page = math.ceil(items_count/page_length)
     else:

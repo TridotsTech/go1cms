@@ -16,12 +16,6 @@ class MBWClientWebsite(Document):
                 "width": "276px"
             },
             {
-                "label": "Loại mẫu",
-                "type": "Select",
-                "key": "type_template",
-                "width": "228px"
-            },
-            {
                 "label": "Loại website",
                 "type": "Select",
                 "key": "type_web",

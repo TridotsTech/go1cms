@@ -25,7 +25,12 @@ frappe.ui.form.on('Page Section', {
 			frm.set_df_property('choose_fields', 'hidden', 1);
 		frm.trigger('image_link_documents');
 		frm.trigger('web_options');
-
+		frm.add_custom_button(__("Save To Template"), function () {
+			console.log('Done');
+		})
+		$('button[data-label="Save%20To%20Template"]').html(
+			"<i class='fa fa-save' style='margin-right:5px'></i> Save To Template"
+		);
 	},
 	onload: function(frm) {
 		frm.set_query("menu", function() {

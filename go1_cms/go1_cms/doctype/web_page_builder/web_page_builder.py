@@ -1636,6 +1636,38 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                         'route': "#"
                     })
                     data_source['breadcrumb'] = breadcrumb
+            elif doc_name and frappe.db.exists("Website Item", doc_name):
+                web_item = frappe.get_doc('Website Item', doc_name)
+                info_item = web_item.get_info()
+                website_item = frappe._dict({
+                    "slides": [{'heading': i.heading, 'description': i.description, 'image': i.image} for i in info_item.slides],
+                    "name": web_item.name,
+                    "web_item_name": web_item.web_item_name,
+                    "route": web_item.route,
+                    "has_variants": web_item.has_variants,
+                    "variant_of": web_item.variant_of,
+                    "item_group": web_item.item_group,
+                    "stock_uom": web_item.stock_uom,
+                    "brand": web_item.brand,
+                    "website_image": web_item.website_image,
+                    "short_description": web_item.short_description,
+                    "web_long_description": web_item.web_long_description,
+                    "recommended_items": info_item.recommended_items,
+                    "product_info": info_item.shopping_cart.product_info,
+                    "cart_settings": info_item.shopping_cart.cart_settings.as_dict(),
+                    "tabs": [i.as_dict() for i in web_item.tabs],
+                })
+                data_source['title_breadcrumb'] = web_item.web_item_name
+                data_source['website_item'] = website_item
+
+                breadcrumb = data_source.get('breadcrumb')
+                if breadcrumb:
+                    breadcrumb.append({
+                        'idx': len(breadcrumb) + 1,
+                        'menu': web_item.web_item_name,
+                        'route': "#"
+                    })
+                    data_source['breadcrumb'] = breadcrumb
             # customer_data = bind_customer_cart()
             # data_source["cart"] = customer_data.get("cart_items")
             # data_source["my_boxes"] = customer_data.get("my_boxes")

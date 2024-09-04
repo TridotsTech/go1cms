@@ -82,9 +82,8 @@ class MbwBlogPost(WebsiteGenerator):
     #         )
 
     def validate(self):
-        route_prefix = slugify(self.category)
-
         if not self.route:
+            route_prefix = slugify(self.category)
             self.route = f"{route_prefix}/{slugify(self.title)}-{self.name}"
 
         if not self.blog_intro:
@@ -126,14 +125,14 @@ class MbwBlogPost(WebsiteGenerator):
 
     def get_context(self, context):
         context.doc_name = self.name
-        context.title = self.title
-        context.metatags = {
+        context.meta_title = self.title
+        context.metatags = frappe._dict({
             "description": self.blog_intro or '',
             "keywords": self.meta_keywords or '',
             "og:title": self.meta_title or '',
             "og:description": self.meta_description or '',
             "og:image": self.meta_image or '',
-        }
+        })
 
         if not self.route.endswith('blog-123-blog-456-blog'):
             web_client = frappe.db.get_value(

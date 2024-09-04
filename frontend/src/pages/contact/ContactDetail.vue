@@ -171,7 +171,7 @@ const sections = computed(() => {
       hideBorder: true,
       fields: [
         {
-          label: 'Thông tin thêm',
+          label: 'Thông tin thêm / Dịch vụ tư vấn',
           name: 'message',
           type: 'textarea',
           placeholder: 'Nhập thông tin',

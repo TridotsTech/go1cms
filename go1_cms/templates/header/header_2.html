@@ -1,3 +1,8 @@
+{%for sec_item in header.get("items")%}
+    {% if sec_item.section_name == 'Header Form'  %}
+    {{ sec_item.get('html_section') }}
+    {% endif %}
+{% endfor %}
 <div class="desktop__header hidden lg:block {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     {%for sec_item in header.get("items")%}
     {% if sec_item.section_name == 'Header Announcement Bar'  %}

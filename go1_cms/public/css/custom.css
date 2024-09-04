@@ -2438,6 +2438,10 @@
   max-width: 1.25rem /* 20px */;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 /* ql editer */
 .ql-snow .ql-editor {
   padding: 0;

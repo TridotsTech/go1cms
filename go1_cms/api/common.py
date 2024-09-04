@@ -59,6 +59,28 @@ def copy_header_component(name, sub_name):
             doc_menu.is_template = 0
             doc_menu.save(ignore_permissions=True)
             doc.menu = doc_menu.name
+        elif doc.section_type == 'Form':
+            form_set = frappe.db.get_value(
+                'MBW Form', {'id_parent_copy': doc.form}, ['name'], as_dict=1)
+            if not form_set:
+                target_doc_form = None
+                doc_form = frappe.new_doc("MBW Form")
+                doc_form = get_mapped_doc("MBW Form", doc.form,	{
+                    "MBW Form": {
+                        "doctype": "MBW Form"
+                    },
+                }, target_doc_form, ignore_permissions=True)
+                doc_form.name = "US-F-{0}".format(getStrTimestamp())
+                doc_form.id_client_website = sub_name
+                doc_form.id_parent_copy = doc.form
+                doc_form.is_template = 0
+                doc_form.save(ignore_permissions=True)
+                # set new id form
+                doc.form = doc_form.name
+            else:
+                # set new id form
+                doc.form = form_set.name
+
         doc.save(ignore_permissions=True)
 
         m_page_sec = frappe.new_doc("Mobile Page Section")

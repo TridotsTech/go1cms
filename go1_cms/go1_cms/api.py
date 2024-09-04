@@ -603,8 +603,55 @@ def get_header_info(header_id):
                 from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
                 for item in data:
                     page_st = frappe.get_value(
-                        "Page Section", item.get('section'), ['menu', 'custom_css', 'route_search'], as_dict=1)
+                        "Page Section", item.get('section'), ['menu', 'form', 'custom_css', 'web_template', 'custom_js', 'route_search'], as_dict=1)
                     item["route_search"] = page_st['route_search']
+                    section_html = page_st.web_template
+                    data_source = {}
+                    css = page_st.custom_css
+                    js = page_st.custom_js
+
+                    if section_html:
+                        data_source['name_section'] = item.get('section')
+                        section_contents = frappe.db.sql('''select field_key, field_type, content from `tabSection Content` where parent = %(parent)s and parenttype = "Page Section" order by idx''', {
+                            'parent': item.get('section')}, as_dict=1)
+
+                        if section_contents:
+                            for cont in section_contents:
+                                if cont.field_type == 'Button':
+                                    data_source[cont.field_key] = json.loads(
+                                        cont.content) if cont.content else {}
+                                elif cont.field_type == 'List':
+                                    data_source[cont.field_key] = json.loads(
+                                        cont.content) if cont.content else []
+                                else:
+                                    data_source[cont.field_key] = cont.content
+                        if page_st.form and frappe.db.exists('MBW Form', page_st.form):
+                            form_data = frappe.get_doc(
+                                'MBW Form', page_st.form).as_dict()
+                            for field in form_data.form_fields:
+                                if field.field_type in ['checkbox', 'radio', 'select']:
+                                    field['field_options'] = str(
+                                        field.field_options).split('\n')
+                            data_source['form_data'] = form_data
+                        if css:
+                            if css.find('<style') == -1:
+                                section_html += '<style>{0}</style>'.format(
+                                    css)
+                            else:
+                                section_html += '{0}'.format(css)
+                        if js:
+                            js = js.replace('&amp;', '&').replace('&gt;', '>')
+                            if js.find('<script') == -1:
+                                section_html += frappe.render_template(
+                                    '<script>{0}</script>'.format(js), data_source)
+                            else:
+                                section_html += frappe.render_template(
+                                    '{0}'.format(js), data_source)
+
+                        section_html = frappe.render_template(
+                            section_html, data_source)
+                    item["html_section"] = section_html or ''
+
                     if item.get('section_type') == "Menu":
                         item["custom_css"] = page_st['custom_css']
                         page_section_menu = page_st['menu']

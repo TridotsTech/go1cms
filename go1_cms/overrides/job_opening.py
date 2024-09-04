@@ -17,6 +17,15 @@ class CustomJobOpening(JobOpening):
 
     def get_context(self, context):
         context.doc_name = self.name
+        context.meta_title = self.job_title
+        context.metatags = frappe._dict({
+            "description": self.cms_meta_description or '',
+            "keywords": self.cms_meta_keywords or '',
+            "og:title": self.cms_meta_title or '',
+            "og:description": self.cms_meta_description or '',
+            "og:image": self.cms_meta_image or '',
+        })
+
         if not self.route.endswith('jobs-123-jobs-456-jobs'):
             web_client = frappe.db.get_value(
                 'MBW Client Website', {"type_web": "Bản chính"}, pluck='name', as_dict=1)
