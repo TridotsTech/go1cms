@@ -59,22 +59,50 @@ def change_name_web_client_website(name, name_web):
 
 @frappe.whitelist()
 def set_primary_client_website(name):
-    if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
-        frappe.throw(_("My website not found"), frappe.DoesNotExistError)
+    if not frappe.db.exists({"doctype": "MBW Website Template", "name": name}):
+        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
 
-    doc = frappe.get_doc('MBW Client Website', name)
+    web_template = frappe.db.get_value(
+        'MBW Website Template', name, ['template_in_use', 'installed_template'], as_dict=1)
+    if web_template.installed_template == 0:
+        frappe.throw(_("Giao diện chưa được cài đặt"))
+    if web_template.template_in_use == 1:
+        frappe.throw(_("Giao diện đã sử dụng từ trước"))
+
+    name_client_web = frappe.db.get_value(
+        'MBW Client Website', {'setting_from_template': name}, ['name'])
+
+    if not name_client_web:
+        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
+
+    doc = frappe.get_doc('MBW Client Website', name_client_web)
     doc.type_web = 'Bản chính'
-    doc.save()
+    doc.edit = 1
+    doc.save(ignore_permissions=True)
+
+    # update web template
+    frappe.db.set_value('MBW Website Template', name, 'template_in_use', 1)
+    existing_list = frappe.db.sql(
+        '''UPDATE `tabMBW Website Template` SET template_in_use=0 WHERE name!="{web_name}" AND template_in_use=1'''.format(web_name=name))
+    frappe.db.commit()
 
     return name
 
 
 @frappe.whitelist()
 def update_published_client_website(name, published):
-    if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
-        frappe.throw(_("My website not found"), frappe.DoesNotExistError)
+    client_web = frappe.db.get_value(
+        'MBW Client Website', {'setting_from_template': name}, ['name', 'published'], as_dict=1)
+    if not client_web:
+        frappe.throw(_("Không tìm thấy trang web"), frappe.DoesNotExistError)
 
-    doc = frappe.get_doc('MBW Client Website', name)
+    if published == client_web.published:
+        if published == 0:
+            frappe.throw(_("Trang web đã được dừng kích hoạt trước đó"))
+        else:
+            frappe.throw(_("Trang web đã được kích hoạt trước đó"))
+
+    doc = frappe.get_doc('MBW Client Website', client_web.name)
     doc.published = published
     doc.save()
 
@@ -96,8 +124,15 @@ def update_edit_client_website(name):
 
 @frappe.whitelist()
 def delete_client_website(name):
-    if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
-        frappe.throw(_("My website not found"), frappe.DoesNotExistError)
+    name_client_web = frappe.db.get_value(
+        'MBW Client Website', {'setting_from_template': name}, ['name'])
+    if not name_client_web:
+        frappe.throw(_("Không tìm thấy trang web"), frappe.DoesNotExistError)
 
-    frappe.delete_doc('MBW Client Website', name)
+    frappe.delete_doc('MBW Client Website', name_client_web)
+
+    frappe.db.set_value('MBW Website Template', name, {
+        "template_in_use": 0,
+        "installed_template": 0,
+    })
     return name

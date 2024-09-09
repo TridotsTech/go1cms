@@ -157,11 +157,11 @@ const { views } = viewsStore()
 const isSidebarCollapsed = useStorage('isSidebarCollapsed', false)
 
 const links = [
-  {
-    label: 'Website của tôi',
-    icon: MyWebsiteIcon,
-    to: 'My Website',
-  },
+  // {
+  //   label: 'Website của tôi',
+  //   icon: MyWebsiteIcon,
+  //   to: 'My Website',
+  // },
   {
     label: 'Kho giao diện',
     icon: DisplayIcon,

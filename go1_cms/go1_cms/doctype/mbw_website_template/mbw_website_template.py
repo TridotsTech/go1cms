@@ -1,7 +1,7 @@
 # Copyright (c) 2024, Tridotstech and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 from datetime import datetime
 import time
@@ -12,6 +12,12 @@ class MBWWebsiteTemplate(Document):
         if not self.custom_name:
             self.custom_name = "WT-{}".format(getStrTimestamp())
 
+    def validate(self):
+        if self.template_in_use == 1:
+            existing_list = frappe.db.sql(
+                '''UPDATE `tabMBW Website Template` SET template_in_use=0 WHERE name!="{web_name}" AND template_in_use=1'''.format(web_name=self.name))
+            frappe.db.commit()
+
     @staticmethod
     def default_list_data():
         columns = []
@@ -21,10 +27,11 @@ class MBWWebsiteTemplate(Document):
             "creation",
             "modified_by",
             "modified",
-            "_assign",
             "owner",
             "image_preview",
-            "template_name"
+            "template_name",
+            "template_in_use",
+            "installed_template"
         ]
         return {'columns': columns, 'rows': rows}
 

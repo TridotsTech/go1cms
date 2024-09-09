@@ -77,10 +77,10 @@ class MBWClientWebsite(Document):
                     doc.save()
 
             # check edit
-            # if self.edit == 1:
-            #     existing_list = frappe.db.sql(
-            #         '''UPDATE `tabMBW Client Website` SET edit=0 WHERE name!="{web_name}" AND edit=1'''.format(web_name=self.name))
-            #     frappe.db.commit()
+            if self.edit == 1:
+                existing_list = frappe.db.sql(
+                    '''UPDATE `tabMBW Client Website` SET edit=0 WHERE name!="{web_name}" AND edit=1'''.format(web_name=self.name))
+                frappe.db.commit()
 
             # update published
             if doc_self_old.published != self.published:

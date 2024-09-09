@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+from frappe import _
 import frappe
 import json
 import os
@@ -815,3 +816,35 @@ def get_child_categories(category):
     except Exception:
         frappe.log_error(frappe.get_traceback(
         ), 'ecommerce_business_store.ecommerce_business_store.api.get_child_categories')
+
+
+@frappe.whitelist()
+def save_page_section_to_template(section_id):
+    if not frappe.db.exists('Page Section', section_id):
+        return {'status': 0}
+
+    page_section = frappe.get_doc('Page Section', section_id)
+    if not frappe.db.exists('Section Template', page_section.section_name):
+        return {'status': 0}
+    section_template = frappe.get_doc(
+        'Section Template', page_section.section_name)
+
+    section_template.html_content = page_section.html_content
+    content = []
+    for item in page_section.content:
+        new_doc = frappe.new_doc('Section Content')
+        new_doc.idx = item.idx
+        new_doc.group_name = item.group_name
+        new_doc.field_label = item.field_label
+        new_doc.field_key = item.field_key
+        new_doc.field_type = item.field_type
+        new_doc.content = item.content
+        new_doc.fields_json = item.fields_json
+        content.append(new_doc)
+
+    section_template.content = content
+    section_template.web_template = page_section.web_template
+    section_template.custom_css = page_section.custom_css
+    section_template.custom_js = page_section.custom_js
+    section_template.save(ignore_permissions=True)
+    return {'status': 200}

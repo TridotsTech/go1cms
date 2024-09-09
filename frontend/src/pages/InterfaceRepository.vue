@@ -20,9 +20,29 @@
       <div class="w-full">
         <div class="p-4 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           <div
-            class="rounded-md shadow-md"
+            class="relative rounded-md shadow-md"
             v-for="temp in interFaces.data.data"
           >
+            <div class="absolute top-6 left-4 z-10">
+              <div
+                v-if="temp.template_in_use"
+                class="bg-green-100 shadow-lg p-2 rounded-lg text-green-700 font-bold text-base"
+              >
+                Đang sử dụng
+              </div>
+              <div
+                v-else-if="temp.installed_template"
+                class="bg-gray-100 shadow-lg p-2 rounded-lg text-orange-500 font-bold text-base"
+              >
+                Bản nháp
+              </div>
+              <div
+                v-else
+                class="bg-gray-100 shadow-lg p-2 rounded-lg text-black font-bold text-base"
+              >
+                Chưa cài đặt
+              </div>
+            </div>
             <div
               class="cursor-pointer"
               :onclick="
@@ -55,7 +75,16 @@
             </div>
             <div class="p-6 pt-4">
               <h2 class="text-xl font-bold">{{ temp.template_name }}</h2>
-              <div class="mt-4 flex justify-end">
+              <div class="mt-4 flex flex-wrap justify-end gap-2">
+                <Button
+                  v-if="temp.installed_template && !temp.template_in_use"
+                  variant="solid"
+                  theme="green"
+                  size="sm"
+                  label="Sử dụng trang web"
+                  @click="() => handleModalUseTemplate(temp)"
+                >
+                </Button>
                 <Button
                   :variant="'outline'"
                   theme="gray"
@@ -91,6 +120,39 @@
       </div>
     </div>
   </div>
+  <Dialog
+    :options="{
+      title: 'Sử dụng giao diện',
+      actions: [
+        {
+          label: 'Xác nhận',
+          variant: 'solid',
+          theme: 'green',
+          onClick: (close) => handleUseTemplate(close),
+        },
+      ],
+    }"
+    v-model="showModalUseTemplate"
+  >
+    <template v-slot:body-content>
+      <div>
+        <div>
+          Bạn chắc chắn muốn sử dụng giao diện:
+          <b>"{{ selectedItem?.template_name }}"</b>?
+        </div>
+        <div class="text-base text-red-600">
+          <p>
+            -
+            <b
+              >Dữ liệu từ mẫu đã sử dụng trước đó sẽ không được áp dụng khi
+              chuyển đổi</b
+            >.
+          </p>
+          <p>- <b>Mẫu này sẽ được sử dụng là website chính của bạn</b>.</p>
+        </div>
+      </div>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
@@ -98,10 +160,13 @@ import noImage from '@/assets/images/no_image.jpg'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import ViewControls from '@/components/ViewControls.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
-import { Breadcrumbs, ListFooter } from 'frappe-ui'
+import { Breadcrumbs, ListFooter, call } from 'frappe-ui'
+import { createToast, errorMessage } from '@/utils'
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { globalStore } from '@/stores/global'
+const { changeLoadingValue } = globalStore()
 
 const breadcrumbs = [
   { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
@@ -112,10 +177,46 @@ const interFaces = ref({})
 const loadMore = ref(1)
 const updatedPageCount = ref(20)
 
+const showModalUseTemplate = ref(false)
+const selectedItem = ref({})
+
+const handleModalUseTemplate = (temp) => {
+  selectedItem.value = temp
+  showModalUseTemplate.value = true
+}
+
+const handleUseTemplate = async (close) => {
+  changeLoadingValue(true, 'Đang cấu hình...')
+  try {
+    await call('go1_cms.api.client_website.set_primary_client_website', {
+      name: selectedItem.value?.name,
+    }).then(() => {
+      createToast({
+        title: 'Thành công',
+        icon: 'check',
+        iconClasses: 'text-green-600',
+      })
+      interFaces.value.reload()
+      close()
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 300)
+    })
+  } catch (err) {
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages[0])
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  }
+  changeLoadingValue(false)
+}
+
 watch(
   () => interFaces.value?.data?.page_length_count,
-  (val, old_value) => {
-    if (!val || val === old_value) return
+  (val, oldVal) => {
+    if (!val || val === oldVal) return
     updatedPageCount.value = val
   },
 )

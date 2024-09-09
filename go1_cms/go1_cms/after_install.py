@@ -502,10 +502,7 @@ def read_module_path_mbw(file_name):
             out = json.load(f)
         for i in out:
             try:
-                check_doc = frappe.db.exists(
-                    i.get('doctype'), i.get('name'))
-
-                if not check_doc:
+                if not frappe.db.exists(i.get('doctype'), i.get('name')):
                     # insert if new app or not find doc
                     frappe.get_doc(i).insert()
                 elif str(allow_update) == '1':

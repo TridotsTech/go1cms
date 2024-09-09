@@ -4,11 +4,7 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
     <template #right-header>
-      <div
-        v-if="pageExists"
-        class="gap-2 justify-end"
-        :class="alreadyActions ? 'flex' : 'hidden'"
-      >
+      <div v-if="pageExists && alreadyActions" class="flex gap-2 justify-end">
         <Button
           variant="subtle"
           theme="gray"

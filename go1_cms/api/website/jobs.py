@@ -65,7 +65,7 @@ def get_all_job(name_section, **kwargs):
     job_type = convert_str_to_list(kwargs.get('job_type', []))
 
     sort_by = frappe.qb.desc
-    if kwargs.get('sort_by', 'ASC').lower() == "asc":
+    if kwargs.get('sort_by', 'desc').lower() == "asc":
         sort_by = frappe.qb.asc
 
     JobOpening = frappe.qb.DocType('Job Opening')

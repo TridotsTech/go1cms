@@ -41,7 +41,20 @@ def get_filter_product():
 
 @frappe.whitelist(allow_guest=True)
 def get_product_filter_data(**kwargs):
+    limit = None
+    sort_field = 'creation'
+    sort_by = 'desc'
+    order_by = None
+
     if kwargs:
+        name_section = kwargs.get('name_section')
+        if frappe.db.exists('Page Section', name_section):
+            doc_section = frappe.get_doc('Page Section', name_section)
+            sort_field = doc_section.sort_field if doc_section.sort_field else sort_field
+            limit = doc_section.no_of_records if doc_section.no_of_records else None
+        if kwargs.get('sort_by', 'desc').lower() == "asc":
+            sort_by = 'asc'
+
         query_args = frappe._dict(kwargs)
 
         text_search = query_args.get("text_search")
@@ -60,6 +73,10 @@ def get_product_filter_data(**kwargs):
         field_filters = {}
         page_no = 0
 
+    # order_by
+    if sort_by and sort_field:
+        order_by = f"{sort_field} {sort_by}"
+
     # if new filter is checked, reset page_no to show filtered items from page 1
     if from_filters:
         page_no = 0
@@ -70,7 +87,7 @@ def get_product_filter_data(**kwargs):
             item_group, immediate=True)
 
     settings = frappe.get_doc("Webshop Settings")
-    page_length = settings.products_per_page or 20
+    page_length = limit or settings.products_per_page or 20
     engine = ProductQuery()
 
     try:
@@ -80,6 +97,7 @@ def get_product_filter_data(**kwargs):
             search_term=text_search,
             start=page_no*page_length,
             item_group=item_group,
+            order_by=order_by
         )
     except Exception:
         frappe.log_error("Product query with filter failed")

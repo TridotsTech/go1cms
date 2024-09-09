@@ -32,7 +32,7 @@ def get_blog_list(name_section, **kwargs):
     limit = doc_section.no_of_records if doc_section.no_of_records else page_len
     offset = page_no*limit
     sort_by = frappe.qb.desc
-    if kwargs.get('sort_by', 'ASC').lower() == "asc":
+    if kwargs.get('sort_by', 'desc').lower() == "asc":
         sort_by = frappe.qb.asc
 
     # get data

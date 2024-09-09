@@ -26,7 +26,7 @@ class ProductQuery:
     def __init__(self):
         self.settings = frappe.get_doc("Webshop Settings")
         self.page_length = self.settings.products_per_page or 20
-
+        self.order_by = "ranking desc"
         self.or_filters = []
         self.filters = [["published", "=", 1]]
         self.fields = [
@@ -46,7 +46,7 @@ class ProductQuery:
             "on_backorder",
         ]
 
-    def query(self, attributes=None, fields=None, search_term=None, start=0, item_group=None):
+    def query(self, attributes=None, fields=None, search_term=None, start=0, item_group=None, order_by=None):
         """
         Args:
                         attributes (dict, optional): Item Attribute filters
@@ -69,6 +69,8 @@ class ProductQuery:
             self.build_search_filters(search_term)
         if self.settings.hide_variants:
             self.filters.append(["variant_of", "is", "not set"])
+        if order_by:
+            self.order_by = order_by
 
         # query results
         if attributes:
@@ -133,7 +135,7 @@ class ProductQuery:
             or_filters=n_or_filters,
             limit_page_length=page_length,
             limit_start=start,
-            order_by="ranking desc",
+            order_by=self.order_by,
         )
 
         return items, count

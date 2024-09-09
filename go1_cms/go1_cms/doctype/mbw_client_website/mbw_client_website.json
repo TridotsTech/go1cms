@@ -9,6 +9,7 @@
   "name_web",
   "type_web",
   "type_template",
+  "setting_from_template",
   "column_break_uzqk",
   "edit",
   "published",
@@ -89,11 +90,17 @@
    "fieldtype": "Link",
    "label": "Web Theme",
    "options": "Web Theme"
+  },
+  {
+   "fieldname": "setting_from_template",
+   "fieldtype": "Link",
+   "label": "C\u00e0i \u0111\u1eb7t t\u1eeb m\u1eabu",
+   "options": "MBW Website Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 14:46:38.934242",
+ "modified": "2024-09-06 10:32:37.945007",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

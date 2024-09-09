@@ -26,7 +26,29 @@ frappe.ui.form.on('Page Section', {
 		frm.trigger('image_link_documents');
 		frm.trigger('web_options');
 		frm.add_custom_button(__("Save To Template"), function () {
-			console.log('Done');
+			frappe.call({
+				method:
+				  "go1_cms.go1_cms.doctype.page_section.page_section.save_page_section_to_template",
+				args: {
+					section_id: frm.doc.name,
+				},
+				freeze: true,
+				callback: function (r) {
+					if(r.message.status == 200){
+						frappe.msgprint(
+						  __("Section đã lưu vào mẫu thành công")
+						);
+
+					}else{
+						frappe.msgprint(
+							msg='Section không thể lưu vào mẫu',
+							title='Error',
+							raise_exception=FileNotFoundError
+						)
+						
+					}
+				},
+			  });
 		})
 		$('button[data-label="Save%20To%20Template"]').html(
 			"<i class='fa fa-save' style='margin-right:5px'></i> Save To Template"

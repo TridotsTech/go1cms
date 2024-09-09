@@ -5,14 +5,14 @@ import { sessionStore } from '@/stores/session'
 const routes = [
   {
     path: '/',
-    redirect: { name: 'My Website' },
+    redirect: { name: 'Interface Repository' },
     name: 'Home',
   },
-  {
-    path: '/my-website',
-    name: 'My Website',
-    component: () => import('@/pages/MyWebsite.vue'),
-  },
+  // {
+  //   path: '/my-website',
+  //   name: 'My Website',
+  //   component: () => import('@/pages/MyWebsite.vue'),
+  // },
   {
     path: '/interface-repository',
     name: 'Interface Repository',
@@ -207,7 +207,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.name === 'Login' && isLoggedIn) {
-    next({ name: 'My Website' })
+    next({ name: 'Interface Repository' })
   } else if (to.name !== 'Login' && !isLoggedIn) {
     next({ name: 'Login' })
   } else if (to.matched.length === 0) {

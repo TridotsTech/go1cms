@@ -32,8 +32,18 @@ def get_web_templates(repo):
 def get_web_template(name):
     WebTemplate = frappe.qb.DocType("MBW Website Template")
     if not frappe.db.exists('MBW Website Template', name):
-        frappe.throw(_("Template not found"), frappe.DoesNotExistError)
-    template = frappe.get_doc('MBW Website Template', name)
+        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
+    template = frappe.get_doc('MBW Website Template', name).as_dict()
+    published = 0
+    web_client = frappe.db.exists(
+        "MBW Client Website", {"setting_from_template": name})
+    if web_client:
+        published = frappe.db.get_value(
+            'MBW Client Website', web_client, 'published')
+
+    template.client_web = {
+        'published': published
+    }
 
     return template
 
@@ -138,23 +148,25 @@ def add_web_template(name):
                 template.web_theme, website.name, cp_header, cp_footer)
 
         # update client website
-        # check template edit
-        # template_edit = frappe.db.exists('MBW Client Website', {'edit': 1})
-        # website.edit = 0 if template_edit else 1
-
         website.name_web = template.template_name
         website.published = 1
         website.web_theme = web_theme
-        website.edit = 0
+        website.edit = 1
         website.type_web = 'Bản chính'
         website.type_template = template.type_template
         website.header_component = cp_header
         website.footer_component = cp_footer
         website.page_websites = page_websites
+        website.setting_from_template = name
         website.save(ignore_permissions=True)
 
         # update edit website
         update_edit_client_website(website.name)
+
+        # update web template
+        template.template_in_use = 1
+        template.installed_template = 1
+        template.save(ignore_permissions=True)
 
         return {'name': website.name, 'template_edit': None}
     except Exception as ex:
