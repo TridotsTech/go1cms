@@ -6,7 +6,7 @@
     padding-top:{{header_settings.header_padding}};
     padding-bottom:{{header_settings.header_padding}};
     {%if header_settings.enable_header_border%}
-        border:1px solid {{header_settings.header_border_color}};
+    border-bottom:1px solid {{header_settings.header_border_color}};
     {%endif%}
     {%if header_settings.header_shadow%}
     box-shadow: 0 0 5px #ddd;
