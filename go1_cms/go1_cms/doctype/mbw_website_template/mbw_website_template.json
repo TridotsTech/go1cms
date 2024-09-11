@@ -95,19 +95,21 @@
    "default": "0",
    "fieldname": "template_in_use",
    "fieldtype": "Check",
+   "in_standard_filter": 1,
    "label": "\u0110ang s\u1eed d\u1ee5ng"
   },
   {
    "default": "0",
    "fieldname": "installed_template",
    "fieldtype": "Check",
+   "in_standard_filter": 1,
    "label": "\u0110\u00e3 c\u00e0i \u0111\u1eb7t"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-09 08:46:12.412126",
+ "modified": "2024-09-10 15:12:17.801796",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

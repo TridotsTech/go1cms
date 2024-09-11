@@ -5,11 +5,11 @@
         <div class="text-base text-gray-700 font-bold mb-2">
           {{ field.field_label }}
         </div>
-        <div class="flex flex-col overflow-auto max-h-[500px]">
+        <div class="border overflow-auto max-h-[500px]">
           <table
-            class="table-section text-base border-spacing-0 border-collapse"
+            class="table-section text-base border-spacing-0 border-collapse w-full"
           >
-            <thead>
+            <thead class="sticky top-0 z-[2]">
               <tr class="box-border border-b bg-gray-50 min-h-16">
                 <th class="p-2 w-auto sticky left-0 py-5">STT</th>
                 <template v-for="f in field.fields_json">
@@ -30,7 +30,9 @@
                 handle=".handle"
               >
                 <template #item="{ element, index }">
-                  <tr class="border-collapse hover:bg-gray-50 table-item">
+                  <tr
+                    class="border-t border-b border-collapse hover:bg-gray-50 table-item"
+                  >
                     <td class="p-2 text-center sticky left-0 z-[1] bg-white">
                       <div class="flex items-center gap-2">
                         <DragVerticalIconV1
@@ -84,14 +86,16 @@
               </Draggable>
             </template>
             <template v-else>
-              <tr class="border">
-                <td
-                  class="p-3 text-center text-base text-gray-600"
-                  :colspan="field.fields_json?.length + 2"
-                >
-                  Không có dữ liệu
-                </td>
-              </tr>
+              <tbody>
+                <tr class="border">
+                  <td
+                    class="p-3 text-center text-base text-gray-600"
+                    :colspan="field.fields_json?.length + 2"
+                  >
+                    Không có dữ liệu
+                  </td>
+                </tr>
+              </tbody>
             </template>
           </table>
         </div>

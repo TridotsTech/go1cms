@@ -4,24 +4,24 @@
       <Breadcrumbs :items="breadcrumbs" />
     </template>
     <template #right-header>
-      <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
-        <div>
-          <Button
-            variant="subtle"
-            theme="blue"
-            size="md"
-            label=""
-            icon="eye"
-            :link="
-              views.data?.config_domain?.use_other_domain
-                ? views.data?.config_domain?.domain + _header?.web_page?.route
-                : _header?.web_page?.route
-            "
-          >
-          </Button>
-        </div>
-      </Tooltip>
       <div class="flex gap-2 justify-end" v-if="alreadyActions">
+        <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+          <div>
+            <Button
+              variant="subtle"
+              theme="blue"
+              size="md"
+              label=""
+              icon="eye"
+              :link="
+                views.data?.config_domain?.use_other_domain
+                  ? views.data?.config_domain?.domain + _header?.web_page?.route
+                  : _header?.web_page?.route
+              "
+            >
+            </Button>
+          </div>
+        </Tooltip>
         <Button
           variant="subtle"
           theme="gray"

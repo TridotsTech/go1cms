@@ -348,7 +348,6 @@
   {
    "fieldname": "layout_json",
    "fieldtype": "Code",
-   "hidden": 1,
    "label": "Layout Json",
    "read_only": 1
   },
@@ -485,7 +484,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-11 14:30:48.402079",
+ "modified": "2024-09-10 13:56:47.952097",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",

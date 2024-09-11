@@ -266,55 +266,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Website",
-   "link_count": 4,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "MBW Client Website",
-   "link_count": 0,
-   "link_to": "MBW Client Website",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Mbw Blog Post",
-   "link_count": 0,
-   "link_to": "Mbw Blog Post",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Blogger",
-   "link_count": 0,
-   "link_to": "Blogger",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Mbw Blog Category",
-   "link_count": 0,
-   "link_to": "Mbw Blog Category",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Template",
    "link_count": 3,
    "link_type": "DocType",
@@ -418,9 +369,68 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Website",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "MBW Client Website",
+   "link_count": 0,
+   "link_to": "MBW Client Website",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mbw Blog Post",
+   "link_count": 0,
+   "link_to": "Mbw Blog Post",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Blogger",
+   "link_count": 0,
+   "link_to": "Blogger",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mbw Blog Category",
+   "link_count": 0,
+   "link_to": "Mbw Blog Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "MBW Blog Tag",
+   "link_count": 0,
+   "link_to": "MBW Blog Tag",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-08-07 13:53:30.126511",
+ "modified": "2024-09-10 15:35:44.531637",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Go1 CMS",

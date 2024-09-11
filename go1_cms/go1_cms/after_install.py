@@ -51,6 +51,9 @@ def after_install():
     insert_faq()
     insert_testimonial()
     insert_blogger()
+    insert_mbw_blog_tag()
+    insert_mbw_blog_category()
+    insert_mbw_blog_post()
 
     # update cms setting
     update_cms_setting()
@@ -185,8 +188,23 @@ def insert_web_theme():
     read_module_path_mbw(file_name)
 
 
-def insert_blogger(t=0):
+def insert_blogger():
     file_name = "blogger.json"
+    read_module_path_mbw(file_name)
+
+
+def insert_mbw_blog_tag():
+    file_name = "mbw_blog_tag.json"
+    read_module_path_mbw(file_name)
+
+
+def insert_mbw_blog_category():
+    file_name = "mbw_blog_category.json"
+    read_module_path_mbw(file_name)
+
+
+def insert_mbw_blog_post():
+    file_name = "mbw_blog_post.json"
     read_module_path_mbw(file_name)
 
 

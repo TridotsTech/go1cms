@@ -26,6 +26,25 @@
           >
           </Button>
         </div>
+        <div v-if="template.data?.template_in_use">
+          <Tooltip text="Xem trang web" :hover-delay="1" placement="top">
+            <div>
+              <Button
+                variant="subtle"
+                theme="blue"
+                size="md"
+                label=""
+                icon="eye"
+                :link="
+                  views.data?.config_domain?.use_other_domain
+                    ? views.data?.config_domain?.domain + '/home'
+                    : '/home'
+                "
+              >
+              </Button>
+            </div>
+          </Tooltip>
+        </div>
         <Button
           v-if="!template.data?.installed_template"
           variant="solid"
@@ -258,6 +277,8 @@ import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 import { useStorage } from '@vueuse/core'
 const isSidebarCollapsed = useStorage('isSidebarCollapsed', false)
+import { viewsStore } from '@/stores/views'
+const { views } = viewsStore()
 
 const props = defineProps({
   interfaceId: {

@@ -207,6 +207,7 @@ const contact = createResource({
   },
   auto: true,
   transform: (data) => {
+    console.log(data)
     _contact.value = {
       ...data,
     }
@@ -299,7 +300,10 @@ watch(
 const breadcrumbs = computed(() => {
   let items = [{ label: 'Danh sách liên hệ', route: { name: 'Contacts' } }]
   items.push({
-    label: contact.data?.email,
+    label:
+      contact.data?.email ||
+      contact.data?.full_name ||
+      contact.data?.phone_number,
     route: {},
   })
   return items
