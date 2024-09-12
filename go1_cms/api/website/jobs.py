@@ -145,11 +145,23 @@ def get_job_detail(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_job_related(name):
+def get_job_related(name, **kwargs):
     jobs = []
     if frappe.db.exists("Job Opening", name):
         doc = frappe.db.get_value('Job Opening', name, [
             'name', 'job_title', 'designation', 'status', 'employment_type', 'location'], as_dict=1)
+
+        name_section = kwargs.get('name_section', None)
+        if name_section:
+            doc_section = frappe.db.get_value('Page Section', name_section, [
+                                              'no_of_records'], as_dict=1)
+            limit = doc_section.no_of_records if doc_section.no_of_records else 4
+        else:
+            limit = kwargs.get('limit', '4')
+            if limit.isdigit():
+                limit = int(limit) if int(limit) <= 12 else 12
+            else:
+                limit = 4
 
         JobOpening = frappe.qb.DocType('Job Opening')
         m_query = (frappe.qb.from_(JobOpening).where(
@@ -174,7 +186,7 @@ def get_job_related(name):
         q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
                                 JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
                                 JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.salary_per, JobOpening.department, JobOpening.vacancies, JobOpening.job_requisition, JobOpening.designation, JobOpening.currency
-                                ).limit(4).orderby(JobOpening.posted_on, order=frappe.qb.desc)
+                                ).limit(limit).orderby(JobOpening.posted_on, order=frappe.qb.desc)
 
         jobs = q_data.run(as_dict=True)
         for j in jobs:

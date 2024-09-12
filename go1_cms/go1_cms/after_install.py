@@ -58,6 +58,9 @@ def after_install():
     # update cms setting
     update_cms_setting()
 
+    # update Website Settings
+    update_website_settings()
+
     # insert_webpage_builder()
     # update_workspace_v14()
 
@@ -65,6 +68,10 @@ def after_install():
 def update_cms_setting():
     frappe.db.set_value('CMS Settings', 'CMS Settings', 'is_updated', 1)
 
+
+def update_website_settings():
+    frappe.db.set_value('Website Settings',
+                        'Website Settings', 'home_page', 'home')
 
 # def update_file_setup_template():
 #     path = frappe.get_module_path("go1_cms")

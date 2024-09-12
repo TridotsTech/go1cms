@@ -27,7 +27,8 @@ def get_blog_list(name_section, **kwargs):
     blog_category = kwargs.get('blog_category', 'Tin tức')
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
 
-    doc_section = frappe.get_doc('Page Section', name_section)
+    doc_section = frappe.db.get_value('Page Section', name_section, [
+        'sort_field', 'no_of_records'], as_dict=1)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
     limit = doc_section.no_of_records if doc_section.no_of_records else page_len
     offset = page_no*limit
@@ -76,9 +77,15 @@ def get_recent_blog(name_section, **kwargs):
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
     blog_category = kwargs.get('blog_category', 'Tin tức')
 
-    doc_section = frappe.get_doc('Page Section', name_section)
+    doc_section = frappe.db.get_value('Page Section', name_section, [
+        'sort_field'], as_dict=1)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
-    limit = 4
+    limit = kwargs.get('limit', '4')
+    if limit.isdigit():
+        limit = int(limit) if int(limit) <= 12 else 12
+    else:
+        limit = 4
+
     offset = 0
     sort_by = frappe.qb.desc
 
@@ -97,7 +104,7 @@ def get_recent_blog(name_section, **kwargs):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_related_blogs(name):
+def get_related_blogs(name, **kwargs):
     related_blogs = []
     if frappe.db.exists("Mbw Blog Post", name):
         tags = frappe.db.get_all("MBW Blog Tag Item", filters={
@@ -105,7 +112,18 @@ def get_related_blogs(name):
         name_blogs = [n for n in frappe.db.get_all("MBW Blog Tag Item", filters={
             "tag": ['in', tags], "parentfield": "tags"}, pluck="parent") or [] if n != name]
 
-        page_length = 4
+        name_section = kwargs.get('name_section', None)
+        if name_section:
+            doc_section = frappe.db.get_value('Page Section', name_section, [
+                                              'no_of_records'], as_dict=1)
+            limit = doc_section.no_of_records if doc_section.no_of_records else 3
+        else:
+            limit = kwargs.get('limit', '3')
+            if limit.isdigit():
+                limit = int(limit) if int(limit) <= 12 else 12
+            else:
+                limit = 3
+
         order_by = 'published_on desc'
         fields = ['published_on', 'name', 'title', 'blogger',
                   'route', 'blog_intro', 'meta_image']
@@ -117,7 +135,7 @@ def get_related_blogs(name):
             fields=fields,
             filters=related_filters,
             order_by=order_by,
-            page_length=page_length,
+            page_length=limit,
         ) or []
 
         for item in related_blogs:

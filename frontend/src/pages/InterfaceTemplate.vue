@@ -58,91 +58,109 @@
     </template>
   </LayoutHeader>
   <div v-if="template.data" class="overflow-auto">
-    <div class="flex justify-end">
+    <div class="sticky top-0 z-[1] flex justify-end">
+      <div class="bg-white">
+        <div
+          class="flex flex-col gap-2 p-4 border-l border-b border-gray-300 min-w-64 rounded-bl-lg text-base text-gray-700"
+        >
+          <div>
+            <strong>Trạng thái:</strong>
+            <span v-if="!template.data?.installed_template" class="text-black">
+              Chưa cài đặt</span
+            >
+            <span
+              v-else-if="template.data?.template_in_use"
+              class="text-green-700"
+            >
+              Đang sử dụng</span
+            >
+            <span v-else class="text-orange-500"> Bản nháp</span>
+          </div>
+          <div v-if="template.data?.template_in_use">
+            <strong>Trang web:</strong>
+            <span
+              v-if="template.data?.client_web.published"
+              class="text-blue-700"
+            >
+              Đang kích hoạt</span
+            >
+            <span v-else class="text-orange-500"> Dừng kích hoạt</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="template.data?.images.length" class="p-6 pb-2 mb-6">
       <div
-        class="flex flex-col gap-2 p-4 border-b border-l border-gray-350 min-w-64 rounded-bl-lg text-base text-gray-700"
+        class="flex flex-wrap justify-center font-bold text-lg text-gray-700 italic border border-b-0 rounded-t-md border-gray-300"
       >
-        <div>
-          <strong>Trạng thái:</strong>
-          <span v-if="!template.data?.installed_template" class="text-black">
-            Chưa cài đặt</span
-          >
-          <span
-            v-else-if="template.data?.template_in_use"
-            class="text-green-700"
-          >
-            Đang sử dụng</span
-          >
-          <span v-else class="text-orange-500"> Bản nháp</span>
-        </div>
-        <div v-if="template.data?.template_in_use">
-          <strong>Trang web:</strong>
-          <span
-            v-if="template.data?.client_web.published"
-            class="text-blue-700"
-          >
-            Đang kích hoạt</span
-          >
-          <span v-else class="text-orange-500"> Dừng kích hoạt</span>
-        </div>
+        <p class="p-3">Ảnh xem trước</p>
       </div>
-    </div>
-    <div v-if="template.data?.images.length" class="p-6 mb-10">
-      <Carousel
-        class="rounded-md"
-        id="gallery"
-        :items-to-show="1"
-        v-model="currentSlide"
-        :mouseDrag="false"
-        :touchDrag="touchDrag"
+      <div
+        class="py-4 rounded-b-md border border-gray-300 focus-visible:outline-none"
       >
-        <Slide v-for="slide in template.data?.images" :key="slide">
-          <div class="carousel__item cursor-zoom-in">
-            <photo-provider :loop="true">
-              <photo-consumer
-                v-for="src in template.data?.images"
-                :intro="`Ảnh xem trước ${src.idx}`"
-                :key="src.idx"
-                :src="src.image"
-              >
-                <img
-                  v-if="src.idx == slide.idx"
-                  class="h-96 view-box"
+        <Carousel
+          class="p-2 pt-4 focus-visible:outline-none"
+          id="gallery"
+          :items-to-show="1"
+          v-model="currentSlide"
+          :mouseDrag="false"
+          :touchDrag="touchDrag"
+        >
+          <Slide v-for="slide in template.data?.images" :key="slide">
+            <div class="carousel__item cursor-zoom-in">
+              <photo-provider :loop="true">
+                <photo-consumer
+                  v-for="src in template.data?.images"
+                  :intro="`Ảnh xem trước ${src.idx}`"
+                  :key="src.idx"
                   :src="src.image"
-                  alt=""
-                />
-              </photo-consumer>
-            </photo-provider>
-          </div>
-        </Slide>
-      </Carousel>
-      <Carousel
-        class="mt-4 overflow-auto"
-        id="thumbnails"
-        v-model="currentSlide"
-        :items-to-show="1"
-        :breakpoints="breakpoints"
-        :touchDrag="touchDrag"
-      >
-        <Slide v-for="slide in template.data?.images" :key="slide">
-          <div
-            class="carousel__item cursor-pointer mx-6 px-6 py-2 border-2 rounded-md w-[200px]"
-            :class="currentSlide == slide.idx - 1 ? 'border-red-500' : ''"
-            @click="slideTo(slide.idx - 1)"
-          >
-            <img class="h-24" :src="slide.image" alt="" />
-          </div>
-        </Slide>
-        <template #addons>
-          <Navigation />
-        </template>
-      </Carousel>
-
-      <div class="text-center font-bold text-lg text-gray-700 my-10 italic">
-        Ảnh xem trước
+                >
+                  <img
+                    v-if="src.idx == slide.idx"
+                    class="h-96 view-box"
+                    :src="src.image"
+                    alt=""
+                  />
+                </photo-consumer>
+              </photo-provider>
+            </div>
+          </Slide>
+        </Carousel>
+        <div class="my-2 border-t border-dashed border-gray-300"></div>
+        <Carousel
+          class="p-2 focus-visible:outline-none"
+          id="thumbnails"
+          v-model="currentSlide"
+          :items-to-show="1"
+          :breakpoints="breakpoints"
+          :touchDrag="touchDrag"
+        >
+          <Slide v-for="slide in template.data?.images" :key="slide">
+            <div
+              class="carousel__item cursor-pointer mx-6 px-6 py-2 border-2 rounded-md w-[200px]"
+              :class="currentSlide == slide.idx - 1 ? 'border-red-500' : ''"
+              @click="slideTo(slide.idx - 1)"
+            >
+              <img class="h-24" :src="slide.image" alt="" />
+            </div>
+          </Slide>
+          <template #addons>
+            <Navigation />
+          </template>
+        </Carousel>
       </div>
     </div>
-    <div class="mb-6 p-6" v-html="template.data?.content"></div>
+    <div class="p-6">
+      <div
+        class="flex flex-wrap justify-center font-bold text-lg text-gray-700 italic border border-b-0 rounded-t-md border-gray-300"
+      >
+        <p class="p-3">Mô tả</p>
+      </div>
+      <div
+        class="rounded-b-md mb-6 p-4 border border-gray-300"
+        v-html="template.data?.content"
+      ></div>
+    </div>
   </div>
   <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
     <div class="flex justify-center h-screen mt-40 text-gray-700">
@@ -271,8 +289,8 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, createResource, call, Dropdown } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
 import { createToast, errorMessage } from '@/utils'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+// import { useRouter } from 'vue-router'
+// const router = useRouter()
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 import { useStorage } from '@vueuse/core'
