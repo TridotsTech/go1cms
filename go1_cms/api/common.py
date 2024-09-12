@@ -492,16 +492,23 @@ def handle_write_file_multiple_doctype_template():
 
     for temp in temps:
         data = []
+        doctype = temp.get('doctype')
         for doc in temp.get('doc_names'):
-            print(temp.get('doctype'), doc)
-            d_j = frappe.get_doc(temp.get('doctype'), doc).as_dict()
+            print(doctype, doc)
+            d_j = frappe.get_doc(doctype, doc).as_dict()
             # remove fields is None
             d_j = remove_nulls(d_j)
+
+            # reset web template
+            if doctype == 'MBW Website Template':
+                d_j['template_in_use'] = 0
+                d_j['installed_template'] = 0
+
             data.append(d_j)
 
         # write file
         path = os.path.join(frappe.get_module_path("go1_cms"), 'mbw_json_data')
-        folder_name = slugify(text=temp.get('doctype'), separator='_')
+        folder_name = slugify(text=doctype, separator='_')
         json_file_name = "{0}.json".format(folder_name)
         with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, default=v)

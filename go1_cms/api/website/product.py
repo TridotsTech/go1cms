@@ -42,15 +42,18 @@ def get_filter_product():
 @frappe.whitelist(allow_guest=True)
 def get_product_filter_data(**kwargs):
     limit = None
-    sort_field = 'creation'
+    sort_field = None
     sort_by = 'desc'
     order_by = None
 
     if kwargs:
         name_section = kwargs.get('name_section')
+        if kwargs.get('sort_field') in ['creation', 'ranking']:
+            sort_field = kwargs.get('sort_field')
         if frappe.db.exists('Page Section', name_section):
             doc_section = frappe.get_doc('Page Section', name_section)
-            sort_field = doc_section.sort_field if doc_section.sort_field else sort_field
+            if not sort_field:
+                sort_field = doc_section.sort_field
             limit = doc_section.no_of_records if doc_section.no_of_records else None
         if kwargs.get('sort_by', 'desc').lower() == "asc":
             sort_by = 'asc'

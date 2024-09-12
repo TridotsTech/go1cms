@@ -358,6 +358,7 @@ async function deleteDoc(close) {
       })
       close()
       if (template.data?.template_in_use == 1) {
+        views.reload()
         setTimeout(() => window.location.reload(), 300)
       } else {
         template.reload()

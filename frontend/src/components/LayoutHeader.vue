@@ -3,7 +3,7 @@
     <header
       class="flex flex-wrap justify-between items-center px-5 py-2.5 min-h-14"
     >
-      <div>
+      <div class="header_left">
         <slot name="left-header" />
       </div>
       <div>
@@ -21,3 +21,9 @@ nextTick(() => {
   showHeader.value = true
 })
 </script>
+<style>
+.header_left > div > div {
+  flex-wrap: wrap;
+  white-space: normal;
+}
+</style>

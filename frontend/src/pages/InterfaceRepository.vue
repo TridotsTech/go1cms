@@ -23,7 +23,7 @@
             class="relative rounded-md shadow-md"
             v-for="temp in interFaces.data.data"
           >
-            <div class="absolute top-6 left-4 z-10">
+            <div class="absolute top-6 left-4 z-[1]">
               <div
                 v-if="temp.template_in_use"
                 class="bg-green-100 shadow-lg p-2 rounded-lg text-green-700 font-bold text-base"
@@ -42,6 +42,28 @@
               >
                 Chưa cài đặt
               </div>
+            </div>
+            <div
+              v-if="temp.template_in_use"
+              class="absolute top-6 right-4 z-[1]"
+            >
+              <Tooltip text="Xem trang web" :hover-delay="1" :placement="'top'">
+                <div>
+                  <Button
+                    variant="subtle"
+                    theme="blue"
+                    size="md"
+                    label=""
+                    icon="eye"
+                    :link="
+                      views.data?.config_domain?.use_other_domain
+                        ? views.data?.config_domain?.domain + '/home'
+                        : '/home'
+                    "
+                  >
+                  </Button>
+                </div>
+              </Tooltip>
             </div>
             <div
               class="cursor-pointer"
@@ -167,6 +189,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
+import { viewsStore } from '@/stores/views'
+const { views } = viewsStore()
 
 const breadcrumbs = [
   { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
