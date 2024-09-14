@@ -26,6 +26,28 @@ def get_info_footer_component():
 
     # fields component
     fields_cp = []
+    # footer
+    fields_footer = {
+        'allow_edit':  True,
+        'show_edit': True if footer_component.footer_bg_image else False,
+        'section_title': 'Thiết kế',
+        'image': None,
+        'show_prv_image': False,
+        'fields': [
+            {
+                'field_label': 'Ảnh nền',
+                'field_key': 'footer_bg_image',
+                'field_type': 'upload_image',
+                'content': footer_component.footer_bg_image,
+                'allow_edit': True if footer_component.footer_bg_image else False,
+                'show_edit': True,
+                'upload_file_image': None
+            }
+        ],
+        'name': 'footer-0'
+    }
+    fields_cp.append(fields_footer)
+
     # copyright
     fields_copyright = {
         'allow_edit':  True,
@@ -53,8 +75,8 @@ def get_info_footer_component():
         ],
         'name': 'footer-1'
     }
-
     fields_cp.append(fields_copyright)
+
     web_page = {
         'route': web_edit.route_web
     }

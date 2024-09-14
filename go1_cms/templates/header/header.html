@@ -1,4 +1,3 @@
-
 {%if header.enable_top_menu%}
 <div class="go1-cms-top-bar z-auto lg:z-[-1]" >
     <div class="container d__flex">
@@ -58,6 +57,11 @@
 </div>
 </div>
 {%endif%}
+{%for sec_item in header.get("items")%}
+    {% if sec_item.section_name == 'Header Form'  %}
+    {{ sec_item.get('html_section') }}
+    {% endif %}
+{% endfor %}
 <div class="desktop__header hidden lg:block {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     <div class="web__header go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
         <div class="container">

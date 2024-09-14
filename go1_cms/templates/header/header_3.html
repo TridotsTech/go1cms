@@ -1,3 +1,8 @@
+{%for sec_item in header.get("items")%}
+    {% if sec_item.section_name == 'Header Form'  %}
+    {{ sec_item.get('html_section') }}
+    {% endif %}
+{% endfor %}
 <div class="desktop__header hidden lg:block {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
     {%for sec_item in header.get("items")%}
     {% if sec_item.section_name == 'Header Announcement Bar'  %}
@@ -53,7 +58,7 @@
                 <div class="w-full flex justify-between gap-2">
                     <div class="flex items-center gap-4">
                         {%for sec_item in header.get("items")%}
-                        {% if sec_item.section_name in ['Header Menu', 'Header Button', 'Header Logo'] %}
+                        {% if sec_item.section_name in ['Header Menu', 'Header Search 1','Header Button', 'Header Logo'] %}
                         {%set col_index = loop.index %}
                         {%if col_index <= col.itemLeft %}
                         {%if sec_item.section_name == "Header Logo"%}
@@ -137,6 +142,9 @@
                             {%endfor%}
                             {% endif %}
                         </ul>
+                        {%endif%}
+                        {% if sec_item.section_name == "Header Search 1" %}
+                            {{ sec_item.get('html_section')}}
                         {%endif%}
                         {%if sec_item.section_name == "Header Button"%}
                         {%if header.call_to_action_button==1%}
@@ -422,6 +430,7 @@
                 {%set col_index = loop.index %}
                 <div style="width: {{ each_col.width }}">
                     {%for sec_item in header.get("items")%}
+                    {% if sec_item.section_name in ['Header Menu', 'Header Search 1','Header Button', 'Header Logo'] %}
                     {%if col_index == (sec_item.column_index+1) %}
                         {%if sec_item.section_name == "Header Logo"%}
                             {%if header.sticky_header %}
@@ -503,6 +512,9 @@
                                 {%endfor%}
                                 {% endif %}
                             </ul>
+                        {%endif%}
+                        {% if sec_item.section_name == "Header Search 1" %}
+                            {{ sec_item.get('html_section')}}
                         {%endif%}
                         {%if sec_item.section_name == "Header Button"%}
                             {%if header.call_to_action_button==1%}
@@ -602,6 +614,7 @@
                                 </div>
                             {%endif%}
                         {%endif%}
+                    {%endif%}
                     {%endif%}
                     {%endfor%}
                 </div>
@@ -760,6 +773,14 @@
                 </button></div>
                 <div class="m-logo flex justify-center mt-10 pb-6">
                     <img src="{{theme_settings.mobile_logo}}" class="logo"/>
+                </div>
+                <div class="mobile_search mx-6">
+                    <!-- add header search -->
+                    {%for sec_item in header.get("items")%}
+                    {% if sec_item.section_name == "Header Search 1" %}
+                        {{ sec_item.get('html_section')}}
+                    {%endif%}
+                    {% endfor %}
                 </div>
                 <div class="m-6 mobile_menu go1-cms-menu">
                     {%for sec_item in header.get("items")%}

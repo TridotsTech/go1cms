@@ -269,7 +269,10 @@ export async function handleUploadFieldImage(data, _page, doctype, docname) {
       for (const [idx_f, f] of field.fields.entries()) {
         if (f.group_name) {
           for (const [idx, f_st] of f.fields.entries()) {
-            if (f_st.field_type == 'Attach' && f_st.upload_file_image) {
+            if (
+              ['Attach', 'upload_image'].includes(f_st.field_type) &&
+              f_st.upload_file_image
+            ) {
               // upload file
               let file_url = await uploadFile(
                 doctype,
@@ -284,7 +287,10 @@ export async function handleUploadFieldImage(data, _page, doctype, docname) {
             }
           }
         } else {
-          if (f.field_type == 'Attach' && f.upload_file_image) {
+          if (
+            ['Attach', 'upload_image'].includes(f.field_type) &&
+            f.upload_file_image
+          ) {
             // upload file
             let file_url = await uploadFile(
               doctype,

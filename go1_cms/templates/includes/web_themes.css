@@ -785,6 +785,7 @@ li {
     {% endif %}
       {% if doc.footer_css.footer_bg_image %}
         background-image:url('{{doc.footer_css.footer_bg_image}}');
+        background-size: cover;
     {% endif %}
     {% if doc.footer_css.footer_vertical_padding %}
         padding:{{doc.footer_css.footer_vertical_padding}} 0px;

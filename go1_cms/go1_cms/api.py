@@ -15,6 +15,7 @@ TEMPLATE_HEADER = {
     'Template 2': 'header_1.html',
     'Template 3': 'header_2.html',
     'Template 4': 'header_3.html',
+    'Template 5': 'header_4.html',
 }
 
 
@@ -606,7 +607,11 @@ def get_header_info(header_id):
                         "Page Section", item.get('section'), ['menu', 'form', 'custom_css', 'web_template', 'custom_js', 'route_search'], as_dict=1)
                     item["route_search"] = page_st['route_search']
                     section_html = page_st.web_template
-                    data_source = {}
+                    data_source = {
+                        'route_search': page_st['route_search'] or '#',
+                        'header_background': header_list[0].header_background
+                    }
+
                     css = page_st.custom_css
                     js = page_st.custom_js
 
@@ -625,6 +630,7 @@ def get_header_info(header_id):
                                         cont.content) if cont.content else []
                                 else:
                                     data_source[cont.field_key] = cont.content
+
                         if page_st.form and frappe.db.exists('MBW Form', page_st.form):
                             form_data = frappe.get_doc(
                                 'MBW Form', page_st.form).as_dict()

@@ -102,10 +102,11 @@
   "column_break_26",
   "meta_keywords",
   "section_break_28",
-  "web_section",
   "mobile_section",
   "is_location_based",
-  "layout_json"
+  "layout_json",
+  "template_website_section",
+  "web_section"
  ],
  "fields": [
   {
@@ -262,11 +263,13 @@
   {
    "fieldname": "section_break_28",
    "fieldtype": "Section Break",
-   "hidden": 1
+   "hidden": 1,
+   "label": "Template"
   },
   {
    "fieldname": "web_section",
    "fieldtype": "Table",
+   "label": "Web Section",
    "options": "Mobile Page Section"
   },
   {
@@ -681,13 +684,18 @@
    "fieldtype": "Data",
    "label": "Web Client Id",
    "read_only": 1
+  },
+  {
+   "fieldname": "template_website_section",
+   "fieldtype": "Section Break",
+   "label": "Template Website"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2024-06-06 15:28:31.640951",
+ "modified": "2024-09-13 15:43:43.852407",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

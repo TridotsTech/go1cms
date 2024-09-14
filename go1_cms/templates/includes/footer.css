@@ -21,6 +21,7 @@
     {% endif %}
     {% if footer_settings.footer_bg_image %}
         background-image:url('{{footer_settings.footer_bg_image}}');
+        background-size: cover;
     {% endif %}
     /* end */
     {% if footer_settings.text_color %}

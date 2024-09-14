@@ -609,7 +609,7 @@
    "fieldname": "template_header",
    "fieldtype": "Select",
    "label": "M\u1eabu Header",
-   "options": "Template 1\nTemplate 2\nTemplate 3\nTemplate 4"
+   "options": "Template 1\nTemplate 2\nTemplate 3\nTemplate 4\nTemplate 5"
   },
   {
    "fieldname": "button_1_section",
@@ -913,7 +913,8 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-09 11:34:22.229611",
+ "make_attachments_public": 1,
+ "modified": "2024-09-13 11:41:50.599326",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",

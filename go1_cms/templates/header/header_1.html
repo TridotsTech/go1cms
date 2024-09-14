@@ -1,4 +1,8 @@
-
+{%for sec_item in header.get("items")%}
+    {% if sec_item.section_name == 'Header Form'  %}
+    {{ sec_item.get('html_section') }}
+    {% endif %}
+{% endfor %}
 {%if header.enable_top_menu%}
 <div class="go1-cms-top-bar z-auto lg:z-[-1]" >
     <div class="container d__flex">

@@ -77,19 +77,22 @@
    "fieldname": "header_component",
    "fieldtype": "Link",
    "label": "\u0110\u1ea7u trang",
-   "options": "Header Component"
+   "options": "Header Component",
+   "read_only": 1
   },
   {
    "fieldname": "footer_component",
    "fieldtype": "Link",
    "label": "Ch\u00e2n trang",
-   "options": "Footer Component"
+   "options": "Footer Component",
+   "read_only": 1
   },
   {
    "fieldname": "web_theme",
    "fieldtype": "Link",
    "label": "Web Theme",
-   "options": "Web Theme"
+   "options": "Web Theme",
+   "read_only": 1
   },
   {
    "fieldname": "setting_from_template",
@@ -100,7 +103,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-06 10:32:37.945007",
+ "modified": "2024-09-13 10:29:32.510638",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

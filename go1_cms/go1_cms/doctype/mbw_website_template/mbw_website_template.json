@@ -60,13 +60,15 @@
    "fieldname": "header_component",
    "fieldtype": "Link",
    "label": "\u0110\u1ea7u trang",
-   "options": "Header Component"
+   "options": "Header Component",
+   "reqd": 1
   },
   {
    "fieldname": "footer_component",
    "fieldtype": "Link",
    "label": "Ch\u00e2n trang",
-   "options": "Footer Component"
+   "options": "Footer Component",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_bblf",
@@ -76,7 +78,8 @@
    "fieldname": "web_theme",
    "fieldtype": "Link",
    "label": "Web Theme",
-   "options": "Web Theme"
+   "options": "Web Theme",
+   "reqd": 1
   },
   {
    "fieldname": "images",
@@ -109,7 +112,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-10 15:12:17.801796",
+ "modified": "2024-09-13 10:30:24.262344",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",
