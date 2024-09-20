@@ -20,7 +20,7 @@
       </div>
     </template>
     <template #body-content>
-      <div class="grid grid-cols-1 gap-4">
+      <div class="flex flex-col gap-4">
         <template v-for="field in fields">
           <div>
             <Field

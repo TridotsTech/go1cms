@@ -34,7 +34,7 @@
                     class="border-t border-b border-collapse hover:bg-gray-50 table-item"
                   >
                     <td class="p-2 text-center sticky left-0 z-[1] bg-white">
-                      <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-2 max-h-20">
                         <DragVerticalIconV1
                           class="h-8 text-gray-700 cursor-move handle"
                         />
@@ -42,26 +42,26 @@
                       </div>
                     </td>
                     <template v-for="fj in field.fields_json">
-                      <td
-                        v-if="fj.field_type == 'Attach'"
-                        class="shadow-inner p-2 text-center"
-                      >
-                        <img
-                          :src="element[fj.field_key]"
-                          alt=""
-                          class="h-15 w-20 border"
-                        />
+                      <td v-if="fj.field_type == 'Attach'">
+                        <div class="shadow-inner p-2 text-center max-h-20">
+                          <img
+                            :src="element[fj.field_key]"
+                            alt=""
+                            class="h-15 w-20 border"
+                          />
+                        </div>
                       </td>
-                      <td
-                        v-else
-                        v-html="element[fj.field_key]"
-                        class="p-2 shadow-inner"
-                        :class="
-                          ['Text Editor', 'Long Text'].includes(fj.field_type)
-                            ? 'ck-content'
-                            : ''
-                        "
-                      ></td>
+                      <td v-else>
+                        <div
+                          v-html="element[fj.field_key]"
+                          class="p-2 shadow-inner max-h-20 overflow-hidden"
+                          :class="
+                            ['Text Editor', 'Long Text'].includes(fj.field_type)
+                              ? 'ck-content'
+                              : ''
+                          "
+                        ></div>
+                      </td>
                     </template>
                     <td class="sticky right-0 z-[1]">
                       <div class="p-2 flex gap-2">

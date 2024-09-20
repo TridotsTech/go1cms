@@ -9,12 +9,56 @@
       </div>
       <div v-for="(field, idx) in fieldsComponent" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
-          <div class="flex items-center mb-4 gap-4">
-            <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
-            <DialogImage
-              :title="field.section_title"
-              :urlImage="field.image"
-            ></DialogImage>
+          <div class="flex flex-wrap justify-between">
+            <div class="flex flex-wrap items-center mb-4 gap-4">
+              <div class="flex items-center">
+                <h2 class="font-bold text-lg">
+                  {{ field.section_title }}
+                </h2>
+                <Tooltip text="Sửa tiêu đề" :hover-delay="1" :placement="'top'">
+                  <div>
+                    <Button
+                      variant="ghost"
+                      theme="gray"
+                      size="sm"
+                      icon="edit"
+                      label=""
+                    >
+                    </Button>
+                  </div>
+                </Tooltip>
+              </div>
+
+              <DialogImage
+                :title="field.section_title"
+                :urlImage="field.image"
+              ></DialogImage>
+            </div>
+            <div class="flex items-center mb-4 gap-2">
+              <Tooltip
+                v-if="field.is_clone"
+                text="Xóa nhân bản"
+                :hover-delay="1"
+                :placement="'top'"
+              >
+                <Button variant="outline" theme="red" size="sm" label="Xóa">
+                </Button>
+              </Tooltip>
+              <Tooltip
+                v-if="field.allow_clone"
+                text="Nhân bản thành phần"
+                :hover-delay="1"
+                :placement="'top'"
+              >
+                <Button
+                  variant="outline"
+                  theme="blue"
+                  size="sm"
+                  label="Nhân bản"
+                >
+                </Button>
+              </Tooltip>
+            </div>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <template v-for="fd in field.fields">

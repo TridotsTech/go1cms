@@ -1,10 +1,16 @@
 <template>
   <div>
-    <ckeditor :editor="editor" v-model="data" :config="editorConfig"></ckeditor>
+    <ckeditor
+      :editor="editor"
+      v-model="data"
+      :config="editorConfig"
+      @ready="onEditorReady"
+    ></ckeditor>
   </div>
 </template>
 
 <script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic'
 import {
   Bold,
@@ -161,17 +167,11 @@ var editorConfig = {
       'link',
       'insertImage',
       'insertTable',
-      {
-        label: 'Insert',
-        icon: 'plus',
-        items: [
-          'highlight',
-          'blockQuote',
-          'mediaEmbed',
-          'codeBlock',
-          'htmlEmbed',
-        ],
-      },
+      'highlight',
+      'blockQuote',
+      'mediaEmbed',
+      'codeBlock',
+      'htmlEmbed',
       '|',
       'alignment',
       '|',
@@ -326,11 +326,10 @@ if (props.modeConfig == 'textarea') {
         'specialCharacters',
         '|',
         'link',
-        {
-          label: 'Insert',
-          icon: 'plus',
-          items: ['highlight', 'blockQuote', 'codeBlock', 'htmlEmbed'],
-        },
+        'highlight',
+        'blockQuote',
+        'codeBlock',
+        'htmlEmbed',
         '|',
         'alignment',
         '|',
@@ -375,6 +374,44 @@ if (props.modeConfig == 'textarea') {
     language: 'vi',
   }
 }
+
+onMounted(() => {
+  window.addEventListener('resize', onEditorReady)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', onEditorReady)
+})
+
+const onEditorReady = () => {
+  let dropdownPanels = document.querySelectorAll('.ck-dropdown__panel')
+
+  dropdownPanels.forEach((panel) => {
+    let parentElement = panel.closest('.ck.ck-dropdown')
+    let parentElement1 = panel.closest('.ck.ck-toolbar')
+    if (parentElement1) {
+      let newMaxWidth = parentElement1.offsetWidth * 0.75
+
+      let parentRect = parentElement.getBoundingClientRect()
+      let parentRect1 = parentElement1.getBoundingClientRect()
+      let distanceToRight = parentRect1.right - parentRect.left
+      let distanceToLeft = parentRect.right - parentRect1.left
+
+      if (distanceToRight < newMaxWidth && distanceToRight < distanceToLeft) {
+        panel.style.right = '0px'
+        panel.style.left = 'auto'
+        newMaxWidth =
+          distanceToLeft > newMaxWidth ? newMaxWidth : distanceToLeft
+      } else {
+        panel.style.left = '0px'
+        panel.style.right = 'auto'
+        newMaxWidth =
+          distanceToRight > newMaxWidth ? newMaxWidth : distanceToRight
+      }
+      panel.style.maxWidth = `${newMaxWidth}px`
+    }
+  })
+}
 </script>
 <style>
 .ck.ck-reset.ck-list {
@@ -383,6 +420,9 @@ if (props.modeConfig == 'textarea') {
 }
 .ck.ck-editor__editable_inline {
   padding-bottom: 20px;
+}
+.ck.ck-content {
+  max-height: 700px;
 }
 .ck-content * {
   line-height: 1.5;

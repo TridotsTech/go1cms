@@ -75,7 +75,7 @@ def get_blog_list(name_section, **kwargs):
 @frappe.whitelist(allow_guest=True)
 def get_recent_blog(name_section, **kwargs):
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
-    blog_category = kwargs.get('blog_category', 'Tin tức')
+    blog_category = kwargs.get('blog_category', None)
 
     doc_section = frappe.db.get_value('Page Section', name_section, [
         'sort_field'], as_dict=1)
@@ -90,7 +90,11 @@ def get_recent_blog(name_section, **kwargs):
     sort_by = frappe.qb.desc
 
     m_query = (frappe.qb.from_(MbwBlogPost)).where(
-        (MbwBlogPost.published == 1) & (MbwBlogPost.category == blog_category))
+        (MbwBlogPost.published == 1))
+    if blog_category:
+        m_query = m_query.where(
+            MbwBlogPost.category == blog_category)
+
     q_data = m_query.select(MbwBlogPost.name, MbwBlogPost.blogger, MbwBlogPost.title, MbwBlogPost.blog_intro, MbwBlogPost.route, MbwBlogPost.published_on, MbwBlogPost.meta_image).offset(offset).limit(
         limit).orderby(MbwBlogPost[sort_field], order=sort_by)
 

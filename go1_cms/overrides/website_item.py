@@ -31,7 +31,7 @@ class CustomWebsiteItem(WebsiteItem):
                 'MBW Client Website', {"type_web": "Bản chính"}, pluck='name', as_dict=1)
             if web_client:
                 web_item = frappe.db.get_value('MBW Client Website Item', {
-                    'parent': web_client, 'parentfield': 'page_websites', 'page_type': 'Product detail page'}, ['page_id'], as_dict=1)
+                    'parent': web_client, 'parentfield': 'page_websites', 'page_type': 'Trang chi tiết sản phẩm'}, ['page_id'], as_dict=1)
 
                 if web_item and frappe.db.exists('Web Page Builder', web_item.page_id, cache=True):
                     doc_wpb = frappe.get_doc(

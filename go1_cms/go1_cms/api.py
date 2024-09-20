@@ -852,7 +852,7 @@ def update_website_context(context):
                                 context.footer = default_footer
                 context.p_route = context.doc.route
                 if context.p_route and "/" in context.doc.route:
-                    context.p_route = context.doc.route.split('/')[1]
+                    context.p_route = context.doc.route.split('/')[0]
                 if context.doc.edit_header_style:
                     if context.header and context.doc.is_transparent_header:
                         context.header.is_transparent_header = 1

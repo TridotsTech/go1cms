@@ -83,9 +83,20 @@ class MBWClientWebsite(Document):
                 frappe.db.commit()
 
             # update published
+            page_not_update = [
+                'Trang chi tiết tin tức',
+                'Trang chi tiết sản phẩm',
+                'Trang chi tiết công việc',
+                'Trang chi tiết góc tư vấn',
+                'Trang chi tiết tips làm đẹp',
+                'Trang chi tiết chăm sóc da',
+                'Trang chi tiết dự án',
+                'Trang chi tiết dịch vụ',
+                'Trang mới'
+            ]
             if doc_self_old.published != self.published:
                 for item in self.page_websites:
-                    if item.page_type not in ['News detail page', 'New page']:
+                    if item.page_type not in page_not_update:
                         doc = frappe.get_doc('Web Page Builder', item.page_id)
                         doc.published = self.published
                         doc.save()

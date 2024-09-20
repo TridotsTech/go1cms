@@ -22,6 +22,18 @@
             </Button>
           </div>
         </Tooltip>
+        <Tooltip text="Nhân bản trang" :hover-delay="1" placement="top">
+          <div>
+            <Button
+              variant="subtle"
+              theme="green"
+              size="md"
+              label="Nhân bản trang"
+              :disabled="dirty"
+            >
+            </Button>
+          </div>
+        </Tooltip>
         <Dropdown
           v-if="_page?.web_page?.allow_delete"
           :options="[

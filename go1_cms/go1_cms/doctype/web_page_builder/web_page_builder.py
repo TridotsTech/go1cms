@@ -1556,8 +1556,8 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
     js_list = ''
     res = {}
     for item in section_list:
-        section_html, css, js, reference_document, form_doc, html_content = frappe.db.get_value(
-            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form', 'html_content'])
+        section_html, css, js, reference_document, form_doc, html_content, category = frappe.db.get_value(
+            'Page Section', item.section, [html, 'custom_css', 'custom_js', 'reference_document', 'form', 'html_content', 'category'])
 
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
@@ -1593,6 +1593,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
             data_source['name_section'] = item.section
             data_source['route_prefix'] = doc.route_prefix if doc.route_prefix else ""
             data_source['html_content'] = html_content or ''
+            data_source['category'] = category or ''
 
             if form_doc and frappe.db.exists('MBW Form', form_doc):
                 form_data = frappe.get_doc('MBW Form', form_doc).as_dict()
@@ -1612,11 +1613,6 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
 
                 breadcrumb = data_source.get('breadcrumb')
                 if breadcrumb:
-                    breadcrumb.append({
-                        'idx': len(breadcrumb) + 1,
-                        'menu': blog_detail.category,
-                        'route': f"/{slugify(blog_detail.category)}"
-                    })
                     breadcrumb.append({
                         'idx': len(breadcrumb) + 1,
                         'menu': blog_detail.title,

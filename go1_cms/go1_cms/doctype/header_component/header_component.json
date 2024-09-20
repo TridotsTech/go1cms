@@ -914,7 +914,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-13 11:41:50.599326",
+ "modified": "2024-09-17 13:35:30.007474",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",
@@ -934,7 +934,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -15,7 +15,7 @@ def get_info_template_page():
     web_edit = frappe.db.get_value(
         'MBW Client Website', {"edit": 1}, ['name', 'type_web'], as_dict=1)
     web_item = frappe.db.get_value('MBW Client Website Item', {
-        "parent": web_edit.name, "parentfield": "page_websites", 'page_type': 'New page'}, ['page_id', 'name_page'], as_dict=1
+        "parent": web_edit.name, "parentfield": "page_websites", 'page_type': 'Trang mới'}, ['page_id', 'name_page'], as_dict=1
     )
     if not web_item:
         return {}

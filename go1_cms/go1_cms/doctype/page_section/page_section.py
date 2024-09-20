@@ -846,5 +846,10 @@ def save_page_section_to_template(section_id):
     section_template.web_template = page_section.web_template
     section_template.custom_css = page_section.custom_css
     section_template.custom_js = page_section.custom_js
+    section_template.query_by_category = page_section.query_by_category
+    section_template.category = page_section.category
+    section_template.reference_document = page_section.reference_document
+    section_template.no_of_records = page_section.no_of_records
+    section_template.section_type = page_section.section_type
     section_template.save(ignore_permissions=True)
     return {'status': 200}

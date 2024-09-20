@@ -27,6 +27,11 @@ frappe.ui.form.on('Section Template', {
 		frm.trigger('web_options');
 
 	},
+	section_group: function(frm){
+		if(['Header', 'Footer'].includes(frm.doc.section_group)){
+			frm.set_value('allow_clone', 0);
+		}
+	},
 	content_type: function(frm){
 		if(frm.doc.content_type){
 			frm.set_value('custom_section_data', '[]');

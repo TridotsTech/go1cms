@@ -807,15 +807,15 @@
                     <div id="dl-menu" class="dl-menuwrapper mt-8">
                         <ul class="dl-menu">
                             {%for menu_item in sec_item.get("menus")%}
-                                <li> <a class="menu_after text-center" href="{{menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{menu_item.menu_label}}</a>
+                                <li> <a class="menu_after text-center" href="{{menu_item.redirect_url}}">{{menu_item.menu_label}}</a>
                                     {%if menu_item.child_menu%}
                                         <ul class="dl-submenu">
                                             {%for sub_menu_item in menu_item.child_menu%}  
-                                                <li> <a href="{{sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_menu_item.menu_label}}</a>
+                                                <li> <a href="{{sub_menu_item.redirect_url}}">{{sub_menu_item.menu_label}}</a>
                                                     {%if sub_menu_item.child_menu%}
                                                         <ul class="dl-submenu">
                                                             {%for sub_sub_menu_item in sub_menu_item.child_menu%}
-                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}"><i class="fa fa-chevron-right" style="margin-right: 10px;"></i>{{sub_sub_menu_item.menu_label}}</a></li>
+                                                                <li><a href="{{sub_sub_menu_item.redirect_url}}">{{sub_sub_menu_item.menu_label}}</a></li>
                                                             {% endfor %} 
                                                         </ul>
                                                     {% endif %}

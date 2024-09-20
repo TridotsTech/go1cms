@@ -182,8 +182,7 @@ def copy_web_theme(name, sub_name, cp_header, cp_footer):
 
 def get_section_content(section, content_type):
     section = frappe.db.get_all('Page Section', filters={'name': section}, fields=[
-        'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'image',
-        'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'html_content', 'section_title'
+        'section_name', 'section_type', 'name', 'reference_document', 'fetch_product', 'reference_name', 'no_of_records', 'image', 'custom_section_data', 'display_data_randomly', 'dynamic_data', 'menu', 'html_content', 'section_title', 'query_by_category', 'category', 'allow_clone', 'is_clone'
     ])
 
     if section:
@@ -204,8 +203,9 @@ def get_field_section_component(web_edit, web_section):
             info_item['show_edit'] = True
         d = {}
         fields_new = []
+        fields_ps = []
         if info_item.get('section_type') == "Menu":
-            info_item['fields_ps'] = [
+            fields_ps.append(
                 {
                     'field_label': 'Menu',
                     'field_key': 'menu',
@@ -218,11 +218,10 @@ def get_field_section_component(web_edit, web_section):
                         'id_client_website': web_edit.name,
                         'is_template': 0,
                     }
-
                 }
-            ]
-        if info_item.get('section_type') == "Html Content":
-            info_item['fields_ps'] = [
+            )
+        elif info_item.get('section_type') == "Html Content":
+            fields_ps.append(
                 {
                     'field_label': 'Nội dung trang',
                     'field_key': 'html_content',
@@ -231,7 +230,23 @@ def get_field_section_component(web_edit, web_section):
                     'allow_edit': True,
                     'show_edit': True,
                 }
-            ]
+            )
+
+        if info_item.query_by_category:
+            fields_ps.append(
+                {
+                    'field_label': 'Danh mục bài viết',
+                    'field_key': 'category',
+                    'field_type': 'Link',
+                    'content': info_item.get('category'),
+                    'allow_edit': True,
+                    'show_edit': True,
+                    'doctype': "Mbw Blog Category",
+                    'filters': {}
+                }
+            )
+
+        info_item['fields_ps'] = fields_ps
 
         for field in info_item['fields']:
             field['allow_edit'] = True

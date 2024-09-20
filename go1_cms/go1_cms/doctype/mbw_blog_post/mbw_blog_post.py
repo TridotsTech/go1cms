@@ -138,8 +138,25 @@ class MbwBlogPost(WebsiteGenerator):
             web_client = frappe.db.get_value(
                 'MBW Client Website', {"type_web": "Bản chính"}, as_dict=1)
             if web_client:
+                if self.category == "Góc tư vấn":
+                    page_type = 'Trang chi tiết góc tư vấn'
+                elif self.category == "Tips làm đẹp":
+                    page_type = 'Trang chi tiết tips làm đẹp'
+                elif self.category == "Chăm sóc da":
+                    page_type = 'Trang chi tiết chăm sóc da'
+                elif self.category == "Dự án":
+                    page_type = 'Trang chi tiết dự án'
+                elif self.category == "Dịch vụ":
+                    page_type = 'Trang chi tiết dịch vụ'
+                else:
+                    page_type = 'Trang chi tiết tin tức'
+
                 web_item = frappe.db.get_value('MBW Client Website Item', {
-                    'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'News detail page'}, ['page_id'], as_dict=1)
+                    'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': page_type}, ['page_id'], as_dict=1)
+                if not web_item:
+                    web_item = frappe.db.get_value('MBW Client Website Item', {
+                        'parent': web_client.name, 'parentfield': 'page_websites', 'page_type': 'Trang chi tiết tin tức'}, ['page_id'], as_dict=1)
+
                 if web_item and frappe.db.exists('Web Page Builder', web_item.page_id, cache=True):
                     doc_wpb = frappe.get_doc(
                         'Web Page Builder', web_item.page_id)

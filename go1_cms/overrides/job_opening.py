@@ -10,8 +10,8 @@ class CustomJobOpening(JobOpening):
     )
 
     def validate(self):
-        if not self.route or not self.route.startswith('cong-viec/'):
-            self.route = f"cong-viec/{frappe.scrub(self.job_title).replace('_', '-')}"
+        if not self.route or not self.route.startswith('tuyen-dung/'):
+            self.route = f"tuyen-dung/{frappe.scrub(self.job_title).replace('_', '-')}"
 
         super().validate()
 
@@ -31,7 +31,7 @@ class CustomJobOpening(JobOpening):
                 'MBW Client Website', {"type_web": "Bản chính"}, pluck='name', as_dict=1)
             if web_client:
                 web_item = frappe.db.get_value('MBW Client Website Item', {
-                    'parent': web_client, 'parentfield': 'page_websites', 'page_type': 'Job detail page'}, ['page_id'], as_dict=1)
+                    'parent': web_client, 'parentfield': 'page_websites', 'page_type': 'Trang chi tiết tuyển dụng'}, ['page_id'], as_dict=1)
 
                 if web_item and frappe.db.exists('Web Page Builder', web_item.page_id, cache=True):
                     doc_wpb = frappe.get_doc(
