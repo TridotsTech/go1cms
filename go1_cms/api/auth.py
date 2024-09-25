@@ -1,4 +1,19 @@
 import frappe
+from frappe import _
+from frappe.auth import LoginManager
+
+
+@frappe.whitelist(methods=['POST'], allow_guest=True)
+def login(usr, pwd):
+    login_manager = LoginManager()
+    login_manager.authenticate(usr, pwd)
+    login_manager.get_user_info()
+    if login_manager.user_type != "System User":
+        frappe.throw(_('Email hoặc mật khẩu không chính xác.'),
+                     frappe.AuthenticationError)
+    login_manager.post_login()
+
+    return {"user": usr}
 
 
 @frappe.whitelist(allow_guest=True)

@@ -6,13 +6,19 @@ from go1_cms.api.common import (
     update_fields_page_section,
     update_fields_page
 )
+from slugify import slugify
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_info_page(name):
-    web_item = frappe.get_doc('MBW Client Website Item', name)
-    if not web_item:
-        frappe.throw(_("Page not found"), frappe.DoesNotExistError)
+    if not frappe.db.exists("MBW Client Website Item", name):
+        frappe.throw(_("Không tìm thấy trang"), frappe.DoesNotExistError)
+    web_item = frappe.db.get_value(
+        'MBW Client Website Item', name, ['name', 'page_id', 'name_page', 'allow_delete', 'page_type', 'category'], as_dict=1)
     web_edit = frappe.db.get_value(
         'MBW Client Website', {"edit": 1}, ['name'], as_dict=1)
     web_page = frappe.get_doc('Web Page Builder', web_item.page_id)
@@ -22,25 +28,62 @@ def get_info_page(name):
 
     # fields component
     fields_cp = []
-    # get field group 1
+
+    # get field group 0
     fields_page = {
-        'allow_edit':  False,
-        'show_edit': True,
+        'allow_edit': web_item.page_type == "Trang chi tiết tin tức",
+        'show_edit': web_item.page_type == "Trang chi tiết tin tức",
+        'section_title': 'Áp dụng trang cho bài viết',
+        'show_prv_image': False,
+        'fields': [
+            {
+                'field_label': 'Thuộc danh mục',
+                'field_key': 'category',
+                'field_type': 'Link',
+                'content': web_item.category,
+                'allow_edit': web_item.page_type == "Trang chi tiết tin tức",
+                'show_edit': web_item.page_type == "Trang chi tiết tin tức",
+                'doctype': "Mbw Blog Category",
+                'filters': {}
+            },
+        ],
+        'name': 'group-0'
+    }
+    fields_cp.append(fields_page)
+
+    # get field group 1
+    domain = frappe.db.get_single_value(
+        'CMS Settings', 'domain') if frappe.db.get_single_value('CMS Settings', 'use_other_domain') else frappe.utils.get_url()
+
+    fields_page = {
+        'allow_edit':  web_item.page_type == "",
+        'show_edit': web_item.page_type == "",
         'section_title': 'Chuyển hướng',
         'show_prv_image': False,
         'fields': [
             {
                 'field_label': 'Link chuyển hướng',
-                'field_key': 'route',
+                'field_key': 'route_template',
                 'field_type': 'Data',
-                'content': '/' + web_page.route,
-                'allow_edit': False,
+                'content': web_page.route,
+                'allow_edit': True,
                 'show_edit': True,
-            }
+                'description': web_page.route,
+                'label_des': f'<strong>{domain}/</strong>',
+            },
+            {
+                'field_label': 'Route Default',
+                'field_key': 'route_default',
+                'field_type': 'Data',
+                'content': web_page.route,
+                'allow_edit': False,
+                'show_edit': False
+            },
         ],
         'name': 'group-1'
     }
     fields_cp.append(fields_page)
+
     # get field group seo
     fields_page = {
         'allow_edit':  True,
@@ -80,11 +123,12 @@ def get_info_page(name):
                 ]
             },
         ],
-        'name': 'group-1'
+        'name': 'group-2'
     }
     fields_cp.append(fields_page)
 
     web_page_info = {
+        'web_item': name,
         'name_page': web_item.name_page,
         'doc_page': web_item.page_id,
         'allow_delete': web_item.allow_delete == 1,
@@ -94,6 +138,7 @@ def get_info_page(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_info_page(data):
     try:
         page_id = None
@@ -119,9 +164,25 @@ def update_info_page(data):
         # update field page
         data_update = update_fields_page(data)
 
+        category = data_update.pop("category", None)
+        route_template = data_update.get('route_template')
+        if route_template:
+            ls_route = [slugify(i) for i in route_template.split('/')]
+            route_template = '/'.join([i for i in ls_route if i])
+            data_update['route_template'] = route_template
+
+        if not route_template:
+            data_update.pop("route_template", None)
+
         if data_update:
             frappe.db.set_value('Web Page Builder',
                                 web_page.name, data_update)
+        # update web item
+        web_item = data.get('web_page').get('web_item')
+        if frappe.db.exists("MBW Client Website Item", web_item):
+            frappe.db.set_value('MBW Client Website Item', web_item, {
+                'category': category
+            })
 
         web_page.reload()
         web_page.save()
@@ -129,10 +190,11 @@ def update_info_page(data):
         return {'name': web_page.name}
     except Exception as ex:
         print("ex::", ex)
-        frappe.throw('Lỗi hệ thống')
+        frappe.throw('Có lỗi xảy ra')
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_page(name):
     try:
         web_item = frappe.db.get_value('MBW Client Website Item', name, [
@@ -150,4 +212,4 @@ def delete_page(name):
         frappe.delete_doc('Web Page Builder', web_item.page_id)
     except Exception as ex:
         print(ex)
-        frappe.throw('Lỗi hệ thống')
+        frappe.throw('Có lỗi xảy ra')

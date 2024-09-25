@@ -113,7 +113,7 @@ import {
   createResource,
   Dropdown,
 } from 'frappe-ui'
-import { createToast, errorMessage, warningMessage } from '@/utils'
+import { createToast, errorMessage, warningMessage, validErrApi } from '@/utils'
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { globalStore } from '@/stores/global'
@@ -279,6 +279,9 @@ const post = createResource({
     _post.value = JSON.parse(JSON.stringify(data))
     return data
   },
+  onError: (err) => {
+    validErrApi(err, router)
+  },
 })
 
 // handle allow actions
@@ -361,6 +364,7 @@ async function callUpdateDoc() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -389,6 +393,7 @@ async function deleteDoc(close) {
       })
     })
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

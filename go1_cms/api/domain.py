@@ -3,14 +3,13 @@ from frappe import _
 from go1_cms.api.common import (
     update_fields_page
 )
-
-# from go1_cms.api.website.jobs import (
-#     get_filter_job,
-#     get_all_job
-# )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_setup():
     try:
         cms_settings = frappe.get_single('CMS Settings')
@@ -50,10 +49,11 @@ def get_setup():
         if type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Lỗi hệ thống')
+            frappe.throw('Có lỗi xảy ra')
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_setup(data):
     try:
         # update field web theme
@@ -68,4 +68,4 @@ def update_setup(data):
         if type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Lỗi hệ thống')
+            frappe.throw('Có lỗi xảy ra')

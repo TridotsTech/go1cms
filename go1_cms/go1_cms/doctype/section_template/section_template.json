@@ -10,6 +10,7 @@
   "section_break_1",
   "preview_html",
   "section_info_section",
+  "section_title",
   "section_group",
   "is_full_width",
   "allow_clone",
@@ -587,13 +588,18 @@
    "fieldname": "allow_clone",
    "fieldtype": "Check",
    "label": "Allow Clone"
+  },
+  {
+   "fieldname": "section_title",
+   "fieldtype": "Data",
+   "label": "Section Title"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-19 11:44:50.191004",
+ "modified": "2024-09-21 10:27:53.785299",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Section Template",

@@ -49,8 +49,15 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, handleUploadFieldImage } from '@/utils'
+import {
+  createToast,
+  errorMessage,
+  handleUploadFieldImage,
+  validErrApi,
+} from '@/utils'
 import { globalStore } from '@/stores/global'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const { changeLoadingValue } = globalStore()
 
@@ -78,6 +85,8 @@ const webSetup = createResource({
     return data
   },
   onError: (err) => {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -124,6 +133,8 @@ async function callUpdateDoc() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

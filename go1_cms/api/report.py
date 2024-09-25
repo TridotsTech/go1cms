@@ -1,6 +1,9 @@
 import frappe
 from frappe import _
 from datetime import datetime, timedelta
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 def calc_trang_xem_nhieu_nhat(time_start, time_end):
@@ -177,6 +180,7 @@ def calc_so_nguoi_truy_cap_30p_qua():
 
 
 @frappe.whitelist()
+@check_user_admin
 def report_dashboard(time_range_start=None, time_range_end=None, **kwargs):
     type_compare = kwargs.get('type_compare', None)
 

@@ -1,7 +1,6 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:ip",
  "creation": "2024-08-02 08:30:30.408656",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -14,6 +13,7 @@
   {
    "fieldname": "captcha_text",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Captcha Text"
   },
   {
@@ -26,17 +26,15 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Ip",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-05 15:25:48.079486",
+ "modified": "2024-09-23 14:13:57.813646",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Captcha",
- "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

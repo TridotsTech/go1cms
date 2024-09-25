@@ -1,8 +1,12 @@
 import frappe
 from frappe import _
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_post(name):
     MbwBlogPost = frappe.qb.DocType("Mbw Blog Post")
     query = (
@@ -24,6 +28,7 @@ def get_post(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_post(data):
     if not data.get('title'):
         frappe.throw(_("Tên bài viết không được để trống"))
@@ -57,6 +62,7 @@ def create_post(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_post(data):
     doc_name = data.get('name')
     if not frappe.db.exists("Mbw Blog Post", doc_name):
@@ -107,6 +113,7 @@ def update_post(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_post(name):
     if not frappe.db.exists("Mbw Blog Post", name):
         frappe.throw(_("Post not found"), frappe.DoesNotExistError)

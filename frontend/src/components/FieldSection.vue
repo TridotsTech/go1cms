@@ -176,6 +176,7 @@
           labelInput: field.label_input,
           disabled: !field.allow_edit,
           description: field.description,
+          label_des: field.label_des,
         }"
         v-model="field['content']"
       ></Field>

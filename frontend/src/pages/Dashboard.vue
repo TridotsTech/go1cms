@@ -114,9 +114,11 @@ import { Breadcrumbs, createResource } from 'frappe-ui'
 import FilterDashboard from '@/components/FilterDashboard.vue'
 import Line from '@/components/Charts/Line/Line.vue'
 import Bar from '@/components/Charts/Bar/Bar.vue'
-import { errorMessage, formatNumber } from '@/utils'
+import { errorMessage, formatNumber, validErrApi } from '@/utils'
 import CardDashboard from '@/components/CardDashboard.vue'
 const socket = inject('$socket')
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const breadcrumbs = [{ label: 'Dashboard', route: { name: 'Dashboard' } }]
 const msgError = ref()
@@ -245,6 +247,8 @@ const report = createResource({
     return data
   },
   onError: (err) => {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

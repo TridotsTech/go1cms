@@ -39,8 +39,10 @@
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, ErrorMessage, call } from 'frappe-ui'
 import { ref } from 'vue'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, validErrApi } from '@/utils'
 import { globalStore } from '@/stores/global'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const { changeLoadingValue } = globalStore()
 
@@ -66,6 +68,8 @@ async function callCreateFile() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -92,6 +96,8 @@ async function callUpdateTemplate() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

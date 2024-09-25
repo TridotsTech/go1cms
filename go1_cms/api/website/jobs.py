@@ -17,6 +17,7 @@ import string
 import random
 import base64
 from frappe.utils import cint
+from frappe.utils import now, add_to_date
 
 
 @frappe.whitelist(allow_guest=True)
@@ -195,38 +196,6 @@ def get_job_related(name, **kwargs):
     return {"jobs": jobs}
 
 
-@frappe.whitelist(methods=['GET'], allow_guest=True)
-def get_captcha():
-    captcha = ImageCaptcha()
-    captcha_text = ''.join(random.choices(
-        string.ascii_uppercase + string.digits, k=6))
-    data = BytesIO()
-    captcha.write(captcha_text, data)
-    data.seek(0)
-
-    # Chuyển đổi dữ liệu hình ảnh sang Base64
-    image_base64 = base64.b64encode(data.getvalue()).decode('utf-8')
-
-    ip = local.request.remote_addr
-    check_doc = frappe.db.exists("CMS Captcha", ip)
-    if check_doc:
-        doc = frappe.get_doc('CMS Captcha', ip)
-        doc.captcha_text = captcha_text
-        doc.captcha_image = image_base64
-        doc.save(ignore_permissions=True)
-    else:
-        new_doc = frappe.new_doc('CMS Captcha')
-        new_doc.ip = ip
-        new_doc.captcha_text = captcha_text
-        new_doc.captcha_image = image_base64
-        new_doc.insert(ignore_permissions=True)
-    frappe.db.commit()
-
-    return {
-        'captcha_image': "data:image/png;base64," + image_base64,
-    }
-
-
 @frappe.whitelist(methods=['POST'], allow_guest=True)
 def upload_cv(name_job, **kwargs):
     applicant_name = kwargs.get('full_name', None)
@@ -242,15 +211,20 @@ def upload_cv(name_job, **kwargs):
     if not form_name or not frappe.db.exists("MBW Form", form_name):
         frappe.throw('Mã biểu mẫu không đúng')
 
-    if not frappe.db.exists("CMS Captcha", ip):
+    captcha = frappe.db.get_value('CMS Captcha', {
+        "ip": ip, 'captcha_text': captcha_text}, ['name', 'creation'], as_dict=1)
+    if not captcha_text or not captcha:
         return {
             'status': '0',
-            'msg': 'Mã captcha đã hết hạn'
+            'msg': 'Mã captcha không đúng'
         }
-    if not captcha_text or frappe.db.get_value('CMS Captcha', ip, 'captcha_text') != captcha_text:
+
+    old_datetime = datetime.strptime(
+        add_to_date(now(), minutes=-10), "%Y-%m-%d %H:%M:%S.%f")
+    if old_datetime >= captcha.creation:
         return {
             'status': '1',
-            'msg': 'Mã captcha không đúng'
+            'msg': 'Mã captcha đã hết hạn'
         }
 
     if not applicant_name:
@@ -297,30 +271,30 @@ def upload_cv(name_job, **kwargs):
                 frappe.throw(
                     f'Tệp không vượt quá {form_fields[0].max_file_size}MB')
 
-        new_file = frappe.get_doc(
-            {
-                "doctype": "File",
-                "attached_to_doctype": "Job Applicant",
-                "attached_to_name": new_doc.name,
-                "attached_to_field": "resume_attachment",
-                "folder": "Home",
-                "file_name": filename,
-                "file_url": "",
-                "is_private": 0,
-                "content": content,
-            }
-        )
-        new_file.save(ignore_permissions=True)
+            new_file = frappe.get_doc(
+                {
+                    "doctype": "File",
+                    "attached_to_doctype": "Job Applicant",
+                    "attached_to_name": new_doc.name,
+                    "attached_to_field": "resume_attachment",
+                    "folder": "Home",
+                    "file_name": filename,
+                    "file_url": "",
+                    "is_private": 0,
+                    "content": content,
+                }
+            )
+            new_file.save(ignore_permissions=True)
+            new_doc.resume_attachment = new_file.file_url
 
-        new_doc.resume_attachment = new_file.file_url
         new_doc.save(ignore_permissions=True)
 
-        if frappe.db.exists("CMS Captcha", ip):
-            frappe.db.delete("CMS Captcha", {'ip': ip})
-
         frappe.enqueue(log_page_view, queue='default', ip=ip,
-                       form_type="Form Tuyển dụng")
-        return {'status': 200, 'name': new_doc.name}
+                       form_type="Form tuyển dụng")
+        # delete captcha
+        frappe.db.delete("CMS Captcha", {'name': captcha.name})
+
+        return {'status': '200', 'name': new_doc.name}
     else:
         frappe.throw(_('Không tìm thấy công việc ứng tuyển'),
                      frappe.DoesNotExistError)

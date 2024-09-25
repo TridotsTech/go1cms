@@ -5,9 +5,13 @@ from datetime import datetime
 from go1_cms.api.website.log_page import (
     log_page_view
 )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_contact(name):
     MbwContact = frappe.qb.DocType("MBW Contact")
     query = (
@@ -98,6 +102,7 @@ def create_contact(**kwargs):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_contact(data):
     doc_name = data.get('name')
     if not frappe.db.exists("MBW Contact", doc_name):
@@ -117,6 +122,7 @@ def update_contact(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_contact(name):
     if not frappe.db.exists("MBW Contact", name):
         frappe.throw(_("Contact not found"), frappe.DoesNotExistError)

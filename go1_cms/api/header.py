@@ -6,9 +6,13 @@ from go1_cms.api.common import (
     update_fields_page_section,
     update_fields_page
 )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_info_header_component():
     web_edit = frappe.db.get_value(
         'MBW Client Website', {"edit": 1}, ['name', 'header_component', 'route_web'], as_dict=1)
@@ -218,6 +222,7 @@ def get_info_header_component():
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_info_header_component(data):
     try:
         web_edit = frappe.db.get_value(
@@ -251,4 +256,4 @@ def update_info_header_component(data):
         return {'name': header_component.name}
     except Exception as ex:
         print("ex::", ex)
-        frappe.throw('Lỗi hệ thống')
+        frappe.throw('Có lỗi xảy ra')

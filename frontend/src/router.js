@@ -166,6 +166,11 @@ const routes = [
     component: () => import('@/pages/InvalidPage.vue'),
   },
   {
+    path: '/permission-denied',
+    name: 'Permission Denied Page',
+    component: () => import('@/pages/PermissionDeniedPage.vue'),
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/pages/Login.vue'),
@@ -198,7 +203,7 @@ let router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { isLoggedIn } = sessionStore()
+  const { isLoggedIn, isSystemUser } = sessionStore()
 
   isLoggedIn && (await userResource.promise)
 
@@ -210,6 +215,12 @@ router.beforeEach(async (to, from, next) => {
     next({ name: 'Interface Repository' })
   } else if (to.name !== 'Login' && !isLoggedIn) {
     next({ name: 'Login' })
+  } else if (
+    isLoggedIn &&
+    !isSystemUser &&
+    !['Permission Denied Page', 'Invalid Page'].includes(to.name)
+  ) {
+    next({ name: 'Permission Denied Page' })
   } else if (to.matched.length === 0) {
     next({ name: 'Invalid Page' })
   } else {

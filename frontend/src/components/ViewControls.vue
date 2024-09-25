@@ -180,7 +180,7 @@ import ColumnSettings from '@/components/ColumnSettings.vue'
 import { globalStore } from '@/stores/global'
 import { viewsStore } from '@/stores/views'
 import { usersStore } from '@/stores/users'
-import { isEmoji } from '@/utils'
+import { isEmoji, validErrApi } from '@/utils'
 import { createResource, Dropdown, call, FeatherIcon } from 'frappe-ui'
 import { computed, ref, onMounted, watch, h, markRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -360,6 +360,9 @@ list.value = createResource({
       },
       default_filters: props.filters,
     }
+  },
+  onError: (err) => {
+    validErrApi(err, router)
   },
 })
 

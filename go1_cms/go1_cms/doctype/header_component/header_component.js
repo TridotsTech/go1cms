@@ -519,9 +519,9 @@ var add_new_section = Class.extend({
         );
     }
     data.map((f) => {
-      let template = `<div class="section-title" data-group='${f.section_group}'>${f.name}</div>`;
+      let template = `<div class="section-title" data-group='${f.section_group}'>${f.section_title || ""}(${f.name})</div>`;
       if (f.image) {
-        template = `<div class="section-img"><img src="${f.image}" /></div><p>${f.name}</p>`;
+        template = `<div class="section-img"><img src="${f.image}" /></div><p>${f.section_title || ""}(${f.name})</p>`;
       }
       let item = $(`<div class="col-md-4 col-sm-6 col-xs-6" style="float:left">
                     <div class="section-item">${template}</div>

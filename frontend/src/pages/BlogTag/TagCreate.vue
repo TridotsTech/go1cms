@@ -41,7 +41,7 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, call, ErrorMessage } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, validErrApi } from '@/utils'
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 
@@ -113,6 +113,8 @@ async function callInsertDoc() {
         params: { tagId: doc.name },
       })
   } catch (err) {
+    validErrApi(err, router)
+
     msgError.value = err.messages.join(', ')
     errorMessage('Có lỗi xảy ra', err.messages.join(', '))
   }

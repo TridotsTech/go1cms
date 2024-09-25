@@ -9,6 +9,7 @@
   "page_template",
   "name_template",
   "page_type",
+  "category",
   "column_break_blsa",
   "route_template",
   "icon",
@@ -51,7 +52,7 @@
    "fieldname": "page_type",
    "fieldtype": "Select",
    "label": "Lo\u1ea1i trang",
-   "options": "\nTrang chi ti\u1ebft tin t\u1ee9c\nTrang chi ti\u1ebft s\u1ea3n ph\u1ea9m\nTrang chi ti\u1ebft tuy\u1ec3n d\u1ee5ng\nTrang chi ti\u1ebft g\u00f3c t\u01b0 v\u1ea5n\nTrang chi ti\u1ebft tips l\u00e0m \u0111\u1eb9p\nTrang chi ti\u1ebft ch\u0103m s\u00f3c da\nTrang chi ti\u1ebft d\u1ef1 \u00e1n\nTrang chi ti\u1ebft d\u1ecbch v\u1ee5\nTrang m\u1edbi"
+   "options": "\nTrang chi ti\u1ebft tin t\u1ee9c\nTrang chi ti\u1ebft s\u1ea3n ph\u1ea9m\nTrang chi ti\u1ebft tuy\u1ec3n d\u1ee5ng\nTrang m\u1edbi"
   },
   {
    "default": "1",
@@ -64,12 +65,18 @@
    "fieldname": "allow_delete",
    "fieldtype": "Check",
    "label": "Allow delete"
+  },
+  {
+   "depends_on": "eval:  doc.page_type == \"Trang chi ti\u1ebft tin t\u1ee9c\"",
+   "fieldname": "category",
+   "fieldtype": "Data",
+   "label": "Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-16 14:02:48.637434",
+ "modified": "2024-09-21 11:16:11.418906",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Item",

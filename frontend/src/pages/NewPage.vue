@@ -92,7 +92,7 @@
           </div>
           <div v-if="routePage" class="text-base">
             <span class="text-gray-700">{{ route_prefix }}</span>
-            <span class="font-bold">{{ formatSlug(routePage) }}</span>
+            <span class="font-bold">{{ customSlugify(routePage) }}</span>
           </div>
         </div>
         <ErrorMessage :message="msgErrorDialog" />
@@ -121,9 +121,16 @@ import {
   FormControl,
 } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, handleUploadFieldImage } from '@/utils'
+import {
+  createToast,
+  errorMessage,
+  handleUploadFieldImage,
+  customSlugify,
+  validErrApi,
+} from '@/utils'
 import { globalStore } from '@/stores/global'
-import slugify from 'slugify'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const { changeLoadingValue } = globalStore()
 
@@ -142,6 +149,16 @@ const page = createResource({
     route_prefix.value = data?.web_page?.route_prefix
     _page.value = JSON.parse(JSON.stringify(data))
     return data
+  },
+  onError: (err) => {
+    validErrApi(err, router)
+
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
   },
 })
 
@@ -189,6 +206,8 @@ async function callUpdateDoc() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -208,17 +227,8 @@ const namePage = ref('')
 const routePage = ref('')
 const msgErrorDialog = ref()
 
-function formatSlug(val) {
-  let newVal = slugify(val, {
-    lower: true,
-    remove: /[*+~.()'"!:@]/g,
-    strict: true,
-  })
-  return newVal
-}
-
 watch(namePage, (val) => {
-  routePage.value = formatSlug(val)
+  routePage.value = customSlugify(val)
 })
 
 async function handleCreatePage() {
@@ -245,6 +255,8 @@ async function handleCreatePage() {
       window.location.href = `/cms/page?view=${docCreate.name}`
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

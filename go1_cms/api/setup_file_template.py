@@ -8,9 +8,13 @@ from go1_cms.api.common import (
 from go1_cms.go1_cms.after_install import (
     after_install
 )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_file_json():
     developer_mode = frappe.db.get_single_value(
         'CMS Settings', 'developer_mode')
@@ -23,6 +27,7 @@ def create_file_json():
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_from_json():
     developer_mode = frappe.db.get_single_value(
         'CMS Settings', 'developer_mode')

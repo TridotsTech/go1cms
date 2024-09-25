@@ -5,6 +5,39 @@ import { usersStore } from '@/stores/users'
 import { gemoji } from 'gemoji'
 import { toast } from 'frappe-ui'
 import { h } from 'vue'
+import slugify from 'slugify'
+slugify.extend({
+  $: '',
+  '%': '',
+  '&': '',
+  '>': '',
+  '<': '',
+  '|': '',
+})
+
+export function customSlugify(val) {
+  return slugify(val, {
+    lower: true,
+    remove: /[^\w\s]/g,
+    strict: true,
+    locale: 'vi',
+  })
+}
+
+export function validErrApi(err, router) {
+  if (err) {
+    switch (err.exc_type) {
+      case 'PermissionError':
+        router.push('/permission-denied')
+        return
+      case 'AuthenticationError':
+        window.location.href = '/cms/login'
+        return
+      default:
+        return
+    }
+  }
+}
 
 export function createToast(options) {
   toast({

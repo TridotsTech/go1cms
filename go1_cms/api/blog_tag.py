@@ -1,8 +1,12 @@
 import frappe
 from frappe import _
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_blog_tag(name):
     MBWBlogTag = frappe.qb.DocType("MBW Blog Tag")
     query = (
@@ -19,6 +23,7 @@ def get_blog_tag(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_blog_tag(data):
     title = data.get('title')
     if not title:
@@ -36,6 +41,7 @@ def create_blog_tag(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_blog_tag(data):
     doc_name = data.get('name')
     title = data.get('title')
@@ -62,6 +68,7 @@ def update_blog_tag(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_blog_tag(name):
     try:
         if not frappe.db.exists("MBW Blog Tag", name):

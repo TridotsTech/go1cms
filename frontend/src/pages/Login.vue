@@ -3,9 +3,7 @@
     <div class="mt-32 w-full px-4">
       <CMSLogo class="mx-auto h-10" />
       <div class="mt-6 flex items-center justify-center space-x-1.5">
-        <span class="text-3xl font-semibold text-gray-900"
-          >Login to MBW CMS</span
-        >
+        <span class="text-3xl font-semibold text-gray-900">MBW CMS</span>
       </div>
       <div class="mx-auto mt-6 w-full px-4 sm:w-96">
         <form
@@ -33,7 +31,7 @@
             <FormControl
               variant="outline"
               size="md"
-              label="Password"
+              label="Mật khẩu"
               v-model="password"
               placeholder="••••••"
               :disabled="session.login.loading"
@@ -46,7 +44,7 @@
             class="mt-6 w-full"
             :loading="session.login.loading"
           >
-            Login
+            Đăng nhập
           </Button>
           <button
             v-if="authProviders.data.length"

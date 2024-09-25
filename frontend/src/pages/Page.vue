@@ -134,19 +134,23 @@ import {
   Dropdown,
 } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   createToast,
   errorMessage,
   handleUploadFieldImage,
   scrollToTop,
+  customSlugify,
+  validErrApi,
 } from '@/utils'
+
 import { globalStore } from '@/stores/global'
 import { viewsStore } from '@/stores/views'
 const { views } = viewsStore()
 
 const { changeLoadingValue } = globalStore()
 const route = useRoute()
+const router = useRouter()
 
 const _page = ref({})
 const msgError = ref()
@@ -162,6 +166,15 @@ const page = createResource({
     _page.value = JSON.parse(JSON.stringify(data))
     return data
   },
+  onError: (err) => {
+    validErrApi(err, router)
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  },
 })
 
 watch(route, (val, oldVal) => {
@@ -176,6 +189,23 @@ watch(route, (val, oldVal) => {
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
+  if (_page.value?.fields_cp) {
+    let route = _page.value?.fields_cp[1].fields[0].content
+    let new_route = ''
+    if (route) {
+      let lst_route = route.split('/')
+      lst_route = lst_route.map((el) => {
+        return customSlugify(el)
+      })
+      new_route = lst_route.filter((el) => el !== '').join('/')
+    }
+
+    if (!new_route) {
+      new_route = _page.value?.fields_cp[1].fields[1].content
+    }
+    _page.value.fields_cp[1].fields[0].description = new_route
+  }
+
   return JSON.stringify(page.data) !== JSON.stringify(_page.value)
 })
 
@@ -221,6 +251,7 @@ async function callUpdateDoc() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -252,6 +283,7 @@ async function deleteDoc(close) {
       window.location.href = '/cms/my-website'
     })
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

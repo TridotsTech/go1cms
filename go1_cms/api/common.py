@@ -7,8 +7,25 @@ import json
 import time
 import datetime
 from frappe.utils import DATETIME_FORMAT, now, cint
+import re
 
 FIELD_TYPE_JSON = ["List", 'Button']
+
+
+def validate_password(password):
+    str_err = "Mật khẩu phải chứa ít nhất 8 ký tự, bao gồm ít nhất một chữ cái viết hoa, một chữ cái viết thường, một chữ số và một ký tự đặc biệt."
+    if len(password) < 8:
+        return str_err
+    if not re.search(r'[A-Z]', password):
+        return str_err
+    if not re.search(r'[a-z]', password):
+        return str_err
+    if not re.search(r'[0-9]', password):
+        return str_err
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return str_err
+
+    return None
 
 
 def getStrTimestamp():
@@ -356,7 +373,7 @@ def update_fields_page(data):
     return data_update
 
 
-def v(i):
+def convert_data_to_str(i):
     if isinstance(i, (datetime.datetime, datetime.date, datetime.time)):
         return str(i)
     return i
@@ -390,7 +407,8 @@ def write_page_section(parent, path, parenttype):
     # write file
     json_file_name = "section.json"
     with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
-        json.dump(page_sections, f, ensure_ascii=False, default=v)
+        json.dump(page_sections, f, ensure_ascii=False,
+                  default=convert_data_to_str)
 
 
 def write_file_page_template(name, version='page_template_v1'):
@@ -410,7 +428,8 @@ def write_file_page_template(name, version='page_template_v1'):
     # write file
     json_file_name = "page_template.json"
     with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
-        json.dump([page_temp], f, ensure_ascii=False, default=v)
+        json.dump([page_temp], f, ensure_ascii=False,
+                  default=convert_data_to_str)
 
     # sections
     write_page_section(name, path, "Page Template")
@@ -432,7 +451,8 @@ def write_file_header_component(name, version='header_component_v1'):
     # write file
     json_file_name = "page_template.json"
     with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
-        json.dump([header_comp], f, ensure_ascii=False, default=v)
+        json.dump([header_comp], f, ensure_ascii=False,
+                  default=convert_data_to_str)
 
     # sections
     write_page_section(name, path, 'Header Component')
@@ -454,7 +474,8 @@ def write_file_footer_component(name, version='footer_component_v1'):
     # write file
     json_file_name = "page_template.json"
     with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
-        json.dump([footer_comp], f, ensure_ascii=False, default=v)
+        json.dump([footer_comp], f, ensure_ascii=False,
+                  default=convert_data_to_str)
 
     # sections
     write_page_section(name, path, 'Footer Component')
@@ -526,7 +547,7 @@ def handle_write_file_multiple_doctype_template():
         folder_name = slugify(text=doctype, separator='_')
         json_file_name = "{0}.json".format(folder_name)
         with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, default=v)
+            json.dump(data, f, ensure_ascii=False, default=convert_data_to_str)
     print('=======================DONE handle_write_file_multiple_doctype_template=======================')
 
 

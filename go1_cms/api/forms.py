@@ -1,8 +1,12 @@
 import frappe
 from frappe import _
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_form(name):
     MBWForm = frappe.qb.DocType("MBW Form")
     query = (
@@ -24,6 +28,7 @@ def get_form(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_form(data):
     doc_name = data.get('name')
     form_name = data.get('form_name')

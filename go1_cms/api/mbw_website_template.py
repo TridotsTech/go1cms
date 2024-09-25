@@ -11,9 +11,13 @@ from slugify import slugify
 from go1_cms.api.client_website import (
     update_edit_client_website
 )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_web_templates(repo):
     WebTemplate = frappe.qb.DocType("MBW Website Template")
     query = (
@@ -29,6 +33,7 @@ def get_web_templates(repo):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_web_template(name):
     WebTemplate = frappe.qb.DocType("MBW Website Template")
     if not frappe.db.exists('MBW Website Template', name):
@@ -49,6 +54,7 @@ def get_web_template(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def add_web_template(name):
     try:
         template = frappe.get_doc("MBW Website Template", name)
@@ -138,6 +144,7 @@ def add_web_template(name):
             item_cl_web.icon = page_temp.icon
             item_cl_web.route_template = page_temp.route_template
             item_cl_web.page_type = page_temp.page_type
+            item_cl_web.category = page_temp.category
             item_cl_web.idx = idx_p
             page_websites.append(item_cl_web)
 
@@ -170,4 +177,4 @@ def add_web_template(name):
 
         return {'name': website.name, 'template_edit': None}
     except Exception as ex:
-        frappe.throw(_("Lỗi hệ thống"))
+        frappe.throw(_("Có lỗi xảy ra"))

@@ -5,9 +5,13 @@ from frappe.model import no_value_fields
 from pypika import Criterion
 
 from go1_cms.api.views import get_views
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def sort_options(doctype: str):
     fields = frappe.get_meta(doctype).fields
     fields = [field for field in fields if field.fieldtype not in no_value_fields]
@@ -36,6 +40,7 @@ def sort_options(doctype: str):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_filterable_fields(doctype: str):
     allowed_fieldtypes = [
         "Check",
@@ -122,6 +127,7 @@ def get_filterable_fields(doctype: str):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_group_by_fields(doctype: str):
     allowed_fieldtypes = [
         "Check",
@@ -188,6 +194,7 @@ def get_fields_meta(DocField, doctype, allowed_fieldtypes, restricted_fields):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_quick_filters(doctype: str):
     meta = frappe.get_meta(doctype)
     fields = [field for field in meta.fields if field.in_standard_filter]
@@ -209,6 +216,7 @@ def get_quick_filters(doctype: str):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_list_data(
         doctype: str,
         filters: dict,
@@ -565,6 +573,7 @@ def get_assigned_users(doctype, name, default_assigned_to=None):
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_fields(doctype: str):
     not_allowed_fieldtypes = list(frappe.model.no_value_fields) + ["Read Only"]
     fields = frappe.get_meta(doctype).fields

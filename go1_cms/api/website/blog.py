@@ -24,13 +24,16 @@ def get_blog_list(name_section, **kwargs):
 
     page_len = 9
     text_search = kwargs.get('text_search', '')
-    blog_category = kwargs.get('blog_category', 'Tin tức')
+    blog_category = kwargs.get('blog_category', None)
     MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
 
     doc_section = frappe.db.get_value('Page Section', name_section, [
-        'sort_field', 'no_of_records'], as_dict=1)
+        'sort_field', 'no_of_records', 'category'], as_dict=1)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
     limit = doc_section.no_of_records if doc_section.no_of_records else page_len
+    if blog_category == None:
+        blog_category = doc_section.category
+
     offset = page_no*limit
     sort_by = frappe.qb.desc
     if kwargs.get('sort_by', 'desc').lower() == "asc":
@@ -78,8 +81,10 @@ def get_recent_blog(name_section, **kwargs):
     blog_category = kwargs.get('blog_category', None)
 
     doc_section = frappe.db.get_value('Page Section', name_section, [
-        'sort_field'], as_dict=1)
+        'sort_field', 'category'], as_dict=1)
     sort_field = doc_section.sort_field if doc_section.sort_field else 'published_on'
+    if blog_category == None:
+        blog_category = doc_section.category
     limit = kwargs.get('limit', '4')
     if limit.isdigit():
         limit = int(limit) if int(limit) <= 12 else 12

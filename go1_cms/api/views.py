@@ -1,8 +1,12 @@
 import frappe
 from pypika import Criterion
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_views(doctype):
     if frappe.session.user == "Guest":
         frappe.throw("Authentication failed", exc=frappe.AuthenticationError)

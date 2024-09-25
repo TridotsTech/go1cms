@@ -67,9 +67,16 @@ import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
 import FieldsSectionComponent from '@/components/FieldsPage/FieldsSectionComponent.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, handleUploadFieldImage } from '@/utils'
+import {
+  createToast,
+  errorMessage,
+  handleUploadFieldImage,
+  validErrApi,
+} from '@/utils'
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import { viewsStore } from '@/stores/views'
 const { views } = viewsStore()
 
@@ -83,6 +90,15 @@ const footer = createResource({
   transform: (data) => {
     _footer.value = JSON.parse(JSON.stringify(data))
     return data
+  },
+  onError: (err) => {
+    validErrApi(err, router)
+    if (err.messages && err.messages.length) {
+      msgError.value = err.messages.join(', ')
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
   },
 })
 
@@ -126,6 +142,7 @@ async function callUpdateDoc() {
       })
     }
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

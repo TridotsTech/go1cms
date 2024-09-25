@@ -7,9 +7,13 @@ from frappe.handler import is_whitelisted
 from frappe.utils.image import optimize_image
 import datetime
 import math
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
-@frappe.whitelist(methods=['POST'], allow_guest=True)
+@frappe.whitelist(methods=['POST'])
+@check_user_admin
 def upload_file():
     if frappe.session.user == "Guest":
         return

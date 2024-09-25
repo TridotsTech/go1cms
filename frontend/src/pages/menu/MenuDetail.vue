@@ -109,13 +109,13 @@ import {
   Dropdown,
 } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, warningMessage } from '@/utils'
+import { createToast, errorMessage, warningMessage, validErrApi } from '@/utils'
 import { useRouter } from 'vue-router'
+const router = useRouter()
 import DraggableNested from '@/components/DraggableNested.vue'
 import { globalStore } from '@/stores/global'
 
 const { changeLoadingValue } = globalStore()
-const router = useRouter()
 const props = defineProps({
   menuId: {
     type: String,
@@ -184,6 +184,9 @@ const menu = createResource({
       menus: convertObjMenu(menus, menusParent),
     }
     return data
+  },
+  onError: (err) => {
+    validErrApi(err, router)
   },
 })
 
@@ -277,6 +280,8 @@ async function callUpdateDoc() {
       menu.reload()
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
@@ -304,6 +309,8 @@ async function deleteDoc(close) {
       })
     })
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

@@ -8,9 +8,13 @@ from go1_cms.api.common import (
     update_fields_page
 )
 from slugify import slugify
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_info_template_page():
     web_edit = frappe.db.get_value(
         'MBW Client Website', {"edit": 1}, ['name', 'type_web'], as_dict=1)
@@ -82,6 +86,7 @@ def get_info_template_page():
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_info_template_page(data):
     try:
         page_id = None
@@ -117,10 +122,11 @@ def update_info_template_page(data):
         return {'name': web_page.name}
     except Exception as ex:
         print("ex::", ex)
-        frappe.throw('Lỗi hệ thống')
+        frappe.throw('Có lỗi xảy ra')
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_new_page(**kwargs):
     if not kwargs.get('name'):
         frappe.throw(_("Mã trang mẫu không tồn tại"))

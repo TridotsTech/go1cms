@@ -1,8 +1,12 @@
 import frappe
 from frappe.query_builder import Order
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_notifications():
     if frappe.session.user == "Guest":
         frappe.throw("Authentication failed", exc=frappe.AuthenticationError)
@@ -45,6 +49,7 @@ def get_notifications():
 
 
 @frappe.whitelist()
+@check_user_admin
 def mark_as_read(user=None, comment=None):
     if frappe.session.user == "Guest":
         frappe.throw("Authentication failed", exc=frappe.AuthenticationError)

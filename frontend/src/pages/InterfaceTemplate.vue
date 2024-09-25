@@ -289,9 +289,9 @@ import 'vue3-carousel/dist/carousel.css'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, createResource, call, Dropdown } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage } from '@/utils'
-// import { useRouter } from 'vue-router'
-// const router = useRouter()
+import { createToast, errorMessage, validErrApi } from '@/utils'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import { globalStore } from '@/stores/global'
 const { changeLoadingValue } = globalStore()
 import { useStorage } from '@vueuse/core'
@@ -353,6 +353,8 @@ async function setPublishedMyWebsite(close) {
       close()
     })
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
     } else {
@@ -384,6 +386,8 @@ async function deleteDoc(close) {
       }
     })
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))
     } else {
@@ -415,6 +419,8 @@ const handleUseTemplate = async (close) => {
       close()
     })
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
     } else {
@@ -430,6 +436,15 @@ const template = createResource({
   method: 'GET',
   params: { name: props.interfaceId },
   auto: true,
+  onError: (err) => {
+    validErrApi(err, router)
+
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    } else {
+      errorMessage('Có lỗi xảy ra', err)
+    }
+  },
 })
 
 // add web template

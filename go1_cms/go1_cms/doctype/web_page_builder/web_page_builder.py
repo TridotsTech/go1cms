@@ -18,6 +18,11 @@ from datetime import datetime
 import math
 import time
 from slugify import slugify
+from go1_cms.api.common import (
+    convert_data_to_str,
+    remove_nulls
+)
+import json
 
 
 def getStrTimestamp():
@@ -50,15 +55,15 @@ class WebPageBuilder(WebsiteGenerator):
         if self.mobile_section:
             self.construct_html('mobile', 'mobile_section')
         route_prefix = ""
-        r_prefix = frappe.db.get_all("CMS Route", filters={
-            "page_type": self.w_page_type, "parent": "CMS Settings"}, fields=['page_prefix'])
+        # r_prefix = frappe.db.get_all("CMS Route", filters={
+        #     "page_type": self.w_page_type, "parent": "CMS Settings"}, fields=['page_prefix'])
+        # if r_prefix and r_prefix[0].page_prefix:
+        #     route_prefix = r_prefix[0].page_prefix + "/"
 
-        if r_prefix and r_prefix[0].page_prefix:
-            route_prefix = r_prefix[0].page_prefix + "/"
         if self.route_template:
             route_prefix += self.route_template
         else:
-            route_prefix += self.scrub(self.page_title)
+            route_prefix += slugify(self.page_title)
         self.route = route_prefix
 
         if not self.meta_title:
@@ -686,7 +691,7 @@ def get_sections():
 def get_section_templates(device_type):
     template_groups = frappe.db.sql(
         "SELECT group_name FROM `tabSection Template Group` where name<>'Footer' AND name<>'Header' AND name <>'Page List Style' ", as_dict=1)
-    templates = frappe.db.sql('''select name, image ,section_group from `tabSection Template` where ((section_group<>'Footer' AND section_group <>'Page List Style') or section_group is null) and device_type in ("Web & Mobile", %(type)s)''', {
+    templates = frappe.db.sql('''select name, image ,section_group, section_title from `tabSection Template` where ((section_group<>'Footer' AND section_group <>'Page List Style') or section_group is null) and device_type in ("Web & Mobile", %(type)s)''', {
         'type': device_type}, as_dict=1)
     return {"template_groups": template_groups, "templates": templates}
 
@@ -760,11 +765,8 @@ def convert_template_to_section(template, business=None, section_name=None, is_t
         }
     }, None, ignore_permissions=True)
 
-    doc.section_title = template
-    # if section_name:
-    # 	doc.section_title = section_name
-    doc.section_name = section_name
-    doc.custom_title = section_name
+    doc.section_title = doc.section_title if doc.section_title else template
+    doc.section_name = template
     doc.choose_from_template = 1
     doc.is_template = is_template
     doc.section_template = template
@@ -1601,6 +1603,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                     if field.field_type in ['checkbox', 'radio', 'select']:
                         field['field_options'] = str(
                             field.field_options).split('\n')
+                form_data['form_fields_json'] = json.dumps(remove_nulls(
+                    form_data.form_fields), ensure_ascii=False,
+                    default=convert_data_to_str)
+
                 data_source['form_data'] = form_data
 
             if doc_name and frappe.db.exists("Mbw Blog Post", doc_name):

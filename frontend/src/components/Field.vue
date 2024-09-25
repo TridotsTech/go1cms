@@ -191,13 +191,18 @@
     v-model="data"
     :disabled="field.disabled || false"
   />
-  <FormControl
-    v-else
-    type="text"
-    :placeholder="__(field.placeholder)"
-    v-model="data"
-    :disabled="field.disabled"
-  />
+  <div v-else>
+    <FormControl
+      type="text"
+      :placeholder="__(field.placeholder)"
+      v-model="data"
+      :disabled="field.disabled"
+    />
+    <div v-if="field.description" class="text-sm my-1 text-gray-600">
+      <span v-html="field.label_des"></span>
+      <span>{{ field.description }}</span>
+    </div>
+  </div>
 </template>
 
 <script setup>

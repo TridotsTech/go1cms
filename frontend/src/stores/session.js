@@ -12,14 +12,20 @@ export const sessionStore = defineStore('cms-session', () => {
     }
     return _sessionUser
   }
+  function sessionUserSystem() {
+    let cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
+    let _systemUser = cookies.get('system_user') === 'yes' ? true : false
+    return _systemUser
+  }
 
   let user = ref(sessionUser())
   const isLoggedIn = computed(() => !!user.value)
+  const isSystemUser = computed(() => sessionUserSystem())
 
   const login = createResource({
-    url: 'login',
+    url: 'go1_cms.api.auth.login',
     onError() {
-      throw new Error('Invalid email or password')
+      throw new Error('Email hoặc mật khẩu không chính xác.')
     },
     onSuccess() {
       userResource.reload()
@@ -41,6 +47,7 @@ export const sessionStore = defineStore('cms-session', () => {
   return {
     user,
     isLoggedIn,
+    isSystemUser,
     login,
     logout,
   }

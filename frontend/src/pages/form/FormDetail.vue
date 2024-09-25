@@ -126,8 +126,10 @@ import DragVerticalIconV1 from '@/components/Icons/DragVerticalIconV1.vue'
 import Draggable from 'vuedraggable'
 import { Breadcrumbs, call, createResource, ErrorMessage } from 'frappe-ui'
 import { ref, computed, watch } from 'vue'
-import { createToast, errorMessage, warningMessage } from '@/utils'
+import { createToast, errorMessage, warningMessage, validErrApi } from '@/utils'
 import { globalStore } from '@/stores/global'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const { changeLoadingValue } = globalStore()
 const props = defineProps({
@@ -236,6 +238,8 @@ async function callUpdateDoc() {
       form.reload()
     }
   } catch (err) {
+    validErrApi(err, router)
+
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
       errorMessage('Có lỗi xảy ra', err.messages.join(', '))

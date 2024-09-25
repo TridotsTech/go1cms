@@ -1,5 +1,9 @@
 <template>
-  <router-view v-if="$route.name == 'Login'" />
+  <router-view
+    v-if="
+      ['Login', 'Permission Denied Page', 'Invalid Page'].includes($route.name)
+    "
+  />
   <DesktopLayout v-else-if="session().isLoggedIn">
     <router-view />
   </DesktopLayout>

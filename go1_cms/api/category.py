@@ -1,8 +1,12 @@
 import frappe
 from frappe import _
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_category(name):
     MbwBlogCategory = frappe.qb.DocType("Mbw Blog Category")
     query = (
@@ -19,6 +23,7 @@ def get_category(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_category(data):
     category_title = data.get('category_title')
     if not category_title:
@@ -36,6 +41,7 @@ def create_category(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_category(data):
     doc_name = data.get('name')
     category_title = data.get('category_title')
@@ -62,6 +68,7 @@ def update_category(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_category(name):
     try:
         if not frappe.db.exists("Mbw Blog Category", name):

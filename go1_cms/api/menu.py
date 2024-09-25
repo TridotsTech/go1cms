@@ -3,9 +3,13 @@ from frappe import _
 from go1_cms.api.common import (
     getStrTimestamp
 )
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_menu_suggest():
     web_edit = frappe.db.get_value('MBW Client Website', {"edit": 1}, ['name'])
     if web_edit:
@@ -31,6 +35,7 @@ def get_menu_suggest():
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_menu(name):
     Menu = frappe.qb.DocType("Menu")
     query = (
@@ -52,6 +57,7 @@ def get_menu(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def create_menu(data):
     title = data.get('title')
     if not title:
@@ -95,6 +101,7 @@ def create_menu(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_menu(data):
     doc_name = data.get('name')
     title = data.get('title')
@@ -148,6 +155,7 @@ def update_menu(data):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_menu(name):
     try:
         if not frappe.db.exists("Menu", name):
@@ -163,4 +171,4 @@ def delete_menu(name):
         elif type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Lỗi hệ thống')
+            frappe.throw('Có lỗi xảy ra')

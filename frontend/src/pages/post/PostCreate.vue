@@ -52,7 +52,7 @@
 import Fields from '@/components/Fields.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, ErrorMessage, call } from 'frappe-ui'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, validErrApi } from '@/utils'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { globalStore } from '@/stores/global'
@@ -262,6 +262,8 @@ async function callInsertDoc() {
         params: { postId: docCreate.name },
       })
   } catch (err) {
+    validErrApi(err, router)
+
     msgError.value = err.messages.join(', ')
     errorMessage('Có lỗi xảy ra', err.messages.join(', '))
   }

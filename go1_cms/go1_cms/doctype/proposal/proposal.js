@@ -1144,9 +1144,9 @@ var add_new_section = Class.extend({
 
     data.map((f) => {
       var bg_color = "style='background: #f3f3f3;'";
-      let template = `<div class="section-title" data-group='${f.section_group}'>${f.name}</div>`;
+      let template = `<div class="section-title" data-group='${f.section_group}'>${f.section_title || ""}(${f.name})</div>`;
       if (f.image) {
-        template = `<div class="section-img" ><img src="${f.image}" /></div><p>${f.name}</p>`;
+        template = `<div class="section-img" ><img src="${f.image}" /></div><p>${f.section_title || ""}(${f.name})</p>`;
         bg_color = "";
       }
       let item =
@@ -1179,7 +1179,7 @@ var add_new_section = Class.extend({
             fieldname: "custom_title",
             fieldtype: "Data",
             label: __("Enter Section Title"),
-            default: f.name,
+            default: f.section_title || f.name,
           });
           var image_html = "";
           if (f.image) {

@@ -2,9 +2,13 @@ import frappe
 from frappe import _
 from pypika import Criterion
 from frappe.model.document import get_controller
+from go1_cms.api.wrapper_api import (
+    check_user_admin
+)
 
 
 @frappe.whitelist()
+@check_user_admin
 def get_client_websites():
     filters = {}
     doctype = "MBW Client Website"
@@ -46,6 +50,7 @@ def get_client_websites():
 
 
 @frappe.whitelist()
+@check_user_admin
 def change_name_web_client_website(name, name_web):
     if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
         frappe.throw(_("My website not found"), frappe.DoesNotExistError)
@@ -58,6 +63,7 @@ def change_name_web_client_website(name, name_web):
 
 
 @frappe.whitelist()
+@check_user_admin
 def set_primary_client_website(name):
     if not frappe.db.exists({"doctype": "MBW Website Template", "name": name}):
         frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
@@ -90,6 +96,7 @@ def set_primary_client_website(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_published_client_website(name, published):
     client_web = frappe.db.get_value(
         'MBW Client Website', {'setting_from_template': name}, ['name', 'published'], as_dict=1)
@@ -110,6 +117,7 @@ def update_published_client_website(name, published):
 
 
 @frappe.whitelist()
+@check_user_admin
 def update_edit_client_website(name):
     if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
         frappe.throw(_("My website not found"), frappe.DoesNotExistError)
@@ -123,6 +131,7 @@ def update_edit_client_website(name):
 
 
 @frappe.whitelist()
+@check_user_admin
 def delete_client_website(name):
     name_client_web = frappe.db.get_value(
         'MBW Client Website', {'setting_from_template': name}, ['name'])

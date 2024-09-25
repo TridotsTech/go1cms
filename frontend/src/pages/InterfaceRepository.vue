@@ -183,7 +183,7 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import ViewControls from '@/components/ViewControls.vue'
 import DisplayIcon from '@/components/Icons/DisplayIcon.vue'
 import { Breadcrumbs, ListFooter, call } from 'frappe-ui'
-import { createToast, errorMessage } from '@/utils'
+import { createToast, errorMessage, validErrApi } from '@/utils'
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -228,6 +228,7 @@ const handleUseTemplate = async (close) => {
       }, 300)
     })
   } catch (err) {
+    validErrApi(err, router)
     if (err.messages && err.messages.length) {
       errorMessage('Có lỗi xảy ra', err.messages[0])
     } else {
