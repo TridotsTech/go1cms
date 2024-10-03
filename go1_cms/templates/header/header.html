@@ -463,6 +463,7 @@
                     {%for sec_item in header.get("items")%}
                     {%if col_index == (sec_item.column_index+1) %}
                         {%if sec_item.section_name == "Header Logo"%}
+                        <div class="flex">
                             {%if header.sticky_header %}
                             {% if theme_settings.website_logo %}
                                 <a href="{{ route_web }}"><img class="logo sticky-logo" src="{{ theme_settings.website_logo }}" /></a>
@@ -479,6 +480,7 @@
                                     <a href="{{ route_web }}"> <img class="logo" src="{{ theme_settings.website_logo }}" /></a>
                                 {%endif%}
                             {%endif%}
+                        </div>
                         {%endif%}
                         {%if sec_item.section_name == "Header Menu"%}
                             <ul class="default_header d__flex go1-cms-menu">

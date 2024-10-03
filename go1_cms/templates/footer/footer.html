@@ -12,13 +12,13 @@
 					{%if col.columns%}
 					{%for each_col in col.columns%}
 					{%set col_index = loop.index %}
-					<div style="width: {{each_col.width}}" class="footer_sec order-[{{ each_col.get('order', '1') }}] md:order-none">
+					<div style="width: {{each_col.width}}"
+						class="footer_sec order-[{{ each_col.get('order', '1') }}] md:order-none">
 						{%for sec_item in footer_items%}
 						{%if col_index == (sec_item.column_index+1) %}
 						{%for m_sec_item in sec_item.get("items")%}
 						{{ m_sec_item.web_template or '' }}
-						{%if m_sec_item.section_name=="Footer Contact Vệ Sinh"%}
-						
+						{%if m_sec_item.section_name=="Footer About DV Bảo Vệ"%}
 						{% endif %}
 						{%endfor%}
 						{%endif%}
@@ -111,7 +111,9 @@
 					</div>
 				</div>
 				<div class="col-md order-first md:order-none">
-					<div class="footer-col-2 order-first" style="display: flex;align-items: center;{%if footer.cp_sc_alignment=="Right"%}justify-content: end;{%endif%}{%if footer.cp_sc_alignment=="Left" %}justify-content:start;{%endif%}">
+					<div class="footer-col-2 order-first"
+						style="display: flex;align-items: center;{%if footer.cp_sc_alignment==" Right"%}justify-content:
+						end;{%endif%}{%if footer.cp_sc_alignment=="Left" %}justify-content:start;{%endif%}">
 						{%if footer.sc_ct_type == "Custom" %}
 						<div class="go1-cms-copyright-sc-content">
 							{{footer.cp_sc_content}}

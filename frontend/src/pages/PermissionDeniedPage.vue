@@ -9,8 +9,8 @@
         </div>
         <div class="font-medium">Trang không được phép truy cập.</div>
         <div class="text-base">
-          Nếu bạn là admin thì nhấp vào nút bên dưới để thay đổi tài khoản quản
-          trị.
+          Nếu bạn là quản trị viên, hãy nhấp vào nút bên dưới để thay đổi tài
+          khoản.
         </div>
         <Button @click="logout.submit()">
           <template #prefix><RefreshIcon class="w-4 h-4" /></template>

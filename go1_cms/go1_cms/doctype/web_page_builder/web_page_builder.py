@@ -707,7 +707,7 @@ def get_page_templates():
 def get_footer_section_templates():
     template_groups = []
     templates = frappe.db.sql(
-        '''select name, image ,section_group from `tabSection Template` where section_group='Footer' ''',  as_dict=1)
+        '''select name,section_title, image ,section_group from `tabSection Template` where section_group='Footer' ''',  as_dict=1)
     return {"template_groups": template_groups, "templates": templates}
 
 
@@ -715,7 +715,7 @@ def get_footer_section_templates():
 def get_header_section_templates():
     template_groups = []
     templates = frappe.db.sql(
-        '''select name, image ,section_group from `tabSection Template` where section_group='Header' ''',  as_dict=1)
+        '''select name,section_title, image ,section_group from `tabSection Template` where section_group='Header' ''',  as_dict=1)
     return {"template_groups": template_groups, "templates": templates}
 
 
@@ -1644,6 +1644,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                 website_item = frappe._dict({
                     "slides": [{'heading': i.heading, 'description': i.description, 'image': i.image} for i in info_item.slides],
                     "name": web_item.name,
+                    "item_code": web_item.item_code,
                     "web_item_name": web_item.web_item_name,
                     "route": web_item.route,
                     "has_variants": web_item.has_variants,

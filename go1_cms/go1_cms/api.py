@@ -16,6 +16,7 @@ TEMPLATE_HEADER = {
     'Template 3': 'header_2.html',
     'Template 4': 'header_3.html',
     'Template 5': 'header_4.html',
+    'Template 6': 'header_5.html',
 }
 
 
@@ -713,6 +714,51 @@ def get_footer_info(footer_id):
             from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
             lists = []
             for item in data:
+                page_st = frappe.get_value(
+                    "Page Section", item.get('section'), ['custom_css', 'custom_js', "class_name"], as_dict=1)
+
+                custom_css_js = ''
+                data_source = {"class_name": page_st['class_name'] or ""}
+
+                css = page_st.custom_css
+                js = page_st.custom_js
+
+                if css or js:
+                    data_source['name_section'] = item.get('section')
+                    section_contents = frappe.db.sql('''select field_key, field_type, content from `tabSection Content` where parent = %(parent)s and parenttype = "Page Section" order by idx''', {
+                        'parent': item.get('section')}, as_dict=1)
+
+                    if section_contents:
+                        for cont in section_contents:
+                            if cont.field_type == 'Button':
+                                data_source[cont.field_key] = json.loads(
+                                    cont.content) if cont.content else {}
+                            elif cont.field_type == 'List':
+                                data_source[cont.field_key] = json.loads(
+                                    cont.content) if cont.content else []
+                            else:
+                                data_source[cont.field_key] = cont.content
+
+                    if css:
+                        if css.find('<style') == -1:
+                            custom_css_js += '<style>{0}</style>'.format(
+                                css)
+                        else:
+                            custom_css_js += '{0}'.format(css)
+                        custom_css_js = frappe.render_template(
+                            custom_css_js, data_source)
+                    if js:
+                        js = js.replace('&amp;', '&').replace('&gt;', '>')
+                        if js.find('<script') == -1:
+                            custom_css_js += frappe.render_template(
+                                '<script>{0}</script>'.format(js), data_source)
+                        else:
+                            custom_css_js += frappe.render_template(
+                                '{0}'.format(js), data_source)
+
+                item["web_template"] = (
+                    item["web_template"] + custom_css_js) or ''
+
                 if item.get('section_type') == "Menu":
                     page_section_menu = frappe.get_value(
                         "Page Section", item.get('section'), "menu")

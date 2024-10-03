@@ -7,52 +7,175 @@
 <div class="page-loader">
   <div class="flex justify-center">
     <img alt="loader" class="lazyload" src="/assets/go1_cms/images/{% if
-    device_type == "Mobile" %}zoomloader{% else %}product-loading{% endif %}.gif">
+    device_type == 'Mobile' %}zoomloader{% else %}product-loading{% endif %}.gif">
   </div>
 </div>
 {% if custom_css %} {{ custom_css }} {% endif %}
 <style type="text/css">
   .page-loader {
-      /* display: none; */
-      text-align: center;
-      justify-content: center;
-      padding: 10px;
+    /* display: none; */
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
   }
-  {% if p_route %}
-  {% if theme_settings.site_layout and theme_settings.site_layout=='Full Width' %}
-      .{{p_route}}{
-          width:100%;
-          {% if theme_settings.body_background_color %}
-              background:{{theme_settings.body_background_color}};
-          {% endif %}
+
+    {
+    % if p_route %
+  }
+
+    {
+    % if theme_settings.site_layout and theme_settings.site_layout=='Full Width' %
+  }
+
+  . {
+      {
+      p_route
+    }
+  }
+
+    {
+    width: 100%;
+
+      {
+      % if theme_settings.body_background_color %
+    }
+
+    background: {
+        {
+        theme_settings.body_background_color
       }
-      {%if theme_settings.container_width %}
-          .{{p_route}} .page-sections-main{
-              width:{{theme_settings.container_width}};
-          }
-      {% endif %}
-  {% endif %}
-  {% if theme_settings.site_layout and theme_settings.site_layout=='Boxed' %}
-      .{{p_route}}{
-          width:100%;
-          {% if theme_settings.body_background_color %}
-              background:{{theme_settings.body_background_color}};
-          {% endif %}
-          {% if theme_settings.border_color %}
-              border:2px solid {{theme_settings.border_color}};
-          {% endif %}
+    }
+
+    ;
+
+      {
+      % endif %
+    }
+  }
+
+    {
+    %if theme_settings.container_width %
+  }
+
+  . {
+      {
+      p_route
+    }
+  }
+
+  .page-sections-main {
+    width: {
+        {
+        theme_settings.container_width
       }
-      {%if theme_settings.boxed_container_width %}
-          .{{p_route}} .page-sections-main{
-              margin: auto;
-              width:{{theme_settings.boxed_container_width}};
-              {% if theme_settings.boxed_background_color %}
-                  background:{{theme_settings.boxed_background_color}};
-              {% endif %}
-          }
-      {% endif %}
-  {% endif %}
-  {% endif %}
+    }
+
+    ;
+  }
+
+    {
+    % endif %
+  }
+
+    {
+    % endif %
+  }
+
+    {
+    % if theme_settings.site_layout and theme_settings.site_layout=='Boxed' %
+  }
+
+  . {
+      {
+      p_route
+    }
+  }
+
+    {
+    width: 100%;
+
+      {
+      % if theme_settings.body_background_color %
+    }
+
+    background: {
+        {
+        theme_settings.body_background_color
+      }
+    }
+
+    ;
+
+      {
+      % endif %
+    }
+
+      {
+      % if theme_settings.border_color %
+    }
+
+    border:2px solid {
+        {
+        theme_settings.border_color
+      }
+    }
+
+    ;
+
+      {
+      % endif %
+    }
+  }
+
+    {
+    %if theme_settings.boxed_container_width %
+  }
+
+  . {
+      {
+      p_route
+    }
+  }
+
+  .page-sections-main {
+    margin: auto;
+
+    width: {
+        {
+        theme_settings.boxed_container_width
+      }
+    }
+
+    ;
+
+      {
+      % if theme_settings.boxed_background_color %
+    }
+
+    background: {
+        {
+        theme_settings.boxed_background_color
+      }
+    }
+
+    ;
+
+      {
+      % endif %
+    }
+  }
+
+    {
+    % endif %
+  }
+
+    {
+    % endif %
+  }
+
+    {
+    % endif %
+  }
 </style>
 {% endblock %} {% block script %} {% if js_list %} {{ js_list }} {% endif %} {%
 if custom_js %} {{ custom_js }} {% endif %}

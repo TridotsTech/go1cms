@@ -25,7 +25,6 @@ def get_blog_list(name_section, **kwargs):
     page_len = 9
     text_search = kwargs.get('text_search', '')
     blog_category = kwargs.get('blog_category', None)
-    MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
 
     doc_section = frappe.db.get_value('Page Section', name_section, [
         'sort_field', 'no_of_records', 'category'], as_dict=1)
@@ -39,6 +38,7 @@ def get_blog_list(name_section, **kwargs):
     if kwargs.get('sort_by', 'desc').lower() == "asc":
         sort_by = frappe.qb.asc
 
+    MbwBlogPost = frappe.qb.DocType('Mbw Blog Post')
     # get data
     m_query = (frappe.qb.from_(MbwBlogPost)).where(MbwBlogPost.published == 1)
 

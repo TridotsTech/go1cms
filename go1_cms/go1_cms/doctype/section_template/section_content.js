@@ -429,7 +429,8 @@ function view_list_items(wrapper, doc) {
                             <tr></tr>
                         </thead>
                         <tbody></tbody>
-                    </table></div>`);
+                    </table>
+                    </div>`);
     var display_fileds_count = 1;
     if (fields.length > 0) {
       list_html.find("thead").append("<tr id='head-cols'></tr>");
@@ -452,7 +453,7 @@ function view_list_items(wrapper, doc) {
       list_html
         .find("thead #head-cols")
         .append(
-          `<th style='border-color: #ddd;border-bottom: 0;'>Actions1</th>`
+          `<th style='border-color: #ddd;border-bottom: 0;'>Actions</th>`
         );
     }
 
@@ -511,6 +512,8 @@ function view_list_items(wrapper, doc) {
           view_data_dialog.$wrapper
             .find("#list_html_table tbody tr:eq(" + index + ")")
             .remove();
+
+          cur_frm.set_value("route", "");
           view_list_items(wrapper, doc);
         });
         list_html.find("tbody").append(row);

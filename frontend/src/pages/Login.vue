@@ -21,6 +21,7 @@
                   ? 'text'
                   : 'email'
               "
+              required
               label="Email"
               v-model="email"
               placeholder="jane@example.com"
@@ -29,6 +30,7 @@
           </div>
           <div class="mt-4">
             <FormControl
+              required
               variant="outline"
               size="md"
               label="Mật khẩu"

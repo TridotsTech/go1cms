@@ -21,6 +21,8 @@ update_website_context = [
     "go1_cms.go1_cms.api.update_website_context",
 ]
 
+on_logout = "go1_cms.api.utils.clear_cookie_cart"
+
 # include js, css files in header of web template
 # web_include_css = "/assets/go1_cms/css/go1_cms.css"
 # web_include_js = "/assets/go1_cms/js/go1_cms.js"

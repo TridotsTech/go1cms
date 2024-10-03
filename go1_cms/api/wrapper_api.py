@@ -11,6 +11,6 @@ def check_user_admin(func):
             if users and users[0].user_type == "System User":
                 return func(*args, **kwargs)
         frappe.throw('Không được phép truy cập', frappe.PermissionError)
-        return
+        return None
 
     return wrapper

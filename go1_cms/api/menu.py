@@ -9,7 +9,6 @@ from go1_cms.api.wrapper_api import (
 
 
 @frappe.whitelist()
-@check_user_admin
 def get_menu_suggest():
     web_edit = frappe.db.get_value('MBW Client Website', {"edit": 1}, ['name'])
     if web_edit:
