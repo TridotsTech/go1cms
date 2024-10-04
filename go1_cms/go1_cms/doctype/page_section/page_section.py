@@ -174,6 +174,7 @@ class PageSection(Document):
 					item['name'] = item.get('tab_item').lower().replace(' ', '_')
 					query_item = frappe.db.get_value(self.reference_document, item.get('tab_item'), 'query')
 					query='''{query} limit {limit}'''.format(query=query_item,limit=no_of_records)
+					filters = {}
 					if businesss:
 						filters = {"business":self.business}
 					result = frappe.db.sql(query, filters, as_dict=1)
