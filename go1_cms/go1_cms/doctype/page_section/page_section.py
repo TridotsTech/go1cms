@@ -101,17 +101,21 @@ class PageSection(Document):
 		json_obj['dynamic_data'] = self.dynamic_data
 		json_obj['is_full_width'] = self.is_full_width
 		json_obj['layout_json'] = self.layout_json
+		businesss = ''
+		if 'ecommerce_business_store' in frappe.get_installed_apps():
+			if self.business:
+				businesss = self.business
 		if self.section_type == 'Predefined Section' and not self.is_login_required:
 			if self.predefined_section=="Recommended Items":
 				# frappe.log_error("rec", "recommended")
-				json_obj['data'] = get_recommended_products(self.query, self.reference_document, self.no_of_records, business=self.business, customer=customer, add_info=add_info,store_business=store_business)
+				json_obj['data'] = get_recommended_products(self.query, self.reference_document, self.no_of_records, business=businesss, customer=customer, add_info=add_info,store_business=store_business)
 				json_obj['reference_document'] = self.reference_document
 			else:
-				json_obj['data'] = get_data_source(self.query, self.reference_document, self.no_of_records, business=self.business, customer=customer, add_info=add_info,store_business=store_business)
+				json_obj['data'] = get_data_source(self.query, self.reference_document, self.no_of_records, business=businesss, customer=customer, add_info=add_info,store_business=store_business)
 				json_obj['reference_document'] = self.reference_document
 		elif self.section_type in ['Slider', 'Slider With Banner']:
 			slider_cond = ''
-			if self.business:
+			if businesss:
 				slider_cond = ' and business = "{0}"'.format(self.business)
 			if check_domain("multi_store") and not store_business:
 				multi_store_business = frappe.request.cookies.get('selected_store')
@@ -170,7 +174,9 @@ class PageSection(Document):
 					item['name'] = item.get('tab_item').lower().replace(' ', '_')
 					query_item = frappe.db.get_value(self.reference_document, item.get('tab_item'), 'query')
 					query='''{query} limit {limit}'''.format(query=query_item,limit=no_of_records)
-					result = frappe.db.sql(query, {"business":self.business}, as_dict=1)
+					if businesss:
+						filters = {"business":self.business}
+					result = frappe.db.sql(query, filters, as_dict=1)
 					result = get_product_details(result, customer=customer)
 					item['products'] = result
 					org_datas = []
