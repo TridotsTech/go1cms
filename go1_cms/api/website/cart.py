@@ -60,14 +60,15 @@ def create_order(**kwargs):
         update_address_quotation(quotation, contact.name)
 
         quotation_name = request_for_quotation()
-        if hasattr(frappe.local, "cookie_manager"):
-            frappe.local.cookie_manager.delete_cookie("cart_count")
-            frappe.local.cookie_manager.delete_cookie("cart")
 
         sale_order = _make_sales_order(
             source_name=quotation_name, ignore_permissions=True)
         sale_order.payment_schedule = []
         sale_order.save(ignore_permissions=True)
+        
+        if hasattr(frappe.local, "cookie_manager"):
+            frappe.local.cookie_manager.delete_cookie("cart_count")
+            frappe.local.cookie_manager.delete_cookie("cart")
     else:
         frappe.throw("Không thể tạo đơn hàng")
 
@@ -91,7 +92,7 @@ def update_cart(item_code, qty, additional_notes=None, add_item=False):
         quotation, customer.customer_primary_address)
 
     cart_cookie = {
-        "items": [{"item_code": item.item_code, "item_name": item.item_name, "qty": item.qty, "amount": item.amount, "rate": item.rate} for item in quotation.items],
+        "items": [{"item_code": item.item_code, "item_name": item.item_name, "qty": item.qty, "amount": item.amount, "rate": item.rate,"uom": item.uom,"image": item.image} for item in quotation.items],
         "grand_total": quotation.grand_total
     }
     cart_cookie = json.dumps(cart_cookie, ensure_ascii=False)

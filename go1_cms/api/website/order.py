@@ -6,6 +6,20 @@ from webshop.webshop.shopping_cart.cart import (
     decorate_quotation_doc
 )
 
+LST_STATUS = [
+    {"label": "Tất cả", "value": ""},
+    {"label": "Chờ xử lý", "value": "Draft"},
+    {"label": "Chờ giao hàng và thanh toán", "value": "To Deliver and Bill"},
+    {"label": "Chờ thanh toán", "value": "To Bill"},
+    {"label": "Chờ giao hàng", "value": "To Deliver"},
+    {"label": "Hoàn thành", "value": "Completed"},
+    {"label": "Đã hủy", "value": "Cancelled"},
+]
+
+@frappe.whitelist(methods=['GET'])
+def get_status_order():
+    lst_status = LST_STATUS
+    return lst_status
 
 @frappe.whitelist(methods=['GET'])
 def get_list_order(name_section, **kwargs):
@@ -49,8 +63,7 @@ def get_list_order(name_section, **kwargs):
 
     q_data = m_query.select(SalesOrder.name, SalesOrder.transaction_date, SalesOrder.status, SalesOrder.grand_total).offset(offset).limit(
         limit).orderby(SalesOrder[sort_field], order=sort_by).distinct()
-    print('===========================')
-    print(q_data)
+
     qts = q_data.run(as_dict=True)
     for item in qts:
         transaction_date = item.get('transaction_date')
@@ -77,6 +90,18 @@ def get_list_order(name_section, **kwargs):
 @frappe.whitelist(methods=['GET'])
 def get_detail_order(order_name):
     if frappe.db.exists("Sales Order", order_name):
-        order = frappe.get_doc("Sales Order", order_name)
-        return decorate_quotation_doc(order)
+        order = frappe.get_doc("Sales Order", order_name).as_dict()
+        transaction_date = order.get('transaction_date')
+        order['transaction_date'] = transaction_date.strftime(
+            "%d-%m-%Y")
+        stat = next((item for item in LST_STATUS if item["value"] == order['status']), None)
+        if stat:
+            order['status'] = stat.get('label')
+        
+        address_billing_info = {}
+        if order.customer_address:
+            address_billing_info = frappe.db.get_value("Address", order.customer_address, ['address_title as full_name', 'email_id as email', 'phone', 'address_line1 as address'],as_dict=1)
+        order['address_billing_info'] = address_billing_info
+            
+        return order
     return {}

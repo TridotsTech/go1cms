@@ -1226,12 +1226,12 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         function mobile_menu() {
             var hidden = $('.mobile_navbar');
             if (hidden.hasClass('visible')) {
-                hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
+                hidden.animate({ "left": "-1000px" }, 450).removeClass('visible');
                 $(".mobile-blackdrop").hide();
                 // $(".go1-cms-top-bar").removeClass('mbl-top-bar');
                 $('body').css("overflow","auto")
             } else {
-                hidden.animate({ "left": "0px" }, "slow").addClass('visible');
+                hidden.animate({ "left": "0px" }, 450).addClass('visible');
                 $(".mobile-blackdrop").show();
                 // $(".go1-cms-top-bar").addClass('mbl-top-bar');
                 $('body').css("overflow","hidden")

@@ -174,8 +174,8 @@ All this is done for any sub-level being entered.
 /* Animation classes for moving out and in */
 
 .dl-menu.dl-animate-out-1 {
-  -webkit-animation: MenuAnimOut1 0.4s;
-  animation: MenuAnimOut1 0.4s;
+  -webkit-animation: MenuAnimOut1 0.3s;
+  animation: MenuAnimOut1 0.3s;
 }
 
 .dl-menu.dl-animate-out-2 {

@@ -26,7 +26,9 @@
                     {% endfor %}
                 </div>
                 <div class="flex justify-center">
-                    {{ sec_item.des or '' }}
+                    <span>
+                        {{ sec_item.des or '' }}
+                    </span>
                 </div>
                 <div class="flex justify-end gap-5">
                     {% for item in sec_item.prbs %}
@@ -498,7 +500,7 @@
                                             <div>
                                                 <a href="{{ sec_item.to_account }}">
                                                     <div class="text-gray-600 text-xs">{{ header.button_text_2 }}</div>
-                                                    <div class="w-24 overflow-hidden">
+                                                    <div class="max-w-20 overflow-hidden">
                                                         <div title="{{ header.sub_text_2 }}" class="text-sm mt-1 line-clamp-1" id="user_name">{{ header.sub_text_2 }}</div>
                                                     </div>
                                                 </a>
@@ -676,7 +678,7 @@
                 {%for sec_item in header.get("items")%}
                 {%if sec_item.section_name == "Header Button Bán hàng"%}
                     {%if header.call_to_action_button==1%}
-                        <div class="flex justify-center gap-4 px-4">
+                        <div class="flex justify-center gap-4">
                             {% if header.active_button %}
                                 {% if not header.show_icon_btn %}
                                     <div class="d__flex custom-button text-base">
@@ -737,7 +739,7 @@
                                     <div>
                                         <a href="{{ sec_item.to_account }}">
                                             <div class="text-gray-600 text-xs">{{ header.button_text_2 }}</div>
-                                            <div class="w-24 overflow-hidden">
+                                            <div class="max-w-20 overflow-hidden">
                                                 <div title="{{ header.sub_text_2 }}" class="text-sm mt-1 line-clamp-1" id="user_name_1">{{ header.sub_text_2 }}</div>
                                             </div>
                                         </a>
@@ -869,7 +871,9 @@
                                     {% endfor %}
                                 </div>
                                 <div class="flex justify-center text-center">
-                                    {{ sec_item.des or '' }}
+                                    <span>
+                                        {{ sec_item.des or '' }}
+                                    </span>
                                 </div>
                                 <div class="flex flex-wrap justify-center gap-5">
                                     {% for item in sec_item.prbs %}
@@ -1305,12 +1309,12 @@ li.drop__down__header.sub-menu-item:hover > .sub__children {
         function mobile_menu() {
             var hidden = $('.mobile_navbar');
             if (hidden.hasClass('visible')) {
-                hidden.animate({ "left": "-1000px" }, "slow").removeClass('visible');
+                hidden.animate({ "left": "-1000px" }, 450).removeClass('visible');
                 $(".mobile-blackdrop").hide();
                 // $(".go1-cms-top-bar").removeClass('mbl-top-bar');
                 $('body').css("overflow","auto")
             } else {
-                hidden.animate({ "left": "0px" }, "slow").addClass('visible');
+                hidden.animate({ "left": "0px" }, 450).addClass('visible');
                 $(".mobile-blackdrop").show();
                 // $(".go1-cms-top-bar").addClass('mbl-top-bar');
                 $('body').css("overflow","hidden")
