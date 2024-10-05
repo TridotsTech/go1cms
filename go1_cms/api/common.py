@@ -507,13 +507,12 @@ def create_file_template():
 
 def handle_write_file_multiple_doctype_template():
     print('=======================handle_write_file_multiple_doctype_template=======================')
-    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template',
-                'CMS Settings', 'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post']
+    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template', 'CMS Settings', 'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post']
     temps = []
     for d in doctypes:
         if d not in ['CMS Settings']:
             filters = []
-            if d in ["Menu", "Web Theme", "MBW Form"]:
+            if d in ["Menu", "Web Theme", "MBW Form", "Mbw Blog Post"]:
                 filters = [['is_template', '=', 1]]
 
             temps.append({

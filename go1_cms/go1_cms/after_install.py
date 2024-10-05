@@ -212,7 +212,7 @@ def insert_mbw_blog_category():
 
 def insert_mbw_blog_post():
     file_name = "mbw_blog_post.json"
-    read_module_path_mbw(file_name)
+    read_module_path_mbw(file_name, True)
 
 
 def insert_faq():
@@ -517,49 +517,58 @@ def read_module_path(file_name):
                 frappe.log_error(frappe.get_traceback(), file_name)
 
 
-def read_module_path_mbw(file_name):
+def read_module_path_mbw(file_name, type_autoname=False):
     allow_update = get_setup_template().get('allow_update', 0)
-
     path = frappe.get_module_path("go1_cms")
     file_path = os.path.join(path, 'mbw_json_data', file_name)
+    
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             out = json.load(f)
-        for i in out:
-            try:
-                if not frappe.db.exists(i.get('doctype'), i.get('name')):
+        if not type_autoname:
+            for i in out:
+                try:
+                    if not frappe.db.exists(i.get('doctype'), i.get('name')):
+                        # insert if new app or not find doc
+                        frappe.get_doc(i).insert()
+                    elif str(allow_update) == '1':
+                        # update if allow
+                        doc = frappe.get_doc(
+                            i.get('doctype'), i.get('name')).as_dict()
+                        data_update = {}
+                        for x, y in i.items():
+                            if x not in ['name']:
+                                if frappe.get_meta(i.get('doctype')).has_field(x):
+                                    if type(y) not in [list]:
+                                        data_update[x] = y
+                                    else:
+                                        # delete old data table
+                                        for child in doc[x]:
+                                            frappe.delete_doc(
+                                                child.get('doctype'), child.get('name'))
+                                        for child in y:
+                                            frappe.get_doc(child).insert()
+
+                        frappe.db.set_value(
+                            i.get('doctype'), i.get('name'), data_update)
+
+                        # call save
+                        doc = frappe.get_doc(i.get('doctype'), i.get('name'))
+                        doc.save()
+                except frappe.NameError:
+                    pass
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback(), file_name)
+        else:
+            frappe.db.delete(i.get('doctype'), {
+                "is_template": 1
+            })
+            for i in out:
+                try:
                     # insert if new app or not find doc
                     frappe.get_doc(i).insert()
-                elif str(allow_update) == '1':
-                    # update if allow
-                    doc = frappe.get_doc(
-                        i.get('doctype'), i.get('name')).as_dict()
-                    data_update = {}
-                    for x, y in i.items():
-                        if x not in ['name']:
-                            if frappe.get_meta(i.get('doctype')).has_field(x):
-                                if type(y) not in [list]:
-                                    data_update[x] = y
-                                else:
-                                    # delete old data table
-                                    for child in doc[x]:
-                                        frappe.delete_doc(
-                                            child.get('doctype'), child.get('name'))
-                                    for child in y:
-                                        frappe.get_doc(child).insert()
-
-                    frappe.db.set_value(
-                        i.get('doctype'), i.get('name'), data_update)
-
-                    # call save
-                    doc = frappe.get_doc(i.get('doctype'), i.get('name'))
-                    doc.save()
-
-            except frappe.NameError:
-                pass
-            except Exception as e:
-                frappe.log_error(frappe.get_traceback(), file_name)
-
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback(), file_name)
 
 def unzip_section_images():
     """Unzip current file and replace it by its children"""
