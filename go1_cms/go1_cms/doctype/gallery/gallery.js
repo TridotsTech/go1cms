@@ -4,6 +4,17 @@
 frappe.ui.form.on('Gallery', {
 	refresh(frm){
 		$(`[data-route="Form/Gallery/${cur_frm.doc.name}"]`).find('[data-fieldname="gallery"]').find('.btn.btn-xs.btn-secondary.grid-add-row').css({"display":"none"})
+		if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            } else {
+                frm.set_value('business', '')
+            }
+        }
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
+            frm.set_df_property('business', 'hidden', 1)
+
+         }
 	},
 	attach_files(frm) {
 		let uploader = new frappe.ui.FileUploader({

@@ -10,6 +10,17 @@ frappe.ui.form.on('Web Theme', {
 		frm.trigger("store_pre_loaded_text")
 		frm.trigger("render_image_preview")
 		frm.trigger("hide_and_set_global_fonts")
+		if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            } else {
+                frm.set_value('business', '')
+            }
+        }
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
+            frm.set_df_property('business', 'hidden', 1)
+
+         }
 	},
 	store_pre_loaded_text(frm){
 		frm.pre_stored_text_arr = []

@@ -134,13 +134,7 @@ frappe.ui.form.on('Web Page Builder', {
                     }
             });
         }
-        if (frm.doc.__islocal) {
-            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
-                frm.set_value('business', frappe.boot.sysdefaults.business)
-            } else {
-                frm.set_value('business', '')
-            }
-        }
+     
          if (frappe.session.user != 'Administrator') {
              
 
@@ -152,6 +146,13 @@ frappe.ui.form.on('Web Page Builder', {
 
 
          }
+        if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            } else {
+                frm.set_value('business', '')
+            }
+        }
          if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
             frm.set_df_property('business', 'hidden', 1)
 

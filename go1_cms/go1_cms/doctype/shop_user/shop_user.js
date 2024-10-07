@@ -17,6 +17,7 @@ frappe.ui.form.on('Shop User', {
 				}
 			}
 		});
+		
 	},
 	after_save:function(frm){
 		cur_frm.reload_doc();

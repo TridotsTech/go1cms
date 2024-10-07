@@ -5,6 +5,17 @@ frappe.ui.form.on('Header Layout', {
 	refresh: function(frm) {
 		frm.r___id = Math.floor(Math.random() * 100)
 		frm.trigger("render_image_preview") 
+		if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            } else {
+                frm.set_value('business', '')
+            }
+        }
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
+            frm.set_df_property('business', 'hidden', 1)
+
+         }
 	},
 	render_image_preview(frm){
 		frm.image_pre_wrapper = frm.get_field("preview_html").$wrapper

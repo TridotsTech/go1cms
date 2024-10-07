@@ -6,6 +6,17 @@ frappe.ui.form.on('Color Palette', {
 		frm.ra___id = Math.floor(Math.random() * 1000)
 		frm.trigger("render_image_preview")
 		frm.trigger("hide_and_set_color_values")
+		if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            } else {
+                frm.set_value('business', '')
+            }
+        }
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
+            frm.set_df_property('business', 'hidden', 1)
+
+         }
 	},
 	image(frm){
 		frm.trigger("render_image_preview")
