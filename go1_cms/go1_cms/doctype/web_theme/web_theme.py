@@ -5,6 +5,7 @@ import json
 import os
 from frappe.utils import get_files_path
 from frappe.model.document import Document
+from frappe.query_builder import DocType, Field, Order
 
 class WebTheme(Document):
 	def validate(self):
