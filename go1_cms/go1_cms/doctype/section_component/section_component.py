@@ -4,7 +4,8 @@
 import frappe
 import json
 from frappe.website.website_generator import WebsiteGenerator
-
+from frappe.query_builder import DocType
+from go1_cms.utils.setup import get_settings_from_domain
 class SectionComponent(WebsiteGenerator):
 	def validate(self):
 		if not self.route:
@@ -12,22 +13,36 @@ class SectionComponent(WebsiteGenerator):
 
 @frappe.whitelist()
 def get_css_fields():
-	result = frappe.db.get_single_value('CMS Settings', 'styles_to_update')
-	return json.loads(result)
+	cms_settings=get_settings_from_domain("CMS Settings", business=self.business)
+	styles_to_update=cms_settings.styles_to_update
+	
+	return json.loads(styles_to_update)
 
 @frappe.whitelist()
 def get_component_details():
 	try:
 		group_data =[]
-		query_1 = ''' SELECT group_name FROM `tabSection Component Group`'''
-		groups = frappe.db.sql(query_1,as_dict=1)
+		section_component_group = DocType('Section Component Group')
+		groups = (
+			frappe.qb.from_(section_component_group)
+			.select(section_component_group.group_name)
+		).run(as_dict=True)
 		# frappe.log_error(groups,">> groups <<")
 		for each_grp in groups:
-			# query_2 = ''' SELECT sc.name as unique_id,sc.title as name,sc.group_name as section_group,sc.icon,sc.preview_image as image,sc.allow_update_to_style,sc.css_field_list,sec.field_label,
-			#  			  sec.field_key,sec.field_type,sec.content_type,sec.image_dimension,sec.allow_update_to_style,sec.css_properties_list,
-			# 			  sec.content,sec.fields_json,sec.css_json,sec.css_text	FROM `tabSection Component` sc INNER JOIN `tabSection Content` sec ON sec.parent=sc.name WHERE sc.group_name="%s"'''%each_grp.group_name
-			query_2 = ''' SELECT name as unique_id,group_name,allow_update_to_style,css_field_list,title as name,icon as image,css_field_list FROM `tabSection Component` WHERE group_name="%s"'''%each_grp.group_name
-			each_data = frappe.db.sql(query_2,as_dict=1)	
+			section_component = DocType('Section Component')
+			each_data = (
+				frappe.qb.from_(section_component)
+				.select(
+					section_component.name.as_('unique_id'),
+					section_component.group_name,
+					section_component.allow_update_to_style,
+					section_component.css_field_list,
+					section_component.title.as_('name'),
+					section_component.icon.as_('image'),
+					section_component.css_field_list
+				)
+				.where(section_component.group_name == each_grp.group_name)
+			).run(as_dict=True)
 			if each_data and len(each_data) > 0:
 				for k in each_data:
 					group_data.append(k)

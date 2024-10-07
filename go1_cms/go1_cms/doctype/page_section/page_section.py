@@ -14,6 +14,9 @@ from frappe.utils.password import encrypt
 from go1_cms.go1_cms.api import get_business_from_login, check_domain, get_today_date
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
+from frappe.query_builder import DocType, Field, Order
+from frappe.query_builder.functions import Function, Max
+from go1_cms.utils.setup import get_settings_from_domain, get_business_from_web_domain
 
 class PageSection(Document):
 	 
@@ -41,7 +44,8 @@ class PageSection(Document):
 			self.is_login_required = 0
 		self.context = "data"+self.name.lower().replace('-','')
 		self.generate_route()
-		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+		cms_settings=get_settings_from_domain("CMS Settings", business=self.business)
+		enable_generate_html=cms_settings.generate_html
 		if enable_generate_html:
 			generate_section_html(self.name)
 		self.check_content_fields()
@@ -78,7 +82,15 @@ class PageSection(Document):
 
 		#end
 
-		pages = frappe.db.sql('''select distinct parent from `tabMobile Page Section` where section = %(section)s and parenttype="Web Page Builder"''',{'section': self.name}, as_dict=1)
+		# pages = frappe.db.sql('''select distinct parent from `tabMobile Page Section` where section = %(section)s and parenttype="Web Page Builder"''',{'section': self.name}, as_dict=1)
+		mobile_page_section = DocType('Mobile Page Section')
+		pages = (
+			frappe.qb.from_(mobile_page_section)
+			.distinct()
+			.select(mobile_page_section.parent)
+			.where(mobile_page_section.section == self.name)
+			.where(mobile_page_section.parenttype == "Web Page Builder")
+		).run(as_dict=True)
 		if pages:
 			for item in pages:
 				doc = frappe.get_doc('Web Page Builder', item.parent)
@@ -129,23 +141,43 @@ class PageSection(Document):
 					slider_cond = ' and business = "{0}"'.format(multi_store_business)
 			if check_domain("multi_store"):
 				if store_business:
-					slider_cond = ' and business = "{0}"'.format(store_business)
-			json_obj['data'] = frappe.db.sql('''select business,mobile_app_image,mobile_app_videoyoutube_id,mobile_image,mobile_videoyoutube_id,redirect_url,slider_type,upload_video_for_mobile,upload_video_for_mobile_app,upload_video_for_web,video_type,web_image,web_videoyoutube_id from `tabSlider` where published = 1 {cond} order by display_order'''.format(cond=slider_cond), as_dict=1)
+					cond = (slider.business == store_business) 
+			slider = DocType('Slider')
+			json_obj['data'] = (
+				frappe.qb.from_(slider)
+				.select(
+					slider.business,
+					slider.mobile_app_image,
+					slider.mobile_app_videoyoutube_id,
+					slider.mobile_image,
+					slider.mobile_videoyoutube_id,
+					slider.redirect_url,
+					slider.slider_type,
+					slider.upload_video_for_mobile,
+					slider.upload_video_for_mobile_app,
+					slider.upload_video_for_web,
+					slider.video_type,
+					slider.web_image,
+					slider.web_videoyoutube_id
+				)
+				.where(slider.published == 1)
+				.where(cond) 
+				.orderby(slider.display_order)
+			).run(as_dict=True)
+			# json_obj['data'] = frappe.db.sql('''select business,mobile_app_image,mobile_app_videoyoutube_id,mobile_image,mobile_videoyoutube_id,redirect_url,slider_type,upload_video_for_mobile,upload_video_for_mobile_app,upload_video_for_web,video_type,web_image,web_videoyoutube_id from `tabSlider` where published = 1 {cond} order by display_order'''.format(cond=slider_cond), as_dict=1)
 		elif self.section_type == 'Custom Section':
-			frappe.log_error("--1--", self.content_type)
+			
 			if self.content_type == 'Static':
 				if self.reference_document == 'Product Category':
 					json_obj['route'] = frappe.db.get_value(self.reference_document, self.reference_name, "route")
 				json_obj['data'] = json.loads(self.custom_section_data)
 			else:
-				frappe.log_error("--2--", self.reference_document)
 				if self.reference_document == 'Product Category' and self.dynamic_data==0:
 					json_obj['data'] = json.loads(self.custom_section_data)
 				else:
 					json_obj['reference_document'] = self.reference_document
 					json_obj['reference_name'] = self.reference_name
 					json_obj['data'] = get_dynamic_data_source(self, customer=customer,store_business=store_business)
-					frappe.log_error("--3--", json_obj['data'])
 					json_obj['fetch_product'] = self.fetch_product
 					if len(json_obj['data']) > 0 and self.reference_name:
 						field = None
@@ -186,8 +218,8 @@ class PageSection(Document):
 				json_obj['data'] = data
 
 		elif self.section_type == 'Lists':
-			if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
-				from erp_ecommerce_business_store.erp_ecommerce_business_store.page_section import get_list_data
+			if 'erp_go1_cms' in frappe.get_installed_apps():
+				from erp_go1_cms.erp_go1_cms.page_section import get_list_data
 				json_obj['data'] = get_list_data(self, customer=None, add_info=None,store_business=None)
 
 		
@@ -292,15 +324,11 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 		if multi_store_business:		
 			query = query.replace('where p.is_active','where  p.restaurant = "{0}" AND p.is_active '.format(multi_store_business))
 			query  = query.replace('where parent_product_category is null and','where  parent_product_category is null and business = "{0}" AND '.format(multi_store_business))
-	if check_domain("multi_store"):
-		if store_business:
-			query = query.replace('where p.is_active','where  p.restaurant = "{0}" AND p.is_active '.format(store_business))
-			query  = query.replace('where parent_product_category is null and','where  parent_product_category is null and business = "{0}" AND '.format(store_business))
-	if check_domain('saas'):
-		domain = frappe.get_request_header('host')
-		business = get_business_from_web_domain(domain)
-		if business:
-			query = query.replace('where p.is_active','where  p.restaurant = "{0}" AND p.is_active '.format(business))
+	
+	domain = frappe.get_request_header('host')
+	business = get_business_from_web_domain(domain)
+	if business:
+		query = query.replace('where p.is_active','where  p.restaurant = "{0}" AND p.is_active '.format(business))
 
 	# if check_domain("multi_store"):
 	# 	if frappe.request.cookies.get('selected_store'):
@@ -324,37 +352,6 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 			filters[k] = urllib.parse.unquote(v)
 			if k == 'searchText' or k == 'searchTxt':
 				filters[k] = urllib.parse.unquote(v) + '%'
-	if check_domain('restaurant'):
-		today = get_today_date(replace=True)
-		filters['today_date'] = getdate(today)
-		filters['today_time'] = str(today.time())
-		if order_type:
-			filters['order_type'] = order_type
-		filters['distance'] = get_settings_value_from_domain('Business Setting', 'nearby_distance', business=business)
-		unit = get_settings_value_from_domain('Business Setting', 'distance_unit', business=business)
-		if unit != 'Miles':
-			filters['distance'] = float(filters['distance']) * 0.621371
-		try:
-			if not latitude and not longitude:
-				check_cookie = frappe.request.cookies.get('geoLocation')
-				if check_cookie:
-					vals = urllib.parse.unquote(check_cookie)
-					filters['latitude'], filters['longitude'] = vals.split(',')
-			if not order_type:
-				filters['order_type'] = frappe.request.cookies.get('order_type')
-			order_date = frappe.request.cookies.get('order_date')
-			if order_date: filters['today_date'] = getdate(urllib.parse.unquote(order_date))
-			order_time = frappe.request.cookies.get('order_time')
-			if order_time:
-				time = urllib.parse.unquote(order_time)
-				if time != 'ASAP':
-					time = to_timedelta(time)
-				else:
-					time = str(today.time())
-				filters['today_time'] = time
-		except Exception as e:
-			print(e)
-			pass
 	try:
 		result = frappe.db.sql('''{query}'''.format(query=query), filters, as_dict=1)
 		if result and dt == 'Product':
@@ -362,17 +359,17 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 		
 		return result
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.cms.doctype.page_section.page_section.get_data_source")
+		frappe.log_error(frappe.get_traceback(),"go1_cms.cms.doctype.page_section.page_section.get_data_source")
 		return []
 
 def get_recommended_products(query=None, dt=None, no_of_records=0, login_required=0, customer=None, user=None, business=None, 
 	latitude=None, longitude=None, order_type=None, page_no=0, add_info=None,store_business=None):
 	catalog_settings = None
-	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
-		from erp_ecommerce_business_store.utils.setup import get_settings_from_domain
+	if 'erp_go1_cms' in frappe.get_installed_apps():
+		from erp_go1_cms.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
-	if 'ecommerce_business_store' in frappe.get_installed_apps():
-		from ecommerce_business_store.utils.setup import get_settings_from_domain
+	if 'go1_cms' in frappe.get_installed_apps():
+		from go1_cms.utils.setup import get_settings_from_domain
 		catalog_settings = get_settings_from_domain('Catalog Settings')
 	if catalog_settings:
 		recommended_products = []
@@ -381,17 +378,31 @@ def get_recommended_products(query=None, dt=None, no_of_records=0, login_require
 			viewed_items = []
 			# frappe.log_error(customer, "---customer--rec-")
 			if customer:
-				cond = " where o.customer='{customer}'""".format(customer=customer)
-				viewed_query = """select distinct product from `tabCustomer Viewed Product` where parent ='{customer}'""".format(customer=customer)
-				viewed_items = frappe.db.sql(viewed_query, as_dict=True)
-				# frappe.log_error(viewed_items, "viewed_items")
-			
-				orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
-				order_items = frappe.db.sql(orderquery, as_dict=True)
-				# frappe.log_error(order_items, "order_items")
-				
-				cartquery = """select i.product, i.price from `tabShopping Cart` o inner join `tabCart Items` i ON i.parent=o.name  {cond}""".format(cond=cond)
-				cart_items = frappe.db.sql(cartquery, as_dict=True)
+				customer_viewed_product = DocType('Customer Viewed Product')
+				viewed_items = (
+					frappe.qb.from_(customer_viewed_product)
+					.distinct()
+					.select(customer_viewed_product.product)
+					.where(customer_viewed_product.parent == customer)  # Replace customer dynamically
+				).run(as_dict=True)
+				order = DocType('Order')
+				order_item = DocType('Order Item')
+				order_items = (
+					frappe.qb.from_(order)
+					.join(order_item)
+					.on(order_item.parent == order.name)
+					.select(Max(order_item.item).as_('product'))
+					.where(order.customer == customer)
+				).run(as_dict=True)
+				shopping_cart = DocType('Shopping Cart')
+				cart_items_table = DocType('Cart Items')
+				cart_items = (
+					frappe.qb.from_(shopping_cart)
+					.join(cart_items_table)
+					.on(cart_items_table.parent == shopping_cart.name)
+					.select(cart_items_table.product, cart_items_table.price)
+					.where(shopping_cart.customer == customer) 
+				).run(as_dict=True)
 				# frappe.log_error(cart_items, "cart_items")
 				for n in cart_items:
 					order_items.append(n)
@@ -405,30 +416,89 @@ def get_recommended_products(query=None, dt=None, no_of_records=0, login_require
 			else:
 				cond = ""
 			
-				orderquery = """select MAX(i.item) as product from `tabOrder` o inner join `tabOrder Item` i ON i.parent=o.name  {cond}""".format(cond=cond)
-				order_items = frappe.db.sql(orderquery, as_dict=True)
+				order_item = DocType('Order Item')
+				order_items = (
+					frappe.qb.from_(order)
+					.join(order_item)
+					.on(order_item.parent == order.name)
+					.select(Max(order_item.item).as_('product'))
+				)
+				if cond:
+					order_items = order_items.where(cond)
+
+				# Execute the query
+				order_items = order_items.run(as_dict=True)
 				# frappe.log_error(order_items, "order_items")
 				for s in order_items:
 					s.price = frappe.db.get_value("Product", s.product, "price")
 				if not order_items:
 					order_items = []
-			# frappe.log_error(order_items, "order_items")
-			recommended_item_list=",".join(['"' + x.product + '"' for x in order_items if x.product])
-			catquery = """select distinct category from `tabProduct Category Mapping`"""
+			recommended_item_list = [x.product for x in order_items if x.product]
+			product_category_mapping = DocType('Product Category Mapping')
+			cat_query = (
+				frappe.qb.from_(product_category_mapping)
+				.select(product_category_mapping.category)
+				.distinct()
+				)
 			if recommended_item_list:
-				catquery = """select distinct category from `tabProduct Category Mapping` where parent in ({lists})""".format(lists=recommended_item_list)
-			# frappe.log_error(catquery, "cat_items")
-			cat_items = frappe.db.sql(catquery, as_dict=True)
+				cat_query = cat_query.where(product_category_mapping.parent.isin(recommended_item_list))
+
+			cat_items = cat_query.run(as_dict=True)
 			max_val = max(flt(node.price) for node in order_items)
 			min_val = min(flt(node.price) for node in order_items)
 			category_list = []
 			category_list=",".join(['"' + x.category + '"' for x in cat_items])
+			category_list_values = [x.category for x in cat_items]
+			product = DocType('Product')
+			product_category_mapping = DocType('Product Category Mapping')
+			product_image = DocType('Product Image')
 			if category_list:
-				ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where pc.category in ({category_list}) and p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
+				subquery = (
+					frappe.qb.from_(product_image)
+					.select(product_image.list_image)
+					.where(product_image.parent == product.name)
+					.orderby(product_image.is_primary.desc())
+					.limit(1)
+				)
+				ord_query = (
+					frappe.qb.from_(product)
+					.select(
+						product.start,
+						subquery.as_("product_image")
+					)
+					.inner_join(product_category_mapping).on(product_category_mapping.parent == product.name)
+					.where(
+						product_category_mapping.category.isin(category_list_values), 
+						product.price >= min_val,
+						product.price <= max_val
+					)
+					.limit(no_of_records).offset(1)
+				)
+				products = ord_query.run(as_dict=True)
 			else:
-				ord_query = """select p.*,(select list_image from `tabProduct Image` where parent=p.name order by is_primary desc limit 1) as product_image from `tabProduct` p inner join `tabProduct Category Mapping` pc on pc.parent=p.name where  p.price >='{min_val}' and p.price <='{max_val}' limit 1,{no_of_records}""".format(no_of_records=no_of_records,lists=recommended_item_list, category_list=category_list,min_val=min_val, max_val=max_val)
-			products =  frappe.db.sql(ord_query, as_dict=True)	
-			# frappe.log_error(products, "products")
+				
+				subquery = (
+					frappe.qb.from_(product_image)
+					.select(product_image.list_image)
+					.where(product_image.parent == product.name)
+					.orderby(product_image.is_primary.desc())
+					.limit(1)
+				)
+				ord_query = (
+					frappe.qb.from_(product)
+					.select(
+						product.start,
+						subquery.as_("product_image")
+					)
+					.inner_join(product_category_mapping).on(product_category_mapping.parent == product.name)
+					.where(
+						product.price >= min_val,
+						product.price <= max_val
+					)
+					.limit(no_of_records) 
+				)
+				products = ord_query.run(as_dict=True)
+			
 			res_data = get_product_details(products)
 			# frappe.log_error(res_data, "res_data")
 			if res_data:
@@ -443,124 +513,35 @@ def get_dynamic_data_source(doc, customer=None,store_business=None):
 	business = None
 	if not business:
 		business = get_business_from_login()
-	if doc.condition: condition = ' and {0}'.format(doc.condition)
-	if doc.fetch_product: 
-		if doc.reference_document == 'Product Category':
-			child_doc = 'Product Category Mapping'
-		elif doc.reference_document == 'Author':
-			child_doc = 'Author'
-		elif doc.reference_document == 'Publisher':
-			child_doc = 'Publisher'
-		else:
-			child_doc = 'Product Brand Mapping'
-		cat_field = ' doc.is_active,'
-		if doc.reference_document == 'Product Category':
-			#hided by boopathy
-			# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
-			#end
-			cat_field += ' child.category,'
-			child = get_child_categories(doc.reference_name)
-			child_category = '""'
-			if child:
-				child_category = ",".join(['"' + x.name + '"' for x in child])
-			condition += ' and (child.category = "{0}" or child.category in ({1}))'.format(doc.reference_name, child_category)
+	# if doc.condition: condition = ' and {0}'.format(doc.condition)
 
-		elif doc.reference_document == 'Product Brand':
-			condition += ' and child.brand = "%s"' % doc.reference_name	
-		elif doc.reference_document == 'Author':
-			condition += ' and doc.author = "%s"' % doc.reference_name
-		elif doc.reference_document == 'Publisher':
-			condition += ' and doc.publisher = "%s"' % doc.reference_name
-		if business:
-			condition += ' and doc.restaurant = "{0}"'.format(business)
-		if check_domain("multi_store"):
-			multi_store_business = frappe.request.cookies.get('selected_store')
-			if not store_business:
-				if not multi_store_business:
-					all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
-					if all_locations:
-						multi_store_business = all_locations[0].name
-				else:
-					multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-				if multi_store_business:		
-					condition += "AND doc.restaurant = '{0}' ".format(multi_store_business)
-		if check_domain("multi_store"):
-			if store_business:		
-				condition += "AND doc.restaurant = '{0}' ".format(store_business)
-		if check_domain('saas'):
-			domain = frappe.get_request_header('host')
-			business = get_business_from_web_domain(domain)
-			if business:
-				condition += "AND doc.restaurant = '{0}' ".format(business)
-		# if check_domain("multi_store"):
-		# 	condition += " AND doc.restaurant = '{0}' ".format(unquote(frappe.request.cookies.get('selected_store')))
-		books_columns_query = ''
-		books_join_query = ''
-		installed_apps = frappe.db.sql(''' select * from `tabModule Def` where app_name='book_shop' ''', as_dict=True)
-		if len(installed_apps) > 0:
-			books_columns_query = ',AU.author_name,AU.route as author_route,PU.publisher_name,PU.route as publisher_route'
-			books_join_query = '  left join `tabAuthor` AU on AU.name=doc.author left join `tabPublisher` PU on PU.name=doc.publisher'
-
-		query = '''SELECT doc.name, doc.item,doc.item as item_title, doc.tax_category, doc.price, doc.old_price, doc.short_description,doc.enable_preorder_product, doc.weight,doc.gross_weight, 
-			doc.full_description, doc.sku, doc.route, doc.inventory_method, doc.minimum_order_qty {books_columns_query}, 
-			doc.maximum_order_qty, doc.stock, doc.disable_add_to_cart_button,doc.custom_entered_price, (select list_image from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as image,{cat_field} 
-			(select detail_thumbnail from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as thumbnail,
-			(select list_image from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as product_image,
-			(select brand_name from `tabProduct Brand Mapping` where parent = doc.name limit 1) as product_brand,
-			(select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand = B.name
-			where MP.parent = doc.name and B.published = 1 limit 1) as brand_route from `tabProduct` doc {books_join_query} left join 
-			`tab{doctype}` child on child.parent = doc.name where doc.is_active = 1 {condition} group by doc.name order by 
-			doc.{field} {sort_by} limit {limit}'''.format(books_join_query=books_join_query,books_columns_query = books_columns_query,condition=condition, doctype=child_doc, cat_field=cat_field, field=(doc.sort_field or 'name'), sort_by=doc.sort_by, limit=doc.no_of_records)
-		if doc.display_randomly:
-			query = '''SELECT doc.name, doc.item,doc.item as item_title, doc.tax_category, doc.price, doc.old_price, doc.short_description,doc.enable_preorder_product, doc.weight,doc.gross_weight, 
-			doc.full_description, doc.sku, doc.route, doc.inventory_method, doc.minimum_order_qty {books_columns_query}, 
-			doc.maximum_order_qty, doc.stock, doc.disable_add_to_cart_button,doc.custom_entered_price, (select list_image from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as image,{cat_field} 
-			(select detail_thumbnail from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as thumbnail,
-			(select list_image from `tabProduct Image` i where parent = doc.name order by is_primary desc limit 1) as product_image,
-			(select brand_name from `tabProduct Brand Mapping` where parent = doc.name limit 1) as product_brand,
-			(select B.route from `tabProduct Brand Mapping` MP inner join `tabProduct Brand` B on MP.brand = B.name
-			where MP.parent = doc.name and B.published = 1 limit 1) as brand_route from `tabProduct` doc {books_join_query} left join 
-			`tab{doctype}` child on child.parent = doc.name where doc.is_active = 1 {condition} group by doc.name order by 
-			RAND() limit {limit}'''.format(books_join_query=books_join_query,books_columns_query = books_columns_query,condition=condition, doctype=child_doc, cat_field=cat_field,  sort_by=doc.sort_by, limit=doc.no_of_records)
-		
-		# frappe.log_error(query,"ecommerce_business_store.cms.doctype.page_section.page_section.get_data_source")
-		result = frappe.db.sql(query, as_dict=1)
-		result = get_product_details(result, customer=customer)
-		org_datas = []
-		org_datas = get_products_json(result)
-		return org_datas
-	else:
-		fields = '*'
-		if doc.reference_document == 'Product Category':
-			fields = 'category_name, category_image, menu_image,route'
-			condition = ' where is_active = 1 {0}'.format(condition)
-		elif doc.reference_document == 'Product Brand':
-			fields = 'brand_name, route, brand_logo'
-			condition = ' where published = 1 {0}'.format(condition)
-		elif doc.reference_document == 'Subscription Plan':
-			fields = 'name, price'
-			condition += ' where disabled = 0'
-		if business:
-			condition += ' and business = "{0}"'.format(business)
-		if doc.reference_document not in ["Product Category", "Product Brand", "Subscription Plan"]:
-			condition = ' where name != "" {0}'.format(condition)
-		if check_domain("multi_store") and doc.reference_document == 'Product Category':
-			multi_store_business = frappe.request.cookies.get('selected_store')
-			if not multi_store_business:
-				all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
-				if all_locations:
-					multi_store_business = all_locations[0].name
-			else:
-				multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
-			if multi_store_business:		
-				condition += "AND doc.business = '{0}' ".format(multi_store_business)
-		if check_domain('saas'):
-			domain = frappe.get_request_header('host')
-			business = get_business_from_web_domain(domain)
-			if business:
-				condition += "AND doc.business = '{0}' ".format(business)
-		query = '''SELECT {fields} from `tab{doctype}` doc {condition} order by doc.{field} {sort_by} limit {limit}'''.format(fields=fields, doctype=doc.reference_document, condition=condition, field=(doc.sort_field or 'name'), sort_by=doc.sort_by, limit=doc.no_of_records)
-		result = frappe.db.sql(query, as_dict=1)
+	fields = '*'
+	if business:
+		condition += ' and business = "{0}"'.format(business)
+	
+	
+	doctype = DocType(doc.reference_document)
+	query = (
+		frappe.qb.from_(doctype).as_("doc")  
+	)
+	fields_to_select = [field for field in fields.split(",")]  
+	query = query.select(*fields_to_select)
+	
+	domain = frappe.get_request_header('host')
+	business = get_business_from_web_domain(domain)
+	if business:
+		query = query.where(doctype.business==business)
+	# if condition:
+	# 	query = query.where(condition)
+	if doc.reference_document not in ["Product Category", "Product Brand", "Subscription Plan"]:
+		query = query.where(doctype.name != "")
+	sort_field = doc.sort_field or 'name'  
+	# query = query.order_by(getattr(doctype, sort_field), order=doc.sort_by) 
+	field = getattr(doctype, sort_field)
+	query = query.orderby(field) if doc.sort_by == 'asc' else query.orderby(field, order=Order.desc)
+	limit = doc.no_of_records
+	query = query.limit(limit)
+	result = query.run(as_dict=True)
 	return result
 
 @frappe.whitelist()
@@ -574,7 +555,16 @@ def get_item_info(dt, dn):
 		title_value = doc.name
 	images = []
 	if dt == 'Product':
-		images = frappe.db.sql('''select list_image, detail_thumbnail as thumbnail from `tabProduct Image` where parent = %(parent)s order by idx''',{'parent': dn}, as_dict=1)
+		product_image = DocType('Product Image')
+		images = (
+			frappe.qb.from_(product_image)
+			.select(
+				product_image.list_image,
+				product_image.detail_thumbnail.as_("thumbnail") 
+			)
+			.where(product_image.parent == dn)
+			.orderby(product_image.idx) 
+		).run(as_dict=True)
 	else:
 		fields = filter(lambda x: x.fieldtype in ['Attach', 'Attach Image'], meta.fields)
 		for item in fields:
@@ -584,7 +574,16 @@ def get_item_info(dt, dn):
 
 @frappe.whitelist()
 def update_page_sections():
-	doc_list = frappe.db.sql('''select name from `tabPage Section` where section_type <> "Banner" or (section_type = "Custom Section" and content_type = "Dynamic")''', as_dict=1)
+	# doc_list = frappe.db.sql('''select name from `tabPage Section` where section_type <> "Banner" or (section_type = "Custom Section" and content_type = "Dynamic")''', as_dict=1)
+	page_section = DocType('Page Section')
+	doc_list = (
+		frappe.qb.from_(page_section)
+		.select(page_section.name)
+		.where(
+			(page_section.section_type != "Banner") | 
+			((page_section.section_type == "Custom Section") & (page_section.content_type == "Dynamic"))  
+		)
+	).run(as_dict=True)
 	if doc_list:
 		for item in doc_list:
 			doc = frappe.get_doc('Page Section', item.name)
@@ -609,7 +608,16 @@ def get_section_template(section):
 	return frappe.get_doc('Section Template', section)
 
 def get_section_data(section, customer=None):
-	section_data = frappe.db.sql('''select section, parent, parentfield from `tabMobile Page Section` where section = %(name)s''', {'name': section}, as_dict=1)
+	mobile_page_section = DocType('Mobile Page Section')
+	section_data = (
+	    frappe.qb.from_(mobile_page_section)
+	    .select(
+	        mobile_page_section.section,
+	        mobile_page_section.parent,
+	        mobile_page_section.parentfield
+	    )
+	    .where(mobile_page_section.section == section) 
+	).run(as_dict=True)
 	data_source = None
 	if section_data:
 		path = 'data_source/{0}_{1}.json'.format(section_data[0].parent.lower().replace(' ', '_'), ('web' if section_data[0].parentfield == 'web_section' else 'mobile'))
@@ -705,22 +713,33 @@ def get_class_name():
 
 #added by boopathy from ecommerce business store api on 10/08/2022
 def get_product_details(product, isMobile=0, customer=None, current_category=None):
-	if 'erp_ecommerce_business_store' in frappe.get_installed_apps():
-		from erp_ecommerce_business_store.erp_ecommerce_business_store.api import get_product_details as get_product_details_list
+	if 'erp_go1_cms' in frappe.get_installed_apps():
+		from erp_go1_cms.erp_go1_cms.api import get_product_details as get_product_details_list
 		return get_product_details_list(product, isMobile, customer, current_category)
-	if 'ecommerce_business_store' in frappe.get_installed_apps():
-		from ecommerce_business_store.ecommerce_business_store.v2.product import get_list_product_details as get_product_details_list
+	if 'go1_cms' in frappe.get_installed_apps():
+		from go1_cms.go1_cms.v2.product import get_list_product_details as get_product_details_list
 		return get_product_details_list(product)
 
 def get_child_categories(category):
 	try:
 		if category:
 			lft, rgt = frappe.db.get_value('Product Category', category, ['lft', 'rgt'])
+			product_category = DocType('Product Category')
+			categories = (
+			    frappe.qb.from_(product_category)
+			    .select(product_category.name)
+			    .where(
+			        product_category.is_active == 1, 
+			        product_category.disable_in_website == 0, 
+			        product_category.lft >= lft,  
+			        product_category.rgt <= rgt  
+			    )
+			).run(as_dict=True)
 			# if lft != "lft" and rgt != "rgt":
-			return frappe.db.sql('''select name from `tabProduct Category` where is_active = 1 and disable_in_website = 0 and lft >= {lft} and rgt <= {rgt}'''.format(lft=lft, rgt=rgt), as_dict=1)
+			# return frappe.db.sql('''select name from `tabProduct Category` where is_active = 1 and disable_in_website = 0 and lft >= {lft} and rgt <= {rgt}'''.format(lft=lft, rgt=rgt), as_dict=1)
 		# else:
 		# 	return frappe.db.sql('''select name from `tabProduct Category` where is_active = 1 and disable_in_website = 0 and parent_product_category = %(parent_categiry)s '''.format(parent_categiry=category), as_dict=1)
 
 		# return frappe.db.get_all('Product Category', fields=['name'], filters={'is_active': 1, 'parent_product_category': category}, limit_page_length=100)
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_child_categories')
+		frappe.log_error(frappe.get_traceback(), 'go1_cms.go1_cms.api.get_child_categories')

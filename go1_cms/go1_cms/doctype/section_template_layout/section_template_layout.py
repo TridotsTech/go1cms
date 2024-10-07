@@ -61,12 +61,33 @@ def get_layout_data():
 		Speciality_Section=[]
 		Regular_Section=[]
 		import json
-		query_1 = ''' SELECT name,layout_json,preview,title,type FROM `tabSection Template Layout` WHERE type="Speciality Section"'''
-		data_1 = frappe.db.sql(query_1,as_dict=1)
+		
+		section_template_layout = DocType('Section Template Layout')
+		data_1 = (
+			frappe.qb.from_(section_template_layout)
+			.select(
+				section_template_layout.name,
+				section_template_layout.layout_json,
+				section_template_layout.preview,
+				section_template_layout.title,
+				section_template_layout.type
+			)
+			.where(section_template_layout.type == "Speciality Section")
+		).run(as_dict=True)
 		for k in data_1:
 			Speciality_Section.append({"unique_id":k.name,"title":k.title,"preview_image":k.preview,"layout_json":json.loads(k.layout_json) if len(k.layout_json) > 0 else []})
-		query_2 = ''' SELECT name,layout_json,preview,title,type FROM `tabSection Template Layout` WHERE type="Regular Section"'''
-		data_2 = frappe.db.sql(query_2,as_dict=1)
+		section_template_layout = DocType('Section Template Layout')
+		data_2 = (
+			frappe.qb.from_(section_template_layout)
+			.select(
+				section_template_layout.name,
+				section_template_layout.layout_json,
+				section_template_layout.preview,
+				section_template_layout.title,
+				section_template_layout.type
+			)
+			.where(section_template_layout.type == "Regular Section")
+		).run(as_dict=True)
 		for k in data_2:
 			Regular_Section.append({"unique_id":k.name,"title":k.title,"preview_image":k.preview,"layout_json":json.loads(k.layout_json) if len(k.layout_json) > 0 else []})
 		final_data['section_template']=get_page_section()
@@ -78,8 +99,28 @@ def get_layout_data():
 
 def get_page_section():
 	device_type = "Web & Mobile"
-	template_groups = frappe.db.sql("SELECT group_name FROM `tabSection Template Group` where name<>'Footer' AND name <>'Page List Style' ",as_dict=1)
-	templates = frappe.db.sql('''select name, image ,section_group from `tabSection Template` where ((section_group<>'Footer' AND section_group <>'Page List Style') or section_group is null) and device_type in ("Web & Mobile", %(type)s)''', {'type': device_type}, as_dict=1)
+	section_template_group = DocType('Section Template Group')
+	template_groups = (
+		frappe.qb.from_(section_template_group)
+		.select(section_template_group.group_name)
+		.where(section_template_group.name != 'Footer')
+		.where(section_template_group.name != 'Page List Style')
+	).run(as_dict=True)
+	section_template = DocType('Section Template')
+	templates = (
+		frappe.qb.from_(section_template)
+		.select(
+			section_template.name,
+			section_template.image,
+			section_template.section_group
+		)
+		.where(
+			(section_template.section_group != 'Footer') & 
+			(section_template.section_group != 'Page List Style') | 
+			(section_template.section_group.isnull())
+		)
+		.where(section_template.device_type.isin(['Web & Mobile', device_type]))
+	).run(as_dict=True)
 	return {"template_groups":template_groups,"templates":templates}
 
 
@@ -88,8 +129,17 @@ def get_each_layout_data(layout_id,page_route):
 	try:
 		final_data =[]
 		import json
-		query_1 = ''' SELECT name,layout_json,preview,title FROM `tabSection Template Layout` WHERE name="%s"'''%layout_id
-		data = frappe.db.sql(query_1,as_dict=1)
+		section_template_layout = DocType('Section Template Layout')
+		data = (
+			frappe.qb.from_(section_template_layout)
+			.select(
+				section_template_layout.name,
+				section_template_layout.layout_json,
+				section_template_layout.preview,
+				section_template_layout.title
+			)
+			.where(section_template_layout.name == layout_id)
+		).run(as_dict=True)
 		for k in data:
 			page_section = frappe.new_doc("Page Section")
 			page_section.section_title = k.title
@@ -122,9 +172,6 @@ def save_predefined_section(layout_id,page_route):
 	try:
 		final_data =[]
 		import json
-		# query_1 = ''' SELECT name,layout_json,preview,title FROM `tabSection Template Layout` WHERE name="%s"'''%layout_id
-		# data = frappe.db.sql(query_1,as_dict=1)
-		# for k in data:
 		from frappe.model.mapper import get_mapped_doc
 		section = frappe.get_doc("Section Template",layout_id)
 		page_section = get_mapped_doc("Section Template", layout_id, {

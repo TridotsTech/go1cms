@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "business",
   "is_static_menu",
   "menus"
  ],
@@ -32,14 +33,21 @@
    "fieldtype": "Table",
    "label": "Menus",
    "options": "Menus Item"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-25 13:50:09.646957",
+ "modified": "2024-09-30 19:07:34.577952",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menu",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -58,5 +66,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -1,0 +1,165 @@
+{
+ "actions": [],
+ "autoname": "field:email",
+ "creation": "2019-02-21 12:39:12.724437",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "first_name",
+  "last_name",
+  "email",
+  "full_name",
+  "column_break_3",
+  "mobile_no",
+  "location",
+  "password",
+  "new_password",
+  "set_new_password",
+  "restaurant_info",
+  "restaurant",
+  "role",
+  "column_break_13",
+  "restaurant_name",
+  "business_type",
+  "player_id"
+ ],
+ "fields": [
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "First name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "options": "Email",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Full Name"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name"
+  },
+  {
+   "fieldname": "mobile_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Mobile No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Section Break",
+   "label": "Password"
+  },
+  {
+   "fieldname": "new_password",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Set New Password"
+  },
+  {
+   "fieldname": "set_new_password",
+   "fieldtype": "Data",
+   "label": "Set New Password"
+  },
+  {
+   "fieldname": "restaurant_info",
+   "fieldtype": "Section Break",
+   "label": "Business Info"
+  },
+  {
+   "fieldname": "restaurant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Business",
+   "options": "Business"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Link",
+   "label": "Role",
+   "options": "Role",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "restaurant.restaurant_name",
+   "fieldname": "restaurant_name",
+   "fieldtype": "Data",
+   "label": "Business Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "restaurant.business_type",
+   "fieldname": "business_type",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Business Type"
+  },
+  {
+   "fieldname": "player_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Player Id"
+  }
+ ],
+ "links": [],
+ "modified": "2024-10-01 16:10:43.305536",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Shop User",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Admin",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

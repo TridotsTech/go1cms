@@ -10,6 +10,7 @@
   "title",
   "posted_by",
   "image",
+  "business",
   "column_break_4",
   "name1",
   "role",
@@ -76,11 +77,17 @@
    "fieldname": "content_section",
    "fieldtype": "Section Break",
    "label": "Content"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-03 19:08:49.411991",
+ "modified": "2024-09-30 19:10:13.288270",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Testimonial",
@@ -101,5 +108,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

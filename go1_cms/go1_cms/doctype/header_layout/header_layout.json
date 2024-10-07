@@ -9,6 +9,7 @@
  "field_order": [
   "title",
   "is_active",
+  "business",
   "column_break_2",
   "preview",
   "preview_html",
@@ -51,12 +52,18 @@
   {
    "fieldname": "preview_html",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "image_field": "preview",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-19 15:21:40.106667",
+ "modified": "2024-09-30 20:11:30.699619",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Layout",
@@ -77,5 +84,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "title"
 }

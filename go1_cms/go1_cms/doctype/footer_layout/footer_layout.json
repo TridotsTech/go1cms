@@ -11,6 +11,7 @@
   "is_active",
   "column_break_2",
   "preview",
+  "business",
   "json_section",
   "layout_json"
  ],
@@ -46,12 +47,18 @@
    "fieldname": "is_active",
    "fieldtype": "Check",
    "label": "Is Active"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "image_field": "preview",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-19 15:22:30.161361",
+ "modified": "2024-09-30 20:09:47.104663",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Layout",
@@ -72,5 +79,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "title"
 }

@@ -167,10 +167,10 @@ frappe.ui.form.on('Section Content', {
          //created by boopathy-30/06/2022
 
     choose_style_properties:function(frm, cdt, cdn){
-        // console.log(frm, cdt, cdn,"frm, cdt, cdn")
+        console.log(frm, cdt, cdn,"frm, cdt, cdn")
         frappe.call({
             method:"go1_cms.go1_cms.doctype.section_template.section_template.get_css_fields",
-            args:{},
+            args:{business:frm.doc.business},
             callback:function(r){
                 console.log(r.message,"r.message")
                 let dialog = new frappe.ui.Dialog({

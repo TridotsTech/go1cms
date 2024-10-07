@@ -5,6 +5,49 @@ from __future__ import unicode_literals
 import frappe 
 import os, re, json, mimetypes
 from frappe.utils import getdate, nowdate, now, get_url
+from frappe.query_builder import DocType
+from go1_cms.utils.setup import get_settings_from_domain, get_business_from_web_domain
+
+def boot_session(bootinfo):
+	try:
+		# defaults = get_settings_from_domain('Catalog Settings')
+		# if defaults.get('default_currency'):
+		# 	bootinfo.sysdefaults.currency = defaults.default_currency
+		# bootinfo.docs += frappe.db.sql("""select name, fraction, fraction_units,
+		# 	number_format, smallest_currency_fraction_value, symbol from tabCurrency
+		# 	where enabled=1""", as_dict=1, update={'doctype': ':Currency'})
+		filters = {}
+		
+		if "Vendor" in frappe.get_roles(frappe.session.user):
+			shop_user = frappe.db.get_all('Shop User', filters={'name': frappe.session.user}, fields=['restaurant'])
+			if shop_user and shop_user[0].restaurant:
+				filters = {'name': shop_user[0].restaurant}
+		if "System Manager" not in frappe.get_roles(frappe.session.user):
+			settings = frappe.db.get_all('Business', fields=['name'], filters=filters)
+			if settings:
+				bootinfo.sysdefaults.business = settings[0].name
+		domain_configuration = frappe.get_single('Server Configuration')
+		bootinfo.sysdefaults.domain_configuration = domain_configuration
+		bootinfo.sysdefaults.business_defaults = get_business_defaults()
+		
+	except Exception:
+		# frappe.flags.web_pages_folders = ['templates/pages', 'www', 'tridotscore']
+		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.boot_session')
+
+def get_business_defaults():
+	defaults = frappe.cache().hget("defaults", 'Business')
+
+	if not defaults:
+		res = frappe.db.sql("""select defkey, defvalue, parent from `tabDefaultValue`
+			where parenttype = %s order by creation""", ('Business'), as_dict=1)
+
+		defaults = frappe._dict({})
+		for d in res:
+			defaults[d.parent] = d.defvalue
+
+		frappe.cache().hset("defaults", 'business', defaults)
+
+	return defaults
 
 @frappe.whitelist(allow_guest=True)
 def get_template_folder(url=None, business=None, temp=0):
@@ -153,20 +196,70 @@ def shipping_zip_matches(zip):
 
 @frappe.whitelist()
 def get_section_layouts():
-	return frappe.db.sql('''select name, web_layout, tab_layout, mobile_layout from `tabLayout`''', as_dict=1)
+	Layout = DocType("Layout")
+	return (frappe.qb.from_(Layout).select(
+		Layout.name, 
+		Layout.web_layout, 
+		Layout.tab_layout, 
+		Layout.mobile_layout
+	).run(as_dict=True))
 
 @frappe.whitelist()
 def get_section_components():
-	components = frappe.db.sql('''select name, html from `tabSection Component` order by name''', as_dict=1)
+	SectionComponent = DocType("Section Component")
+	SectionContent = DocType("Section Content")
+	components = (
+		frappe.qb.from_(SectionComponent)
+		.select(SectionComponent.name, SectionComponent.html)
+		.orderby(SectionComponent.name)
+		.run(as_dict=True)
+	)
 	for item in components:
-		item.content = frappe.db.sql('''select group_name, field_label, field_key, field_type, content_type, content, fields_json from `tabSection Content` where parent = %(parent)s and parenttype = "Section Component" order by idx''',{'parent': item.name}, as_dict=1)
+		item['content'] = (
+			frappe.qb.from_(SectionContent)
+			.select(
+				SectionContent.group_name,
+				SectionContent.field_label,
+				SectionContent.field_key,
+				SectionContent.field_type,
+				SectionContent.content_type,
+				SectionContent.content,
+				SectionContent.fields_json
+			)
+			.where(
+				(SectionContent.parent == item['name']) &
+				(SectionContent.parenttype == "Section Component")
+			)
+			.orderby(SectionContent.idx)
+			.run(as_dict=True)
+		)
+
 	return components
 
 @frappe.whitelist()
 def get_styles_list():
-	style_groups = frappe.db.sql('''select name from `tabCSS Group` order by name''', as_dict=1)
+	CSSGroup = DocType("CSS Group")
+	CSSProperty = DocType("CSS Property")
+	style_groups = (
+		frappe.qb.from_(CSSGroup)
+		.select(CSSGroup.name)
+		.orderby(CSSGroup.name)
+		.run(as_dict=True)
+	)
 	for item in style_groups:
-		item.style_elements = frappe.db.sql('''select name, property_name, value_type, options_json from `tabCSS Property` where css_group = %(group)s order by name''', {'group': item.name}, as_dict=1)
+		item['style_elements'] = (
+			frappe.qb.from_(CSSProperty)
+			.select(
+				CSSProperty.name,
+				CSSProperty.property_name,
+				CSSProperty.value_type,
+				CSSProperty.options_json
+			)
+			.where(CSSProperty.css_group == item['name'])
+			.orderby(CSSProperty.name)
+			.run(as_dict=True)
+		)
+
 	return style_groups
 
 @frappe.whitelist(allow_guest=True)
@@ -243,7 +336,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 	if domain and not route:
 		
 		#removed product_box from Website get_list-by sivaranjani
-		check_website = frappe.db.get_all('Website', filters={'domain_name': domain}, fields=['business', 'theme', 'home_page'])
+		check_website = frappe.db.get_all('Site Settings', filters={'domain_name': domain}, fields=['business', 'theme', 'home_page'])
 		if check_website and check_website[0].home_page:
 			#changed filter from 'name': to 'route':  get_list-by sivaranjani
 			home = frappe.db.get_all('Web Page Builder', filters={'route': check_website[0].home_page}, fields=['name', 'page_type'])
@@ -256,12 +349,11 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 			page_content =  get_page_builder_data(home, customer,application_type,business=business)
 	else:
 		
-		if check_domain("saas"):
-			business = get_business_from_web_domain(domain)
+		
+		business = get_business_from_web_domain(domain)
 		filters = [['route', '=', route]]
 		if business:
-			if not check_domain("multi_store"):
-				filters.append(['business', '=', business])
+			filters.append(['business', '=', business])
 		check_builder = frappe.db.get_all('Web Page Builder', filters=filters, fields=['name', 'page_type','w_page_type'])
 		
 		if check_builder:
@@ -271,26 +363,32 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 		else:
 			check_section = frappe.db.get_all('Page Section', filters=filters, fields=['name'])
 			if check_section:
-				from ecommerce_business_store.cms.doctype.page_section.page_section import get_section_data
+				from go1_cms.cms.doctype.page_section.page_section import get_section_data
 				page_content =  get_section_data(check_section[0].name, customer)
 	if page_type == "List":
 		list_content = []
 		check_builder = frappe.db.get_all('Web Page Builder', filters=filters, fields=['name','side_menu_display_field','side_menu_position','list_style','page_type','list_style','columns_mapping','document','condition','sort_field','sort_by','enable_side_menu','data_fetch_from'])
 		if check_builder:
-			columns = ''
-			condition = ''
-			order_by = " ORDER BY creation DESC "
+			document = DocType(check_builder[0].document)
+			query = frappe.qb.from_(document)
 			if check_builder[0].condition:
-				condition = " WHERE "+check_builder[0].condition
-			if check_builder[0].sort_field:
-				order_by = " ORDER BY "+check_builder[0].sort_field+" "+ check_builder[0].sort_by
+				query = query.where(frappe.qb.parse_conditions(check_builder[0].condition))
 			cols_json = json.loads(check_builder[0].columns_mapping)
+			columns = []
 			for x in cols_json:
-				for key in x.keys():
-					# frappe.log_error(key,'key')
-					columns += x[key]+" as "+key+","
-			columns = columns[:-1]
-			list_content = frappe.db.sql(""" SELECT {columns} FROM `tab{document}` doc {condition} {order_by}""".format(condition=condition,order_by=order_by,columns=columns,document=check_builder[0].document),as_dict=1)
+				for key, value in x.items():
+					columns.append(document[value].as_(key))
+			query = query.select(*columns)
+			if check_builder[0].sort_field:
+				sort_field = document[check_builder[0].sort_field]
+				sort_by = check_builder[0].sort_by.lower()
+				if sort_by == "desc":
+					query = query.orderby(sort_field, order=frappe.qb.Order.desc)
+				else:
+					query = query.orderby(sort_field, order=frappe.qb.Order.asc)
+			else:
+				query = query.orderby(document.creation, order=frappe.qb.Order.desc)
+			list_content = query.run(as_dict=True)
 			list_style = check_builder[0].list_style
 			if check_builder[0].enable_side_menu:
 				s_data = None
@@ -356,33 +454,60 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 
 @frappe.whitelist(allow_guest=True)
 def get_detail_page_content(route):
- 	check_dt = frappe.db.sql(""" select D.name from `tabDocType` D inner join  where has_web_view=1 """,as_dict=1)
- 	for x in check_dt:
- 		pass
+	DocType = DocType("DocType")
+	check_dt = (
+		frappe.qb.from_(DocType)
+		.select(DocType.name)
+		.where(DocType.has_web_view == 1)
+		.run(as_dict=True)
+	)
+	for x in check_dt:
+		pass
 
 @frappe.whitelist(allow_guest=True)
 def get_page_side_menu_data(page_route,linked_doc,page_no=1,page_size=10):
 	page_doc = frappe.db.get_all('Web Page Builder',filters={"route":page_route},fields=['columns_mapping','name', 'page_type','document','enable_side_menu','data_fetch_from','condition','sort_field','sort_by'])
 	if page_doc:
 		if page_doc[0].enable_side_menu == 1 and page_doc[0].data_fetch_from and page_doc[0].document:
-			link_fields = frappe.db.sql(""" SELECT fieldname FROM `tabDocField` WHERE parent=%(dt)s AND options=%(linked_doc)s """,{"dt":page_doc[0].document,"linked_doc":page_doc[0].data_fetch_from},as_dict=1)
+			DocField = DocType("DocField")
+			link_fields = (
+				frappe.qb.from_(DocField)
+				.select(DocField.fieldname)
+				.where(
+					(DocField.parent == page_doc[0].document) &
+					(DocField.options == page_doc[0].data_fetch_from)
+				)
+				.run(as_dict=True)
+			)
 			if link_fields:
-				columns = ''
-				condition = ' WHERE doc.{link_field} = "{linked_doc}"'.format(link_field=link_fields[0].fieldname,linked_doc=linked_doc)
-				order_by = " ORDER BY creation DESC "
+				document = DocType(page_doc[0].document)
+				link_field = page_doc[0].fieldname
+				linked_doc = linked_doc
+				condition = document[link_fields[0].fieldname] == linked_doc
+
 				if page_doc[0].condition:
-					condition = " AND "+page_doc[0].condition
-				if page_doc[0].sort_field:
-					order_by = " ORDER BY "+page_doc[0].sort_field+" "+ page_doc[0].sort_by
+					additional_condition = frappe.qb.parse_conditions(page_doc[0].condition)
+					condition = condition & additional_condition
+
 				cols_json = json.loads(page_doc[0].columns_mapping)
+				columns = []
 				for x in cols_json:
-					for key in x.keys():
-						# frappe.log_error(key,'key')
-						columns += x[key]+" as "+key+","
-				columns = columns[:-1]
-				# frappe.log_error(columns,'columns')
-				# frappe.log_error(condition,'condition')
-				list_content = frappe.db.sql(""" SELECT {columns} FROM `tab{document}` doc {condition} {order_by} limit {page_no},{page_len} """.format(condition=condition,order_by=order_by,columns=columns,document=page_doc[0].document,page_no = (int(page_no) - 1) * int(page_size),page_len = page_size),as_dict=1)
+					for key, value in x.items():
+						columns.append(document[value].as_(key))
+
+				query = frappe.qb.from_(document).select(*columns).where(condition)
+				if page_doc[0].sort_field:
+					sort_field = document[page_doc[0].sort_field]
+					sort_by = page_doc[0].sort_by.lower()
+					if sort_by == "desc":
+						query = query.orderby(sort_field, order=frappe.qb.Order.desc)
+					else:
+						query = query.orderby(sort_field, order=frappe.qb.Order.asc)
+				else:
+					query = query.orderby(document.creation, order=frappe.qb.Order.desc)
+				page_no = (int(page_no) - 1) * int(page_size)
+				query = query.limit(page_size).offset(page_no)
+				list_content = query.run(as_dict=True)
 				return list_content
 	return []
 
@@ -472,14 +597,53 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 								query += " LIMIT {no_of_records} "
 
 							if d['get_data_from_doctype']==0:
-								res_data = frappe.db.sql(query.format(query=query,field_list=d['field_list'],reference_document=d['reference_document'],conditions=d['conditions'],sort_field=d['sort_field'],sort_by=d['sort_by'],no_of_records=d['no_of_records'],reference_doc=d['reference_doc'],get_data_from_doctype=d['get_data_from_doctype'],from_doctype=d['from_doctype'],reference_field=d['reference_field']),as_dict=1)
+								reference_document = DocType(d['reference_document'])
+								query = frappe.qb.from_(reference_document)
+								field_list = d['field_list'].split(',') 
+								fields = [reference_document[field.strip()] for field in field_list]
+								query = query.select(*fields)
+								if d['conditions']:
+									conditions = frappe.qb.parse_conditions(d['conditions'])
+									query = query.where(conditions)
+								if d['sort_field'] and d['sort_by']:
+									sort_field = reference_document[d['sort_field']]
+									sort_by = d['sort_by'].lower()
+									if sort_by == "desc":
+										query = query.orderby(sort_field, order=frappe.qb.Order.desc)
+									else:
+										query = query.orderby(sort_field, order=frappe.qb.Order.asc)
+								if d['no_of_records']:
+									query = query.limit(int(d['no_of_records']))
+								res_data = query.run(as_dict=True)
 							if d['get_data_from_doctype']==1:
-								res_data = frappe.db.sql(query.format(query=query,field_list=field_list,reference_document=d['reference_document'],conditions=d['conditions'],sort_field=d['sort_field'],sort_by=d['sort_by'],no_of_records=d['no_of_records'],reference_doc=d['reference_doc'],get_data_from_doctype=d['get_data_from_doctype'],from_doctype=d['from_doctype'],reference_field=d['reference_field']),as_dict=1)
+								reference_document = DocType(d['reference_document'])
+								query = frappe.qb.from_(reference_document)
+
+								fields = [reference_document[field.strip()] for field in field_list.split(',')]
+								query = query.select(*fields)
+
+								if d['conditions']:
+									conditions = frappe.qb.parse_conditions(d['conditions'])
+									query = query.where(conditions)
+
+								if d['sort_field'] and d['sort_by']:
+									sort_field = reference_document[d['sort_field']]
+									sort_by = d['sort_by'].lower()
+									if sort_by == "desc":
+										query = query.orderby(sort_field, order=frappe.qb.Order.desc)
+									else:
+										query = query.orderby(sort_field, order=frappe.qb.Order.asc)
+
+								if d['no_of_records']:
+									query = query.limit(int(d['no_of_records']))
+								if d.get('get_data_from_doctype') and d.get('from_doctype') and d.get('reference_field'):
+									from_doctype = DocType(d['from_doctype'])
+									query = query.join(from_doctype).on(
+										reference_document[d['reference_field']] == from_doctype[d['reference_field']]
+									)
+								res_data = query.run(as_dict=True)
 							sections['data'] = res_data
-							# frappe.log_error(res_data)
 							
-						
-							#frappe.log_error(custom_section_data,"custom section data")
 						child_section_data.append(sections)
 					item['child_section_data'] = child_section_data
 
@@ -489,33 +653,6 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 	else:
 		return frappe.db.get_all("Web Page Builder",filters={"name":page[0].name},fields=['content','name','use_page_builder'])
 
-# def get_header_info(header_id):
-# 	default_header = None
-# 	headers_list = frappe.db.get_all("Header Component",filters={"name":header_id},fields=['menu','enable_top_menu','enable_search_bar','enable_cart','enable_wishlist','enable_account_menu','is_menu_full_width','layout_json'])
-# 	if headers_list:
-# 		menu = frappe.db.get_all("Menu",filters={"name":headers_list[0].menu},fields=['is_static_menu','name'])
-# 		if menu:
-# 			headers_list[0].is_static_menu = menu[0].is_static_menu
-# 			parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
-# 			for x in parent_menus:
-# 			 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":menu[0].name},as_dict=1)
-# 			 	for sub_menu in x.child_menu:
-# 			 		sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":menu[0].name},as_dict=1)
-# 			headers_list[0].menus = parent_menus
-# 			if headers_list[0].enable_top_menu==1:
-# 				left_items =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":header_id},as_dict=1)
-# 				for x in left_items:
-# 				 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":header_id},as_dict=1)
-# 				 	for sub_menu in x.child_menu:
-# 				 		sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":header_id},as_dict=1)
-# 				right_items =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":header_id},as_dict=1)
-# 				for x in right_items:
-# 				 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":header_id},as_dict=1)
-# 				 	for sub_menu in x.child_menu:
-# 				 		sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":header_id},as_dict=1)
-# 				headers_list[0].top_menu = {"left_items":left_items,"right_items":right_items}
-# 		default_header = headers_list[0]
-# 	return default_header
 def get_header_info(header_id):
 	header_list = frappe.db.get_all("Header Component",filters={"name":header_id},fields=['is_transparent_header','title','is_menu_full_width','layout_json','enable_top_menu','sticky_on_top','is_dismissable','layout','sticky_header','call_to_action_button','button_text','button_link','link_target','is_transparent_header','sticky_header_background','menu_text_color'])
 	if header_list:
@@ -530,26 +667,148 @@ def get_header_info(header_id):
 						page_section_menu = frappe.get_value("Page Section",item.get('section'),"menu")
 						menu = frappe.db.get_all("Menu",filters={"name":page_section_menu},fields=['is_static_menu','name'])
 						if menu:
-							parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url,is_mega_menu,no_of_column FROM `tabMenus Item` WHERE parent=%(menu_id)s AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
-							# parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
+							menus_item = DocType('Menus Item')
+							query = (
+								frappe.qb.from_(menus_item)
+								.select(
+									menus_item.menu_label,
+									menus_item.redirect_url,
+									menus_item.is_mega_menu,
+									menus_item.no_of_column
+								)
+								.where(menus_item.parent == menu[0].name)
+								.where((menus_item.parent_menu.isnull()) | (menus_item.parent_menu == ''))
+								.orderby(menus_item.idx)
+							)
+							parent_menus = query.run(as_dict=True)
 							for x in parent_menus:
-							 	x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon,mega_m_col_index FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":menu[0].name},as_dict=1)
-							 	for sub_menu in x.child_menu:
-							 		sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE parent=%(menu_id)s AND parentfield='menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":menu[0].name},as_dict=1)
+								menus_item = DocType('Menus Item')
+								query = (
+									frappe.qb.from_(menus_item)
+									.select(
+										menus_item.menu_label,
+										menus_item.redirect_url,
+										menus_item.icon,
+										menus_item.mega_m_col_index
+									)
+									.where(menus_item.parent == menu[0].name) 
+									.where(menus_item.parentfield == 'menus') 
+									.where(menus_item.parent_menu == x.menu_label) 
+									.orderby(menus_item.idx)
+								)
+								x.child_menu = query.run(as_dict=True)
+								for sub_menu in x.child_menu:
+									menus_item = DocType('Menus Item')
+									query = (
+										frappe.qb.from_(menus_item)
+										.select(
+											menus_item.menu_label,
+											menus_item.redirect_url,
+											menus_item.icon
+										)
+										.where(menus_item.parent == menu[0].name) 
+										.where(menus_item.parentfield == 'menus')
+										.where(menus_item.parent_menu == sub_menu.menu_label)  
+										.orderby(menus_item.idx)
+									)
+									sub_menu.child_menu = query.run(as_dict=True)
 							item["menus"] = parent_menus
 					lists.append(item)
 			header_list[0].items = lists
 			if header_list[0].enable_top_menu==1:
-				left_items =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":header_id},as_dict=1)
+				menus_item = DocType('Menus Item')
+				left_items_query = (
+					frappe.qb.from_(menus_item)
+					.select(
+						menus_item.menu_label,
+						menus_item.redirect_url,
+						menus_item.icon
+					)
+					.where(menus_item.position == 'Left')
+					.where(menus_item.parent == header_id)
+					.where(menus_item.parentfield == 'top_menus')
+					.where((menus_item.parent_menu.isnull()) | (menus_item.parent_menu == ''))
+					.orderby(menus_item.idx)
+				)
+				left_items = left_items_query.run(as_dict=True)
+
 				for x in left_items:
-					x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":header_id},as_dict=1)
+					child_menu_query = (
+						frappe.qb.from_(menus_item)
+						.select(
+							menus_item.menu_label,
+							menus_item.redirect_url,
+							menus_item.icon
+						)
+						.where(menus_item.position == 'Left')
+						.where(menus_item.parent == header_id)
+						.where(menus_item.parentfield == 'top_menus')
+						.where(menus_item.parent_menu == x.menu_label)
+						.orderby(menus_item.idx)
+					)
+					x.child_menu = child_menu_query.run(as_dict=True)
+					
 					for sub_menu in x.child_menu:
-						sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Left' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":header_id},as_dict=1)
-				right_items =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":header_id},as_dict=1)
+						sub_child_menu_query = (
+							frappe.qb.from_(menus_item)
+							.select(
+								menus_item.menu_label,
+								menus_item.redirect_url,
+								menus_item.icon
+							)
+							.where(menus_item.position == 'Left')
+							.where(menus_item.parent == header_id)
+							.where(menus_item.parentfield == 'top_menus')
+							.where(menus_item.parent_menu == sub_menu.menu_label)
+							.orderby(menus_item.idx)
+						)
+						sub_menu.child_menu = sub_child_menu_query.run(as_dict=True)
+				right_items_query = (
+					frappe.qb.from_(menus_item)
+					.select(
+						menus_item.menu_label,
+						menus_item.redirect_url,
+						menus_item.icon
+					)
+					.where(menus_item.position == 'Right')
+					.where(menus_item.parent == header_id)
+					.where(menus_item.parentfield == 'top_menus')
+					.where((menus_item.parent_menu.isnull()) | (menus_item.parent_menu == ''))
+					.orderby(menus_item.idx)
+				)
+				right_items = right_items_query.run(as_dict=True)
+
 				for x in right_items:
-					x.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":x.menu_label,"menu_id":header_id},as_dict=1)
+					child_menu_query = (
+						frappe.qb.from_(menus_item)
+						.select(
+							menus_item.menu_label,
+							menus_item.redirect_url,
+							menus_item.icon
+						)
+						.where(menus_item.position == 'Right')
+						.where(menus_item.parent == header_id)
+						.where(menus_item.parentfield == 'top_menus')
+						.where(menus_item.parent_menu == x.menu_label)
+						.orderby(menus_item.idx)
+					)
+					x.child_menu = child_menu_query.run(as_dict=True)
+					
 					for sub_menu in x.child_menu:
-						sub_menu.child_menu =  frappe.db.sql(""" SELECT menu_label,redirect_url,icon FROM `tabMenus Item` WHERE position='Right' AND parent=%(menu_id)s AND parentfield='top_menus' AND parent_menu=%(parent_menu)s ORDER BY idx""",{"parent_menu":sub_menu.menu_label,"menu_id":header_id},as_dict=1)
+						sub_child_menu_query = (
+							frappe.qb.from_(menus_item)
+							.select(
+								menus_item.menu_label,
+								menus_item.redirect_url,
+								menus_item.icon
+							)
+							.where(menus_item.position == 'Right')
+							.where(menus_item.parent == header_id)
+							.where(menus_item.parentfield == 'top_menus')
+							.where(menus_item.parent_menu == sub_menu.menu_label)
+							.orderby(menus_item.idx)
+						)
+						sub_menu.child_menu = sub_child_menu_query.run(as_dict=True)
 				header_list[0].top_menu = {"left_items":left_items,"right_items":right_items}
 		return header_list[0]
 	return None
@@ -567,12 +826,30 @@ def get_footer_info(footer_id):
 					page_section_menu = frappe.get_value("Page Section",item.get('section'),"menu")
 					menu = frappe.db.get_all("Menu",filters={"name":page_section_menu},fields=['is_static_menu','name'])
 					if menu:
-						parent_menus = frappe.db.sql(""" SELECT menu_label,redirect_url FROM `tabMenus Item` WHERE parent=%(menu_id)s AND (parent_menu IS NULL OR parent_menu='') ORDER BY idx""",{"menu_id":menu[0].name},as_dict=1)
+						menus_item = DocType('Menus Item')
+						query = (
+							frappe.qb.from_(menus_item)
+							.select(
+								menus_item.menu_label,
+								menus_item.redirect_url
+							)
+							.where(menus_item.parent == menu[0].name)
+							.where((menus_item.parent_menu.isnull()) | (menus_item.parent_menu == '')) 
+							.orderby(menus_item.idx)
+						)
+						parent_menus = query.run(as_dict=True)
 						item["menus"] = parent_menus
 				lists.append(item)
 		# sort INFO data by 'company' key.
 		g_list = []
-		column_indexes = frappe.db.sql("""SELECT column_index FROM `tabMobile Page Section` WHERE parent=%(f_id)s GROUP BY column_index""",{"f_id":footer_id},as_dict=1)
+		mobile_page_section = DocType('Mobile Page Section')
+		query = (
+			frappe.qb.from_(mobile_page_section)
+			.select(mobile_page_section.column_index)
+			.where(mobile_page_section.parent == footer_id)
+			.groupby(mobile_page_section.column_index)
+		)
+		column_indexes = query.run(as_dict=True)
 		for x in column_indexes:
 			result = [m for m in lists if m.get("column_index") == x.get("column_index")] 
 			# filter(lambda m: m.get("column_index") == x.get("column_index"), lists)
@@ -585,13 +862,19 @@ def get_footer_info(footer_id):
 	return None
 
 def key_func(k):
-    return k['column_index']
+	return k['column_index']
  
 
 
 @frappe.whitelist(allow_guest=True)
 def update_website_context(context):
-	try:
+	try:	
+		print("------------12")
+		domain = frappe.get_request_header('host')	
+		if domain and not context.web_domain:
+			business = get_business_from_web_domain(domain)
+			context.web_domain=frappe._dict({})
+			context.web_domain["business"] = business
 		if frappe.local.session.data.csrf_token:
 			context.csrf_token=frappe.local.session.data.csrf_token
 		else:
@@ -668,8 +951,7 @@ def update_website_context(context):
 					if context.header and context.doc.is_transparent_header:
 						context.header.is_transparent_header = 1
 		get_device_type(context)
-		# frappe.log_error(context.header,">> context.header <<")
-		# frappe.log_error(context,">> context data <<")
+		print("------------12end")
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.update_website_context")
 
@@ -734,7 +1016,7 @@ def get_testing_footer_template():
 
 def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, page_no=0, page_len=3):
 	#hided by boopathy on 10/08/2022
-	# from ecommerce_business_store.ecommerce_business_store.api import get_all_restaurant_data, check_restaurant_distance
+	# from go1_cms.go1_cms.api import get_all_restaurant_data, check_restaurant_distance
 	#end
 	section_list = sections[int(page_no):int(page_len)]
 	data = get_page_section(source_doc)
@@ -787,19 +1069,13 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 		if data_source.get('login_required') == 1:
 			if frappe.session.user != 'Guest':
 				#modified by boopathy on 10/08/22
-				# from ecommerce_business_store.cms.doctype.page_section.page_section import get_data_source
+				# from go1_cms.cms.doctype.page_section.page_section import get_data_source
 				from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
 				#end
 				doc = frappe.get_doc('Page Section', item.section)
 				data_source['data'] = get_data_source(doc.query, doc.reference_document, doc.no_of_records, 1, business=doc.business)
 			else:
 				allow = False
-		if check_domain('restaurant') and data_source['section_type'] == 'Predefined Section' and doc.is_location_based:
-			check_nearby = False
-			if data_source.get('check_location'):
-				check_nearby = True
-			data_source['data'] = get_all_restaurant_data(data_source['data'], distance, check_nearby, latitude, longitude, sid=res.get('sid'), order_type=order_type)
-			data_source['order_type'] = order_type
 		if allow:
 			# customer_data = bind_customer_cart()
 			# data_source["cart"] = customer_data.get("cart_items")
@@ -825,7 +1101,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:
-				frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html") 
+				frappe.log_error(frappe.get_traceback(), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html") 
 	return html_list, js_list
 
 
@@ -877,25 +1153,69 @@ def get_source_doc(doc, device_type):
 
 @frappe.whitelist(allow_guest=True)
 def get_blog_list(category=None,page_no=1,page_size=12):
-	condition = ""
+	blog_post = DocType('Blog Post')
+	query = (
+		frappe.qb.from_(blog_post)
+		.select(
+			blog_post.name,
+			blog_post.title,
+			blog_post.thumbnail_image,
+			blog_post.blog_intro,
+			blog_post.published_on,
+			blog_post.route
+		)
+		.where(blog_post.published == 1)
+	)
 	if category:
-		condition = " AND blog_category = '%s' "%(category)
-	bloglist_query = "SELECT name,title,thumbnail_image,blog_intro,published_on,route FROM `tabBlog Post` WHERE published = 1 %s ORDER BY published_on DESC  limit %s,%s"%(condition,(int(page_no) - 1) * int(page_size),page_size)
-	return frappe.db.sql(bloglist_query,as_dict=1)
+		query = query.where(blog_post.blog_category == category)
+	query = query.orderby(blog_post.published_on.desc()).limit((int(page_no) - 1) * int(page_size), int(page_size))
+	bloglist = query.run(as_dict=True)
+
+	return bloglist
 
 
 @frappe.whitelist(allow_guest=True)
 def get_blog_categories():
-	bloglist_query = "SELECT name,title,route FROM `tabBlog Category` WHERE published = 1 ORDER BY creation DESC "
-	return frappe.db.sql(bloglist_query,as_dict=1)
+	blog_category = DocType('Blog Category')
+	query = (
+		frappe.qb.from_(blog_category)
+		.select(
+			blog_category.name,
+			blog_category.title,
+			blog_category.route
+		)
+		.where(blog_category.published == 1) 
+		.orderby(blog_category.creation.desc()) 
+	)
+
+	bloglist = query.run(as_dict=True)
+	return bloglist
 
 @frappe.whitelist(allow_guest=True)
 def get_blog_details(route):
 	blog_details = frappe.db.get_all("Blog Post",filters={"route":route},fields=["*"])
 	if blog_details:
-		condition = " AND blog_category = '%s' "%(blog_details[0].blog_category)
-		related_bloglist_query = "SELECT name,title,thumbnail_image,blog_intro,published_on,route FROM `tabBlog Post` WHERE published = 1 AND route<>'%s' %s ORDER BY published_on DESC  limit %s,%s"%(route,condition,0,6)
-		related_bloglist = frappe.db.sql(related_bloglist_query,as_dict=1)
+		blog_post = DocType('Blog Post')
+
+		query = (
+			frappe.qb.from_(blog_post)
+			.select(
+				blog_post.name,
+				blog_post.title,
+				blog_post.thumbnail_image,
+				blog_post.blog_intro,
+				blog_post.published_on,
+				blog_post.route
+			)
+			.where(blog_post.published == 1)  
+			.where(blog_post.route != route)
+		)
+
+		if blog_details and blog_details[0].blog_category:
+			query = query.where(blog_post.blog_category == blog_details[0].blog_category)
+		query = query.orderby(blog_post.published_on.desc()).limit(0, 6)
+		related_bloglist = query.run(as_dict=True)
+
 		comments = frappe.db.get_all("Blog Comments",filters={"blog_name":blog_details[0].name},fields=["name1","email","comments","creation"],order_by="creation desc")
 		return {"status":"success","blog_details":blog_details[0],"related_bloglist":related_bloglist,"comments":comments}
 	else:
@@ -949,3 +1269,58 @@ def update_website_themes(doc):
 			theme = frappe.get_doc("Web Theme",x.name)
 			theme.save(ignore_permissions=True)
 			theme.reload()
+
+@frappe.whitelist(allow_guest=True)
+def social_login_customer(data, get_user_token=0, check_user=False):
+	try:
+		response = json.loads(data)
+		check_customer = frappe.db.get_all('Customers', filters={'email': response.get('email')})
+		if not check_customer:
+			if not check_user:
+				customer = frappe.get_doc({
+					'doctype': 'Customers',
+					'first_name': response.get('user_name'),
+					'email': response.get('email'),
+					'phone': response.get('phone'),
+					'last_name': ''
+					}).insert(ignore_permissions=True)
+				frappe.db.commit()
+				if not customer.get('user_id'):
+					if frappe.db.get_value('User', response.get('email')):
+						customer.user_id = response.get('email')
+						frappe.db.set_value('Customers', customer.name, 'user_id', customer.user_id)
+			else:
+				return {'status': 'Failed', 'message': frappe._('User does not exists!')}
+		user = frappe.get_doc('User', response.get('email'))
+		provider = response.get('provider')
+		if provider and provider.find('.') != -1:
+			provider = provider.split('.')[0]
+		check_provider = next((x for x in user.social_logins if x.provider == provider), None)
+		if not check_provider:
+			user.set_social_login_userid(provider, userid=response.get('uid'))
+			user.save(ignore_permissions=True)
+		guest_customer = frappe.request.cookies.get('guest_customer')		
+		frappe.local.login_manager.user = response.get('email')
+		frappe.local.login_manager.post_login()
+		login_response = {
+			'message': frappe.local.response['message'],
+			'home_page': frappe.local.response['home_page'],
+			'full_name': frappe.local.response['full_name']
+		}
+		if get_user_token:
+			login_response['sid'] = frappe.local.session.sid
+			token = get_auth_token(response.get('email'))
+			if token:
+				login_response['api_key'] = token['api_key']
+				login_response['api_secret'] = token['api_secret']
+		if guest_customer:
+			customer = frappe.db.get_all('Customers',filters={'user_id': response.get('email')},fields=['name'])
+			if customer:
+				frappe.local.cookie_manager.set_cookie('customer_id', customer[0].name)
+				from go1_cms.go1_cms.api import move_cart_items
+				move_cart_items(customer[0].name, guest_customer)
+		return login_response
+	except Exception as e:
+		frappe.db.rollback()
+		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.api.social_login_customer")
+		return {'status': 'Failed', 'message': 'Invalid username or password'}

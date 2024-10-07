@@ -1,0 +1,179 @@
+{
+ "allow_rename": 1,
+ "autoname": "field:domain_name",
+ "creation": "2019-12-04 13:13:35.616523",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "domain_name",
+  "domain",
+  "is_domain_verified",
+  "enable_alias_active",
+  "column_break_2",
+  "business",
+  "section_break_4",
+  "header_template",
+  "column_break_6",
+  "footer_template",
+  "section_break_8",
+  "theme",
+  "column_break_10",
+  "home_page",
+  "settings",
+  "disable_www",
+  "enable_custom_ssl",
+  "column_break_14",
+  "section_break_17",
+  "additional_information",
+  "user_details_section",
+  "website_user"
+ ],
+ "fields": [
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Data",
+   "label": "Domain",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business",
+   "options": "Business"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "header_template",
+   "fieldtype": "Link",
+   "label": "Header Template",
+   "options": "Header Template"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "footer_template",
+   "fieldtype": "Link",
+   "label": "Footer Template",
+   "options": "Footer Template"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "theme",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Theme",
+   "options": "Web Theme"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "home_page",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Home Page"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_www",
+   "fieldtype": "Check",
+   "label": "Disable www for this domain"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "settings",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "If Custom SSl Installation flag is enabled , it will generate private ssl key for this particular sub domain when  wildcard SSL enabled for  this particular domain.",
+   "fieldname": "enable_custom_ssl",
+   "fieldtype": "Check",
+   "label": "Enable Custom SSl Installation"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Code",
+   "label": "Additional Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_alias_active",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Make Alias As Active Domain"
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_domain_verified",
+   "fieldtype": "Check",
+   "label": "Is Domain Verified?"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "user_details_section",
+   "fieldtype": "Section Break",
+   "label": "User Details"
+  },
+  {
+   "fieldname": "website_user",
+   "fieldtype": "Table",
+   "label": "Website User",
+   "options": "Website User",
+   "read_only": 1
+  }
+ ],
+ "modified": "2020-12-16 08:27:09.988478",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Site Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "column_break_mwma",
+  "business",
   "layout_section",
   "pick_layout",
   "layout_json",
@@ -560,14 +562,25 @@
    "fieldname": "back_button_text_color",
    "fieldtype": "Color",
    "label": "Back Button Text Color"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
+  },
+  {
+   "fieldname": "column_break_mwma",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-01 18:39:23.066439",
+ "modified": "2024-09-30 19:03:15.900561",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Header Component",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -586,5 +599,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

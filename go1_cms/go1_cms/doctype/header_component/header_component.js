@@ -931,7 +931,7 @@ var modify_section_data = Class.extend({
             // let data = ''
             field_list.push({ 'fieldtype': 'Column Break', 'fieldname': 'predefined_col_br_1' });
             // frappe.call({
-            //     method: 'ecommerce_business_store.cms.doctype.web_page_builder.web_page_builder.get_featured_products',
+            //     method: 'go1_cms.cms.doctype.web_page_builder.web_page_builder.get_featured_products',
             //     args: {},
             //     async: false,
             //     callback: function(r) {
@@ -1684,7 +1684,7 @@ var modify_section_data = Class.extend({
                     //     var name = $(this).parent().attr('data-id')
                     //     let obj = me.list_section_data.filter(o => o.idx != f.idx);
                     //     frappe.call({
-                    //         method: 'ecommerce_business_store.cms.doctype.web_page_builder.web_page_builder.update_featured_item',
+                    //         method: 'go1_cms.cms.doctype.web_page_builder.web_page_builder.update_featured_item',
                     //         args: {
                         // doctype:me.fields.reference_document,
                     //             name: name,

@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title"
+  "title",
+  "business"
  ],
  "fields": [
   {
@@ -16,11 +17,17 @@
    "label": "Title",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-09 16:13:07.600103",
+ "modified": "2024-09-30 20:26:06.679079",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CSS Group",
@@ -42,5 +49,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -3859,8 +3859,8 @@ var modify_section_data = Class.extend({
     }
 });
 function preview_page(){
-	frappe.db.get_doc("CMS Settings","CMS Settings", {
-                }).then(res => {
+	 frappe.xcall('go1_cms.utils.setup.get_settings_from_domain', { 'dt': 'CMS Settings', 'business': frm.doc.business })
+            .then(res => {
                     if (res.use_other_domain==1){
                         window.open(
                           res.domain+'/c/'+page_route,

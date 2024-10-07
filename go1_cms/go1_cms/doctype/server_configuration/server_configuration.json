@@ -1,0 +1,292 @@
+{
+ "creation": "2020-10-05 05:53:50.263389",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable",
+  "column_break_2",
+  "default_domain",
+  "section_break_2",
+  "users",
+  "section_break_8",
+  "enable_business_auto_approval",
+  "column_break_8",
+  "business_creation_method",
+  "domain_settings_section",
+  "setup_domain",
+  "enable_www",
+  "external_server",
+  "column_break_11",
+  "installed_wildcard_ssl",
+  "install_wildcard",
+  "ssl_help",
+  "server_details_section",
+  "host",
+  "user_name",
+  "application_path",
+  "mysql_root_password",
+  "column_break_15",
+  "domain_name",
+  "server_password",
+  "site_name",
+  "reg_settings",
+  "reg_url",
+  "column_break_26",
+  "reg_key",
+  "column_break_28",
+  "reg_secret",
+  "section_break_30",
+  "enable_account_management",
+  "column_break_32",
+  "external_site_url",
+  "column_break_34",
+  "authentication_url",
+  "section_break_31",
+  "install_apps",
+  "app_list",
+  "enable_canonical_redirection"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enable",
+   "fieldtype": "Check",
+   "label": "Create Business In External Domain?"
+  },
+  {
+   "depends_on": "eval:  doc.enable == 1 ",
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_business_auto_approval",
+   "fieldtype": "Check",
+   "label": "Enable Auto-Approval Of Business Registrations?"
+  },
+  {
+   "default": "0",
+   "fieldname": "setup_domain",
+   "fieldtype": "Check",
+   "label": "Setup Domain On Website Creation"
+  },
+  {
+   "default": "0",
+   "fieldname": "external_server",
+   "fieldtype": "Check",
+   "label": "Use External Server or Bench"
+  },
+  {
+   "depends_on": "eval:((doc.external_server==1))",
+   "fieldname": "server_details_section",
+   "fieldtype": "Section Break",
+   "label": "Server Details"
+  },
+  {
+   "fieldname": "host",
+   "fieldtype": "Data",
+   "label": "Host"
+  },
+  {
+   "fieldname": "user_name",
+   "fieldtype": "Data",
+   "label": "User Name"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Data",
+   "label": "Domain Name"
+  },
+  {
+   "fieldname": "server_password",
+   "fieldtype": "Password",
+   "label": "Server Password"
+  },
+  {
+   "fieldname": "application_path",
+   "fieldtype": "Data",
+   "label": "Application Path"
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "label": "Site Name"
+  },
+  {
+   "fieldname": "users",
+   "fieldtype": "Table",
+   "label": "Users",
+   "options": "Domain User"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_domain",
+   "fieldtype": "Data",
+   "label": "Default Domain For Business Creation"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:((doc.setup_domain==1))",
+   "fieldname": "enable_www",
+   "fieldtype": "Check",
+   "label": "Enable www for Domain"
+  },
+  {
+   "fieldname": "domain_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Domain Settings"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "installed_wildcard_ssl",
+   "fieldtype": "Check",
+   "label": "Installed Wildcard SSL"
+  },
+  {
+   "fieldname": "install_wildcard",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Install Wildcard SSL"
+  },
+  {
+   "fieldname": "ssl_help",
+   "fieldtype": "HTML",
+   "label": "Wildcard SSL Manual Setup"
+  },
+  {
+   "fieldname": "reg_settings",
+   "fieldtype": "Section Break",
+   "label": "Domain Registration Settings"
+  },
+  {
+   "fieldname": "reg_key",
+   "fieldtype": "Password",
+   "label": "Key"
+  },
+  {
+   "fieldname": "reg_secret",
+   "fieldtype": "Password",
+   "label": "Secret"
+  },
+  {
+   "fieldname": "reg_url",
+   "fieldtype": "Data",
+   "label": "URL"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_28",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.enable != 1",
+   "fieldname": "section_break_30",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_account_management",
+   "fieldtype": "Check",
+   "label": "Enable External Site For Account Management"
+  },
+  {
+   "depends_on": "eval: doc.enable_account_management == 1",
+   "fieldname": "external_site_url",
+   "fieldtype": "Data",
+   "label": "External Site Url"
+  },
+  {
+   "fieldname": "column_break_32",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_34",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.enable_account_management == 1",
+   "fieldname": "authentication_url",
+   "fieldtype": "Data",
+   "label": "Authentication Url"
+  },
+  {
+   "fieldname": "mysql_root_password",
+   "fieldtype": "Password",
+   "label": "Mysql Root Password"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break",
+   "label": "Site Creation Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "install_apps",
+   "fieldtype": "Check",
+   "label": "Install Apps"
+  },
+  {
+   "fieldname": "app_list",
+   "fieldtype": "Small Text",
+   "label": "App List"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Client Side",
+   "fieldname": "business_creation_method",
+   "fieldtype": "Select",
+   "label": "Business Creation Method",
+   "options": "\nClient Side\nServer Side"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_canonical_redirection",
+   "fieldtype": "Check",
+   "label": "Enable Canonical Redirection"
+  }
+ ],
+ "issingle": 1,
+ "modified": "2021-07-06 11:43:57.912645",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Server Configuration",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

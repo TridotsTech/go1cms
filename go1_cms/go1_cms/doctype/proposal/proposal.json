@@ -20,7 +20,6 @@
   "status",
   "published",
   "document",
-  "quotation",
   "route",
   "list_settings_section",
   "choose_list_style",
@@ -468,13 +467,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "quotation",
-   "fieldtype": "Link",
-   "label": "Quotation",
-   "options": "Quotation",
-   "reqd": 1
-  },
-  {
    "fieldname": "preview_pdf_url",
    "fieldtype": "Data",
    "hidden": 1,
@@ -509,10 +501,11 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-12-19 14:46:17.929879",
+ "modified": "2024-09-30 21:54:57.610867",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Proposal",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -530,5 +523,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -25,6 +25,19 @@ frappe.ui.form.on('Section Template', {
 			frm.set_df_property('choose_fields', 'hidden', 1);
 		frm.trigger('image_link_documents');
 		frm.trigger('web_options');
+		if (frm.doc.__islocal) {
+            if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
+            	if(frappe.boot.sysdefaults.business){
+                frm.set_value('business', frappe.boot.sysdefaults.business)
+            }
+            } else {
+                frm.set_value('business', '')
+            }
+        }
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
+            frm.set_df_property('business', 'hidden', 1)
+
+         }
 
 	},
 	content_type: function(frm){
@@ -146,7 +159,7 @@ frappe.ui.form.on('Section Template', {
 	choose_style_properties:function(frm){
 		frappe.call({
 			method:"go1_cms.go1_cms.doctype.section_template.section_template.get_css_fields",
-			args:{},
+			args:{business:frm.doc.business},
 			callback:function(r){
 				console.log(r.message,"r.message")
 				let dialog = new frappe.ui.Dialog({

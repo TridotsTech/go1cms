@@ -17,11 +17,13 @@ app_include_css = "/assets/go1_cms/css/cms.css"
 app_include_js = "/assets/go1_cms/js/cms.js"
 
 
-
+boot_session = "go1_cms.go1_cms.api.boot_session"
 
 update_website_context = [
 	"go1_cms.go1_cms.api.update_website_context",
 ]
+
+get_website_user_home_page = "go1_cms.utils.setup.get_website_user_home_page"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/go1_cms/css/go1_cms.css"

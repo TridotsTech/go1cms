@@ -13,6 +13,7 @@
   "favicon",
   "default_footer",
   "enable_noindex",
+  "business",
   "general_section",
   "body_background_image",
   "body_background_color",
@@ -282,12 +283,18 @@
    "fieldname": "footer_link_color",
    "fieldtype": "Color",
    "label": "Footer Link Color"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-08-17 11:14:16.380730",
+ "modified": "2024-09-30 20:20:39.891416",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Theme Settings",
@@ -305,5 +312,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

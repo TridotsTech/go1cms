@@ -8,7 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "query"
+  "query",
+  "business"
  ],
  "fields": [
   {
@@ -21,11 +22,17 @@
    "fieldtype": "Data",
    "label": "Title",
    "unique": 1
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-05 21:06:50.392434",
+ "modified": "2024-09-30 20:17:20.657611",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Custom Query",
@@ -46,5 +53,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

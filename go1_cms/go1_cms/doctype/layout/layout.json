@@ -9,7 +9,8 @@
   "layout_title",
   "web_layout",
   "tab_layout",
-  "mobile_layout"
+  "mobile_layout",
+  "business"
  ],
  "fields": [
   {
@@ -39,11 +40,17 @@
    "in_list_view": 1,
    "label": "Mobile Layout",
    "reqd": 1
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-09 16:02:21.013822",
+ "modified": "2024-09-30 20:27:24.897799",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Layout",
@@ -65,5 +72,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

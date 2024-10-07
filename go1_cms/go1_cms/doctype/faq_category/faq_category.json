@@ -8,7 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "faq_category_name",
-  "category_image"
+  "category_image",
+  "business"
  ],
  "fields": [
   {
@@ -24,11 +25,17 @@
    "fieldname": "category_image",
    "fieldtype": "Attach Image",
    "label": "Category Image"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-08 20:06:15.346038",
+ "modified": "2024-09-30 20:29:25.075291",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "FAQ Category",
@@ -49,5 +56,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

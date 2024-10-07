@@ -14,6 +14,7 @@
   "column_break_2",
   "default_footer",
   "enable_noindex",
+  "business",
   "branding_section",
   "website_logo",
   "favicon",
@@ -693,13 +694,20 @@
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "links": [],
- "modified": "2022-11-28 12:58:55.591025",
+ "modified": "2024-09-30 19:06:38.512087",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Theme",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {
@@ -715,5 +723,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -10,7 +10,8 @@
   "faq_category",
   "question",
   "answer",
-  "naming_series"
+  "naming_series",
+  "business"
  ],
  "fields": [
   {
@@ -39,11 +40,17 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "FAQ-"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-08 20:06:07.528477",
+ "modified": "2024-09-30 20:29:51.533079",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "FAQ",
@@ -64,5 +71,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

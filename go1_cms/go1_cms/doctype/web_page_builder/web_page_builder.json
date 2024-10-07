@@ -8,7 +8,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "business",
   "page_title",
   "page_type",
   "w_page_type",
@@ -17,6 +16,7 @@
   "published",
   "document",
   "route",
+  "business",
   "edit_with_go1_builder",
   "hf_sec",
   "hf_settings",
@@ -273,9 +273,9 @@
   },
   {
    "fieldname": "business",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "business"
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   },
   {
    "default": "0",
@@ -668,10 +668,11 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-12-01 16:16:18.907523",
+ "modified": "2024-10-01 16:50:57.625867",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -689,5 +690,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -1,0 +1,316 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"oqGpJddbI2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Go1 CMS</span>\",\"col\":12}},{\"id\":\"oIIL6rPu3E\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Page Builder\",\"col\":3}},{\"id\":\"3MxhRW8L8y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Section Templates\",\"col\":3}},{\"id\":\"W86_Hw9s9S\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Header Templates\",\"col\":3}},{\"id\":\"K2QIey3-iM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Footer Templates\",\"col\":3}},{\"id\":\"IGCjW46IEz\",\"type\":\"card\",\"data\":{\"card_name\":\"Content\",\"col\":3}},{\"id\":\"rPvwbqmyKB\",\"type\":\"card\",\"data\":{\"card_name\":\"Sections\",\"col\":3}},{\"id\":\"-vJeSDt7S8\",\"type\":\"card\",\"data\":{\"card_name\":\"Header &amp; Footer Section\",\"col\":3}},{\"id\":\"5xNMxqAfQK\",\"type\":\"card\",\"data\":{\"card_name\":\"Design\",\"col\":3}},{\"id\":\"PloLB-7Dx_\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
+ "creation": "2022-10-28 08:57:40.088555",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "organization",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Go1 CMS",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Content",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sliders",
+   "link_count": 0,
+   "link_to": "Slider",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contact Enquiries",
+   "link_count": 0,
+   "link_to": "Contact Enquiry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "FAQs",
+   "link_count": 0,
+   "link_to": "FAQ",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Testimonials",
+   "link_count": 0,
+   "link_to": "Testimonial",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sections",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Section Templates",
+   "link_count": 0,
+   "link_to": "Section Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Section Template Groups",
+   "link_count": 0,
+   "link_to": "Section Template Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Section Template Layouts",
+   "link_count": 0,
+   "link_to": "Section Template Layout",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Section Dividers",
+   "link_count": 0,
+   "link_to": "Section Dividers",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Page Sections",
+   "link_count": 0,
+   "link_to": "Page Section",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Header &amp; Footer Section",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Header Layouts",
+   "link_count": 0,
+   "link_to": "Header Layout",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Header Components",
+   "link_count": 0,
+   "link_to": "Header Component",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Footer Layouts",
+   "link_count": 0,
+   "link_to": "Footer Layout",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Footer Components",
+   "link_count": 0,
+   "link_to": "Footer Component",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Design",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Background Gradients",
+   "link_count": 0,
+   "link_to": "Background Gradient",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Background Masks",
+   "link_count": 0,
+   "link_to": "Background Mask",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Background Patterns",
+   "link_count": 0,
+   "link_to": "Background Pattern",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Color Palettes",
+   "link_count": 0,
+   "link_to": "Color Palette",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Web Page Builders",
+   "link_count": 0,
+   "link_to": "Web Page Builder",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CMS Settings",
+   "link_count": 0,
+   "link_to": "CMS Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Web Themes",
+   "link_count": 0,
+   "link_to": "Web Theme",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Custom Queries",
+   "link_count": 0,
+   "link_to": "Custom Query",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2024-10-03 17:05:32.989040",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Go1 CMS",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Vendor"
+  },
+  {
+   "role": "Administrator"
+  }
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Page Builder",
+   "link_to": "Web Page Builder",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Footer Templates",
+   "link_to": "Footer Component",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Header Templates",
+   "link_to": "Header Component",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Section Templates",
+   "link_to": "Section Template",
+   "type": "DocType"
+  }
+ ],
+ "title": "Go1 CMS"
+}

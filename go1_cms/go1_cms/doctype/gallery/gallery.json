@@ -12,7 +12,8 @@
   "cover_image",
   "section_break_5",
   "attach_files",
-  "gallery"
+  "gallery",
+  "business"
  ],
  "fields": [
   {
@@ -46,10 +47,16 @@
   {
    "fieldname": "section_break_5",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "links": [],
- "modified": "2022-09-05 13:56:48.821780",
+ "modified": "2024-09-30 20:17:48.275798",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Gallery",
@@ -69,5 +76,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

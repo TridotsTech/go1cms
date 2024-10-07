@@ -6,7 +6,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "customer_ip"
+  "customer_ip",
+  "business"
  ],
  "fields": [
   {
@@ -14,12 +15,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Customer IP"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-12-19 01:38:28.976521",
+ "modified": "2024-09-30 20:33:42.653652",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Viewed Customer Detail",

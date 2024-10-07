@@ -9,6 +9,7 @@
  "field_order": [
   "name1",
   "is_active",
+  "business",
   "column_break_2",
   "image",
   "image_preview_html",
@@ -112,15 +113,22 @@
    "fieldtype": "Table",
    "label": "Default Colors",
    "options": "Typography Default Color"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-19 15:22:14.559663",
+ "modified": "2024-09-30 20:10:52.082934",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Color Palette",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -138,5 +146,6 @@
  ],
  "search_fields": "name1",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

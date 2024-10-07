@@ -13,9 +13,7 @@
   "route",
   "column_break_6",
   "about",
-  "features_section",
-  "theme_features",
-  "pages_section",
+  "business",
   "section_break_11",
   "theme_json"
  ],
@@ -61,23 +59,6 @@
    "label": "About Theme"
   },
   {
-   "collapsible": 1,
-   "fieldname": "features_section",
-   "fieldtype": "Section Break",
-   "label": "Features"
-  },
-  {
-   "fieldname": "theme_features",
-   "fieldtype": "Table",
-   "label": "Theme Features",
-   "options": "Theme Features"
-  },
-  {
-   "fieldname": "pages_section",
-   "fieldtype": "Section Break",
-   "label": "Pages"
-  },
-  {
    "fieldname": "section_break_11",
    "fieldtype": "Section Break"
   },
@@ -85,11 +66,17 @@
    "fieldname": "theme_json",
    "fieldtype": "Code",
    "label": "Theme JSON"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-09 16:15:48.139261",
+ "modified": "2024-09-30 20:25:32.100505",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Theme",
@@ -110,5 +97,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

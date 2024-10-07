@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "column_break_fgdb",
+  "business",
   "layout_section",
   "pick_layout",
   "layout_json",
@@ -441,14 +443,25 @@
    "fieldname": "enable_link_icon",
    "fieldtype": "Check",
    "label": "Enable Icon For Link"
+  },
+  {
+   "fieldname": "column_break_fgdb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-22 12:20:26.650202",
+ "modified": "2024-09-30 20:06:48.581958",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Footer Component",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -467,5 +480,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

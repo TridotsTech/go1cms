@@ -11,7 +11,8 @@
   "is_group",
   "parent_category",
   "category_image",
-  "category_icon"
+  "category_icon",
+  "business"
  ],
  "fields": [
   {
@@ -45,11 +46,17 @@
    "fieldname": "category_icon",
    "fieldtype": "Icon",
    "label": "Category Icon"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-22 13:58:08.718208",
+ "modified": "2024-09-30 19:16:02.437683",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Service Category",
@@ -69,5 +76,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

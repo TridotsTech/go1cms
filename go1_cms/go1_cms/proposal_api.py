@@ -78,45 +78,47 @@ def get_pagebuilder_context(context, doc=None):
 						content = frappe.get_list("Page Content", fields=['content_key', 'content'], filters={"parent":section.section_template})
 						for cont in content:
 							context[cont.content_key] = cont.content
-					if section.filters_json:
-						filters = json.loads(section.filters_json)
-					if section.ref_doc_fields:
-						field_list = json.loads(section.ref_doc_fields)
-						pages_list = list(set(field_list))
-						fields_list = ', '.join(['' + str(i) + '' for i in pages_list])
-					else:
-						fields_list = "*"
-
-					groupby_con = ""
-					if section.get('group_by_fields'):
-						groupby_con = "group by "+groupby_condition(section.group_by_fields)
 					
-					orderby_con = ""
+					doctype = section.reference_doctype
+					reference_doc = DocType(doctype)
+					filters = json.loads(section.filters_json) if section.filters_json else {}
+					field_list = json.loads(section.ref_doc_fields) if section.ref_doc_fields else None
+
+					if field_list:
+						pages_list = list(set(field_list))
+						fields_list = [str(i) for i in pages_list]
+					else:
+						fields_list = ["*"]
+
+					query = (
+						frappe.qb.from_(reference_doc)
+						.select(*fields_list)  
+					)
+
+					if filters:
+						for key, value in filters.items():
+							query = query.where(reference_doc[key] == value)
+
+					if section.get('group_by_fields'):
+						group_by_fields = groupby_condition(section.group_by_fields)  
+						query = query.groupby(*group_by_fields)
+
 					if section.order_by_fields:
-						orderby_con = orderby_condition(section.order_by_fields,section.orderby_type)
+						order_by_fields = orderby_condition(section.order_by_fields, section.orderby_type)  
+						query = query.orderby(*order_by_fields)
 					else:
-						orderby_con = "name asc"
-					condition = ''
-					c_condition = ''
-					if section.number_of_list:
-						limit = section.number_of_list
-					else:
-						limit = 3
-					condition = convert_json_conditions(filters, section.reference_doctype, condition)
-					frappe.log_error(condition, "---condition---")
-					query = '''select {fields_list} from `tab{doctype}` where `tab{doctype}`.name != "" {condition} {groupby_con} order by {orderby_con} limit {limit}'''.format(fields_list=fields_list, doctype=section.reference_doctype, condition=condition, groupby_con=groupby_con, orderby_con = orderby_con, limit = limit)					
-					# query = '''select {fields_list} from `tab{doctype}` where `tab{doctype}`.name != "" {condition} order by name asc limit {limit}'''.format(fields_list=fields_list, doctype=section.reference_doctype, condition=condition, limit = limit)
-					# frappe.log_error(query, "query")
-					if frappe.db.get_value("DocField", {"parent": "Section","fieldname": "enable_custom_query"}):
-						if section.enable_custom_query ==1:
-							
-							query = section.custom_query
-							section_list = frappe.db.sql(query,as_dict=1)
-							
+						query = query.orderby(reference_doc.name.asc())
+
+					limit = section.number_of_list if section.number_of_list else 3
+					query = query.limit(limit)
+
+					if frappe.db.get_value("DocField", {"parent": "Section", "fieldname": "enable_custom_query"}):
+						if section.enable_custom_query == 1:
+							section_list = frappe.db.sql(section.custom_query, as_dict=True)
 						else:
-							section_list = frappe.db.sql(query,as_dict=1)
+							section_list = query.run(as_dict=True)
 					else:
-						section_list = frappe.db.sql(query,as_dict=1)
+						section_list = query.run(as_dict=True)
 					context_value = section.context_name	
 				
 					context[context_value] = section_list
@@ -152,13 +154,13 @@ def orderby_condition( orderby_fields, orderby_type=None):
 
 @frappe.whitelist(allow_guest = True)
 def groupby_condition(groupby_fields):
-        groupby_con = ""
-        if groupby_fields:
-                groupby_field_list = json.loads(groupby_fields)
-                group_list = list(set(groupby_field_list))
-                groupby_list = ', '.join(['' + str(i) + '' for i in group_list])
-        groupby_con += groupby_list
-        return groupby_con
+	groupby_con = ""
+	if groupby_fields:
+		groupby_field_list = json.loads(groupby_fields)
+		group_list = list(set(groupby_field_list))
+		groupby_list = ', '.join(['' + str(i) + '' for i in group_list])
+	groupby_con += groupby_list
+	return groupby_con
 
 @frappe.whitelist(allow_guest = True)
 def update_context(context):
@@ -626,7 +628,7 @@ def get_doc_list(doctype, fields=None, filters=None, order_by=None, limit_start=
 		filters=json.loads(filters)
 	if order_by:
 		order_by = json.loads(order_by)
-        
+	
 	return frappe.get_list(doctype, fields=fields, filters=filters, order_by=order_by,
 		limit_start=limit_start, limit_page_length=limit_page_length, ignore_permissions=True)
 

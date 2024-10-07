@@ -8,8 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "service_category",
   "icon_type",
+  "business",
   "section_break_4",
   "service_icon",
   "image_icon",
@@ -96,25 +96,25 @@
    "label": "Image Icon"
   },
   {
-   "fieldname": "service_category",
-   "fieldtype": "Link",
-   "label": "Service Category",
-   "options": "Page Category"
-  },
-  {
    "fieldname": "section_break_4",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_9",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_active",
  "links": [],
- "modified": "2022-09-20 11:50:20.726788",
+ "modified": "2024-09-30 20:09:15.070077",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Services",
@@ -135,5 +135,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

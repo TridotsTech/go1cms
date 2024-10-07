@@ -1,0 +1,17 @@
+[
+	{
+		"doctype": "Media Settings",
+		"list_thumbnail_size": "250",
+		"detail_image_size": "500",
+		"detail_thumbnail_size": "100",
+		"mini_cart_image_size": "100",
+		"email_thumbnail_size": "100",
+		"cart_thumbnail_size": "100",
+		"default_image": "/assets/ecommerce_business_store/images/no-product.png",
+		"mini_cart_thumbnail": "/assets/ecommerce_business_store/images/no-product.png",
+		"cart_thumbnail": "/assets/ecommerce_business_store/images/no-product.png",
+		"detail_thumbnail": "/assets/ecommerce_business_store/images/no-product.png",
+		"list_thumbnail": "/assets/ecommerce_business_store/images/no-product.png",
+		"email_thumbnail": "/assets/ecommerce_business_store/images/no-product.png"
+	}
+]

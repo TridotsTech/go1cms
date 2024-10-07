@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 import json
 from frappe.model.document import Document
-
+from go1_cms.utils.setup import get_settings_from_domain
 class SectionTemplate(Document):
 	def validate(self):		
 		if self.content:
@@ -46,8 +46,9 @@ def get_linked_documents(dt, image_option):
 
 
 @frappe.whitelist()
-def get_css_fields():
+def get_css_fields(business=None):
 	# result = frappe.get_list("CSS Fields",fields=['*'])
 	# return result
-	result = frappe.db.get_single_value('CMS Settings', 'styles_to_update')
-	return json.loads(result)
+	cms_settings=get_settings_from_domain("CMS Settings", business=business)
+	styles_to_update=cms_settings.styles_to_update
+	return json.loads(styles_to_update)

@@ -61,7 +61,7 @@ frappe.PrintPageBuilder = class PrintPageBuilder {
 		await frappe.call({
 			method: '',
 			type: "post",
-			url: "http://45.140.185.144:8004/api/method/ecommerce_business_store.cms.doctype.web_page_builder.web_page_builder.get_section_templates",
+			url: "http://45.140.185.144:8004/api/method/go1_cms.cms.doctype.web_page_builder.web_page_builder.get_section_templates",
 			args: {
 				device_type: "Web",
 			},
@@ -171,7 +171,7 @@ frappe.PrintPageBuilder = class PrintPageBuilder {
 
    async get_components(){
 	await frappe.call({
-		method: 'ecommerce_business_store.cms.doctype.section_template_layout.section_template_layout.get_layout_section_template_data',
+		method: 'go1_cms.cms.doctype.section_template_layout.section_template_layout.get_layout_section_template_data',
 		type: "post",
 		args: {
 		},
@@ -810,7 +810,7 @@ async setup_add_section() {
 		// boostrap new section info
 			// new dialog
 			frappe.call({
-				method: "ecommerce_business_store.cms.doctype.section_template_layout.section_template_layout.get_layout_data",
+				method: "go1_cms.cms.doctype.section_template_layout.section_template_layout.get_layout_data",
 				args: {},
 				freeze: true,
 				callback: function (r) {
@@ -881,7 +881,7 @@ async setup_add_section() {
 	function get_each_layout_data(layout_id){
 		console.log(">> seleted layout id on save <<",layout_id)
 		frappe.call({
-			method: "ecommerce_business_store.cms.doctype.section_template_layout.section_template_layout.get_each_layout_data",
+			method: "go1_cms.cms.doctype.section_template_layout.section_template_layout.get_each_layout_data",
 			args: {layout_id:layout_id},
 			freeze: true,
 			callback: function (r) {

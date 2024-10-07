@@ -10,7 +10,15 @@ class WebTheme(Document):
 	def validate(self):
 		try:
 			if self.is_active==1:
-				existing_list = frappe.db.sql('''UPDATE `tabWeb Theme` SET is_active=0 WHERE name!="{theme_name}"'''.format(theme_name=self.name))
+				theme_name = self.name 
+				web_theme_doc = DocType('Web Theme')
+
+				update_query = (
+					frappe.qb.update(web_theme_doc)
+					.set(web_theme_doc.is_active, 0)
+					.where(web_theme_doc.name != theme_name)
+				)
+				existing_list = update_query.run()
 				frappe.db.commit()
 		except Exception as e:
 			frappe.log_error(frappe.get_traceback(),"validate web theme")
@@ -150,7 +158,18 @@ def generate_webtheme_css_file(path,sitename,self):
 		pages = frappe.db.get_all("Web Page Builder",filters={"published":1},fields=['route','name','header_component','footer_component','edit_header_style','is_transparent_header','menu_text_color','menu_hover_bg','menu_hover_text_color'])
 		header_settings = None
 		for page in pages:
-			web_sections = frappe.db.sql("""SELECT P.class_name,P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""",{"page_name":page.name},as_dict=1)
+			page_name = page.name 
+			mobile_page_section_doc = DocType('Mobile Page Section')
+			page_section_doc = DocType('Page Section')
+			web_sections_query = (
+				frappe.qb.from_(mobile_page_section_doc).as_('M')
+				.inner_join(page_section_doc).as_('P')
+				.on(mobile_page_section_doc.section == page_section_doc.name)
+				.select(page_section_doc.class_name, page_section_doc.css_text, page_section_doc.name)
+				.where(mobile_page_section_doc.parent == page_name)
+			)
+
+			web_sections = web_sections_query.run(as_dict=True)
 			for x in web_sections:
 				header_settings = None
 				if page.header_component:
@@ -363,8 +382,17 @@ def get_color_palette_datas():
 @frappe.whitelist()
 def get_color_palette_default_datas(palette_id):
 	try:
-		query_1 = ''' SELECT dc.type,dc.css_design,dc.style_json FROM `tabColor Palette` cp INNER JOIN `tabTypography Default Color` dc ON dc.parent=cp.name WHERE cp.name="%s"'''%palette_id
-		return frappe.db.sql(query_1,as_dict=1)
+		color_palette_doc = DocType('Color Palette')
+		typography_default_color_doc = DocType('Typography Default Color')
+		query_1 = (
+			frappe.qb.from_(color_palette_doc).as_('cp')
+			.inner_join(typography_default_color_doc).as_('dc')
+			.on(typography_default_color_doc.parent == color_palette_doc.name)
+			.select(typography_default_color_doc.type, typography_default_color_doc.css_design, typography_default_color_doc.style_json)
+			.where(color_palette_doc.name == palette_id)
+		)
+		result = query_1.run(as_dict=True)
+		
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.get_color_palette_default_datas")
 # end
@@ -372,15 +400,35 @@ def get_color_palette_default_datas(palette_id):
 @frappe.whitelist()
 def get_color_code_data(bg_type):
 	try:
+		query = None
 		if bg_type == "Gradient":
-			query_1 = ''' SELECT title,css_properties FROM `tabBackground Gradient`'''
+			background_gradient_doc = DocType('Background Gradient')
+			query = (
+				frappe.qb.from_(background_gradient_doc)
+				.select(background_gradient_doc.title, background_gradient_doc.css_properties)
+			)
 		elif bg_type == "Pattern":
-			query_1 = ''' SELECT title,css_properties FROM `tabBackground Pattern`'''
+			background_pattern_doc = DocType('Background Pattern')
+			query = (
+				frappe.qb.from_(background_pattern_doc)
+				.select(background_pattern_doc.title, background_pattern_pattern_doc.css_properties)
+			)
 		elif bg_type == "Mask":
-			query_1 = ''' SELECT title,css_properties FROM `tabBackground Mask`'''
+			background_mask_doc = DocType('Background Mask')
+			query = (
+				frappe.qb.from_(background_mask_doc)
+				.select(background_mask_doc.title, background_mask_doc.css_properties)
+			)
 		elif bg_type == "Divider":
-			query_1 = ''' SELECT title,svg_file as css_properties FROM `tabSection Dividers`'''
-		return frappe.db.sql(query_1,as_dict=1)
+			section_dividers_doc = DocType('Section Dividers')
+			query = (
+				frappe.qb.from_(section_dividers_doc)
+				.select(section_dividers_doc.title, section_dividers_doc.svg_file.as_('css_properties'))
+			)
+
+		if query:
+			return query.run(as_dict=True)
+		return []
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.def get_color_code_data")
 # end

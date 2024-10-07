@@ -12,6 +12,7 @@
   "column_break_4",
   "sub_title",
   "redirect_url",
+  "business",
   "column_break_8",
   "enable_button",
   "published",
@@ -179,10 +180,16 @@
    "fieldname": "upload_video_for_mobile_app",
    "fieldtype": "Attach",
    "label": "Upload Video For Mobile App (Video only up to10 MB)"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "links": [],
- "modified": "2022-09-22 14:43:35.024671",
+ "modified": "2024-09-30 19:14:22.545783",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Slider",
@@ -203,6 +210,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "title",
  "track_changes": 1
 }

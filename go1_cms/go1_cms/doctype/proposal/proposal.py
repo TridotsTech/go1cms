@@ -12,23 +12,21 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.website.website_generator import WebsiteGenerator
 from go1_cms.go1_cms.api import check_domain, get_business_from_login
 from frappe.model.naming import make_autoname
-# from go1_cms.utils.setup import get_settings_from_domain, \
-# 	get_settings_value_from_domain, get_theme_settings
+from go1_cms.utils.setup import get_settings_from_domain
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from go1_cms.go1_cms.proposal_api import generate_token
 from urllib.parse import urljoin, unquote, urlencode
+from frappe.query_builder import DocType, Field
 
 class Proposal(WebsiteGenerator):
 	def autoname(self):
-		if check_domain('saas'):
-			naming_series = 'WPB-'
-			if not self.business:
-				self.business = get_business_from_login()
-			if self.business:
-				naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
-			self.name = make_autoname(naming_series + '.#####', doc=self)
-		else:
-			self.name = self.page_title
+		naming_series = 'WPB-'
+		if not self.business:
+			self.business = get_business_from_login()
+		if self.business:
+			naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
+		self.name = make_autoname(naming_series + '.#####', doc=self)
+		
 
 	def validate(self):
 		if self.is_new():
@@ -56,7 +54,8 @@ class Proposal(WebsiteGenerator):
 
 	def on_update(self):
 		#by siva
-		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+		cms_settings=get_settings_from_domain("CMS Settings", self.business)
+		enable_generate_html=cms_settings.generate_html
 		if enable_generate_html or self.document:
 			page_template = generate_page_html(page=self.name, view_type='web')
 			if page_template:
@@ -91,7 +90,7 @@ class Proposal(WebsiteGenerator):
 		# 		content = css_text
 		# 		f.write(content)
 			# return {"status":"success","message":"completed successfully"}
-		# frappe.enqueue("ecommerce_business_store.ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.generate_css_file")
+		# frappe.enqueue("go1_cms.go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.generate_css_file")
 		generate_css_file()
 		generate_email_pdf(self)
 
@@ -171,7 +170,7 @@ class Proposal(WebsiteGenerator):
 			preferred_time = frappe.request.cookies.get('order_time')
 			if not preferred_date and not preferred_time:
 				#hided by boopathy
-				# from ecommerce_business_store.ecommerce_business_store.api import get_today_date
+				# from go1_cms.go1_cms.api import get_today_date
 				#end
 				preferred_date = getdate(get_today_date(replace=True))
 				preferred_time = 'ASAP'
@@ -242,14 +241,15 @@ class Proposal(WebsiteGenerator):
 		context.htmldata = get_proposal_html(doc.name, doc.quotation)
 		context.template = "templates/pages/proposal.html"
 		
-		enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
+		cms_settings=get_settings_from_domain("CMS Settings", business=self.business)
+		enable_generate_html=cms_settings.generate_html
 		
 		if enable_generate_html:
 			#by siva
 			page_no=0
 			page_len=3
 			# modified by boopathy
-			# from ecommerce_business_store.cms.api import get_section_data
+			# from go1_cms.cms.api import get_section_data
 			from go1_cms.go1_cms.api import get_section_data
 			#end
 			page_builder = frappe.get_doc('Proposal', self.name)
@@ -269,7 +269,7 @@ class Proposal(WebsiteGenerator):
 def get_product_context(self, context):
 		try:
 			#hided by boopathy on 10/08/2022
-			# from ecommerce_business_store.ecommerce_business_store.api import get_bestsellers,get_product_price,get_category_products,get_category_detail,get_enquiry_product_detail,get_customer_recently_viewed_products, get_product_other_info,get_parent_categorie
+			# from go1_cms.go1_cms.api import get_bestsellers,get_product_price,get_category_products,get_category_detail,get_enquiry_product_detail,get_customer_recently_viewed_products, get_product_other_info,get_parent_categorie
 			#end
 			product_brands = []
 			product_attributes = []
@@ -287,7 +287,30 @@ def get_product_context(self, context):
 					raise frappe.Redirect
 			if business:
 				brand_cond = ' and b.business = "{0}"'.format(business) 
-			context.brands = frappe.db.sql('''select b.name, b.brand_name, b.brand_logo, b.route, b.warranty_information as warranty_info, b.description from `tabProduct Brand` b inner join `tabProduct Brand Mapping` pbm on b.name = pbm.brand where pbm.parent = %(parent)s {condition} group by b.name order by pbm.idx'''.format(condition=brand_cond), {'parent': self.name}, as_dict=1) 
+			
+			product_brand = DocType('Product Brand')
+			product_brand_mapping = DocType('Product Brand Mapping')
+			context.brands = (
+			    frappe.qb.from_(product_brand).as_("b")  
+			    .inner_join(product_brand_mapping.as_("pbm"))  
+			    .on(b.name == pbm.brand) 
+			    .select(
+			        b.name,
+			        b.brand_name,
+			        b.brand_logo,
+			        b.route,
+			        b.warranty_information.as_("warranty_info"), 
+			        b.description
+			    )
+			    .where(pbm.parent == self.name)  
+			)
+			if brand_cond:
+			    context.brands = context.brands.where(brand_cond)
+			context.brands = (
+			    context.brands
+			    .groupby(b.name)
+			    .orderby(pbm.idx)
+			).run(as_dict=True)
 			self.get_product_reviews(context)
 			productattributes = frappe.db.get_all('Product Attribute Mapping',fields=["*"], filters={"parent":self.name},order_by="display_order",limit_page_length=50)
 			image = []
@@ -309,7 +332,19 @@ def get_product_context(self, context):
 				if attribute.size_chart:
 					chart_name = attribute.size_chart
 					size_charts = frappe.db.get_all('Size Chart',filters={'name':attribute.size_chart},fields=['size_chart_image','name'])
-					size_chart = frappe.db.sql('''select TRIM(attribute_values) as attribute_values,chart_title,chart_value,name from `tabSize Chart Content` where parent=%(parent)s order by display_order''',{'parent':attribute.size_chart},as_dict=1)
+					# size_chart = frappe.db.sql('''select TRIM(attribute_values) as attribute_values,chart_title,chart_value,name from `tabSize Chart Content` where parent=%(parent)s order by display_order''',{'parent':attribute.size_chart},as_dict=1)
+					size_chart_content = DocType('Size Chart Content')
+					size_chart = (
+					    frappe.qb.from_(size_chart_content)
+					    .select(
+					        Field("TRIM(attribute_values)").as_("attribute_values"), 
+					        size_chart_content.chart_title,
+					        size_chart_content.chart_value,
+					        size_chart_content.name
+					    )
+					    .where(size_chart_content.parent == attribute.size_chart)  
+					    .orderby(size_chart_content.display_order) 
+					).run(as_dict=True)
 					unique_sizes = list(set([x.chart_title for x in size_chart]))
 					# unique_attr = list(set([x.attribute_values for x in size_chart]))
 					unique_attr = []
@@ -532,7 +567,7 @@ def get_product_context(self, context):
 			context.recent_products = recent_products
 			context.best_sellers = best_sellers_list
 		except Exception:
-			frappe.log_error(frappe.get_traceback(),'ecommerce_business_store.ecommerce_business_store.product.product.get_context')
+			frappe.log_error(frappe.get_traceback(),'go1_cms.go1_cms.product.product.get_context')
 	
 def bind_customer_cart():
 	cart_items = []
@@ -840,7 +875,7 @@ def get_proposal_html(page,name):
 @frappe.whitelist()
 def update_section_content(docs, section, lists_data='[]', business=None):
 	#hided by boopathy
-	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
+	# from go1_cms.go1_cms.mobileapi import get_uploaded_file_content, update_doc
 	#end
 	if lists_data:
 		lists = json.loads(lists_data)
@@ -939,7 +974,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 				frappe.db.set_value('Page Section', section, 'display_randomly', check_val)
 			elif item.get('name') == "category_products_html":
 				#hided by boopathy on 10/08/2022
-				# from ecommerce_business_store.ecommerce_business_store.api import get_product_details
+				# from go1_cms.go1_cms.api import get_product_details
 				#end
 				if item.get('content') and item.get('content')!="":
 					products = json.loads(item.get('content'))
@@ -1049,7 +1084,7 @@ def get_predefined_records(dt,records,name,page_no=0,business=None):
 		# 	result = get_product_details(result)
 		return result
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_predefined_records")
+		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_predefined_records")
 		return []
 
 @frappe.whitelist()
@@ -1129,7 +1164,7 @@ def get_source_doc(doc, device_type):
 
 def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, page_no=0, page_len=3):
 	#hided by boopathy on 10/08/2022
-	# from ecommerce_business_store.ecommerce_business_store.api import get_all_restaurant_data, check_restaurant_distance
+	# from go1_cms.go1_cms.api import get_all_restaurant_data, check_restaurant_distance
 	#end
 	section_list = sections[int(page_no):int(page_len)]
 	data = get_page_section(source_doc)
@@ -1182,7 +1217,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 		if data_source.get('login_required') == 1:
 			if frappe.session.user != 'Guest':
 				#modified by boopathy on 10/08/22
-				# from ecommerce_business_store.cms.doctype.page_section.page_section import get_data_source
+				# from go1_cms.cms.doctype.page_section.page_section import get_data_source
 				from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
 				#end
 				doc = frappe.get_doc('Page Section', item.section)
@@ -1220,7 +1255,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 				template = frappe.render_template(section_html, data_source)
 				html_list.append({'template': template, 'section': item.section})
 			except Exception as e:
-				frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html") 
+				frappe.log_error(frappe.get_traceback(), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html") 
 	return html_list, js_list
 
 
@@ -1229,7 +1264,7 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Proposal', page)
 	source_doc, sections, html = get_source_doc(doc, "Mobile")
 	#hided by boopathy on 10/08/22
-	# from ecommerce_business_store.ecommerce_business_store.api import get_all_restaurant_data, check_restaurant_distance
+	# from go1_cms.go1_cms.api import get_all_restaurant_data, check_restaurant_distance
 	#end
 	start = int(page_no) * int(page_len)
 	section_list = sections[int(start):int(int(page_len) + int(start))]
@@ -1246,7 +1281,7 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 		if data_source.get('login_required') == 1:
 			if frappe.session.user != 'Guest':
 				#modified by boopathy on 10/08/22
-				# from ecommerce_business_store.cms.doctype.page_section.page_section import get_data_source
+				# from go1_cms.cms.doctype.page_section.page_section import get_data_source
 				from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
 				#end
 				doc = frappe.get_doc('Page Section', item.section)
@@ -1277,7 +1312,7 @@ def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 def upload_img():
 	import base64
 	#hide it boopathy on 10/08/22
-	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
+	# from go1_cms.go1_cms.mobileapi import get_uploaded_file_content, update_doc
 	#end
 	files = frappe.request.files
 	content = None
@@ -1357,7 +1392,7 @@ def get_document_image(dt, dn, business=None):
 @frappe.whitelist()
 def update_page_data(doc, method):
 	# update json data whenever changes occurs in any doctypes
-	frappe.enqueue("ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.update_json")
+	frappe.enqueue("go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.update_json")
 
 @frappe.whitelist()
 def update_json():
@@ -1395,7 +1430,7 @@ def get_collection_records(collections):
 			result = frappe.db.sql(query, as_dict=1)
 			return result
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_collection_records")
+		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_collection_records")
 		return []
 
 @frappe.whitelist()
@@ -1466,7 +1501,7 @@ def get_element_properties(id):
 		if not class_name:
 			class_name = get_class_name()
 			#modified by boopathy on 10/08/2022
-			# from ecommerce_business_store.cms.doctype.page_section.page_section import get_class_name
+			# from go1_cms.cms.doctype.page_section.page_section import get_class_name
 			from go1_cms.go1_cms.doctype.page_section.page_section import get_class_name
 			#end
 			page_section_doc = frappe.get_doc("Page Section",fields[0].parent)
@@ -1519,7 +1554,7 @@ def get_query_condition(user):
 @frappe.whitelist()
 def get_shuffled_category_products(category,no_of_records):
 	#hided by boopathy-10/08/2022
-	# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
+	# from go1_cms.go1_cms.api import get_child_categories
 	#end
 	catalog_settings = get_settings_from_domain('Catalog Settings')
 	category_filter = ""
@@ -1686,7 +1721,7 @@ def get_page_data(doc, sections, source_doc, device_type, page_no=0, page_len=5)
 			if data_source.get('login_required') == 1:
 				if frappe.session.user != 'Guest':
 					#modified by boopathy - 10/08/2022
-					# from ecommerce_business_store.cms.doctype.page_section.page_section import get_data_source
+					# from go1_cms.cms.doctype.page_section.page_section import get_data_source
 					from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
 
 					#end
@@ -1712,7 +1747,7 @@ def get_page_data(doc, sections, source_doc, device_type, page_no=0, page_len=5)
 				try:
 						data_list.append({'data_source': data_source, 'section': item.section})
 				except Exception as e:
-						frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html") 
+						frappe.log_error(frappe.get_traceback(), "go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_page_html") 
 	return data_list
 
 default_page_script = """<script>
@@ -1721,7 +1756,7 @@ default_page_script = """<script>
   var page_len = 3;
   var section_len = {{ section_len }};
   var scroll = false;
-  var ecommerce_baseurl = '/api/method/ecommerce_business_store.cms.';
+  var ecommerce_baseurl = '/api/method/go1_cms.cms.';
   var path = window.location.pathname
   path = path.replace("/", "")
   path = path.split('/');
@@ -1817,7 +1852,7 @@ def get_uploaded_file_content(filedata):
 			return None
 
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.mobileapi.get_uploaded_file_content")
+		frappe.log_error(frappe.get_traceback(), "go1_cms.go1_cms.mobileapi.get_uploaded_file_content")
 		
 
 
@@ -1853,7 +1888,7 @@ def update_doc(doc):
 			update_doc.save(ignore_permissions=True)
 			return update_doc.as_dict()
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.mobileapi.update_doc")
+		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.mobileapi.update_doc")
 
 @frappe.whitelist()
 def get_global_fonts(parent):

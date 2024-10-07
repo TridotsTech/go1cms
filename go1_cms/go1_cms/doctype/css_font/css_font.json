@@ -13,6 +13,7 @@
   "font_family",
   "column_break_5",
   "font_family_category",
+  "business",
   "font_files_section",
   "font_files"
  ],
@@ -63,14 +64,21 @@
    "fieldtype": "Select",
    "label": "Font Family Category",
    "options": "\nSans-serif\nSerif"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-02 12:41:06.575343",
+ "modified": "2024-09-30 20:19:30.159188",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CSS Font",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -87,5 +95,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

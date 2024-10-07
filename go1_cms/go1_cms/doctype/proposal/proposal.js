@@ -167,7 +167,7 @@ frappe.ui.form.on('Proposal', {
         }
         if (frm.doc.__islocal) {
             if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
-                frm.set_value('business', frappe.boot.user.defaults.business)
+                frm.set_value('business', frappe.boot.sysdefaults.business)
             } else {
                 frm.set_value('business', '')
             }

@@ -9,7 +9,8 @@
  "field_order": [
   "title",
   "image",
-  "layout_json"
+  "layout_json",
+  "business"
  ],
  "fields": [
   {
@@ -29,11 +30,17 @@
    "fieldtype": "Code",
    "label": "Layout Json",
    "reqd": 1
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-20 15:53:39.344062",
+ "modified": "2024-09-30 20:06:00.908945",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Detail Page Layout",
@@ -53,5 +60,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

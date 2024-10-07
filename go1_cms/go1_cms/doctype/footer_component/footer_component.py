@@ -11,11 +11,11 @@ import urllib.parse
 from frappe.utils import encode, get_files_path, getdate
 from frappe.model.mapper import get_mapped_doc
 from frappe.website.website_generator import WebsiteGenerator
-# from ecommerce_business_store.ecommerce_business_store.api import check_domain, get_business_from_login
+# from go1_cms.go1_cms.api import check_domain, get_business_from_login
 from frappe.model.naming import make_autoname
-# from ecommerce_business_store.utils.setup import get_settings_from_domain, \
+# from go1_cms.utils.setup import get_settings_from_domain, \
 # 	get_settings_value_from_domain, get_theme_settings
-# from ecommerce_business_store.cms.api import get_template_folder, unescape
+# from go1_cms.cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 from frappe.model.document import Document
 

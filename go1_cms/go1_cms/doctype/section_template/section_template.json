@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "Prompt",
+ "autoname": "naming_series:",
  "creation": "2022-08-09 15:40:16.895002",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -9,6 +9,10 @@
  "field_order": [
   "section_break_1",
   "preview_html",
+  "section_break_wejt",
+  "section_template_name",
+  "column_break_qseq",
+  "business",
   "section_info_section",
   "section_group",
   "is_full_width",
@@ -62,7 +66,6 @@
   "column_break_42",
   "sub_title",
   "column_break_44",
-  "banners_section",
   "section_break_46",
   "query",
   "section_break_48",
@@ -86,7 +89,8 @@
   "custom_js",
   "route",
   "section_break_77",
-  "builder_html"
+  "builder_html",
+  "naming_series"
  ],
  "fields": [
   {
@@ -349,13 +353,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.section_type == \"Banner\" ",
-   "fieldname": "banners_section",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Banners"
-  },
-  {
    "fieldname": "section_break_46",
    "fieldtype": "Section Break",
    "hidden": 1
@@ -546,15 +543,42 @@
    "fieldname": "preview_html",
    "fieldtype": "HTML",
    "hidden": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SET.#####"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
+  },
+  {
+   "fieldname": "section_template_name",
+   "fieldtype": "Data",
+   "label": "Section Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_wejt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_qseq",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-17 12:33:20.388011",
+ "modified": "2024-10-03 14:03:04.682161",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Section Template",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -572,5 +596,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
+ "title_field": "section_template_name",
  "track_changes": 1
 }

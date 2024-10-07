@@ -1,0 +1,453 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2019-02-20 19:03:42.492242",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_1",
+  "disable",
+  "sec_2",
+  "restaurant_name",
+  "business_phone",
+  "abbr",
+  "is_promoted",
+  "column_break_6",
+  "contact_person",
+  "contact_number",
+  "contact_email",
+  "fax",
+  "column_break_3",
+  "business_address",
+  "city",
+  "country",
+  "zip_code",
+  "time_zone",
+  "latitude",
+  "business_type",
+  "longitude",
+  "section_break_25",
+  "google_map_embed_url",
+  "column_break_27",
+  "google_map_share_link",
+  "section_break_19",
+  "is_group",
+  "parent_business",
+  "lft",
+  "rgt",
+  "old_parent",
+  "section_break_18",
+  "gstin",
+  "pan",
+  "cin",
+  "column_break_22",
+  "authorised_signature",
+  "bank_details_section",
+  "account_no",
+  "bank_name",
+  "column_break_39",
+  "bank_ifsc",
+  "account_holder_name",
+  "section_break_24",
+  "business_category",
+  "section_break_8",
+  "restaurant_logo",
+  "banner_bg_color",
+  "column_break_12",
+  "banner_image",
+  "about_us",
+  "about_restaurant",
+  "menu_settings_section",
+  "events",
+  "column_break_93",
+  "res_gallery",
+  "sec_12",
+  "naming_series",
+  "seo",
+  "page_title_separator",
+  "default_meta_keywords",
+  "column_break_84",
+  "seo_adjustment",
+  "default_meta_description",
+  "column_break_87",
+  "default_title",
+  "sec_31",
+  "default_currency",
+  "column_break_102",
+  "route",
+  "show_in_website",
+  "meta_details_section",
+  "meta_title",
+  "column_break_178",
+  "meta_description",
+  "column_break_180",
+  "meta_keywords"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_2",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "restaurant_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Name / Business Name",
+   "reqd": 1
+  },
+  {
+   "description": "Please enter each phone number in a new line",
+   "fieldname": "business_phone",
+   "fieldtype": "Small Text",
+   "label": "Phone / Business Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "abbr",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Business Abbreviation",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contact Person",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contact Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contact E-Mail",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_address",
+   "fieldtype": "Data",
+   "label": "Business Address"
+  },
+  {
+   "depends_on": "",
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country",
+   "reqd": 1
+  },
+  {
+   "fieldname": "zip_code",
+   "fieldtype": "Data",
+   "label": "Zip Code"
+  },
+
+  {
+   "default": "E-Commerce",
+   "fieldname": "business_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Business Type",
+   "options": "E-Commerce\nRestaurant"
+  },
+
+  {
+   "depends_on": "",
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "parent_business",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Business",
+   "options": "Business"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Lft"
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Rgt"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "ignore_user_permissions": 1,
+   "label": "Old Parent",
+   "options": "Business"
+  },
+  {
+   "depends_on": "",
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "gstin",
+   "fieldtype": "Data",
+   "label": "GSTIN"
+  },
+  {
+   "fieldname": "pan",
+   "fieldtype": "Data",
+   "label": "PAN"
+  },
+  {
+   "fieldname": "cin",
+   "fieldtype": "Data",
+   "label": "CIN"
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "authorised_signature",
+   "fieldtype": "Attach Image",
+   "label": "Authorised Signature"
+  },
+  {
+   "depends_on": "",
+   "fieldname": "section_break_24",
+   "fieldtype": "Section Break",
+   "label": "Business Category"
+  },
+  {
+   "fieldname": "business_category",
+   "fieldtype": "Table",
+   "in_standard_filter": 1,
+   "label": "Business Category",
+   "options": "Business Category"
+  },
+  {
+   "depends_on": "",
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Business Information"
+  },
+  {
+   "description": "Update your business logo",
+   "fieldname": "restaurant_logo",
+   "fieldtype": "Attach Image",
+   "label": "Business Logo"
+  },
+  {
+   "fieldname": "banner_bg_color",
+   "fieldtype": "Color",
+   "hidden": 1,
+   "label": "Banner Bg Color"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Update your banner image",
+   "fieldname": "banner_image",
+   "fieldtype": "Attach Image",
+   "label": "Banner Image"
+  },
+ 
+  
+  {
+   "fieldname": "seo",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Seo "
+  },
+  {
+   "default": "-",
+   "fieldname": "page_title_separator",
+   "fieldtype": "Data",
+   "label": "Page Title Separator"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "BS-"
+  },
+  {
+   "fieldname": "default_meta_keywords",
+   "fieldtype": "Data",
+   "label": "Default Meta Keywords"
+  },
+  {
+   "fieldname": "column_break_84",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Pagename After Storename",
+   "fieldname": "seo_adjustment",
+   "fieldtype": "Select",
+   "label": "Page Title Seo Adjustment",
+   "options": "Pagename After Storename\nStorename After Pagename"
+  },
+  {
+   "fieldname": "default_meta_description",
+   "fieldtype": "Data",
+   "label": "Default Meta Description"
+  },
+  {
+   "fieldname": "column_break_87",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_title",
+   "fieldtype": "Data",
+   "label": "Default Title"
+  },
+
+  {
+   "depends_on": "",
+   "fieldname": "column_break_102",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_in_website",
+   "fieldtype": "Check",
+   "label": "Show in Website"
+  },
+
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+
+  {
+   "fieldname": "meta_details_section",
+   "fieldtype": "Section Break",
+   "label": "Meta Details"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title"
+  },
+  {
+   "fieldname": "column_break_178",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description"
+  },
+  {
+   "fieldname": "column_break_180",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_keywords",
+   "fieldtype": "Small Text",
+   "label": "Meta Keywords"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "To display a google map in contact us page",
+   "fieldname": "google_map_embed_url",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "label": "Google Map Embed Url"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "To provide a link to the google maps search result of this business",
+   "fieldname": "google_map_share_link",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "label": "Google Map Share Link"
+  }
+ ],
+ "has_web_view": 1,
+ "icon": "fa fa-store",
+ "is_published_field": "show_in_website",
+ "links": [],
+ "modified": "2024-10-01 14:29:55.872771",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Business",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "export": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Vendor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "restaurant_name",
+ "track_changes": 1
+}

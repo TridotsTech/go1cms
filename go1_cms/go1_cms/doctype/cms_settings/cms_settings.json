@@ -1,21 +1,21 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2022-08-09 15:53:24.282958",
+ "creation": "2024-10-03 12:24:04.666316",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "settings_section",
-  "enable_go1_builder",
   "generate_html",
+  "business",
   "styles_to_update",
   "field_type_properties",
-  "route_prefix_section",
-  "route_prefix",
+  "enable_go1_builder",
   "website_settings_section",
   "use_other_domain",
-  "domain"
+  "domain",
+  "route_prefix_section",
+  "route_prefix"
  ],
  "fields": [
   {
@@ -73,12 +73,17 @@
    "fieldtype": "Table",
    "label": "Route Prefix",
    "options": "CMS Route"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
- "issingle": 1,
  "links": [],
- "modified": "2022-10-06 13:14:04.149793",
+ "modified": "2024-10-03 12:29:03.925614",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",
@@ -88,8 +93,10 @@
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "System Manager",
    "share": 1,
    "write": 1
@@ -97,5 +104,5 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1
+ "states": []
 }

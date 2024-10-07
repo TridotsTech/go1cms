@@ -1,0 +1,86 @@
+{
+ "creation": "2020-10-13 08:13:11.759691",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "web_url",
+  "domain_ip",
+  "username",
+  "password",
+  "is_active",
+  "column_break_6",
+  "bench_name",
+  "site_name",
+  "registered_business"
+ ],
+ "fields": [
+  {
+   "fieldname": "web_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Server Url",
+   "reqd": 1
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Username",
+   "reqd": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "in_list_view": 1,
+   "label": "Password",
+   "print_width": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "domain_ip",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Domain IP"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active",
+   "width": "1"
+  },
+  {
+   "fieldname": "registered_business",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Registered Business"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bench_name",
+   "fieldtype": "Data",
+   "label": "Bench Name"
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "label": "Site Name"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-11-12 01:07:28.849575",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Domain User",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

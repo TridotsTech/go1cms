@@ -1,0 +1,39 @@
+{
+ "creation": "2019-04-23 20:05:10.520998",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "category",
+  "category_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "Product Category",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "category.category_name",
+   "fieldname": "category_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Category Name",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-01-29 19:04:00.275937",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Business Category",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -9,7 +9,8 @@
  "field_order": [
   "title",
   "css_properties",
-  "image"
+  "image",
+  "business"
  ],
  "fields": [
   {
@@ -28,11 +29,17 @@
    "fieldname": "image",
    "fieldtype": "Image",
    "label": "Image"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-15 17:28:44.277194",
+ "modified": "2024-09-30 20:16:19.391930",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Background Gradient",
@@ -52,5 +59,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

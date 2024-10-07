@@ -9,6 +9,7 @@
  "field_order": [
   "full_name",
   "subject",
+  "business",
   "column_break_3",
   "email_id",
   "phone_number",
@@ -64,11 +65,17 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "CE-"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-08 20:08:46.171749",
+ "modified": "2024-09-30 20:29:00.206984",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Contact Enquiry",
@@ -88,5 +95,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

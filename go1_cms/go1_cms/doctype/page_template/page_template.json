@@ -18,6 +18,7 @@
   "image",
   "document",
   "route",
+  "business",
   "sec_content",
   "content",
   "jodit_editor",
@@ -220,14 +221,21 @@
    "fieldname": "image",
    "fieldtype": "Attach",
    "label": "Image"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-18 19:00:29.907881",
+ "modified": "2024-09-30 20:20:05.608785",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Page Template",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -245,5 +253,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

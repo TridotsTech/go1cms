@@ -1,0 +1,14 @@
+{
+	"restaurant":"Restaurant",
+	"multi_vendor":"Multi Vendor",
+	"single_vendor":"Single Vendor",
+	"stock":"Stock",
+	"purchase":"Purchase",
+	"deals_and_offers":"Business Deals",
+	"books":"Books",
+	"events":"Events",
+	"multi_store":"Multi Store",
+	"saas":"SaaS",
+	"services": "Services",
+	"b2b": "B2B"
+}

@@ -9,6 +9,7 @@
  "field_order": [
   "title",
   "group_name",
+  "business",
   "column_break_2",
   "icon",
   "preview_image",
@@ -158,14 +159,21 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Route"
+  },
+  {
+   "fieldname": "business",
+   "fieldtype": "Link",
+   "label": "Business",
+   "options": "Business"
   }
  ],
  "has_web_view": 1,
  "links": [],
- "modified": "2022-09-23 19:18:18.264949",
+ "modified": "2024-09-30 19:12:54.834817",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Section Component",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -183,5 +191,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

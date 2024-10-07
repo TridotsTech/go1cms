@@ -21,7 +21,7 @@ frappe.ui.form.on('Web Page Builder', {
                 }
             };
             });
-           console.log(frm.doc.enable_side_menu)
+          
            if(frm.doc.w_page_type=="List" && frm.doc.enable_side_menu==1){
                frappe.call({
                     method: 'go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_side_menu_fields',
@@ -100,10 +100,11 @@ frappe.ui.form.on('Web Page Builder', {
         }
         if (!frm.__islocal && frm.doc.published==1) {
             frm.add_custom_button(__('Preview'), function () {
-                frappe.db.get_doc("CMS Settings","CMS Settings", {
-                }).then(res => {
-                    if (res.use_other_domain==1){
-                        window.open(
+               
+                frappe.xcall('go1_cms.utils.setup.get_settings_from_domain', { 'dt': 'CMS Settings', 'business': frm.doc.business })
+            .then(r => {
+                if (r && r.use_other_domain == 1) {
+                    window.open(
                           res.domain+'/p/'+frm.doc.route,
                           '_blank' // <- This is what makes it open in a new window.
                         );
@@ -114,8 +115,7 @@ frappe.ui.form.on('Web Page Builder', {
                           '_blank' // <- This is what makes it open in a new window.
                         );
                     }
-                    
-                });
+            });
 
             });
             $('button[data-label="Preview"]').attr("class","btn btn-xs btn-default");
@@ -125,17 +125,18 @@ frappe.ui.form.on('Web Page Builder', {
 
         }
         if(frm.doc.route && frm.doc.w_page_type!="List" && frm.doc.w_page_type!="Detail"){
-         frappe.db.get_doc("CMS Settings","CMS Settings", {
-                }).then(res => {
-                    if(res.enable_go1_builder){
+        
+                 frappe.xcall('go1_cms.utils.setup.get_settings_from_domain', { 'dt': 'CMS Settings', 'business': frm.doc.business })
+            .then(r => {
+               if(r.enable_go1_builder){
                         
                           frm.set_df_property('edit_with_go1_builder', 'hidden', 0)
                     }
-                })
+            });
         }
         if (frm.doc.__islocal) {
             if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator') {
-                frm.set_value('business', frappe.boot.user.defaults.business)
+                frm.set_value('business', frappe.boot.sysdefaults.business)
             } else {
                 frm.set_value('business', '')
             }
@@ -151,7 +152,7 @@ frappe.ui.form.on('Web Page Builder', {
 
 
          }
-         if (has_common(frappe.user_roles, ['Vendor'])){
+         if (has_common(frappe.user_roles, ['Vendor']) && frappe.session.user != 'Administrator'){
             frm.set_df_property('business', 'hidden', 1)
 
          }
@@ -1500,7 +1501,8 @@ var add_new_section = Class.extend({
         frappe.call({
             method: 'go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_section_templates',
             args: {
-                device_type: me.device_type
+                device_type: me.device_type,
+                business: me.frm.doc.business
             },
             async: false,
             callback: function(r) {
@@ -1646,9 +1648,14 @@ var add_new_section = Class.extend({
 
         data.map(f => {
             var bg_color = "style='background: #f3f3f3;'";
-            let template = `<div class="section-title" data-group='${f.section_group}'>${f.name}</div>`;
+            if(f.section_template_name){
+                section_template_name = f.section_template_name
+            }else{
+                section_template_name=f.name
+            }
+            let template = `<div class="section-title" data-group='${f.section_group}'>${section_template_name}</div>`;
             if (f.image) {
-                template = `<div class="section-img" ><img src="${f.image}" /></div><p>${f.name}</p>`
+                template = `<div class="section-img" ><img src="${f.image}" /></div><p>${section_template_name}</p>`
                 bg_color = "";
             }
             let item = $(`<div class="col-md-4 col-sm-6 col-xs-6" style="float:left" data-group='${f.section_group}'>
@@ -1670,7 +1677,7 @@ var add_new_section = Class.extend({
                     $(html).find('.section-item').removeClass('active');
                     $(item).find('.section-item').addClass('active');
                     var title_fileds = [];
-                    title_fileds.push({"fieldname": "custom_title", "fieldtype": "Data","label": __("Enter Section Title"),"default":f.name })
+                    title_fileds.push({"fieldname": "custom_title", "fieldtype": "Data","label": __("Enter Section Title"),"default":section_template_name })
                     var image_html="";
                     if(f.image){
                          image_html = "<label class='control-label' style='padding-right: 0px;'>Section Preview</label><img src='"+f.image+"' style='border: 1px solid #ddd;padding: 5px;border-radius: 5px;' />";
@@ -1695,7 +1702,7 @@ var add_new_section = Class.extend({
                     if (val) {
                         titles = val.title_name
                     }
-
+console.log(me.selected_section)
                     frappe.call({
                         method: 'go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.convert_template_to_section',
                         args: {
@@ -1704,6 +1711,7 @@ var add_new_section = Class.extend({
                             'section_name':  custom_title
                         },
                         callback: function(r) {
+                            console.log(r)
                             if (r.message) {
                                 let row = frappe.model.add_child(me.frm.doc, me.doctype, me.parentfield);
                                 row.section = r.message.name;
@@ -3141,7 +3149,7 @@ var modify_section_data = Class.extend({
                 freeze: true,
                 callback: function(r) {
                     if (r.message.status == 'Success') {
-                        show_alert('Section updated!', 5);
+                        frappe.show_alert('Section updated!', 5);
                          cur_frm.set_value('route', '')
                         // me.dialog.hide();
                         cur_frm.save();
@@ -3161,7 +3169,7 @@ var modify_section_data = Class.extend({
                 args: me.selected_pattern,
                 callback: function(r) {
                     if (r.message.status == 'Success') {
-                        show_alert('Section updated!', 5);
+                        frappe.show_alert('Section updated!', 5);
                         me.dialog.hide();
                         cur_frm.save();
                     }
