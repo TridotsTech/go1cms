@@ -21,7 +21,7 @@
   "city",
   "country",
   "zip_code",
-  "disabled",
+  "disable",
   "section_break_25",
   "google_map_embed_url",
   "column_break_27",
@@ -373,19 +373,20 @@
   },
   {
    "default": "0",
-   "fieldname": "disabled",
+   "fieldname": "disable",
    "fieldtype": "Check",
-   "label": "Disabled"
+   "label": "Disable"
   }
  ],
  "has_web_view": 1,
  "icon": "fa fa-store",
  "is_published_field": "show_in_website",
  "links": [],
- "modified": "2024-10-07 23:28:30.056292",
+ "modified": "2024-10-07 23:29:49.725828",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Business",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
