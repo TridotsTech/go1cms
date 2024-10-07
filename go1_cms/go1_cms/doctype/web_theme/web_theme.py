@@ -163,8 +163,8 @@ def generate_webtheme_css_file(path,sitename,self):
 			mobile_page_section_doc = DocType('Mobile Page Section')
 			page_section_doc = DocType('Page Section')
 			web_sections_query = (
-				frappe.qb.from_(mobile_page_section_doc).as_('M')
-				.inner_join(page_section_doc).as_('P')
+				frappe.qb.from_(mobile_page_section_doc)
+				.inner_join(page_section_doc)
 				.on(mobile_page_section_doc.section == page_section_doc.name)
 				.select(page_section_doc.class_name, page_section_doc.css_text, page_section_doc.name)
 				.where(mobile_page_section_doc.parent == page_name)
