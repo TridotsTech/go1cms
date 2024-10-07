@@ -7,27 +7,21 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "section_break_1",
-  "disable",
   "sec_2",
   "restaurant_name",
   "business_phone",
   "abbr",
-  "is_promoted",
   "column_break_6",
   "contact_person",
   "contact_number",
   "contact_email",
-  "fax",
+  "business_type",
   "column_break_3",
   "business_address",
   "city",
   "country",
   "zip_code",
-  "time_zone",
-  "latitude",
-  "business_type",
-  "longitude",
+  "disabled",
   "section_break_25",
   "google_map_embed_url",
   "column_break_27",
@@ -44,12 +38,6 @@
   "cin",
   "column_break_22",
   "authorised_signature",
-  "bank_details_section",
-  "account_no",
-  "bank_name",
-  "column_break_39",
-  "bank_ifsc",
-  "account_holder_name",
   "section_break_24",
   "business_category",
   "section_break_8",
@@ -57,13 +45,6 @@
   "banner_bg_color",
   "column_break_12",
   "banner_image",
-  "about_us",
-  "about_restaurant",
-  "menu_settings_section",
-  "events",
-  "column_break_93",
-  "res_gallery",
-  "sec_12",
   "naming_series",
   "seo",
   "page_title_separator",
@@ -73,8 +54,6 @@
   "default_meta_description",
   "column_break_87",
   "default_title",
-  "sec_31",
-  "default_currency",
   "column_break_102",
   "route",
   "show_in_website",
@@ -151,7 +130,6 @@
    "label": "Business Address"
   },
   {
-   "depends_on": "",
    "fieldname": "city",
    "fieldtype": "Data",
    "label": "City"
@@ -168,7 +146,6 @@
    "fieldtype": "Data",
    "label": "Zip Code"
   },
-
   {
    "default": "E-Commerce",
    "fieldname": "business_type",
@@ -177,9 +154,7 @@
    "label": "Business Type",
    "options": "E-Commerce\nRestaurant"
   },
-
   {
-   "depends_on": "",
    "fieldname": "section_break_19",
    "fieldtype": "Section Break"
   },
@@ -217,7 +192,6 @@
    "options": "Business"
   },
   {
-   "depends_on": "",
    "fieldname": "section_break_18",
    "fieldtype": "Section Break"
   },
@@ -246,7 +220,6 @@
    "label": "Authorised Signature"
   },
   {
-   "depends_on": "",
    "fieldname": "section_break_24",
    "fieldtype": "Section Break",
    "label": "Business Category"
@@ -259,7 +232,6 @@
    "options": "Business Category"
   },
   {
-   "depends_on": "",
    "fieldname": "section_break_8",
    "fieldtype": "Section Break",
    "label": "Business Information"
@@ -286,8 +258,6 @@
    "fieldtype": "Attach Image",
    "label": "Banner Image"
   },
- 
-  
   {
    "fieldname": "seo",
    "fieldtype": "Section Break",
@@ -336,9 +306,7 @@
    "fieldtype": "Data",
    "label": "Default Title"
   },
-
   {
-   "depends_on": "",
    "fieldname": "column_break_102",
    "fieldtype": "Section Break"
   },
@@ -353,12 +321,6 @@
    "fieldtype": "Check",
    "label": "Show in Website"
   },
-
-  {
-   "fieldname": "section_break_1",
-   "fieldtype": "Section Break"
-  },
-
   {
    "fieldname": "meta_details_section",
    "fieldtype": "Section Break",
@@ -408,13 +370,19 @@
    "fieldtype": "Small Text",
    "ignore_xss_filter": 1,
    "label": "Google Map Share Link"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "has_web_view": 1,
  "icon": "fa fa-store",
  "is_published_field": "show_in_website",
  "links": [],
- "modified": "2024-10-01 14:29:55.872771",
+ "modified": "2024-10-07 23:28:30.056292",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Business",
