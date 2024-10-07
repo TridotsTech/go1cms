@@ -1,0 +1,107 @@
+{
+ "autoname": "field:key",
+ "creation": "2020-10-06 11:27:22.796830",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "source",
+  "time_taken",
+  "column_break_2",
+  "status",
+  "section_break_2",
+  "command",
+  "section_break_1",
+  "console",
+  "key",
+  "bench_settings"
+ ],
+ "fields": [
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Source",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "time_taken",
+   "fieldtype": "Data",
+   "label": "Time taken",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Ongoing",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Success\nFailed\nOngoing",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "command",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Command",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "console",
+   "fieldtype": "Code",
+   "label": "Console",
+   "read_only": 1
+  },
+  {
+   "fieldname": "key",
+   "fieldtype": "Data",
+   "label": "Key",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "bench_settings",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Settings",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "modified": "2020-10-06 11:27:22.796830",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Executed Command",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
