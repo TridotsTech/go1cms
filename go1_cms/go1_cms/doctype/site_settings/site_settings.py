@@ -122,7 +122,7 @@ class SiteSettings(Document):
 				print(stdout.read().decode())
 				err = stderr.read().decode()
 				if err:
-					print(err)
+					frappe.log_error("Error with connect_external_bench", str(err))
 		
 		except:
 			print("[!] Cannot connect to the SSH Server")
