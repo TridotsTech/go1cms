@@ -115,12 +115,15 @@ class SiteSettings(Document):
 		client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		try:
 			client.connect(hostname=hostname, username=username, password=password)
+			print(commands)
 			# execute the commands
 			for command in commands:
 				print("="*50, command, "="*50)
 				stdin, stdout, stderr = client.exec_command(command)
 				print(stdout.read().decode())
 				err = stderr.read().decode()
+				print("============123============")
+				print(err)
 				if err:
 					frappe.log_error("Error with connect_external_bench", str(err))
 		
