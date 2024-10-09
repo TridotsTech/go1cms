@@ -243,7 +243,7 @@ class SiteSettings(Document):
 				html += "ipval.to_text() :"+str(ipval.to_text())+"\n"
 				if ipval.to_text() not in hostip_ex:
 					html += "123 :"+str(ipval.to_text())+"\n"
-				if ipval.to_text() not in hostip_ex:
+				if hostip_ex.count(ipval.to_text()):
 					html += "123==== :"+str(ipval.to_text())+"\n"
 				frappe.log_error("check_subdomain_with_arecord", html)
 				if not ipval.to_text():
