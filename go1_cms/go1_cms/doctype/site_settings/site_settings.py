@@ -26,6 +26,12 @@ class SiteSettings(Document):
 			self.is_domain_verified = 0
 
 	def on_update(self):
+		'''
+		pre updates:
+		sudo visudo
+		your_username ALL=(ALL) NOPASSWD: /usr/sbin/nginx -t
+		your_username ALL=(ALL) NOPASSWD: /bin/systemctl reload nginx
+		'''
 		#wildcard_domains = self.get_wildcard_ssl_enabled_domains()
 		#print(wildcard_domains)
 		domain_config = frappe.get_single('Server Configuration')
@@ -118,15 +124,12 @@ class SiteSettings(Document):
 		client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		try:
 			client.connect(hostname=hostname, username=username, password=password)
-			print(commands)
+			# print(commands)
 			# execute the commands
 			for command in commands:
-				print("="*50, command, "="*50)
+				# print("="*50, command, "="*50)
 				stdin, stdout, stderr = client.exec_command(command)
-				print(stdout.read().decode())
 				err = stderr.read().decode()
-				print("============123============")
-				print(err)
 				if err:
 					frappe.log_error("Error with connect_external_bench", str(err))
 		

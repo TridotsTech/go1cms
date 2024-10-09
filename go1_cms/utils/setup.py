@@ -128,10 +128,12 @@ def get_website_user_home_page(user):
 		domain = frappe.get_request_header('host')
 	except Exception as e:
 		pass
+	frappe.log_error("domain", domain)
 	if domain:
 		domain = get_subdomain(domain)
-		
+		frappe.log_error("domain", domain)
 		website = frappe.db.get_all('Site Settings', filters={'domain_name': domain}, fields=['home_page'])
+		frappe.log_error("website", website)
 		if website and website[0].home_page:
 			return website[0].home_page
 

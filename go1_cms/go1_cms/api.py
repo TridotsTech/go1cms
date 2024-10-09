@@ -331,8 +331,6 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 		home = frappe.db.get_all('Web Page Builder', filters={'business': business}, fields=['name', 'page_type'])
 		if home:
 			page_content =  get_page_builder_data(home, customer,application_type,business=business)
-	if not check_domain("multi_store"):
-		business = None
 	if domain and not route:
 		
 		#removed product_box from Website get_list-by sivaranjani

@@ -121,11 +121,11 @@ class Business(WebsiteGenerator, NestedSet):
 		except Exception as e:
 			domain = None
 
-		if domain and check_domain('saas') and not frappe.db.get_value('Site Settings', domain):
+		if domain and not frappe.db.get_value('Site Settings', domain):
 			if not self.publish_in_market_place:
 				frappe.local.flags.redirect_location = '/404'
 				raise frappe.Redirect
-		elif domain and check_domain('saas') and frappe.db.get_value('Site Settings', domain):
+		elif domain and frappe.db.get_value('Site Settings', domain):
 			business = frappe.db.get_value('Site Settings', domain, 'business')
 			if business != self.name:
 				frappe.local.flags.redirect_location = '/404'
