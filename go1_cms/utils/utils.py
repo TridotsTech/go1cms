@@ -55,12 +55,14 @@ def run_ssl_command(commands, doctype, key, cwd='..', docname=None, after_comman
 	sensitive_data = ["--mariadb-root-password", "--admin-password", "--root-password"]
 	for password in sensitive_data:
 		logged_command = re.sub("{password} .*? ".format(password=password), '', logged_command, flags=re.DOTALL)
+	frappe.log_error("logged_command", logged_command)
 	doc = frappe.get_doc({'doctype': 'Executed Command', 'key': key, 'source': doctype+': '+docname,
 		'command': logged_command, 'console': console_dump, 'status': 'Ongoing'})
 	doc.insert()
 	frappe.db.commit()
 	frappe.publish_realtime(key, "Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command), user=frappe.session.user)
 	try:
+		frappe.log_error("commands", commands)
 		for command in commands:
 			terminal = Popen(shlex.split(command), stdin=PIPE, stdout=PIPE, stderr=STDOUT, cwd=cwd)
 			input2 = "Y"
