@@ -69,8 +69,10 @@ def run_ssl_command(commands, doctype, key, cwd='..', docname=None, after_comman
 			input3 = "Y"
 			concat_query = "{}\n{}\n".format(input2, input3)
 			terminal.communicate(input=concat_query.encode('utf-8'))
+			frappe.log_error("terminal", terminal)
 			for c in iter(lambda: safe_decode(terminal.stdout.read(1)), ''):
 				frappe.publish_realtime(key, c, user=frappe.session.user)
+				frappe.log_error("c", c)
 				console_dump += c
 		if terminal.wait():
 			_close_the_doc(start_time, key, console_dump, status='Failed', user=frappe.session.user)
