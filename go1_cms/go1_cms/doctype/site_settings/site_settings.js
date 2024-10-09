@@ -2,6 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Site Settings', {
+	onload: function(frm) {
+		frappe.realtime.on('Go1-CMS:reload-page', () => {
+			frm.reload_doc();
+		});
+	},
 	refresh: function(frm) {
 		//by sivaranjani
 		frappe.call({

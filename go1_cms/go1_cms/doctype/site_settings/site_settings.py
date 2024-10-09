@@ -71,6 +71,9 @@ class SiteSettings(Document):
 		if domain_config.setup_domain and domain_config.external_server==1:
 			self.connect_external_bench()
 
+	def after_command(self, commands=None):
+		frappe.publish_realtime("Go1-CMS:reload-page")
+
 	def enable_only_ssl(self):
 		#check if not wildcard ssl installed
 		domain_config = frappe.get_single('Server Configuration')
