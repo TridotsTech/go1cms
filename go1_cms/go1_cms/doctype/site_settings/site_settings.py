@@ -230,7 +230,7 @@ class SiteSettings(Document):
 			if not host_ip:
 				host_name = socket.gethostname() 
 				host_ip = socket.gethostbyname(host_name)
-				hostip_ex = socket.gethostbyname_ex(host_name)
+				hostip_ex = socket.gethostbyname_ex(host_name)[2]
 			if not domain:
 				domain = self.domain_name
 			html = "host_name :"+str(host_name)+"\n"
@@ -244,7 +244,7 @@ class SiteSettings(Document):
 				frappe.log_error("check_subdomain_with_arecord", html)
 				if not ipval.to_text():
 					frappe.throw("{domain} not mapped with A record!".format(domain=domain))
-				if ipval.to_text()!=host_ip:
+				if ipval.to_text()!=host_ip or ipval.to_text() not in hostip_ex:
 					frappe.throw("Domain {domain} not configured with IP.".format(domain=domain))
 
 		except Exception as e:
