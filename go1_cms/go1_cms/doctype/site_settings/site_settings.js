@@ -34,6 +34,7 @@ frappe.ui.form.on('Site Settings', {
 					method: 'go1_cms.go1_cms.doctype.site_settings.site_settings.execute_bench_command',
 					args: {
 						method: val.command,
+						docname: frm.doc.name
 					}
 				});
 				dialog.hide();

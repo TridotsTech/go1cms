@@ -47,7 +47,7 @@ class SiteSettings(Document):
 				# setup nginx config and reloading the nginx service		
 				commands.append("bench setup nginx --yes")		
 				commands.append("bench setup reload-nginx")
-				frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings",key=today() + " " + nowtime())
+				frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 				
 				#check if not wildcard ssl installed
 				if domain_config.installed_wildcard_ssl==0 or (domain_config.installed_wildcard_ssl==1 and self.enable_custom_ssl==1):
@@ -87,7 +87,7 @@ class SiteSettings(Document):
 				commands=["bench setup add-domain {custom_domain} --site {site_name}".format(custom_domain=wwwdomain, site_name=site_name)]
 				commands.append("bench setup nginx --yes")		
 				commands.append("bench setup reload-nginx")
-				frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings",key=today() + " " + nowtime())
+				frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 				wwwcommand=["sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=wwwdomain)]
 				frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=wwwcommand,doctype="Site Settings",key=today() + " " + nowtime())
 			else:
@@ -180,19 +180,19 @@ class SiteSettings(Document):
 			# remove www subdomain bench setup sync-domains
 			if wwwdomain in domain_array:
 				commands.append("bench setup remove-domain {custom_domain} --site {site_name}".format(custom_domain=wwwdomain, site_name=site_name))
-			frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings",key=today() + " " + nowtime())
+			frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			# setup nginx config and reloading the nginx service		
 			#nginxCmd=["bench setup nginx --yes"]
 			nginxCmd=["service nginx start"]
 			nginxCmd.append("bench setup nginx --yes")
 			nginxCmd.append("bench setup reload-nginx")
-			frappe.enqueue('go1_cms.utils.utils.run_command', commands=nginxCmd, doctype="Site Settings",key=today() + " " + nowtime())
+			frappe.enqueue('go1_cms.utils.utils.run_command', commands=nginxCmd, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			
 		else:
 			commands=["bench setup nginx --yes"]
 			commands.append("service nginx start")		
 			commands.append("bench setup reload-nginx")
-			frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings",key=today() + " " + nowtime())
+			frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			
 
 	def get_domains(self):
@@ -310,7 +310,7 @@ def process(data):
 			frappe.db.commit()
 
 @frappe.whitelist()
-def execute_bench_command(method, args=None):
+def execute_bench_command(method,docname=None, args=None):
 	dateTimeObj = datetime.now()
 	key = dateTimeObj.strftime("%Y-%m-%d %H:%M:%S.%f")
 	if args:
@@ -321,6 +321,7 @@ def execute_bench_command(method, args=None):
 	frappe.enqueue('go1_cms.utils.utils.run_command',
 		commands=commands,
 		doctype="Site Settings",
+		docname=docname,
 		key=key
 	)
 

@@ -10,7 +10,7 @@ import re, shlex
 from frappe.utils import cstr, flt, getdate, nowdate, today, encode, get_url, get_datetime, to_timedelta, nowtime
 from six import iteritems, text_type, string_types
 
-def run_command(commands, doctype, key, cwd='..', docname=' ', after_command=None):
+def run_command(commands, doctype, key, cwd='..', docname='', after_command=None):
 	verify_whitelisted_call()
 	start_time = frappe.utils.time.time()
 	console_dump = ""
