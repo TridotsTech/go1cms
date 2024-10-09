@@ -70,17 +70,23 @@ def run_ssl_command(commands, doctype, key, cwd='..', docname=None, after_comman
 			concat_query = "{}\n{}\n".format(input2, input3)
 			terminal.communicate(input=concat_query.encode('utf-8'))
 			frappe.log_error("terminal", terminal)
+			frappe.log_error("terminal.stdout.read(1)", terminal.stdout.read(1))
+			frappe.log_error("safe_decode(terminal.stdout.read(1))", safe_decode(terminal.stdout.read(1)))
 			for c in iter(lambda: safe_decode(terminal.stdout.read(1)), ''):
 				frappe.publish_realtime(key, c, user=frappe.session.user)
 				frappe.log_error("c", c)
 				console_dump += c
 		if terminal.wait():
+			frappe.log_error("11", "11")
 			_close_the_doc(start_time, key, console_dump, status='Failed', user=frappe.session.user)
 		else:
+			frappe.log_error("22", "11")
 			_close_the_doc(start_time, key, console_dump, status='Success', user=frappe.session.user)
 	except Exception as e:
+		frappe.log_error("33", "11")
 		_close_the_doc(start_time, key, "{} \n\n{}".format(e, console_dump), status='Failed', user=frappe.session.user)
 	finally:
+		frappe.log_error("44", "11")
 		frappe.db.commit()
 		# hack: frappe.db.commit() to make sure the log created is robust,
 		# and the _refresh throws an error if the doc is deleted 

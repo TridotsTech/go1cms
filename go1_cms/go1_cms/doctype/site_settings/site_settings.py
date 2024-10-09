@@ -31,6 +31,7 @@ class SiteSettings(Document):
 		sudo visudo
 		your_username ALL=(ALL) NOPASSWD: /usr/sbin/nginx -t
 		your_username ALL=(ALL) NOPASSWD: /bin/systemctl reload nginx
+		your_username ALL=(ALL) NOPASSWD: /usr/local/bin/bench setup *
 		'''
 		#wildcard_domains = self.get_wildcard_ssl_enabled_domains()
 		#print(wildcard_domains)
