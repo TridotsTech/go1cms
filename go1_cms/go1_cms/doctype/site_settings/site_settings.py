@@ -55,10 +55,10 @@ class SiteSettings(Document):
 					command=[]	
 					command.append("sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=self.domain_name))
 					#enable ssl domain with wwww
-					frappe.enqueue('go1_cms.utils.utils.run_ssl_command',commands=command,doctype="Site Settings",key=today() + " " + nowtime())
+					frappe.enqueue('go1_cms.utils.utils.run_ssl_command',commands=command,doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 					if domain_config.enable_www==1 and self.disable_www==0:
 						wwwcommand=["sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=wwwdomain)]
-						frappe.enqueue('go1_cms.utils.utils.run_ssl_command',commands=wwwcommand,doctype="Site Settings",key=today() + " " + nowtime())
+						frappe.enqueue('go1_cms.utils.utils.run_ssl_command',commands=wwwcommand,doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			else:
 				#install ssl 
 				self.enable_only_ssl()
@@ -89,14 +89,14 @@ class SiteSettings(Document):
 				commands.append("bench setup reload-nginx")
 				frappe.enqueue('go1_cms.utils.utils.run_command', commands=commands, doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 				wwwcommand=["sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=wwwdomain)]
-				frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=wwwcommand,doctype="Site Settings",key=today() + " " + nowtime())
+				frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=wwwcommand,doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			else:
 				wwwcommand=["sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=wwwdomain)]
-				frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=wwwcommand,doctype="Site Settings",key=today() + " " + nowtime())
+				frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=wwwcommand,doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 	
 			# add custom ssl or lets's encrypt ssl	
 			command.append("sudo -H bench setup lets-encrypt {site_name} --custom-domain {domain}".format(site_name=site_name, domain=self.domain_name))
-			frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=command,doctype="Site Settings",key=today() + " " + nowtime())
+			frappe.enqueue('go1_cms.utils.utils.run_ssl_command',	commands=command,doctype="Site Settings", docname=self.name,key=today() + " " + nowtime())
 			
 			
 	def connect_external_bench(self):
