@@ -241,14 +241,10 @@ class SiteSettings(Document):
 			html += "result :"+str(result)+"\n"
 			for ipval in result:
 				html += "ipval.to_text() :"+str(ipval.to_text())+"\n"
-				if ipval.to_text() not in hostip_ex:
-					html += "123 :"+str(ipval.to_text())+"\n"
-				if hostip_ex.count(ipval.to_text()):
-					html += "123==== :"+str(ipval.to_text())+"\n"
 				frappe.log_error("check_subdomain_with_arecord", html)
 				if not ipval.to_text():
 					frappe.throw("{domain} not mapped with A record!".format(domain=domain))
-				if ipval.to_text()!=host_ip or ipval.to_text() not in hostip_ex:
+				if ipval.to_text()!=host_ip and not hostip_ex.count(ipval.to_text()):
 					frappe.throw("Domain {domain} not configured with IP.".format(domain=domain))
 
 		except Exception as e:
