@@ -11,8 +11,9 @@ from frappe.utils import cstr, flt, getdate, nowdate, today, encode, get_url, ge
 from six import iteritems, text_type, string_types
 
 def run_command(commands, doctype, key, cwd='..', docname=None, after_command=None):
-	verify_whitelisted_call()
+
 	start_time = frappe.utils.time.time()
+	frappe.log_error("start_time", start_time)
 	console_dump = ""
 	logged_command = " && ".join(commands)
 	logged_command += " " #to make sure passwords at the end of the commands are also hidden
@@ -47,7 +48,6 @@ def run_command(commands, doctype, key, cwd='..', docname=None, after_command=No
 			doctype=doctype, docname=docname, commands=commands)
 
 def run_ssl_command(commands, doctype, key, cwd='..', docname=None, after_command=None):
-	verify_whitelisted_call()
 	start_time = frappe.utils.time.time()
 	console_dump = ""
 	logged_command = " && ".join(commands)
