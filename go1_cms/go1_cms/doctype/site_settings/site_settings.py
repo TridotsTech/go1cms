@@ -230,10 +230,12 @@ class SiteSettings(Document):
 			if not host_ip:
 				host_name = socket.gethostname() 
 				host_ip = socket.gethostbyname(host_name)
+				hostip_ex = socket.gethostbyname_ex(host_name)
 			if not domain:
 				domain = self.domain_name
 			html = "host_name :"+str(host_name)+"\n"
 			html += "host_ip :"+str(host_ip)+"\n"
+			html += "hostip_ex :"+str(hostip_ex)+"\n"
 			html += "domain :"+str(domain)+"\n"
 			result = dns.resolver.query(domain, 'A')
 			html += "result :"+str(result)+"\n"
