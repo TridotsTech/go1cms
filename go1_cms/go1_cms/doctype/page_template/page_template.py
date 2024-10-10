@@ -1,8 +1,16 @@
 # Copyright (c) 2022, Tridotstech and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 
 class PageTemplate(Document):
-	pass
+	def autoname(self): 
+		naming_series="PT-"
+		if self.business:
+			abbr=frappe.db.get_value('Business',self.business,'abbr')
+			if abbr:
+				naming_series+=abbr+'-'
+		self.naming_series=naming_series
+		from frappe.model.naming import make_autoname
+		self.name = make_autoname(naming_series+'.#####', doc=self)

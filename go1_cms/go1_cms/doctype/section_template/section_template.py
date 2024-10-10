@@ -8,6 +8,15 @@ import json
 from frappe.model.document import Document
 from go1_cms.utils.setup import get_settings_from_domain
 class SectionTemplate(Document):
+	def autoname(self): 
+		naming_series="SET-"
+		if self.business:
+			abbr=frappe.db.get_value('Business',self.business,'abbr')
+			if abbr:
+				naming_series+=abbr+'-'
+		self.naming_series=naming_series
+		from frappe.model.naming import make_autoname
+		self.name = make_autoname(naming_series+'.#####', doc=self)
 	def validate(self):		
 		if self.content:
 			for item in self.content:

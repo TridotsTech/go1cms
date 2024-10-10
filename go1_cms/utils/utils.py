@@ -63,16 +63,24 @@ def run_ssl_command(commands, doctype, key, cwd='..', docname=None, after_comman
 	frappe.publish_realtime(key, "Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command), user=frappe.session.user)
 	try:
 		frappe.log_error("commands", commands)
+
 		for command in commands:
+			# try:
+			#     # Use subprocess to run the command, providing 'y' as input to continue
+			#     process = subprocess.run(command, shell=True, input="y\n", text=True, check=True)
+			    
+			#     print("Command executed successfully!")
+			# except subprocess.CalledProcessError as e:
+			#     print(f"Error: {e}")
 			terminal = Popen(shlex.split(command), stdin=PIPE, stdout=PIPE, stderr=STDOUT, cwd=cwd)
 			input2 = "Y"
 			input3 = "Y"
 			concat_query = "{}\n{}\n".format(input2, input3)
 			terminal.communicate(input=concat_query.encode('utf-8'))
-			frappe.log_error("terminal", terminal)
-			frappe.log_error("terminal.stdout", terminal.stdout)
-			frappe.log_error("terminal.stdout.read(1)", terminal.stdout.read(1))
-			frappe.log_error("safe_decode(terminal.stdout.read(1))", safe_decode(terminal.stdout.read(1)))
+			# frappe.log_error("terminal", terminal)
+			# frappe.log_error("terminal.stdout", terminal.stdout)
+			# frappe.log_error("terminal.stdout.read(1)", terminal.stdout.read(1))
+			# frappe.log_error("safe_decode(terminal.stdout.read(1))", safe_decode(terminal.stdout.read(1)))
 			for c in iter(lambda: safe_decode(terminal.stdout.read(1)), ''):
 				frappe.publish_realtime(key, c, user=frappe.session.user)
 				frappe.log_error("c", c)
