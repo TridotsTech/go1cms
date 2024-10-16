@@ -1641,8 +1641,12 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
             elif doc_name and frappe.db.exists("Website Item", doc_name):
                 web_item = frappe.get_doc('Website Item', doc_name)
                 info_item = web_item.get_info()
+                slides = []
+                if info_item.slides:
+                    slides = [{'heading': i.heading, 'description': i.description,
+                               'image': i.image} for i in info_item.slides]
                 website_item = frappe._dict({
-                    "slides": [{'heading': i.heading, 'description': i.description, 'image': i.image} for i in info_item.slides],
+                    "slides": slides,
                     "name": web_item.name,
                     "item_code": web_item.item_code,
                     "web_item_name": web_item.web_item_name,
@@ -1658,7 +1662,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
                     "recommended_items": info_item.recommended_items,
                     "product_info": info_item.shopping_cart.product_info,
                     "cart_settings": info_item.shopping_cart.cart_settings.as_dict(),
-                    "tabs": [i.as_dict() for i in web_item.tabs],
+                    "tabs": [{'name': i.name, 'idx': i.idx, 'label': i.label, 'content': i.content} for i in web_item.tabs],
                 })
                 data_source['title_breadcrumb'] = web_item.web_item_name
                 data_source['website_item'] = website_item
@@ -1787,7 +1791,7 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
+def get_scroll_content(page, device_type, doc_name=None, add_info=None, page_no=0, page_len=3):
     doc = frappe.get_doc('Web Page Builder', page)
     # frappe.log_error(doc.as_dict(),">> Web page builder data <<")
     source_doc, sections, html = get_source_doc(doc, device_type)
@@ -1798,7 +1802,7 @@ def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
     start = int(page_no) * int(page_len)
     if source_doc:
         html_list, js = get_page_html(
-            doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=device_type, add_info=add_info, page_no=start, page_len=int(page_len) + int(start))
+            doc=doc, sections=sections, html=html, source_doc=source_doc, device_type=device_type, doc_name=doc_name, add_info=add_info, page_no=start, page_len=int(page_len) + int(start))
     return html_list
 
 
@@ -2161,7 +2165,7 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
                 "doctype": "Page Section"
             },
         }, target_doc, ignore_permissions=True)
-        if doc.section_type == "Form" and doc.form:
+        if doc.form:
             form_set = frappe.db.get_value(
                 'MBW Form', {'id_parent_copy': doc.form}, ['name'], as_dict=1)
             if not form_set:
@@ -2201,7 +2205,7 @@ def import_sections_from_template(page_id, doctype="Page Template", id_client_we
                 "doctype": "Page Section"
             },
         }, target_doc, ignore_permissions=True)
-        if doc.section_type == "Form" and doc.form:
+        if doc.form:
             form_set = frappe.db.get_value(
                 'MBW Form', {'id_parent_copy': doc.form}, ['name'], as_dict=1)
             if not form_set:

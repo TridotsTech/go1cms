@@ -19,7 +19,10 @@
   "use_other_domain",
   "domain",
   "email_setup_section",
+  "system_email",
+  "cskh_email",
   "allow_send_email_contact",
+  "allow_send_email_customer",
   "list_email_receipt",
   "synchronize_lead_data_section",
   "sync_lead_data"
@@ -120,12 +123,30 @@
    "fieldname": "developer_mode",
    "fieldtype": "Check",
    "label": "Developer Mode"
+  },
+  {
+   "fieldname": "system_email",
+   "fieldtype": "Link",
+   "label": "System Email",
+   "options": "Email Account"
+  },
+  {
+   "fieldname": "cskh_email",
+   "fieldtype": "Link",
+   "label": "CSKH Email",
+   "options": "Email Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_send_email_customer",
+   "fieldtype": "Check",
+   "label": "Allow send email customer"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-18 10:50:34.083636",
+ "modified": "2024-10-14 11:13:54.286562",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",

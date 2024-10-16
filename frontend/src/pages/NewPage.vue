@@ -139,6 +139,7 @@ const msgError = ref()
 const refToTop = ref(null)
 const showDialogCreate = ref(false)
 const route_prefix = ref('')
+const alreadyActions = ref(false)
 
 // get detail
 const page = createResource({
@@ -148,6 +149,7 @@ const page = createResource({
   transform: (data) => {
     route_prefix.value = data?.web_page?.route_prefix
     _page.value = JSON.parse(JSON.stringify(data))
+    alreadyActions.value = true
     return data
   },
   onError: (err) => {
@@ -163,16 +165,14 @@ const page = createResource({
 })
 
 // handle allow actions
-const alreadyActions = ref(false)
 const dirty = computed(() => {
+  if(JSON.stringify(_page.value) == '{}'){
+    return false
+  }
   return JSON.stringify(page.data) !== JSON.stringify(_page.value)
 })
 const pageExists = computed(() => {
   return JSON.stringify(_page.value) !== '{}'
-})
-
-watch(dirty, (val) => {
-  alreadyActions.value = true
 })
 
 const breadcrumbs = [{ label: 'Thêm trang mới', route: { name: 'New Page' } }]

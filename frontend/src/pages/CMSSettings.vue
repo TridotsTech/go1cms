@@ -30,10 +30,10 @@
       <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
       <ErrorMessage :message="msgError" />
     </div>
-    <div v-if="JSON.stringify(_domain) != '{}'">
+    <div v-if="JSON.stringify(_settings) != '{}'">
       <FieldsComponent
-        title="Cấu hình chung"
-        v-model="_domain.fields_cp"
+        title="Cài đặt chung"
+        v-model="_settings.fields_cp"
       ></FieldsComponent>
     </div>
     <div v-else class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -56,17 +56,17 @@ const router = useRouter()
 
 const { changeLoadingValue } = globalStore()
 
-const breadcrumbs = [{ label: 'Cấu hình tên miền', route: { name: 'Domain' } }]
-const _domain = ref({})
+const breadcrumbs = [{ label: 'Cài đặt', route: { name: 'CMS Settings' } }]
+const _settings = ref({})
 const msgError = ref()
 
 // get detail
-const domain = createResource({
-  url: 'go1_cms.api.domain.get_setup',
+const settings = createResource({
+  url: 'go1_cms.api.settings.get_setup',
   method: 'GET',
   auto: true,
   transform: (data) => {
-    _domain.value = JSON.parse(JSON.stringify(data))
+    _settings.value = JSON.parse(JSON.stringify(data))
     return data
   },
   onError: (err) => {
@@ -83,14 +83,20 @@ const domain = createResource({
 // handle allow actions
 const alreadyActions = ref(false)
 const dirty = computed(() => {
-  if (_domain.value?.fields_cp) {
+  if (_settings.value?.fields_cp) {
     let show_edit = false
-    if (_domain.value?.fields_cp[0].fields[0].content) {
+    if (_settings.value?.fields_cp[0].fields[0].content) {
       show_edit = true
     }
-    _domain.value.fields_cp[0].fields[1].show_edit = show_edit
+    _settings.value.fields_cp[0].fields[1].show_edit = show_edit
+
+    show_edit = false
+    if (_settings.value?.fields_cp[1].fields[2].content) {
+      show_edit = true
+    }
+    _settings.value.fields_cp[1].fields[3].show_edit = show_edit
   }
-  return JSON.stringify(domain.data) !== JSON.stringify(_domain.value)
+  return JSON.stringify(settings.data) !== JSON.stringify(_settings.value)
 })
 
 watch(dirty, (val) => {
@@ -100,14 +106,14 @@ watch(dirty, (val) => {
 async function callUpdateDoc() {
   changeLoadingValue(true, 'Đang lưu...')
   try {
-    let data = JSON.parse(JSON.stringify(_domain.value))
+    let data = JSON.parse(JSON.stringify(_settings.value))
 
-    let docUpdate = await call('go1_cms.api.domain.update_setup', {
+    let docUpdate = await call('go1_cms.api.settings.update_setup', {
       data: data,
     })
 
     if (docUpdate.name) {
-      domain.reload()
+      settings.reload()
 
       createToast({
         title: 'Cập nhật thành công',
@@ -128,6 +134,6 @@ async function callUpdateDoc() {
 }
 
 async function cancelSaveDoc() {
-  await domain.reload()
+  await settings.reload()
 }
 </script>

@@ -4,7 +4,10 @@ from frappe import _, local
 from pypika import functions as fn
 from go1_cms.api.common import (
     pretty_date,
-    convert_str_to_list
+    convert_str_to_list,
+    send_email_manage,
+    send_email_customer,
+    get_domain
 )
 from go1_cms.api.website.log_page import (
     log_page_view
@@ -185,7 +188,7 @@ def get_job_related(name, **kwargs):
         if q:
             m_query = m_query.where(q)
         q_data = m_query.select(JobOpening.name, JobOpening.job_title, JobOpening.posted_on,
-                                JobOpening.location, JobOpening.employment_type, JobOpening.lower_range,
+                                JobOpening.location, JobOpening.employment_type, JobOpening.lower_range, JobOpening.route,
                                 JobOpening.upper_range, JobOpening.publish_salary_range, JobOpening.salary_per, JobOpening.department, JobOpening.vacancies, JobOpening.job_requisition, JobOpening.designation, JobOpening.currency
                                 ).limit(limit).orderby(JobOpening.posted_on, order=frappe.qb.desc)
 
@@ -288,6 +291,20 @@ def upload_cv(name_job, **kwargs):
             new_doc.resume_attachment = new_file.file_url
 
         new_doc.save(ignore_permissions=True)
+
+        ### send email ###
+        d_t = new_doc.creation.strftime("%d-%m-%Y %H:%M:%S")
+        subject = f"Một đơn ứng tuyển mới từ {applicant_name or email or phone_number or ''} tạo lúc {d_t}"
+        domain = get_domain()
+        redirect_to = f'{domain}/app/job-applicant/{new_doc.name}'
+
+        args = {
+            'full_name': applicant_name,
+            'email': email,
+            'phone_number': phone_number,
+            'redirect_to': redirect_to,
+        }
+        send_email_manage(subject, 'email_apply_cv_manage', args)
 
         frappe.enqueue(log_page_view, queue='default', ip=ip,
                        form_type="Form tuyển dụng")

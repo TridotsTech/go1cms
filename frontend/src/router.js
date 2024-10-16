@@ -30,9 +30,9 @@ const routes = [
     component: () => import('@/pages/Interface.vue'),
   },
   {
-    path: '/domain',
-    name: 'Domain',
-    component: () => import('@/pages/Domain.vue'),
+    path: '/settings',
+    name: 'CMS Settings',
+    component: () => import('@/pages/CMSSettings.vue'),
   },
   {
     path: '/website-setup',
@@ -44,11 +44,11 @@ const routes = [
     name: 'Setup File Template',
     component: () => import('@/pages/SetupFileTemplate.vue'),
   },
-  {
-    path: '/form-setup',
-    name: 'Form Setup',
-    component: () => import('@/pages/FormSetup.vue'),
-  },
+  // {
+  //   path: '/form-setup',
+  //   name: 'Form Setup',
+  //   component: () => import('@/pages/FormSetup.vue'),
+  // },
   {
     path: '/contacts',
     name: 'Contacts',

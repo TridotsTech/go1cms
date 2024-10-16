@@ -21,8 +21,14 @@ from webshop.webshop.shopping_cart.cart import (
     update_cart as update_cart_default,
     request_for_quotation
 )
+from go1_cms.api.common import (
+    send_email_manage,
+    send_email_customer,
+    get_domain
+)
 import json
 from erpnext.selling.doctype.quotation.quotation import _make_sales_order
+
 
 @frappe.whitelist(methods=['POST'])
 def get_cart():
@@ -66,6 +72,39 @@ def create_order(**kwargs):
         sale_order.payment_schedule = []
         sale_order.save(ignore_permissions=True)
         
+        ### send email ###
+        # manage
+        sale_order.reload()
+        domain = get_domain()
+        d_t = sale_order.creation.strftime("%d-%m-%Y %H:%M:%S")
+        subject = f"Một đơn hàng mới tạo lúc {d_t}"
+        redirect_to = f'{domain}/app/sales-order/{sale_order.name}'
+
+        args = {
+            'order_code': sale_order.name,
+            'redirect_to': redirect_to,
+        }
+        send_email_manage(subject, 'email_order_manage', args)
+        # customer
+        subject = f'Đơn hàng của bạn đã được tạo thành công vào lúc {d_t}'
+        redirect_to = f'{domain}/tai-khoan?tag=my-orders'
+        items = []
+        for item in sale_order.items:
+            items.append({
+                'item_name': item.item_name,
+                'qty': item.qty,
+                'uom': item.uom,
+                'rate': item.rate,
+                'amount': item.amount,
+            })
+        args = {
+            'order_code': sale_order.name,
+            'redirect_to': redirect_to,
+            'items': items,
+            'grand_total': sale_order.grand_total
+        }
+        send_email_customer(subject, 'email_order_customer', [email], args)
+        
         if hasattr(frappe.local, "cookie_manager"):
             frappe.local.cookie_manager.delete_cookie("cart_count")
             frappe.local.cookie_manager.delete_cookie("cart")
@@ -78,13 +117,16 @@ def create_order(**kwargs):
 @frappe.whitelist()
 def update_cart(item_code, qty, additional_notes=None, add_item=False):
     customer = get_customer()
+    qty = flt(qty)
     
     if add_item:
         quotation = _get_cart_quotation()
         quotation_items = quotation.get("items", {"item_code": item_code})
         if quotation_items:
-            qty = quotation_items[0].qty + flt(qty)
+            qty = quotation_items[0].qty + qty
 
+    if qty > 999:
+        qty = 999
     rs = update_cart_default(item_code, qty, additional_notes=additional_notes,
                              with_items=1)
     quotation = _get_cart_quotation()
@@ -92,7 +134,7 @@ def update_cart(item_code, qty, additional_notes=None, add_item=False):
         quotation, customer.customer_primary_address)
 
     cart_cookie = {
-        "items": [{"item_code": item.item_code, "item_name": item.item_name, "qty": item.qty, "amount": item.amount, "rate": item.rate,"uom": item.uom,"image": item.image} for item in quotation.items],
+        "items": [{"item_code": item.item_code, "item_name": item.item_name, "qty": item.qty, "amount": item.amount, "rate": item.rate, "uom": item.uom, "image": item.image} for item in quotation.items],
         "grand_total": quotation.grand_total
     }
     cart_cookie = json.dumps(cart_cookie, ensure_ascii=False)
@@ -111,6 +153,11 @@ def create_new_address_order(info={}):
     address.append("links", dict(
         link_doctype="Customer", link_name=customer.name))
     address.insert(ignore_permissions=True, ignore_mandatory=True)
+    # update primary address customer
+    customer.customer_primary_address = address.name
+    customer.flags.ignore_permissions = True
+    customer.flags.ignore_mandatory = True
+    customer.save()
     return address
 
 

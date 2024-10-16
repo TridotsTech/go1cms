@@ -170,19 +170,23 @@
     classQuill="overflow-auto min-h-80"
     v-model="data"
   ></CustomQuillEditor> -->
-  <div class="flex" v-else-if="field.type === 'checkbox'">
-    <FormControl
-      :disabled="field.disabled"
-      :id="field.name"
-      type="checkbox"
-      v-model="data"
-    />
-    <label
-      v-if="field.labelInput"
-      class="ml-2 text-sm text-gray-600"
-      :for="field.name"
-      >{{ field.labelInput }}</label
-    >
+  <div v-else-if="field.type === 'checkbox'">
+    <div class="flex">
+      <FormControl
+        :disabled="field.disabled"
+        :id="field.name"
+        type="checkbox"
+        v-model="data"
+      />
+      <label
+        v-if="field.labelInput"
+        class="ml-2 text-sm text-gray-600"
+        :for="field.name"
+        >{{ field.labelInput }}</label
+      >
+    </div>
+    <div v-if="field.description" v-html="field.description" class="text-sm my-1 text-gray-600">
+    </div>
   </div>
   <FormControl
     v-else-if="['number', 'Int'].includes(field.type)"

@@ -36,6 +36,46 @@ def getStrTimestamp():
     return arr_time[0] + arr_time[1]
 
 
+def get_domain():
+    domain = frappe.db.get_single_value('CMS Settings', 'domain')
+    if not frappe.db.get_single_value('CMS Settings', 'use_other_domain') or not domain:
+        domain = frappe.utils.get_url()
+    return domain
+
+def send_email_manage(subject, template, args={}, now=False):
+    cms_settings = frappe.get_single('CMS Settings')
+    if cms_settings.system_email and cms_settings.allow_send_email_contact and cms_settings.list_email_receipt:
+        list_email = cms_settings.list_email_receipt
+        recipients = [e.strip()
+                      for e in str(cms_settings.list_email_receipt).split(';') if e]
+
+        sender = frappe.db.get_value(
+            'Email Account', cms_settings.system_email, 'email_id')
+        frappe.sendmail(
+            sender=sender,
+            recipients=recipients,
+            subject=subject,
+            template=template,
+            args=args,
+            now=now,
+        )
+
+
+def send_email_customer(subject, template, recipients=[], args={}, now=False):
+    cms_settings = frappe.get_single('CMS Settings')
+    if cms_settings.cskh_email and cms_settings.allow_send_email_customer:
+        sender = frappe.db.get_value(
+            'Email Account', cms_settings.cskh_email, 'email_id')
+        frappe.sendmail(
+            sender=sender,
+            recipients=recipients,
+            subject=subject,
+            template=template,
+            args=args,
+            now=now,
+        )
+
+
 def copy_header_component(name, sub_name):
     target_doc = None
     doc_header_comp = frappe.new_doc("Header Component")
@@ -507,7 +547,8 @@ def create_file_template():
 
 def handle_write_file_multiple_doctype_template():
     print('=======================handle_write_file_multiple_doctype_template=======================')
-    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template', 'CMS Settings', 'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post']
+    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template', 'CMS Settings',
+                'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post']
     temps = []
     for d in doctypes:
         if d not in ['CMS Settings']:
@@ -538,6 +579,16 @@ def handle_write_file_multiple_doctype_template():
             if doctype == 'MBW Website Template':
                 d_j['template_in_use'] = 0
                 d_j['installed_template'] = 0
+            elif doctype == "CMS Settings":
+                d_j['developer_mode'] = 0
+                d_j['use_other_domain'] = 0
+                d_j['domain'] = ''
+                d_j['system_email'] = None
+                d_j['cskh_email'] = None
+                d_j['allow_send_email_contact'] = 0
+                d_j['allow_send_email_customer'] = 0
+                d_j['list_email_receipt'] = ''
+                d_j['sync_lead_data'] = 0
 
             data.append(d_j)
 

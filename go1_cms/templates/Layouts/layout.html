@@ -239,7 +239,15 @@
         });
       }
     }
-    
+
+    function checkLogin(){
+      let user_id = getCookie('user_id')
+      if(!user_id || user_id == "Guest"){
+        return false;
+      }
+      return true
+    }
+
     function updateDisplayCart(){
       let el_count = $('#cart_count')
       let el_count_1 = $('#el_count_1')
@@ -260,8 +268,9 @@
     function updateDisplayAccount(){
       let el_user = $('#user_name')
       let el_user_1 = $('#user_name_1')
-      let user_name = getCookie('full_name')
-      if(user_name && user_name !=="Guest"){
+      let user_name = decodeURIComponent(getCookie('full_name'))
+      let user_id = getCookie('user_id')
+      if(user_id && user_id !=="Guest"){
         if(el_user){
           el_user.text(user_name);
           el_user.attr("title", user_name);
@@ -272,6 +281,29 @@
         }
       }
 
+    }
+  </script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <!-- check login -->
+  <script>
+    if(!checkLogin()){
+      let route = window.location.pathname;
+      if(['/tai-khoan', '/gio-hang', '/thanh-toan', '/dat-hang-thanh-cong'].includes(route)){
+        window.location.href = '/dang-nhap'
+      }
+    }else{
+      let route = window.location.pathname;
+      let cartObject = JSON.parse(decodeURIComponent(getCookie("cart")));
+
+      if(['/dang-nhap', '/dang-ky'].includes(route)){
+        window.location.href = '/tai-khoan'
+      }
+
+      if(['/thanh-toan'].includes(route) && !cartObject?.items?.length){
+          window.location.href = '/gio-hang'
+      }
     }
   </script>
 </head>
@@ -491,7 +523,7 @@
         Accept: 'application/json',
         ContentType: 'application/json;charset=utf-8',
         url: window.location.origin + '/api/method/go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_scroll_content',
-        data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}', 'add_info': add_info },
+        data: { 'page_no': page, 'page_len': page_len, 'page': '{{doc.name}}', 'device_type': '{{device_type}}','doc_name': '{{ doc_name }}', 'add_info': add_info },
         dataType: "json",
         headers: {
           'X-Frappe-CSRF-Token': '{{csrf_token}}'

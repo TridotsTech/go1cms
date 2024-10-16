@@ -5,7 +5,12 @@
     </template>
     <template #right-header>
       <div class="flex gap-2 justify-end" v-if="alreadyActions">
-        <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+        <Tooltip
+          v-if="!_page?.web_page?.is_detail_page"
+          text="Xem trang"
+          :hover-delay="1"
+          :placement="'top'"
+        >
           <div>
             <Button
               variant="subtle"
@@ -22,18 +27,19 @@
             </Button>
           </div>
         </Tooltip>
-        <Tooltip text="Nhân bản trang" :hover-delay="1" placement="top">
+        <!-- tinh nang sau -->
+        <!-- <Tooltip text="Nhân bản trang" :hover-delay="1" placement="top">
           <div>
             <Button
               variant="subtle"
               theme="green"
               size="md"
               label="Nhân bản trang"
-              :disabled="dirty"
+              :disabled="!dirty"
             >
             </Button>
           </div>
-        </Tooltip>
+        </Tooltip> -->
         <Dropdown
           v-if="_page?.web_page?.allow_delete"
           :options="[
@@ -155,6 +161,7 @@ const router = useRouter()
 const _page = ref({})
 const msgError = ref()
 const refToTop = ref(null)
+const alreadyActions = ref(false)
 
 // get detail
 const page = createResource({
@@ -164,6 +171,7 @@ const page = createResource({
   auto: true,
   transform: (data) => {
     _page.value = JSON.parse(JSON.stringify(data))
+    alreadyActions.value = true
     return data
   },
   onError: (err) => {
@@ -187,30 +195,31 @@ watch(route, (val, oldVal) => {
 })
 
 // handle allow actions
-const alreadyActions = ref(false)
 const dirty = computed(() => {
-  if (_page.value?.fields_cp) {
-    let route = _page.value?.fields_cp[1].fields[0].content
-    let new_route = ''
-    if (route) {
-      let lst_route = route.split('/')
-      lst_route = lst_route.map((el) => {
-        return customSlugify(el)
-      })
-      new_route = lst_route.filter((el) => el !== '').join('/')
-    }
+  if (!_page.value?.web_page?.is_detail_page) {
+    if (_page.value?.fields_cp) {
+      let route = _page.value?.fields_cp[1].fields[0].content
+      let new_route = ''
+      if (route) {
+        let lst_route = route.split('/')
+        lst_route = lst_route.map((el) => {
+          return customSlugify(el)
+        })
+        new_route = lst_route.filter((el) => el !== '').join('/')
+      }
 
-    if (!new_route) {
-      new_route = _page.value?.fields_cp[1].fields[1].content
+      if (!new_route) {
+        new_route = _page.value?.fields_cp[1].fields[1].content
+      }
+      _page.value.fields_cp[1].fields[0].description = new_route
     }
-    _page.value.fields_cp[1].fields[0].description = new_route
+  }
+
+  if (JSON.stringify(_page.value) == '{}') {
+    return false
   }
 
   return JSON.stringify(page.data) !== JSON.stringify(_page.value)
-})
-
-watch(dirty, (val) => {
-  alreadyActions.value = true
 })
 
 const breadcrumbs = computed(() => {

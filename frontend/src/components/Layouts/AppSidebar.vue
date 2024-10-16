@@ -201,25 +201,19 @@ const allViews = computed(() => {
       // icon: SettingsIcon,
       views: [
         {
-          label: 'Menu',
-          icon: MenuIcon,
-          to: 'Menu',
-        },
-        {
-          label: 'Domain',
-          icon: DomainIcon,
-          to: 'Domain',
-        },
-
-        {
           label: 'Thiết lập website',
           icon: SettingsIcon,
           to: 'Website Setup',
         },
         {
-          label: 'Cấu hình biểu mẫu',
+          label: 'Menu',
+          icon: MenuIcon,
+          to: 'Menu',
+        },
+        {
+          label: 'Cài đặt',
           icon: FormSetupIcon,
-          to: 'Form Setup',
+          to: 'CMS Settings',
         },
       ],
     })

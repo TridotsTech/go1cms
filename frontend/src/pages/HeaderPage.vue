@@ -83,12 +83,14 @@ const router = useRouter()
 const breadcrumbs = [{ label: 'Đầu trang', route: { name: 'Header Page' } }]
 const _header = ref({})
 const msgError = ref()
+const alreadyActions = ref(false)
 
 const header = createResource({
   url: 'go1_cms.api.header.get_info_header_component',
   auto: true,
   transform: (data) => {
     _header.value = JSON.parse(JSON.stringify(data))
+    alreadyActions.value = true
     return data
   },
   onError: (err) => {
@@ -104,13 +106,12 @@ const header = createResource({
 })
 
 // handle allow actions
-const alreadyActions = ref(false)
-const dirty = computed(() => {
-  return JSON.stringify(header.data) !== JSON.stringify(_header.value)
-})
 
-watch(dirty, (val) => {
-  alreadyActions.value = true
+const dirty = computed(() => {
+  if(JSON.stringify(_header.value) == '{}'){
+    return false
+  }
+  return JSON.stringify(header.data) !== JSON.stringify(_header.value)
 })
 
 async function callUpdateDoc() {

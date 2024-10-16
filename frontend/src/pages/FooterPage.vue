@@ -83,12 +83,14 @@ const { views } = viewsStore()
 const breadcrumbs = [{ label: 'Chân trang', route: { name: 'Footer Page' } }]
 const _footer = ref({})
 const msgError = ref()
+const alreadyActions = ref(false)
 
 const footer = createResource({
   url: 'go1_cms.api.footer.get_info_footer_component',
   auto: true,
   transform: (data) => {
     _footer.value = JSON.parse(JSON.stringify(data))
+    alreadyActions.value = true
     return data
   },
   onError: (err) => {
@@ -103,13 +105,11 @@ const footer = createResource({
 })
 
 // handle allow actions
-const alreadyActions = ref(false)
 const dirty = computed(() => {
+  if(JSON.stringify(_footer.value) == '{}'){
+    return false
+  }
   return JSON.stringify(footer.data) !== JSON.stringify(_footer.value)
-})
-
-watch(dirty, (val) => {
-  alreadyActions.value = true
 })
 
 async function callUpdateDoc() {

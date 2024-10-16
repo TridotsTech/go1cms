@@ -54,12 +54,19 @@ def update_accout_info(**kwargs):
         user = frappe.get_doc('User', frappe.session.user)
         full_name = account_info.get("full_name")
         location = account_info.get("location")
+        mobile_no = account_info.get("mobile_no")
         if full_name and full_name != user.first_name:
             user.first_name = full_name
             check_update = True
         if location and location != user.location:
             user.location = location
             check_update = True
+        if mobile_no and user.mobile_no != mobile_no:
+            if frappe.db.exists("User", {"mobile_no": mobile_no}):
+                return frappe.throw('Số điện thoại đã được đăng ký', frappe.DuplicateEntryError)
+            user.mobile_no = mobile_no
+            check_update = True
+            
         if check_update:
             user.save(ignore_permissions=True)
 

@@ -8,7 +8,9 @@ from go1_cms.api.website.log_page import (
 from go1_cms.api.wrapper_api import (
     check_user_admin
 )
-
+from go1_cms.api.common import (
+    send_email_manage
+)
 
 @frappe.whitelist()
 @check_user_admin
@@ -42,7 +44,6 @@ def create_contact(**kwargs):
     #         frappe.throw(f"{f.field_label} không được để trống")
 
     doc = frappe.new_doc("MBW Contact")
-
     doc.last_name = kwargs.get("last_name") or ''
     doc.first_name = kwargs.get("first_name") or ''
     if kwargs.get("full_name"):
@@ -82,19 +83,10 @@ def create_contact(**kwargs):
             doc_lead.insert(ignore_permissions=True)
 
     # send email
-    if cms_settings.allow_send_email_contact and cms_settings.list_email_receipt:
-        list_email = cms_settings.list_email_receipt
-        recipients = [e.strip()
-                      for e in str(cms_settings.list_email_receipt).split(';')]
-        subject = f"Nhận được một liên hệ mới {doc.email or ''} - {doc.phone_number or ''}"
-
-        frappe.sendmail(
-            recipients=recipients,
-            subject=subject,
-            template="email_send_contact",
-            args=doc.as_dict(),
-            # now=True,
-        )
+    doc.reload()
+    d_t = doc.creation.strftime("%d-%m-%Y %H:%M:%S")
+    subject = f"Nhận được một liên hệ mới vào lúc {d_t}"
+    send_email_manage(subject, "email_send_contact", doc.as_dict())
 
     frappe.enqueue(log_page_view, queue='default', ip=local.request.remote_addr,
                    form_type="Form liên hệ")

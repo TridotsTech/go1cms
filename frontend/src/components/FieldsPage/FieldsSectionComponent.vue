@@ -34,7 +34,8 @@
                 :urlImage="field.image"
               ></DialogImage>
             </div>
-            <div class="flex items-center mb-4 gap-2">
+            <!-- tinh nang sau -->
+            <!-- <div class="flex items-center mb-4 gap-2">
               <Tooltip
                 v-if="field.is_clone"
                 text="Xóa nhân bản"
@@ -58,7 +59,7 @@
                 >
                 </Button>
               </Tooltip>
-            </div>
+            </div> -->
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <template v-for="fd in field.fields">

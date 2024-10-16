@@ -7252,7 +7252,7 @@ fieldset:disabled .btn {
   flex-shrink: 1 !important;
 }
 .flex-wrap {
-  flex-wrap: wrap !important;
+  flex-wrap: wrap;
 }
 .flex-nowrap {
   flex-wrap: nowrap !important;

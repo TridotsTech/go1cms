@@ -8,12 +8,12 @@ from webshop.webshop.shopping_cart.cart import (
 
 LST_STATUS = [
     {"label": "Tất cả", "value": ""},
-    {"label": "Chờ xử lý", "value": "Draft"},
-    {"label": "Chờ giao hàng và thanh toán", "value": "To Deliver and Bill"},
-    {"label": "Chờ thanh toán", "value": "To Bill"},
-    {"label": "Chờ giao hàng", "value": "To Deliver"},
-    {"label": "Hoàn thành", "value": "Completed"},
-    {"label": "Đã hủy", "value": "Cancelled"},
+    {"label": "Chờ xử lý", "value": "Draft",'color': '#919EAB'},
+    {"label": "Chờ giao hàng và thanh toán", "value": "To Deliver and Bill",'color': '#1877F2'},
+    {"label": "Chờ thanh toán", "value": "To Bill",'color': '#1877F2'},
+    {"label": "Chờ giao hàng", "value": "To Deliver",'color': '#1877F2'},
+    {"label": "Hoàn thành", "value": "Completed",'color': '#118D57'},
+    {"label": "Đã hủy", "value": "Cancelled",'color': '#B71D18'},
 ]
 
 @frappe.whitelist(methods=['GET'])
@@ -46,7 +46,7 @@ def get_list_order(name_section, **kwargs):
 
     SalesOrder = frappe.qb.DocType('Sales Order')
     # get data
-    m_query = (frappe.qb.from_(SalesOrder))
+    m_query = (frappe.qb.from_(SalesOrder)).where(SalesOrder.customer == frappe.session.user)
     if text_search:
         m_query = m_query.where(
             SalesOrder.name.like('%' + text_search+'%'))
@@ -69,6 +69,10 @@ def get_list_order(name_section, **kwargs):
         transaction_date = item.get('transaction_date')
         item['transaction_date'] = transaction_date.strftime(
             "%d-%m-%Y")
+        stat = next((s for s in LST_STATUS if s["value"] == item['status']), None)
+        if stat:
+            item['status'] = stat.get('label')
+            item['color_status'] = stat.get('color')
 
     q_count = m_query.select(
         fn.Count(SalesOrder.name).as_('total').distinct())
@@ -89,7 +93,7 @@ def get_list_order(name_section, **kwargs):
 
 @frappe.whitelist(methods=['GET'])
 def get_detail_order(order_name):
-    if frappe.db.exists("Sales Order", order_name):
+    if frappe.db.exists("Sales Order", {'name': order_name, 'customer': frappe.session.user}):
         order = frappe.get_doc("Sales Order", order_name).as_dict()
         transaction_date = order.get('transaction_date')
         order['transaction_date'] = transaction_date.strftime(
@@ -97,6 +101,7 @@ def get_detail_order(order_name):
         stat = next((item for item in LST_STATUS if item["value"] == order['status']), None)
         if stat:
             order['status'] = stat.get('label')
+            order['color_status'] = stat.get('color')
         
         address_billing_info = {}
         if order.customer_address:

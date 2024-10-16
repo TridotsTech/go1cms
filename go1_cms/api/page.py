@@ -66,7 +66,7 @@ def get_info_page(name):
                 'field_key': 'route_template',
                 'field_type': 'Data',
                 'content': web_page.route,
-                'allow_edit': True,
+                'allow_edit': web_item.allow_delete,
                 'show_edit': True,
                 'description': web_page.route,
                 'label_des': f'<strong>{domain}/</strong>',
@@ -128,6 +128,7 @@ def get_info_page(name):
     fields_cp.append(fields_page)
 
     web_page_info = {
+        'is_detail_page': True if web_item.page_type else False,
         'web_item': name,
         'name_page': web_item.name_page,
         'doc_page': web_item.page_id,

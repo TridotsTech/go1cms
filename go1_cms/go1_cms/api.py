@@ -757,7 +757,7 @@ def get_footer_info(footer_id):
                                 '{0}'.format(js), data_source)
 
                 item["web_template"] = (
-                    item["web_template"] + custom_css_js) or ''
+                    item["web_template"] or '' + custom_css_js) or ''
 
                 if item.get('section_type') == "Menu":
                     page_section_menu = frappe.get_value(

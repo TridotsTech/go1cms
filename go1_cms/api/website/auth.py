@@ -6,7 +6,10 @@ from frappe.utils import (
     validate_email_address,
 )
 from go1_cms.api.common import (
-    validate_password
+    validate_password,
+    send_email_manage,
+    send_email_customer,
+    get_domain
 )
 from webshop.webshop.doctype.webshop_settings.webshop_settings import (
     get_shopping_cart_settings,
@@ -96,6 +99,28 @@ def sign_up(**kwargs):
         new_doc.new_password = password
         new_doc.save(ignore_permissions=True)
 
+        ### send email ###
+        # manage
+        domain = get_domain()
+        d_t = new_doc.creation.strftime("%d-%m-%Y %H:%M:%S")
+        subject = f"Một tài khoản mới tạo lúc {d_t}"
+        redirect_to = f'{domain}/app/user/{new_doc.name}'
+
+        args = {
+            'full_name': full_name,
+            'phone_number': phone_number,
+            'email': email,
+            'redirect_to': redirect_to,
+        }
+        send_email_manage(subject, 'email_register_manage', args)
+        # customer
+        subject = f'Tài khoản của bạn đã được tạo vào lúc {d_t}'
+        redirect_to = f'{domain}/dang-nhap'
+        args = {
+            'redirect_to': redirect_to,
+        }
+        send_email_customer(subject, 'email_register_customer', [email], args)
+        
         frappe.enqueue(
             "go1_cms.api.website.auth.create_info_after_create_user",
             info_user={"email": email, "full_name": full_name,
