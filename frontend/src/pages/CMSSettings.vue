@@ -98,7 +98,7 @@
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span>đường dẫn tới xem chi tiết cho quản trị viên</span>
+                    <span>đường dẫn xem chi tiết liên hệ mới</span>
                   </div>
                 </div>
               </template>
@@ -112,6 +112,13 @@
                 <div class="text-gray-600">
                   <div class="mb-2">
                     <strong v-pre>Bao gồm các biến sử dụng chung.</strong>
+                  </div>
+                  <div class="mb-2">
+                    <strong v-pre>{{ redirect_to }}: </strong>
+                    <span
+                      >đường dẫn xem chi tiết tài khoản mới(cho quản trị viên) /
+                      đường dẫn tới trang đăng nhập(cho khách hàng)</span
+                    >
                   </div>
                 </div>
               </template>
@@ -168,7 +175,7 @@
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span>đường dẫn tới xem chi tiết cho quản trị viên</span>
+                    <span>đường dẫn xem chi tiết đơn ứng tuyển</span>
                   </div>
                 </div>
               </template>
@@ -192,13 +199,6 @@
                   <div class="mb-2">
                     <strong v-pre>{{ address }}: </strong>
                     <span>địa chỉ khách hàng</span>
-                  </div>
-                  <div class="mb-2">
-                    <strong v-pre>{{ redirect_to }}: </strong>
-                    <span
-                      >đường dẫn tới xem chi tiết cho quản trị viên / cho khách
-                      hàng</span
-                    >
                   </div>
                   <div class="mb-2">
                     <div>
@@ -246,6 +246,13 @@
                   <div class="mb-2">
                     <strong v-pre>{{ grand_total }}: </strong>
                     <span>tổng số tiền tạm tính</span>
+                  </div>
+                  <div class="mb-2">
+                    <strong v-pre>{{ redirect_to }}: </strong>
+                    <span
+                      >đường dẫn xem chi tiết đơn hàng mới(cho quản trị viên) /
+                      đường dẫn xem đơn hàng(cho khách hàng)</span
+                    >
                   </div>
                 </div>
               </template>
