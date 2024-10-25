@@ -14,9 +14,7 @@
               label=""
               icon="eye"
               :link="
-                views.data?.config_domain?.use_other_domain
-                  ? views.data?.config_domain?.domain + _footer?.web_page?.route
-                  : _footer?.web_page?.route
+                views.data?.config_domain?.domain + _footer?.web_page?.route
               "
             >
             </Button>
@@ -106,7 +104,7 @@ const footer = createResource({
 
 // handle allow actions
 const dirty = computed(() => {
-  if(JSON.stringify(_footer.value) == '{}'){
+  if (JSON.stringify(_footer.value) == '{}') {
     return false
   }
   return JSON.stringify(footer.data) !== JSON.stringify(_footer.value)

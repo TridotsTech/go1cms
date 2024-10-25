@@ -9,7 +9,7 @@
       </div>
       <div v-for="(field, idx) in fieldsComponent" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
-          <div class="flex mb-4 gap-4">
+          <div class="flex items-center mb-4 gap-4">
             <div>
               <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
               <div

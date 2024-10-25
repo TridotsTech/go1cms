@@ -43,8 +43,10 @@
   {
    "fieldname": "type_template",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Lo\u1ea1i m\u1eabu",
-   "options": "Website c\u00f4ng ty\nWebsite b\u00e1n h\u00e0ng\nWebsite tuy\u1ec3n d\u1ee5ng"
+   "options": "Website gi\u1edbi thi\u1ec7u\nWebsite tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng v\u00e0 tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng c\u00f3 gi\u1ecf h\u00e0ng"
   },
   {
    "fieldname": "page_templates",
@@ -112,7 +114,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-13 10:30:24.262344",
+ "modified": "2024-10-21 16:34:53.331373",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

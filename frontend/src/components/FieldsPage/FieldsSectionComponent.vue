@@ -15,7 +15,7 @@
                 <h2 class="font-bold text-lg">
                   {{ field.section_title }}
                 </h2>
-                <Tooltip text="Sửa tiêu đề" :hover-delay="1" :placement="'top'">
+                <!-- <Tooltip text="Sửa tiêu đề" :hover-delay="1" :placement="'top'">
                   <div>
                     <Button
                       variant="ghost"
@@ -26,7 +26,7 @@
                     >
                     </Button>
                   </div>
-                </Tooltip>
+                </Tooltip> -->
               </div>
 
               <DialogImage

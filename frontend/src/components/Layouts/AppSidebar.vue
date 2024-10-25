@@ -337,7 +337,7 @@ function getIcon(name) {
     case 'DescriptionIcon':
       return DescriptionIcon
     default:
-      return PinIcon
+      return WebpageIcon
   }
 }
 

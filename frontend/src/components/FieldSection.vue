@@ -177,7 +177,9 @@
           disabled: !field.allow_edit,
           description: field.description,
           label_des: field.label_des,
+          actions: field.actions,
         }"
+        v-model:actions="field['actions']"
         v-model="field['content']"
       ></Field>
     </div>

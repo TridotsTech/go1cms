@@ -20,10 +20,22 @@
   "domain",
   "email_setup_section",
   "system_email",
-  "cskh_email",
   "allow_send_email_contact",
-  "allow_send_email_customer",
   "list_email_receipt",
+  "column_break_sfdl",
+  "ad_email_temp_new_contact",
+  "ad_email_temp_new_cv_apply",
+  "ad_email_temp_new_order",
+  "ad_email_temp_new_account",
+  "email_g\u1eedi_cho_kh\u00e1ch_h\u00e0ng_section",
+  "cskh_email",
+  "allow_send_email_customer",
+  "column_break_risx",
+  "cus_email_temp_new_order",
+  "cus_email_temp_delivery_order",
+  "cus_email_temp_order_success",
+  "cus_email_temp_cancel_order",
+  "cus_email_temp_new_account",
   "synchronize_lead_data_section",
   "sync_lead_data"
  ],
@@ -87,7 +99,7 @@
   {
    "fieldname": "email_setup_section",
    "fieldtype": "Section Break",
-   "label": "Email setup"
+   "label": "Email g\u1eedi cho qu\u1ea3n tr\u1ecb"
   },
   {
    "default": "0",
@@ -141,12 +153,79 @@
    "fieldname": "allow_send_email_customer",
    "fieldtype": "Check",
    "label": "Allow send email customer"
+  },
+  {
+   "fieldname": "email_g\u1eedi_cho_kh\u00e1ch_h\u00e0ng_section",
+   "fieldtype": "Section Break",
+   "label": "Email g\u1eedi cho kh\u00e1ch h\u00e0ng"
+  },
+  {
+   "fieldname": "column_break_sfdl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ad_email_temp_new_contact",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi c\u00f3 li\u00ean h\u1ec7 m\u1edbi",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "ad_email_temp_new_cv_apply",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi c\u00f3 CV \u1ee9ng tuy\u1ec3n m\u1edbi",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "ad_email_temp_new_order",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi c\u00f3 \u0111\u01a1n h\u00e0ng m\u1edbi",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "ad_email_temp_new_account",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi c\u00f3 t\u00e0i kho\u1ea3n \u0111\u0103ng k\u00fd m\u1edbi",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_risx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cus_email_temp_new_account",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi \u0111\u0103ng k\u00fd t\u00e0i kho\u1ea3n",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "cus_email_temp_new_order",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi \u0111\u1eb7t \u0111\u01a1n h\u00e0ng m\u1edbi",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "cus_email_temp_order_success",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi ho\u00e0n th\u00e0nh \u0111\u01a1n h\u00e0ng",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "cus_email_temp_cancel_order",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi h\u1ee7y \u0111\u01a1n h\u00e0ng",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "cus_email_temp_delivery_order",
+   "fieldtype": "Link",
+   "label": "M\u1eabu email khi \u0111\u01a1n h\u00e0ng \u0111ang \u0111\u01b0\u1ee3c giao",
+   "options": "Email Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-14 11:13:54.286562",
+ "modified": "2024-10-25 09:47:10.499939",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",

@@ -4,7 +4,8 @@ import json
 from go1_cms.api.common import (
     get_field_section_component,
     update_fields_page_section,
-    update_fields_page
+    update_fields_page,
+    get_domain
 )
 from slugify import slugify
 from go1_cms.api.wrapper_api import (
@@ -52,8 +53,7 @@ def get_info_page(name):
     fields_cp.append(fields_page)
 
     # get field group 1
-    domain = frappe.db.get_single_value(
-        'CMS Settings', 'domain') if frappe.db.get_single_value('CMS Settings', 'use_other_domain') else frappe.utils.get_url()
+    domain = get_domain()
 
     fields_page = {
         'allow_edit':  web_item.page_type == "",

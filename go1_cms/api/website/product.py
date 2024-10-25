@@ -89,8 +89,7 @@ def get_product_filter_data(**kwargs):
         sub_categories = get_child_groups_for_website(
             item_group, immediate=True)
 
-    settings = frappe.get_doc("Webshop Settings")
-    page_length = limit or settings.products_per_page or 20
+    page_length = limit or 0
     engine = ProductQuery()
 
     try:
@@ -99,6 +98,7 @@ def get_product_filter_data(**kwargs):
             field_filters,
             search_term=text_search,
             start=page_no*page_length,
+            page_length=page_length,
             item_group=item_group,
             order_by=order_by
         )

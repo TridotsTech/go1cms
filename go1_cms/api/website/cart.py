@@ -24,7 +24,8 @@ from webshop.webshop.shopping_cart.cart import (
 from go1_cms.api.common import (
     send_email_manage,
     send_email_customer,
-    get_domain
+    get_domain,
+    ORDER_STATUS
 )
 import json
 from erpnext.selling.doctype.quotation.quotation import _make_sales_order
@@ -71,23 +72,12 @@ def create_order(**kwargs):
             source_name=quotation_name, ignore_permissions=True)
         sale_order.payment_schedule = []
         sale_order.save(ignore_permissions=True)
-        
+
         ### send email ###
         # manage
         sale_order.reload()
         domain = get_domain()
-        d_t = sale_order.creation.strftime("%d-%m-%Y %H:%M:%S")
-        subject = f"Một đơn hàng mới tạo lúc {d_t}"
         redirect_to = f'{domain}/app/sales-order/{sale_order.name}'
-
-        args = {
-            'order_code': sale_order.name,
-            'redirect_to': redirect_to,
-        }
-        send_email_manage(subject, 'email_order_manage', args)
-        # customer
-        subject = f'Đơn hàng của bạn đã được tạo thành công vào lúc {d_t}'
-        redirect_to = f'{domain}/tai-khoan?tag=my-orders'
         items = []
         for item in sale_order.items:
             items.append({
@@ -97,14 +87,25 @@ def create_order(**kwargs):
                 'rate': item.rate,
                 'amount': item.amount,
             })
+
         args = {
+            'time': sale_order.creation.strftime("%d/%m/%Y %H:%M:%S"),
             'order_code': sale_order.name,
+            'order_status': ORDER_STATUS.get(sale_order.status, {}).get('label') or sale_order.status,
+            'full_name': full_name,
+            'phone_number': phone_number,
+            'email': email,
+            'address': address,
             'redirect_to': redirect_to,
             'items': items,
-            'grand_total': sale_order.grand_total
+            'grand_total': sale_order.grand_total,
         }
-        send_email_customer(subject, 'email_order_customer', [email], args)
-        
+        send_email_manage(None, 'email_new_order_manage', args)
+        # customer
+        redirect_to = f'{domain}/tai-khoan?tag=my-orders'
+        args['redirect_to'] = redirect_to
+        send_email_customer(None, 'email_new_order_customer', [email], args)
+
         if hasattr(frappe.local, "cookie_manager"):
             frappe.local.cookie_manager.delete_cookie("cart_count")
             frappe.local.cookie_manager.delete_cookie("cart")
@@ -118,7 +119,7 @@ def create_order(**kwargs):
 def update_cart(item_code, qty, additional_notes=None, add_item=False):
     customer = get_customer()
     qty = flt(qty)
-    
+
     if add_item:
         quotation = _get_cart_quotation()
         quotation_items = quotation.get("items", {"item_code": item_code})
@@ -183,6 +184,10 @@ def get_customer():
 
     user_email, phone_number = frappe.db.get_value(
         'User', user, ['email', 'mobile_no'])
+    if user == "Administrator":
+        user_email = 'Administrator'
+
+    fullname = get_fullname(user)
     contact_name = get_contact_name(user_email)
     party = None
 
@@ -208,7 +213,7 @@ def get_customer():
                 check_update = True
                 address = create_address(fullname, user_email,
                                          phone_number, doc.name)
-                customer.customer_primary_address = address.name
+                doc.customer_primary_address = address.name
 
             if check_update:
                 doc.flags.ignore_permissions = True
@@ -216,9 +221,7 @@ def get_customer():
                 doc.save()
 
         return doc
-
     else:
-        fullname = get_fullname(user)
         customer = create_customer(fullname)
         contact = create_contact(fullname, user_email, customer.name)
         address = create_address(fullname, user_email,

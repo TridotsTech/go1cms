@@ -46,7 +46,7 @@ class ProductQuery:
             "on_backorder",
         ]
 
-    def query(self, attributes=None, fields=None, search_term=None, start=0, item_group=None, order_by=None):
+    def query(self, attributes=None, fields=None, search_term=None, start=0, page_length=0, item_group=None, order_by=None):
         """
         Args:
                         attributes (dict, optional): Item Attribute filters
@@ -58,6 +58,7 @@ class ProductQuery:
                         dict: Dict containing items, item count & discount range
         """
         # track if discounts included in field filters
+        self.page_length = page_length or self.page_length
         self.filter_with_discount = bool(fields.get("discount"))
         result, discount_list, website_item_groups, cart_items, count = [], [], [], [], 0
 

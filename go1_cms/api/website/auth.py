@@ -100,27 +100,20 @@ def sign_up(**kwargs):
         new_doc.save(ignore_permissions=True)
 
         ### send email ###
-        # manage
         domain = get_domain()
-        d_t = new_doc.creation.strftime("%d-%m-%Y %H:%M:%S")
-        subject = f"Một tài khoản mới tạo lúc {d_t}"
-        redirect_to = f'{domain}/app/user/{new_doc.name}'
-
         args = {
+            'time': new_doc.creation.strftime("%d/%m/%Y %H:%M:%S"),
             'full_name': full_name,
             'phone_number': phone_number,
-            'email': email,
-            'redirect_to': redirect_to,
+            'email': email
         }
-        send_email_manage(subject, 'email_register_manage', args)
+        # manage
+        args['redirect_to'] = f'{domain}/app/user/{new_doc.name}'
+        send_email_manage(None, 'email_register_manage', args)
         # customer
-        subject = f'Tài khoản của bạn đã được tạo vào lúc {d_t}'
-        redirect_to = f'{domain}/dang-nhap'
-        args = {
-            'redirect_to': redirect_to,
-        }
-        send_email_customer(subject, 'email_register_customer', [email], args)
-        
+        args['redirect_to'] = f'{domain}/dang-nhap'
+        send_email_customer(None, 'email_register_customer', [email], args)
+
         frappe.enqueue(
             "go1_cms.api.website.auth.create_info_after_create_user",
             info_user={"email": email, "full_name": full_name,
@@ -214,16 +207,16 @@ def create_address(full_name, email, phone_number, customer_name):
         address.append("links", dict(
             link_doctype="Customer", link_name=customer_name))
         address.insert(ignore_permissions=True, ignore_mandatory=True)
+        return address
     else:
-        address = frappe.get_doc("Address", address_name)
-        if not address.address_title:
-            address.address_title = full_name
-        if not address.email_id:
-            address.email_id = email
-        if not address.phone:
-            address.phone = phone_number
-        address.flags.ignore_permissions = True
-        address.flags.ignore_mandatory = True
-        address.save()
-
-    return address
+        doc = frappe.get_doc("Address", address_name)
+        if not doc.address_title:
+            doc.address_title = full_name
+        if not doc.email_id:
+            doc.email_id = email
+        if not doc.phone:
+            doc.phone = phone_number
+        doc.flags.ignore_permissions = True
+        doc.flags.ignore_mandatory = True
+        doc.save()
+        return doc

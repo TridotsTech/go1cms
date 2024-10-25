@@ -3,27 +3,31 @@
 
 <td class="text-base leading-6 text-gray-900">
   <div class="p-8 bg-white from-markdown">
-    <p>
-      <strong class="text-lg"
-        >Một liên hệ mới từ Anh(Chị) {{full_name}}</strong
-      >
-    </p>
-    <p><strong>Email: </strong>{{email or ''}}</p>
-    <p><strong>Số điện thoại: </strong>{{phone_number or ''}}</p>
-    <p><strong>Địa chỉ: </strong>{{address or ''}}</p>
-    <p><strong>Nội dung: </strong>{{message or ''}}</p>
-    <p><strong>Nguồn từ: </strong>{{source or ''}}</p>
-    <p><strong>UTM Source: </strong>{{utm_source or ''}}</p>
-    <p><strong>UTM Campaign: </strong>{{utm_campaign or ''}}</p>
-    <p><strong>Thời gian: </strong>{{send_time or ''}}</p>
-    <p>
-      <strong>* Lưu ý: </strong>Đây là email thông báo, vui lòng không trả lời
-      email này. Xin cám ơn!
-    </p>
-    <p>
-      * Bạn nhận được email này vì đã đăng ký sử dụng sản phẩm/dịch vụ của MBW
-      CMS.
-    </p>
+    {% if content_email %}
+    {{ content_email }}
+    {% else %}
+    <div>
+      <p>
+        <strong class="text-lg">Một liên hệ mới từ Anh(Chị) {{full_name}}</strong>
+      </p>
+      <p><strong>Email: </strong>{{email or ''}}</p>
+      <p><strong>Số điện thoại: </strong>{{phone_number or ''}}</p>
+      <p><strong>Địa chỉ: </strong>{{address or ''}}</p>
+      <p><strong>Nội dung: </strong>{{message or ''}}</p>
+      <p><strong>Nguồn từ: </strong>{{source or ''}}</p>
+      <p><strong>UTM Source: </strong>{{utm_source or ''}}</p>
+      <p><strong>UTM Campaign: </strong>{{utm_campaign or ''}}</p>
+      <p><strong>Thời gian: </strong>{{send_time or ''}}</p>
+      <p>
+        <strong>* Lưu ý: </strong>Đây là email thông báo, vui lòng không trả lời
+        email này. Xin cám ơn!
+      </p>
+      <p>
+        * Bạn nhận được email này vì đã đăng ký sử dụng sản phẩm/dịch vụ của MBW
+        CMS.
+      </p>
+    </div>
+    {% endif %}
   </div>
 </td>
 

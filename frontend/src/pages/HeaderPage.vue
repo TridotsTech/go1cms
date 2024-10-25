@@ -14,9 +14,7 @@
               label=""
               icon="eye"
               :link="
-                views.data?.config_domain?.use_other_domain
-                  ? views.data?.config_domain?.domain + _header?.web_page?.route
-                  : _header?.web_page?.route
+                views.data?.config_domain?.domain + _header?.web_page?.route
               "
             >
             </Button>
@@ -108,7 +106,7 @@ const header = createResource({
 // handle allow actions
 
 const dirty = computed(() => {
-  if(JSON.stringify(_header.value) == '{}'){
+  if (JSON.stringify(_header.value) == '{}') {
     return false
   }
   return JSON.stringify(header.data) !== JSON.stringify(_header.value)

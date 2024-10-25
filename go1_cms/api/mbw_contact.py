@@ -9,8 +9,10 @@ from go1_cms.api.wrapper_api import (
     check_user_admin
 )
 from go1_cms.api.common import (
-    send_email_manage
+    send_email_manage,
+    get_domain
 )
+
 
 @frappe.whitelist()
 @check_user_admin
@@ -83,10 +85,22 @@ def create_contact(**kwargs):
             doc_lead.insert(ignore_permissions=True)
 
     # send email
+    domain = get_domain()
     doc.reload()
-    d_t = doc.creation.strftime("%d-%m-%Y %H:%M:%S")
-    subject = f"Nhận được một liên hệ mới vào lúc {d_t}"
-    send_email_manage(subject, "email_send_contact", doc.as_dict())
+    args = {
+        'time': doc.creation.strftime("%d/%m/%Y %H:%M:%S"),
+        'full_name': doc.full_name,
+        'phone_number': doc.phone_number,
+        'email': doc.email,
+        'address': doc.address,
+        'content': doc.message,
+        'source': doc.source,
+        'utm_source': doc.utm_source,
+        'utm_campaign': doc.utm_campaign,
+        'send_time': doc.send_time.strftime("%d/%m/%Y %H:%M:%S"),
+        'redirect_to': f'{domain}/cms/contacts/{doc.name}'
+    }
+    send_email_manage(None, "email_send_contact", args)
 
     frappe.enqueue(log_page_view, queue='default', ip=local.request.remote_addr,
                    form_type="Form liên hệ")

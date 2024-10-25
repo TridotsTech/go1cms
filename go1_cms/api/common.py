@@ -10,6 +10,16 @@ from frappe.utils import DATETIME_FORMAT, now, cint
 import re
 
 FIELD_TYPE_JSON = ["List", 'Button']
+ORDER_STATUS = {
+    'Draft': {"label": "Chờ xác nhận", "value": "Draft", 'color': '#919EAB'},
+    'On Hold': {"label": "Chờ xác nhận", "value": "On Hold", 'color': '#919EAB'},
+    'To Deliver and Bill': {"label": "Chờ giao hàng", "value": "To Deliver and Bill", 'color': '#1877F2'},
+    'To Bill': {"label": "Chờ giao hàng", "value": "To Bill", 'color': '#1877F2'},
+    'To Deliver': {"label": "Chờ giao hàng", "value": "To Deliver", 'color': '#1877F2'},
+    'Completed': {"label": "Hoàn thành", "value": "Completed", 'color': '#118D57'},
+    'Closed': {"label": "Hoàn thành", "value": "Closed", 'color': '#118D57'},
+    'Cancelled': {"label": "Đã hủy", "value": "Cancelled", 'color': '#B71D18'},
+}
 
 
 def validate_password(password):
@@ -42,38 +52,130 @@ def get_domain():
         domain = frappe.utils.get_url()
     return domain
 
-def send_email_manage(subject, template, args={}, now=False):
-    cms_settings = frappe.get_single('CMS Settings')
-    if cms_settings.system_email and cms_settings.allow_send_email_contact and cms_settings.list_email_receipt:
-        list_email = cms_settings.list_email_receipt
-        recipients = [e.strip()
-                      for e in str(cms_settings.list_email_receipt).split(';') if e]
 
-        sender = frappe.db.get_value(
-            'Email Account', cms_settings.system_email, 'email_id')
-        frappe.sendmail(
-            sender=sender,
-            recipients=recipients,
-            subject=subject,
-            template=template,
-            args=args,
-            now=now,
-        )
+def send_email_manage(subject, template, args={}, now=False):
+    try:
+        cms_settings = frappe.get_single('CMS Settings')
+        if cms_settings.system_email and cms_settings.allow_send_email_contact and cms_settings.list_email_receipt:
+            temp_name = None
+            if template == 'email_register_manage':
+                if cms_settings.ad_email_temp_new_account:
+                    temp_name = cms_settings.ad_email_temp_new_account
+                else:
+                    subject = subject or "Một tài khoản mới tạo lúc {{ time }}"
+            elif template == 'email_send_contact':
+                if cms_settings.ad_email_temp_new_contact:
+                    temp_name = cms_settings.ad_email_temp_new_contact
+                else:
+                    subject = subject or "Nhận được một liên hệ mới vào lúc {{ time }}"
+            elif template == 'email_new_order_manage':
+                if cms_settings.ad_email_temp_new_order:
+                    temp_name = cms_settings.ad_email_temp_new_order
+                else:
+                    subject = subject or "Một đơn hàng mới tạo lúc {{ time }} - {{ order_code }}"
+            elif template == 'email_apply_cv_manage':
+                if cms_settings.ad_email_temp_new_cv_apply:
+                    temp_name = cms_settings.ad_email_temp_new_cv_apply
+                else:
+                    subject = subject or "Một đơn ứng tuyển mới từ {{ full_name }} tạo lúc {{ time }}"
+
+            if temp_name:
+                temp = frappe.get_doc('Email Template', temp_name)
+                if not subject:
+                    subject = temp.subject
+                if temp.use_html:
+                    content_email = temp.response_html or ''
+                else:
+                    content_email = temp.response or ''
+                args['content_email'] = frappe.render_template(
+                    content_email, args)
+
+            subject = subject or ''
+            subject = frappe.render_template(subject, args)
+
+            list_email = cms_settings.list_email_receipt
+            recipients = [e.strip()
+                          for e in str(cms_settings.list_email_receipt).split(';') if e]
+            if not recipients:
+                return
+
+            sender = frappe.db.get_value(
+                'Email Account', cms_settings.system_email, 'email_id')
+            frappe.sendmail(
+                sender=sender,
+                recipients=recipients,
+                subject=subject,
+                template=template,
+                args=args,
+                now=now,
+            )
+    except Exception as ex:
+        frappe.log_error(frappe.get_traceback(),
+                         "go1_cms.api.common.send_email_manage")
 
 
 def send_email_customer(subject, template, recipients=[], args={}, now=False):
-    cms_settings = frappe.get_single('CMS Settings')
-    if cms_settings.cskh_email and cms_settings.allow_send_email_customer:
-        sender = frappe.db.get_value(
-            'Email Account', cms_settings.cskh_email, 'email_id')
-        frappe.sendmail(
-            sender=sender,
-            recipients=recipients,
-            subject=subject,
-            template=template,
-            args=args,
-            now=now,
-        )
+    recipients = [e for e in recipients if e]
+    if not recipients:
+        return
+
+    try:
+        cms_settings = frappe.get_single('CMS Settings')
+        if cms_settings.cskh_email and cms_settings.allow_send_email_customer:
+            temp_name = None
+            if template == 'email_register_customer':
+                if cms_settings.cus_email_temp_new_account:
+                    temp_name = cms_settings.cus_email_temp_new_account
+                else:
+                    subject = subject or "Tài khoản của bạn đã được tạo vào lúc {{ time }}"
+            elif template == 'email_new_order_customer':
+                if cms_settings.cus_email_temp_new_order:
+                    temp_name = cms_settings.cus_email_temp_new_order
+                else:
+                    subject = subject or "Đơn hàng của bạn đã được tạo thành công vào lúc {{ time }} - {{ order_code }}"
+            elif template == 'email_delivery_order_customer':
+                if cms_settings.cus_email_temp_delivery_order:
+                    temp_name = cms_settings.cus_email_temp_delivery_order
+                else:
+                    subject = subject or "Đơn hàng của bạn đang được giao vào lúc {{ time }} - {{ order_code }}"
+            elif template == 'email_order_success_customer':
+                if cms_settings.cus_email_temp_order_success:
+                    temp_name = cms_settings.cus_email_temp_order_success
+                else:
+                    subject = subject or "Đơn hàng của bạn đã hoàn thành vào lúc {{ time }} - {{ order_code }}"
+            elif template == 'email_cancel_order_customer':
+                if cms_settings.cus_email_temp_cancel_order:
+                    temp_name = cms_settings.cus_email_temp_cancel_order
+                else:
+                    subject = subject or "Đơn hàng của bạn đã được hủy thành công vào lúc {{ time }} - {{ order_code }}"
+
+            if temp_name:
+                temp = frappe.get_doc('Email Template', temp_name)
+                if not subject:
+                    subject = temp.subject
+                if temp.use_html:
+                    content_email = temp.response_html or ''
+                else:
+                    content_email = temp.response or ''
+                args['content_email'] = frappe.render_template(
+                    content_email, args)
+
+            subject = subject or ''
+            subject = frappe.render_template(subject, args)
+
+            sender = frappe.db.get_value(
+                'Email Account', cms_settings.cskh_email, 'email_id')
+            frappe.sendmail(
+                sender=sender,
+                recipients=recipients,
+                subject=subject,
+                template=template,
+                args=args,
+                now=now,
+            )
+    except Exception as ex:
+        frappe.log_error(frappe.get_traceback(),
+                         "go1_cms.api.common.send_email_customer")
 
 
 def copy_header_component(name, sub_name):
@@ -586,7 +688,7 @@ def handle_write_file_multiple_doctype_template():
                 d_j['system_email'] = None
                 d_j['cskh_email'] = None
                 d_j['allow_send_email_contact'] = 0
-                d_j['allow_send_email_customer'] = 0
+                d_j['allow_send_email_customer'] = 1
                 d_j['list_email_receipt'] = ''
                 d_j['sync_lead_data'] = 0
 

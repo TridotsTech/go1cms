@@ -129,9 +129,9 @@ doc_events = {
     "Color Palette": {
         "on_update": "go1_cms.go1_cms.api.update_web_themes",
     },
-    # "Job Opening": {
-    #     "validate": "go1_cms.go1_cms.api.insert_job_opening_website"
-    # }
+    "Sales Order": {
+        "on_change": "go1_cms.api.doc_events.send_mail_sale_order"
+    },
 }
 
 # Scheduled Tasks
@@ -219,6 +219,6 @@ get_translated_dict = {
     ("doctype", "Global Defaults"): "frappe.geo.country_info.get_translated_dict"
 }
 
-# fixtures = [
-#     {"doctype": "Custom Field", "filters": [{"module": "Go1 CMS"}]},
-# ]
+fixtures = [
+    {"doctype": "Custom Field", "filters": [{"module": "Go1 CMS"}]},
+]

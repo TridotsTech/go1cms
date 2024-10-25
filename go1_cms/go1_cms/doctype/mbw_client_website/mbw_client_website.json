@@ -64,7 +64,7 @@
    "fieldname": "type_template",
    "fieldtype": "Select",
    "label": "Lo\u1ea1i m\u1eabu",
-   "options": "Website c\u00f4ng ty\nWebsite b\u00e1n h\u00e0ng\nWebsite tuy\u1ec3n d\u1ee5ng"
+   "options": "Website gi\u1edbi thi\u1ec7u\nWebsite tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng v\u00e0 tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng c\u00f3 gi\u1ecf h\u00e0ng"
   },
   {
    "default": "B\u1ea3n nh\u00e1p",
@@ -103,7 +103,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-13 10:29:32.510638",
+ "modified": "2024-10-21 16:33:09.214338",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Client Website",

@@ -55,11 +55,7 @@
                     size="md"
                     label=""
                     icon="eye"
-                    :link="
-                      views.data?.config_domain?.use_other_domain
-                        ? views.data?.config_domain?.domain + '/home'
-                        : '/home'
-                    "
+                    :link="views.data?.config_domain?.domain + '/home'"
                   >
                   </Button>
                 </div>

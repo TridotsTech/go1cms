@@ -3,6 +3,9 @@ from pypika import Criterion
 from go1_cms.api.wrapper_api import (
     check_user_admin
 )
+from go1_cms.api.common import (
+    get_domain
+)
 
 
 @frappe.whitelist()
@@ -36,11 +39,10 @@ def get_views(doctype):
 
     developer_mode = frappe.db.get_single_value(
         'CMS Settings', 'developer_mode')
+
+    domain = get_domain()
     config_domain = {
-        'use_other_domain': frappe.db.get_single_value(
-            'CMS Settings', 'use_other_domain'),
-        'domain': frappe.db.get_single_value(
-            'CMS Settings', 'domain')
+        'domain': domain
     }
 
     result = {

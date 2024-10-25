@@ -208,7 +208,6 @@ def upload_cv(name_job, **kwargs):
     files = frappe.request.files
     captcha_text = kwargs.get('captcha_text', None)
     form_name = kwargs.get('form_name', None)
-    job_opening = kwargs.get('job_opening', None)
     ip = local.request.remote_addr
 
     if not form_name or not frappe.db.exists("MBW Form", form_name):
@@ -243,7 +242,7 @@ def upload_cv(name_job, **kwargs):
         new_doc.email_id = email
         new_doc.phone_number = phone_number
         new_doc.cover_letter = message
-        new_doc.job_title = job_opening
+        new_doc.job_title = name_job
         new_doc.save(ignore_permissions=True)
         new_doc.reload()
 
@@ -293,18 +292,32 @@ def upload_cv(name_job, **kwargs):
         new_doc.save(ignore_permissions=True)
 
         ### send email ###
-        d_t = new_doc.creation.strftime("%d-%m-%Y %H:%M:%S")
-        subject = f"Một đơn ứng tuyển mới từ {applicant_name or email or phone_number or ''} tạo lúc {d_t}"
         domain = get_domain()
         redirect_to = f'{domain}/app/job-applicant/{new_doc.name}'
-
+        job_open = frappe.db.get_value(
+            'Job Opening', name_job,
+            ['job_title', 'employment_type', 'location',
+                'department', 'designation', 'lower_range', 'upper_range', 'currency', 'salary_per'],
+            as_dict=1
+        )
         args = {
+            'time': new_doc.creation.strftime("%d/%m/%Y %H:%M:%S"),
+            'job_title': job_open.job_title,
+            'designation': job_open.designation,
+            'location': job_open.location,
+            'employment_type': job_open.employment_type,
+            'department': job_open.department,
+            'lower_range': job_open.lower_range,
+            'upper_range': job_open.upper_range,
+            'currency': job_open.currency,
+            'salary_per': 'Tháng' if job_open.salary_per == 'Month' else 'Năm',
             'full_name': applicant_name,
             'email': email,
             'phone_number': phone_number,
+            'content': message,
             'redirect_to': redirect_to,
         }
-        send_email_manage(subject, 'email_apply_cv_manage', args)
+        send_email_manage(None, 'email_apply_cv_manage', args)
 
         frappe.enqueue(log_page_view, queue='default', ip=ip,
                        form_type="Form tuyển dụng")

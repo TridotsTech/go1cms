@@ -17,16 +17,52 @@
       <IndicatorIcon :class="field.prefix" />
     </template>
   </FormControl>
-  <Link
-    v-else-if="field.type === 'link'"
-    class="form-control"
-    :value="data"
-    :doctype="field.doctype"
-    @change="(v) => (data = v)"
-    :placeholder="__(field.placeholder)"
-    :onCreate="field.create"
-    :filters="field.filters"
-  />
+  <div v-else-if="field.type === 'link'">
+    <Link
+      class="form-control"
+      :value="data"
+      :doctype="field.doctype"
+      @change="
+        (v) => {
+          data = v
+          if (Array.isArray(actions) && actions.length) {
+            actions[2] = v
+          }
+        }
+      "
+      :placeholder="__(field.placeholder)"
+      :onCreate="field.create"
+      :filters="field.filters"
+    />
+    <div v-if="Array.isArray(actions) && actions.length">
+      <div class="flex flex-wrap gap-2 text-sm my-1 text-gray-600">
+        <div v-if="actions[1]">
+          <a
+            class="text-blue-500 underline"
+            :href="actions[0] + actions[1]"
+            target="_blank"
+            rel=""
+            >Thêm mới</a
+          >
+        </div>
+        <div v-if="actions[2]">
+          hoặc
+          <a
+            class="text-blue-500 underline"
+            :href="actions[0] + actions[2]"
+            target="_blank"
+            rel=""
+            >Chỉnh sửa</a
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="field.description"
+      v-html="field.description"
+      class="text-sm my-1 text-gray-600"
+    ></div>
+  </div>
   <MultiselectLink
     v-else-if="field.type === 'multilink'"
     class="form-control"
@@ -185,8 +221,11 @@
         >{{ field.labelInput }}</label
       >
     </div>
-    <div v-if="field.description" v-html="field.description" class="text-sm my-1 text-gray-600">
-    </div>
+    <div
+      v-if="field.description"
+      v-html="field.description"
+      class="text-sm my-1 text-gray-600"
+    ></div>
   </div>
   <FormControl
     v-else-if="['number', 'Int'].includes(field.type)"
@@ -233,6 +272,7 @@ const props = defineProps({
   },
 })
 const data = defineModel()
+const actions = defineModel('actions')
 const refImgMeta = ref(null)
 
 watch(

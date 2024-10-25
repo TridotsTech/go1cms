@@ -44,7 +44,7 @@ def get_info_header_component():
                 'show_edit': header_component.active_button == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Văn bản nút',
+                        'field_label': 'Nhãn nút',
                         'field_key': 'button_text',
                         'field_type': 'Data',
                         'content': header_component.button_text,
@@ -52,7 +52,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text == 1
                     },
                     {
-                        'field_label': 'Văn bản phụ nút',
+                        'field_label': 'Nhãn phụ nút',
                         'field_key': 'sub_text',
                         'field_type': 'Data',
                         'content': header_component.sub_text,
@@ -87,7 +87,7 @@ def get_info_header_component():
                 'show_edit': header_component.active_button_2 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Văn bản nút',
+                        'field_label': 'Nhãn nút',
                         'field_key': 'button_text_2',
                         'field_type': 'Data',
                         'content': header_component.button_text_2,
@@ -95,7 +95,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_2 == 1
                     },
                     {
-                        'field_label': 'Văn bản phụ nút',
+                        'field_label': 'Nhãn phụ nút',
                         'field_key': 'sub_text_2',
                         'field_type': 'Data',
                         'content': header_component.sub_text_2,
@@ -130,7 +130,7 @@ def get_info_header_component():
                 'show_edit': header_component.active_button_3 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Văn bản nút',
+                        'field_label': 'Nhãn nút',
                         'field_key': 'button_text_3',
                         'field_type': 'Data',
                         'content': header_component.button_text_3,
@@ -138,7 +138,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_3 == 1
                     },
                     {
-                        'field_label': 'Văn bản phụ nút',
+                        'field_label': 'Nhãn phụ nút',
                         'field_key': 'sub_text_3',
                         'field_type': 'Data',
                         'content': header_component.sub_text_3,
@@ -173,7 +173,7 @@ def get_info_header_component():
                 'show_edit': header_component.active_button_4 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Văn bản nút',
+                        'field_label': 'Nhãn nút',
                         'field_key': 'button_text_4',
                         'field_type': 'Data',
                         'content': header_component.button_text_4,
@@ -181,7 +181,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_4 == 1
                     },
                     {
-                        'field_label': 'Văn bản phụ nút',
+                        'field_label': 'Nhãn phụ nút',
                         'field_key': 'button_text_4',
                         'field_type': 'Data',
                         'content': header_component.button_text_4,

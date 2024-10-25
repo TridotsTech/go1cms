@@ -1,5 +1,5 @@
 {% import "templates/emails/macros.html" as utils %} {% extends
-"templates/emails/base_customer.html" %} {% block content %}
+"templates/emails/base.html" %} {% block content %}
 
 <td class="text-base leading-6 text-gray-900">
     <div class="p-8 bg-white from-markdown">
@@ -8,17 +8,16 @@
         {% else %}
         <div>
             <p>
-                <strong>Bạn đã đăng ký tài khoản thành công!</strong>
+                <strong class="text-lg">Mã đơn hàng: {{order_code}}</strong>
             </p>
-            <p>Từ bây giờ, bạn có thể truy cập vào tài khoản của mình tại <a href="{{ redirect_to }}">{{ redirect_to
-                    }}</a>
-                để khám phá và sử dụng các dịch vụ mà chúng tôi cung cấp.</p>
+            <p><strong>Xem chi tiết tại: </strong><a href="{{ redirect_to }}">{{ redirect_to }}</a></p>
             <p>
                 <strong>* Lưu ý: </strong>Đây là email thông báo, vui lòng không trả lời
                 email này. Xin cám ơn!
             </p>
             <p>
-                * Bạn nhận được email này vì đã đăng ký sử dụng sản phẩm/dịch vụ của chúng tôi.
+                * Bạn nhận được email này vì đã đăng ký sử dụng sản phẩm/dịch vụ của MBW
+                CMS.
             </p>
         </div>
         {% endif %}
