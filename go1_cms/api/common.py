@@ -5,9 +5,12 @@ from frappe import _
 from frappe.model.mapper import get_mapped_doc
 import json
 import time
+import shutil
 import datetime
 from frappe.utils import DATETIME_FORMAT, now, cint
 import re
+from frappe.desk.form.load import get_attachments
+
 
 FIELD_TYPE_JSON = ["List", 'Button']
 ORDER_STATUS = {
@@ -20,6 +23,9 @@ ORDER_STATUS = {
     'Closed': {"label": "Hoàn thành", "value": "Closed", 'color': '#118D57'},
     'Cancelled': {"label": "Đã hủy", "value": "Cancelled", 'color': '#B71D18'},
 }
+# doctype resource
+DOCTYPE_RESOURCE = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group',
+                    'CMS Settings', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post', 'Email Template', 'Menu', 'MBW Form', 'MBW Website Template']
 
 
 def validate_password(password):
@@ -530,6 +536,37 @@ def remove_nulls(d):
         return d
 
 
+def remove_file_duplicate(files_old, files_append):
+    for file in files_append:
+        if file not in files_old and not file.endswith('.css'):
+            files_old.append(file)
+
+
+def save_images_to_folder(files, path, destination_folder):
+    destination_folder = os.path.join(path, destination_folder)
+    for _file in files:
+        f_name = frappe.db.get_value('File', {'file_name': _file}, ['name'])
+        if f_name:
+            _file = frappe.get_doc("File", f_name)
+            os.makedirs(destination_folder, exist_ok=True)
+            file_path = os.path.join(destination_folder, _file.file_name)
+            if not os.path.exists(file_path):
+                if type(_file.get_content()) == bytes:
+                    with open(file_path, 'wb') as file:
+                        file.write(_file.get_content())
+                else:
+                    with open(file_path, 'w') as file:
+                        file.write(_file.get_content())
+
+
+def create_zip_archive_of_the_folder(path, folder_name, zip_name):
+    folder_name = slugify(text=folder_name, separator='_')
+    zip_name = slugify(text=zip_name, separator='_')
+    folder_to_zip = os.path.join(path, folder_name)
+    output_zip = os.path.join(path, zip_name)
+    shutil.make_archive(output_zip, 'tar', folder_to_zip)
+
+
 def write_page_section(parent, path, parenttype):
     web_sections = frappe.db.get_all("Mobile Page Section", filters={
                                      "parent": parent, "parentfield": "web_section", "parenttype": parenttype}, fields=['section', 'column_index', 'idx'], order_by="idx")
@@ -647,17 +684,36 @@ def create_file_template():
     print('=========================Done create_file_template============================')
 
 
-def handle_write_file_multiple_doctype_template():
-    print('=======================handle_write_file_multiple_doctype_template=======================')
-    doctypes = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'Section Template', 'CMS Settings',
-                'Menu', 'MBW Form', 'Web Theme', 'MBW Website Template', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post']
+def delete_file_or_folder(files_path_remove):
+    # remove file install
+    for f_path in files_path_remove:
+        if os.path.exists(f_path):
+            if os.path.isfile(f_path):
+                os.remove(f_path)
+            elif os.path.isdir(f_path):
+                shutil.rmtree(f_path)
+
+
+def get_files_attach(doctype, docname):
+    files_attach = []
+    for file in get_attachments(doctype, docname):
+        arr_url = file.file_url.split('/files/')
+        files_attach.append(arr_url[1])
+
+    return files_attach
+
+
+def handle_write_multiple_files_web_template():
+    print('=======================START: handle_write_multiple_files_web_template=======================')
+    files_attach = []
     temps = []
-    for d in doctypes:
+    for d in DOCTYPE_RESOURCE:
         if d not in ['CMS Settings']:
             filters = []
-            if d in ["Menu", "Web Theme", "MBW Form", "Mbw Blog Post"]:
+            if d in ["Menu", "MBW Form", "Mbw Blog Post"]:
                 filters = [['is_template', '=', 1]]
-
+            elif d == "Email Template":
+                filters = [['reference_doctype', '=', 'CMS Settings']]
             temps.append({
                 "doc_names": frappe.db.get_all(d, filters, pluck="name"),
                 "doctype": d
@@ -671,9 +727,14 @@ def handle_write_file_multiple_doctype_template():
     for temp in temps:
         data = []
         doctype = temp.get('doctype')
-        for doc in temp.get('doc_names'):
-            print(doctype, doc)
-            d_j = frappe.get_doc(doctype, doc).as_dict()
+        print('===>>Doctype:', doctype)
+        for docname in temp.get('doc_names'):
+            print(docname)
+            # get file attach
+            files = get_files_attach(doctype, docname)
+            remove_file_duplicate(files_attach, files)
+
+            d_j = frappe.get_doc(doctype, docname).as_dict()
             # remove fields is None
             d_j = remove_nulls(d_j)
 
@@ -681,6 +742,10 @@ def handle_write_file_multiple_doctype_template():
             if doctype == 'MBW Website Template':
                 d_j['template_in_use'] = 0
                 d_j['installed_template'] = 0
+                d_j['web_theme'] = None
+                d_j['header_component'] = None
+                d_j['footer_component'] = None
+                d_j['page_templates'] = []
             elif doctype == "CMS Settings":
                 d_j['developer_mode'] = 0
                 d_j['use_other_domain'] = 0
@@ -696,11 +761,33 @@ def handle_write_file_multiple_doctype_template():
 
         # write file
         path = os.path.join(frappe.get_module_path("go1_cms"), 'mbw_json_data')
+        os.makedirs(path, exist_ok=True)
         folder_name = slugify(text=doctype, separator='_')
         json_file_name = "{0}.json".format(folder_name)
         with open(os.path.join(path, json_file_name), "w", encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, default=convert_data_to_str)
-    print('=======================DONE handle_write_file_multiple_doctype_template=======================')
+
+    print("==================START: save images to folder=================")
+    path = os.path.join(frappe.get_module_path("go1_cms"), 'section_images')
+    # delete old folder or old file
+    delete_file_or_folder([path])
+    # save file image
+    print("===>>: image")
+    save_images_to_folder(files_attach, path, 'section_images')
+    # file css
+    print("===>>: css")
+    files_css = ['aos.css', 'cms.css', 'desk.min.css',
+                 'owl.carousel.min.css', 'site_custom_css.css']
+    save_images_to_folder(files_css, path, 'css')
+    print("==================END: save images to folder=================")
+
+    # create file zip
+    print("==================START: create file zip==================")
+    path = frappe.get_module_path("go1_cms")
+    create_zip_archive_of_the_folder(path, 'section_images', 'section_images')
+    print("==================END: create file zip==================")
+
+    print('=======================END: handle_write_multiple_files_web_template=======================')
 
 
 def get_all_folder_in_dir(version):

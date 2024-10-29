@@ -133,15 +133,40 @@ def update_edit_client_website(name):
 @frappe.whitelist()
 @check_user_admin
 def delete_client_website(name):
-    name_client_web = frappe.db.get_value(
-        'MBW Client Website', {'setting_from_template': name}, ['name'])
-    if not name_client_web:
-        frappe.throw(_("Không tìm thấy trang web"), frappe.DoesNotExistError)
+    try:
+        name_client_web = frappe.db.get_value(
+            'MBW Client Website', {'setting_from_template': name}, ['name'])
+        if not name_client_web:
+            frappe.throw(_("Không tìm thấy trang web"),
+                         frappe.DoesNotExistError)
 
-    frappe.delete_doc('MBW Client Website', name_client_web)
+        frappe.delete_doc('MBW Client Website', name_client_web)
 
-    frappe.db.set_value('MBW Website Template', name, {
-        "template_in_use": 0,
-        "installed_template": 0,
-    })
-    return name
+        web_template = frappe.get_doc('MBW Website Template', name)
+        web_template_dict = web_template.as_dict()
+
+        web_template.template_in_use = 0
+        web_template.installed_template = 0
+        web_template.web_theme = None
+        web_template.header_component = None
+        web_template.footer_component = None
+        web_template.page_templates = []
+        web_template.flags.ignore_permissions = True
+        web_template.flags.ignore_mandatory = True
+        web_template.save()
+
+        # delete resource template
+        for temp in web_template_dict.page_templates:
+            frappe.delete_doc('Page Template', temp.page_template)
+        if web_template_dict.web_theme:
+            frappe.delete_doc('Web Theme', web_template_dict.web_theme)
+        if web_template_dict.header_component:
+            frappe.delete_doc('Header Component',
+                              web_template_dict.header_component)
+        if web_template_dict.footer_component:
+            frappe.delete_doc('Footer Component',
+                              web_template_dict.footer_component)
+
+        return name
+    except Exception as ex:
+        frappe.throw(_("Có lỗi xảy ra"))

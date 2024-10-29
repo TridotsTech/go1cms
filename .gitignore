@@ -7,5 +7,7 @@ tags
 node_modules
 go1_cms/public/email/email.css
 go1_cms/public/frontend
+go1_cms/go1_cms/files_zip/
+go1_cms/go1_cms/section_images/
 go1_cms/www/cms.html
 build

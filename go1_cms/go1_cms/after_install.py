@@ -23,6 +23,7 @@ def after_install():
 
     # * load setting
     if frappe.db.get_single_value("CMS Settings", "is_updated") == 0:
+        insert_email_template()
         insert_cms_settings()
 
     # * load data doctype
@@ -30,7 +31,7 @@ def after_install():
     insert_footer_layouts()
     insert_section_groups()
     insert_custom_queries()
-    insert_section_templates()
+    # insert_section_templates()
     insert_color_palletes()
     insert_section_component_groups()
     insert_section_components()
@@ -41,12 +42,12 @@ def after_install():
     insert_forms()
 
     # insert_header_components()
-    insert_page_template('header_component_v1')
+    # insert_page_template('header_component_v1')
     # insert_footer_components()
-    insert_page_template('footer_component_v1')
+    # insert_page_template('footer_component_v1')
 
-    insert_web_theme()
-    insert_page_template('page_template_v1')
+    # insert_web_theme()
+    # insert_page_template('page_template_v1')
     insert_website_template()
     insert_faq()
     insert_testimonial()
@@ -166,6 +167,11 @@ def insert_color_palletes():
     # read_module_path(file_name)
 
     file_name = "color_palette.json"
+    read_module_path_mbw(file_name)
+
+
+def insert_email_template():
+    file_name = "email_template.json"
     read_module_path_mbw(file_name)
 
 
@@ -521,7 +527,7 @@ def read_module_path_mbw(file_name, type_autoname=False):
     allow_update = get_setup_template().get('allow_update', 0)
     path = frappe.get_module_path("go1_cms")
     file_path = os.path.join(path, 'mbw_json_data', file_name)
-    
+
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             out = json.load(f)
@@ -530,7 +536,10 @@ def read_module_path_mbw(file_name, type_autoname=False):
                 try:
                     if not frappe.db.exists(i.get('doctype'), i.get('name')):
                         # insert if new app or not find doc
-                        frappe.get_doc(i).insert()
+                        doc = frappe.get_doc(i)
+                        doc.flags.ignore_permissions = True
+                        doc.flags.ignore_mandatory = True
+                        doc.insert()
                     elif str(allow_update) == '1':
                         # update if allow
                         doc = frappe.get_doc(
@@ -554,6 +563,8 @@ def read_module_path_mbw(file_name, type_autoname=False):
 
                         # call save
                         doc = frappe.get_doc(i.get('doctype'), i.get('name'))
+                        doc.flags.ignore_permissions = True
+                        doc.flags.ignore_mandatory = True
                         doc.save()
                 except frappe.NameError:
                     pass
@@ -569,6 +580,7 @@ def read_module_path_mbw(file_name, type_autoname=False):
                     frappe.get_doc(i).insert()
                 except Exception as e:
                     frappe.log_error(frappe.get_traceback(), file_name)
+
 
 def unzip_section_images():
     """Unzip current file and replace it by its children"""

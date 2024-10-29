@@ -47,7 +47,7 @@
           theme="blue"
           size="sm"
           label="Cài đặt giao diện"
-          @click="addWebTemplate"
+          @click="prepareFileTemplate"
         >
         </Button>
       </div>
@@ -447,16 +447,37 @@ const template = createResource({
   },
 })
 
-// add web template
-async function addWebTemplate() {
+async function prepareFileTemplate() {
   changeLoadingValue(true, 'Đang tải giao diện...')
   try {
-    await call('go1_cms.api.mbw_website_template.add_web_template', {
+    await call('go1_cms.api.mbw_website_template.prepare_file_template', {
+      name: props.interfaceId,
+    }).then((d) => {
+      if (d.code == 200) {
+        addWebTemplate()
+      } else {
+        changeLoadingValue(false)
+        errorMessage('Có lỗi xảy ra', d.msg)
+      }
+    })
+  } catch (err) {
+    changeLoadingValue(false)
+    if (err.messages && err.messages.length) {
+      errorMessage('Có lỗi xảy ra', err.messages[0])
+    }
+  }
+}
+
+// add web template
+async function addWebTemplate() {
+  changeLoadingValue(true, 'Đang cài đặt giao diện...')
+  try {
+    await call('go1_cms.api.mbw_website_template.create_client_website', {
       name: props.interfaceId,
     }).then((d) => {
       if (d) {
         createToast({
-          title: 'Tải giao diện thành công',
+          title: 'Cài đặt giao diện thành công',
           icon: 'check',
           iconClasses: 'text-green-600',
         })

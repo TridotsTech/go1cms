@@ -1,8 +1,7 @@
 import frappe
 from frappe import _
 from go1_cms.api.common import (
-    create_file_template,
-    handle_write_file_multiple_doctype_template
+    handle_write_multiple_files_web_template
 )
 
 from go1_cms.go1_cms.after_install import (
@@ -21,8 +20,7 @@ def create_file_json():
     if developer_mode == 0:
         frappe.throw(_("Không thể thực hiện"), frappe.PermissionError)
 
-    create_file_template()
-    handle_write_file_multiple_doctype_template()
+    handle_write_multiple_files_web_template()
     return {'msg': "Done"}
 
 
@@ -34,5 +32,5 @@ def update_from_json():
     if developer_mode == 0:
         frappe.throw(_("Không thể thực hiện"), frappe.PermissionError)
 
-    after_install()
+    # after_install()
     return {'msg': "Done"}

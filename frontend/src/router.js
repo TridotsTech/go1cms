@@ -39,11 +39,11 @@ const routes = [
     name: 'Website Setup',
     component: () => import('@/pages/WebsiteSetup.vue'),
   },
-  {
-    path: '/setup-file-template',
-    name: 'Setup File Template',
-    component: () => import('@/pages/SetupFileTemplate.vue'),
-  },
+  // {
+  //   path: '/setup-file-template',
+  //   name: 'Setup File Template',
+  //   component: () => import('@/pages/SetupFileTemplate.vue'),
+  // },
   // {
   //   path: '/form-setup',
   //   name: 'Form Setup',

@@ -14,6 +14,9 @@ from go1_cms.api.client_website import (
 from go1_cms.api.wrapper_api import (
     check_user_admin
 )
+from go1_cms.api.export_template import (
+    install_template
+)
 
 
 @frappe.whitelist()
@@ -55,7 +58,7 @@ def get_web_template(name):
 
 @frappe.whitelist()
 @check_user_admin
-def add_web_template(name):
+def create_client_website(name):
     try:
         template = frappe.get_doc("MBW Website Template", name)
         if not template:
@@ -178,3 +181,13 @@ def add_web_template(name):
         return {'name': website.name, 'template_edit': None}
     except Exception as ex:
         frappe.throw(_("Có lỗi xảy ra"))
+
+
+@frappe.whitelist()
+@check_user_admin
+def prepare_file_template(name):
+    rs = install_template(name)
+    if rs:
+        return {'code': 200, 'msg': "Tải giao diện thành công"}
+    else:
+        return {'code': 0, 'msg': "Tải giao diện thất bại"}

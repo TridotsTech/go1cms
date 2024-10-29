@@ -83,7 +83,7 @@ class MbwBlogPost(WebsiteGenerator):
 
     def validate(self):
         if not self.route:
-            route_prefix = slugify(self.category)
+            route_prefix = slugify(self.category or '')
             self.route = f"{route_prefix}/{slugify(self.title)}-{self.name}"
 
         if not self.blog_intro:

@@ -188,7 +188,7 @@ def get_setup():
                     'field_type': 'checkbox',
                     'allow_edit': active_email in [5],
                     'show_edit': active_email in [5],
-                    'description': '<strong>Gửi email trong các trường hợp:</strong> khi đặt đơn hàng mới, khi hoàn thành đơn hàng, khi hủy đơn hàng và khi đăng ký tài khoản'
+                    'description': '<strong>Gửi email trong các trường hợp:</strong> khi đặt đơn hàng mới, khi đơn hàng đang được giao, khi hoàn thành đơn hàng, khi hủy đơn hàng và khi đăng ký tài khoản'
                 },
                 {
                     'field_label': 'Mẫu email khi đặt đơn hàng mới (*)',

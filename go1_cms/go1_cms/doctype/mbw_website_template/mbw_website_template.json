@@ -10,6 +10,7 @@
   "template_name",
   "image_preview",
   "type_template",
+  "link_download",
   "column_break_cdyg",
   "web_theme",
   "header_component",
@@ -109,12 +110,17 @@
    "fieldtype": "Check",
    "in_standard_filter": 1,
    "label": "\u0110\u00e3 c\u00e0i \u0111\u1eb7t"
+  },
+  {
+   "fieldname": "link_download",
+   "fieldtype": "Small Text",
+   "label": "\u0110\u01b0\u1eddng d\u1eabn download"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-10-21 16:34:53.331373",
+ "modified": "2024-10-29 13:46:34.013555",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",
