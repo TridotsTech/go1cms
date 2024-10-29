@@ -571,9 +571,11 @@ def read_module_path_mbw(file_name, type_autoname=False):
                 except Exception as e:
                     frappe.log_error(frappe.get_traceback(), file_name)
         else:
-            frappe.db.delete(i.get('doctype'), {
-                "is_template": 1
-            })
+            doctype = out[0].get('doctype') if out else None
+            if doctype:
+                frappe.db.delete(doctype, {
+                    "is_template": 1
+                })
             for i in out:
                 try:
                     # insert if new app or not find doc
