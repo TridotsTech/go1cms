@@ -24,12 +24,13 @@ def delete_section_images():
             if filename.startswith("."):
                 # skip hidden files
                 continue
-            origin = get_files_path()
+
             arr_filename = member.name.split("/")
             if len(arr_filename) == 3:
                 with tar.extractfile(member) as file:
                     if file is not None:
-                        item_file_path = os.path.join(origin, arr_filename[2])
+                        item_file_path = os.path.join(
+                            '/files', arr_filename[2])
                         # * delete file
                         filters = [
                             ['file_url', '=', item_file_path],
