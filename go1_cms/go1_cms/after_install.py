@@ -586,28 +586,52 @@ def read_module_path_mbw(file_name, type_autoname=False):
 
 def unzip_section_images():
     """Unzip current file and replace it by its children"""
+    import tarfile
     path = frappe.get_module_path("go1_cms")
-    file_path = os.path.join(path, "section_images.zip")
-    with zipfile.ZipFile(file_path) as z:
-        for file in z.filelist:
-            if file.is_dir() or file.filename.startswith("__MACOSX/"):
-                # skip directories and macos hidden directory
+    file_path = os.path.join(path, "section_images.tar")
+    with tarfile.open(file_path, 'r') as tar:
+        for member in tar.getmembers():
+            if member.isdir():
                 continue
-            filename = os.path.basename(file.filename)
+            filename = os.path.basename(member.name)
             if filename.startswith("."):
                 # skip hidden files
                 continue
             origin = get_files_path()
-            arr_filename = file.filename.split("/")
+            arr_filename = member.name.split("/")
             if len(arr_filename) == 3:
-                item_file_path = os.path.join(origin, arr_filename[2])
-                if not os.path.exists(item_file_path):
-                    file_doc = frappe.new_doc("File")
-                    file_doc.content = z.read(file.filename)
-                    file_doc.file_name = filename
-                    file_doc.folder = "Home"
-                    file_doc.is_private = 0
-                    file_doc.save()
+                with tar.extractfile(member) as file:
+                    if file is not None:
+                        item_file_path = os.path.join(origin, arr_filename[2])
+                        if not os.path.exists(item_file_path):
+                            file_doc = frappe.new_doc("File")
+                            file_doc.content = file.read()
+                            file_doc.file_name = filename
+                            file_doc.folder = "Home"
+                            file_doc.is_private = 0
+                            file_doc.save()
+
+    # with zipfile.ZipFile(file_path) as z:
+    #     for file in z.filelist:
+    #         if file.is_dir() or file.filename.startswith("__MACOSX/"):
+    #             # skip directories and macos hidden directory
+    #             continue
+    #         filename = os.path.basename(file.filename)
+    #         if filename.startswith("."):
+    #             # skip hidden files
+    #             continue
+    #         origin = get_files_path()
+    #         arr_filename = file.filename.split("/")
+    #         print(arr_filename)
+    #         # if len(arr_filename) == 3:
+    #         #     item_file_path = os.path.join(origin, arr_filename[2])
+    #         #     if not os.path.exists(item_file_path):
+    #         #         file_doc = frappe.new_doc("File")
+    #         #         file_doc.content = z.read(file.filename)
+    #         #         file_doc.file_name = filename
+    #         #         file_doc.folder = "Home"
+    #         #         file_doc.is_private = 0
+    #         #         file_doc.save()
 
 
 @frappe.whitelist()
