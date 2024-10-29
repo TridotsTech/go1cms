@@ -24,8 +24,9 @@ ORDER_STATUS = {
     'Cancelled': {"label": "Đã hủy", "value": "Cancelled", 'color': '#B71D18'},
 }
 # doctype resource
-DOCTYPE_RESOURCE = ['Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group',
-                    'CMS Settings', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post', 'Email Template', 'Menu', 'MBW Form', 'MBW Website Template']
+DOCTYPE_RESOURCE = [
+    'Color Palette', 'Header Layout', 'Footer Layout', 'Section Template Group', 'CMS Settings', 'Blogger', 'MBW Blog Tag', 'Mbw Blog Category', 'Mbw Blog Post', 'Email Template', 'Menu', 'MBW Form', 'MBW Website Template'
+]
 
 
 def validate_password(password):
