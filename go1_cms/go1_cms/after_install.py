@@ -228,7 +228,7 @@ def insert_faq():
 
 def insert_testimonial():
     file_name = "testimonial.json"
-    read_module_path(file_name)
+    read_module_path_mbw(file_name)
 
 
 def insert_page_template(version):
