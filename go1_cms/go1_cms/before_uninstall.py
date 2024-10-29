@@ -13,25 +13,28 @@ def before_uninstall():
 
 
 def delete_section_images():
+    import tarfile
     path = frappe.get_module_path("go1_cms")
-    file_path = os.path.join(path, "section_images.zip")
-    with zipfile.ZipFile(file_path) as z:
-        for file in z.filelist:
-            if file.is_dir() or file.filename.startswith("__MACOSX/"):
-                # skip directories and macos hidden directory
+    file_path = os.path.join(path, "section_images.tar")
+    with tarfile.open(file_path, 'r') as tar:
+        for member in tar.getmembers():
+            if member.isdir():
                 continue
-            filename = os.path.basename(file.filename)
+            filename = os.path.basename(member.name)
             if filename.startswith("."):
                 # skip hidden files
                 continue
-            arr_filename = file.filename.split("/")
+            origin = get_files_path()
+            arr_filename = member.name.split("/")
             if len(arr_filename) == 3:
-                item_file_path = os.path.join('/files', arr_filename[2])
-
-                # * delete file
-                filters = [
-                    ['file_url', '=', item_file_path],
-                ]
-                files = frappe.get_all('File', filters=filters, pluck="name")
-                for f in files:
-                    frappe.delete_doc('File', f)
+                with tar.extractfile(member) as file:
+                    if file is not None:
+                        item_file_path = os.path.join(origin, arr_filename[2])
+                        # * delete file
+                        filters = [
+                            ['file_url', '=', item_file_path],
+                        ]
+                        files = frappe.get_all(
+                            'File', filters=filters, pluck="name")
+                        for f in files:
+                            frappe.delete_doc('File', f)
