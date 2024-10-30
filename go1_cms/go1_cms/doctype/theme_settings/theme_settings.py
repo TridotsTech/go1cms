@@ -23,7 +23,8 @@ class ThemeSettings(Document):
                         path, 'public', "webthemes", folder_name))
                 with open(os.path.join(path, 'public', "webthemes", folder_name, ('theme.css')), "w") as f:
                     doc_obj = self
-                    doc_obj.page_css = (self.page_css.replace('\n', ''))
+                    doc_obj.page_css = (self.page_css.replace(
+                        '\n', '')) if self.page_css else ''
                     theme_css = template.render({'doc': doc_obj})
                     # from go1_cms.utils.setup import minify_string
                     frappe.log_error(theme_css, "theme_css")
