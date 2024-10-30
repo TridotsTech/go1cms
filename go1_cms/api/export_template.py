@@ -63,7 +63,7 @@ def install_template(name):
 
         # install section template
         read_module_path_mbw(destination_folder,
-                             'section_template.json')
+                             'section_template.json', 1)
         # install header component
         insert_page_template(destination_folder, 'header_component')
         # install footer component
