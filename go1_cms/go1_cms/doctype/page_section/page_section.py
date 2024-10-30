@@ -831,6 +831,7 @@ def save_page_section_to_template(section_id):
 
     section_template.html_content = page_section.html_content
     content = []
+    section_template.content = []
     for item in page_section.content:
         new_doc = frappe.new_doc('Section Content')
         new_doc.idx = item.idx

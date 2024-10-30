@@ -776,6 +776,12 @@ def handle_write_multiple_files_web_template():
     delete_file_or_folder([path])
     # save file image
     print("===>>: image")
+    files_resource = [
+        'delete-input.svg', 'asc.svg', 'search.svg', 'vnd.svg', 'Sort-icon-up.svg', 'cancel.svg', '/files/kh1.png', 'clock.svg', 'ic-job.svg', 'Vectorlogo-breadcrumb.png', 'phone-alert.png', 'mail.png', 'outline.png', 'active-arrown.svg', 'no-active-arrown.svg'
+    ]
+    for file in files_resource:
+        if file not in files_attach:
+            files_attach.append(file)
     save_images_to_folder(files_attach, path, 'section_images')
     # file css
     print("===>>: css")

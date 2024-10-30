@@ -192,6 +192,7 @@ def create_client_website(name):
 @frappe.whitelist()
 @check_user_admin
 def prepare_file_template(name):
+    # return {'code': 200, 'msg': "Tải giao diện thành công"}
     rs = install_template(name)
     if rs:
         return {'code': 200, 'msg': "Tải giao diện thành công"}
