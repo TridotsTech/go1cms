@@ -207,7 +207,6 @@ const contact = createResource({
   },
   auto: true,
   transform: (data) => {
-    console.log(data)
     _contact.value = {
       ...data,
     }
