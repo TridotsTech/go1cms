@@ -840,9 +840,11 @@ def save_page_section_to_template(section_id):
         new_doc.field_type = item.field_type
         new_doc.content = item.content
         new_doc.fields_json = item.fields_json
-        content.append(new_doc)
 
-    section_template.content = content
+        section_template.append("content", new_doc.as_dict())
+        # content.append(new_doc)
+
+    # section_template.content = content
     section_template.web_template = page_section.web_template
     section_template.custom_css = page_section.custom_css
     section_template.custom_js = page_section.custom_js

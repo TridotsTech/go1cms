@@ -2280,7 +2280,9 @@ def save_as_template(page_id, title):
         m_page_sec.parenttype = "Page Template"
         m_page_sec.section = doc.name
         m_page_sec.idx = x.idx
-        mobile_secs.append(m_page_sec)
+
+        page_template.append("mobile_section", m_page_sec.as_dict())
+        # mobile_secs.append(m_page_sec)
     for x in web_sections:
         target_doc = None
         doc = frappe.new_doc("Page Section")
@@ -2300,9 +2302,11 @@ def save_as_template(page_id, title):
         m_page_sec.parenttype = "Page Template"
         m_page_sec.section = doc.name
         m_page_sec.idx = x.idx
-        web_secs.append(m_page_sec)
-    page_template.mobile_section = mobile_secs
-    page_template.web_section = web_secs
+
+        page_template.append("web_section", m_page_sec.as_dict())
+        # web_secs.append(m_page_sec)
+    # page_template.mobile_section = mobile_secs
+    # page_template.web_section = web_secs
     page_template.save(ignore_permissions=True)
     web_page.is_converted_to_template = 1
     web_page.save(ignore_permissions=True)

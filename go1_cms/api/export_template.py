@@ -61,6 +61,9 @@ def install_template(name):
         unzip_section_images(path_images, 'css')
         unzip_section_images(path_images, 'section_images')
 
+        # install section template
+        read_module_path_mbw(destination_folder,
+                             'section_template.json')
         # install header component
         insert_page_template(destination_folder, 'header_component')
         # install footer component
@@ -72,9 +75,6 @@ def install_template(name):
         # install web template
         read_module_path_mbw(destination_folder,
                              'mbw_website_template.json', 1)
-        # install section template
-        read_module_path_mbw(destination_folder,
-                             'section_template.json')
 
         delete_file_or_folder(files_path_remove)
         return True
@@ -425,7 +425,6 @@ def insert_page_template(path, version, allow_update=0):
                         # insert section
                         section_file_path = os.path.join(
                             path, version, fd, "section.json")
-
                         if os.path.exists(section_file_path):
                             with open(section_file_path, 'r') as f:
                                 header_out = json.load(f)

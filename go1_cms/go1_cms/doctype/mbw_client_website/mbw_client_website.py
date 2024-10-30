@@ -162,8 +162,8 @@ class MBWClientWebsite(Document):
                              "validate MBW Client Website")
 
     def after_delete(self):
-        list_header = []
-        list_footer = []
+        list_header = [self.header_component]
+        list_footer = [self.footer_component]
         for item in self.page_websites:
             doc = frappe.get_doc('Web Page Builder', item.page_id)
             if doc.header_component and doc.header_component not in list_header:

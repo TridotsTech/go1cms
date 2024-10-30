@@ -9,6 +9,7 @@ from frappe.utils import encode, get_files_path, getdate, to_timedelta,  flt
 
 
 def before_uninstall():
+    frappe.db.set_value('CMS Settings', 'CMS Settings', 'is_updated', 0)
     delete_section_images()
 
 

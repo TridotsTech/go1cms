@@ -46,8 +46,10 @@ def create_post(data):
         if frappe.db.exists({"doctype": "MBW Blog Tag", "name": tag.get('name')}):
             new_tag = frappe.new_doc("MBW Blog Tag Item")
             new_tag.tag = tag.get('name')
-            tags.append(new_tag)
-    doc_new.tags = tags
+
+            doc_new.append("tags", new_tag.as_dict())
+            # tags.append(new_tag)
+    # doc_new.tags = tags
 
     doc_new.blog_tag = data.get('blog_tag')
     doc_new.content = data.get('content') or ''
@@ -89,7 +91,8 @@ def update_post(data):
                 new_tag = frappe.new_doc("MBW Blog Tag Item")
                 new_tag.tag = tag.get('name')
                 new_tag.idx = idx
-                tags.append(new_tag)
+                doc.append("tags", new_tag.as_dict())
+                # tags.append(new_tag)
         else:
             tag_exs.idx = idx
         idx += 1

@@ -259,9 +259,10 @@ def copy_header_component(name, sub_name):
         m_page_sec.parentfield = "web_section"
         m_page_sec.parenttype = "Header Component"
         m_page_sec.section = doc.name
-        web_secs.append(m_page_sec)
+        doc_header_comp.append("web_section", m_page_sec.as_dict())
+        # web_secs.append(m_page_sec)
 
-    doc_header_comp.web_section = web_secs
+    # doc_header_comp.web_section = web_secs
     doc_header_comp.save(ignore_permissions=True)
     # frappe.db.commit()
     return doc_header_comp.name
@@ -319,9 +320,10 @@ def copy_footer_component(name, sub_name):
         m_page_sec.parentfield = "web_section"
         m_page_sec.parenttype = "Footer Component"
         m_page_sec.section = doc.name
-        web_secs.append(m_page_sec)
+        doc_footer_comp.append("web_section", m_page_sec.as_dict())
+        # web_secs.append(m_page_sec)
 
-    doc_footer_comp.web_section = web_secs
+    # doc_footer_comp.web_section = web_secs
     doc_footer_comp.save(ignore_permissions=True)
     # frappe.db.commit()
     return doc_footer_comp.name

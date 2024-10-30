@@ -343,6 +343,8 @@ def get_list_data(
             filt.extend(['=', y])
         new_filters.append(filt)
 
+    rows = [row for row in rows if row != 'action_button']
+
     data = frappe.get_list(
         doctype,
         fields=rows,

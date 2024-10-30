@@ -180,7 +180,9 @@ def create_new_page(**kwargs):
         mb_page_new.section_title = mb_st.section_title
         mb_page_new.section_type = mb_st.section_type
         mb_page_new.idx = idx
-        mobile_section.append(mb_page_new)
+
+        new_webpage.append("mobile_section", mb_page_new.as_dict())
+        # mobile_section.append(mb_page_new)
 
     web_section = []
     idx = 0
@@ -193,7 +195,9 @@ def create_new_page(**kwargs):
         mb_page_new.section_title = wb_st.section_title
         mb_page_new.section_type = wb_st.section_type
         mb_page_new.idx = idx
-        web_section.append(mb_page_new)
+
+        new_webpage.append("web_section", mb_page_new.as_dict())
+        # web_section.append(mb_page_new)
 
     if web_edit.type_web == 'Bản nháp':
         route_template = f'template_{web_edit.name}/' + route_page
@@ -201,8 +205,8 @@ def create_new_page(**kwargs):
     else:
         route_template = route_page
         route_prefix = ''
-    new_webpage.mobile_section = mobile_section
-    new_webpage.web_section = web_section
+    # new_webpage.mobile_section = mobile_section
+    # new_webpage.web_section = web_section
     new_webpage.route_template = route_template
     new_webpage.route_prefix = route_prefix
     new_webpage.save(ignore_permissions=True)

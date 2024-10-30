@@ -119,7 +119,9 @@ def create_client_website(name):
                 mb_page_new.section_title = mb_st.section_title
                 mb_page_new.section_type = mb_st.section_type
                 mb_page_new.idx = idx
-                mobile_section.append(mb_page_new)
+
+                new_webpage.append("mobile_section", mb_page_new.as_dict())
+                # mobile_section.append(mb_page_new)
 
             web_section = []
             idx = 0
@@ -132,10 +134,12 @@ def create_client_website(name):
                 mb_page_new.section_title = wb_st.section_title
                 mb_page_new.section_type = wb_st.section_type
                 mb_page_new.idx = idx
-                web_section.append(mb_page_new)
 
-            new_webpage.mobile_section = mobile_section
-            new_webpage.web_section = web_section
+                new_webpage.append("web_section", mb_page_new.as_dict())
+                # web_section.append(mb_page_new)
+
+            # new_webpage.mobile_section = mobile_section
+            # new_webpage.web_section = web_section
             new_webpage.save(ignore_permissions=True)
 
             # add item client web
@@ -149,7 +153,9 @@ def create_client_website(name):
             item_cl_web.page_type = page_temp.page_type
             item_cl_web.category = page_temp.category
             item_cl_web.idx = idx_p
-            page_websites.append(item_cl_web)
+
+            website.append("page_websites", item_cl_web.as_dict())
+            # page_websites.append(item_cl_web)
 
         # copy web theme
         web_theme = None
@@ -166,7 +172,7 @@ def create_client_website(name):
         website.type_template = template.type_template
         website.header_component = cp_header
         website.footer_component = cp_footer
-        website.page_websites = page_websites
+        # website.page_websites = page_websites
         website.setting_from_template = name
         website.save(ignore_permissions=True)
 
