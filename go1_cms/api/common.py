@@ -738,6 +738,13 @@ def handle_write_multiple_files_web_template():
             remove_file_duplicate(files_attach, files)
 
             d_j = frappe.get_doc(doctype, docname).as_dict()
+            # get file attach in child
+            if doctype == 'MBW Website Template':
+                for img in d_j.images:
+                    arr_url = img.image.split('/files/')
+                    if arr_url[1] not in files_attach:
+                        files_attach.append(arr_url[1])
+
             # remove fields is None
             d_j = remove_nulls(d_j)
 

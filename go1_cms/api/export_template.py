@@ -97,6 +97,12 @@ def export_template():
 
         files_attach = []
         web_template = frappe.get_doc(doctype, docname)
+        # get file attach in child
+        for img in web_template.images:
+            arr_url = img.image.split('/files/')
+            if arr_url[1] not in files_attach:
+                files_attach.append(arr_url[1])
+
         # write file doctype reference web template
         handle_write_multiple_files_web_template(web_template)
 
