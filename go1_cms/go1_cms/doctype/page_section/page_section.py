@@ -306,8 +306,8 @@ def get_data_source(query, dt=None, no_of_records=0, login_required=0, customer=
 	# 	if frappe.request.cookies.get('selected_store'):
 	# 		query = query.replace('where p.is_active','where  p.restaurant = "{0}" AND p.is_active '.format(unquote(frappe.request.cookies.get('selected_store'))))
 	filters = {}
-	filters['business'] = business
-	filters['restaurant'] = business
+	# filters['business'] = business
+	# filters['restaurant'] = business
 	if latitude:
 		filters['latitude'] = latitude
 	if longitude:
