@@ -1,7 +1,7 @@
 [data-route^="Form/Web Page Builder"] .modal-backdrop.show {
 	z-index: 9999;
 }
-[data-route^="Form/Web Page Builder"] .modal.fade.show,.popover {
+[data-route^="Form/Web Page Builder"] .modal.fade.show {
 	z-index: 9999 !important;
 }
 .ui-helper-hidden-accessible {
