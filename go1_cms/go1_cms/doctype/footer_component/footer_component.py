@@ -45,6 +45,7 @@ class FooterComponent(Document):
 		for item in self.as_dict()[ref_field]:
 			doc = frappe.get_doc('Page Section', item.section)
 			obj = doc.run_method('section_data')
+			obj["layout_json"] = self.layout_json
 			obj["column_index"] = item.get("column_index")
 			results.append(obj)
 		return results
