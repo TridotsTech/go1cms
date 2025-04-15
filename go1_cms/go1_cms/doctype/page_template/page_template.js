@@ -189,7 +189,7 @@ frappe.ui.form.on('Page Template', {
             frm.doc[field].map(f => {
                 let section_data = '';
                 if (has_common(frappe.user_roles, ['System Manager'])) {
-                    section_data = `<a href="/desk#Form/Page Section/${f.section}">${f.section}</a>`;
+                    section_data = `<a href="/app/page-section/${f.section}">${f.section}</a>`;
                     if (f.section != f.section_title) {
 
                         if (f.custom_title!=undefined) {
