@@ -62,7 +62,7 @@
 <div class="desktop__header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
    <div  class="web__header go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
        <div class="container"> 
-        
+        {{theme_settings}}
         {%if header.layout_json%}
             <div class="d__flex">
                 {%for col in header.layout_json%}
