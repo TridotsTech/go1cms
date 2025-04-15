@@ -73,8 +73,6 @@
                     {%set col_index = loop.index %}
                         <div style="width: {{each_col.width}}">
                             {%for sec_item in header.get("items")%}
-                            {{col_index}} == {{sec_item.column_index+1}}
-                            {{sec_item.section_name}}
                                 {%if col_index == (sec_item.column_index+1) %}
                                     {%if sec_item.section_name == "Header Logo"%}
                                         {%if header.sticky_header %}
