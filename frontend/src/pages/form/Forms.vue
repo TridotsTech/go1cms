@@ -40,7 +40,7 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <PostIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có biểu mẫu nào') }}</span>
+        <span>{{ __('No form available yet') }}</span>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@ import ViewControls from '@/components/ViewControls.vue'
 import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
-const breadcrumbs = [{ label: 'Quản lý biểu mẫu', route: { name: 'Forms' } }]
+const breadcrumbs = [{ label: __('Form management'), route: { name: 'Forms' } }]
 
 // leads data is loaded in the ViewControls component
 const forms = ref({})

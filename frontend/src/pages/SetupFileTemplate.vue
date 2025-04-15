@@ -6,11 +6,13 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
-      <h2 class="font-bold text-lg mb-4">Hành động</h2>
+      <h2 class="font-bold text-lg mb-4">{{ __('Action') }}</h2>
       <div class="flex gap-6">
         <Button
           :variant="'solid'"
@@ -72,9 +74,9 @@ async function callCreateFile() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -90,7 +92,7 @@ async function callUpdateTemplate() {
 
     if (docUpdate.msg) {
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -100,9 +102,9 @@ async function callUpdateTemplate() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

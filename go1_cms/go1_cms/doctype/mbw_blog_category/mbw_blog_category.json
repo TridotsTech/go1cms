@@ -45,7 +45,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Category Title",
+   "label": "Category name",
    "no_copy": 1,
    "reqd": 1,
    "unique": 1
@@ -53,7 +53,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-29 11:39:30.447358",
+ "modified": "2025-04-12 09:28:09.363827",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Mbw Blog Category",

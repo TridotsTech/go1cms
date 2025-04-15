@@ -5,13 +5,13 @@
   >
     <div class="p-2">
       <div class="mb-4">
-        <h2 class="font-bold text-xl">{{ title }}</h2>
+        <h2 class="font-bold text-xl">{{ __(title) }}</h2>
       </div>
       <div v-for="(field, idx) in fieldsComponent" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
           <div class="flex items-center mb-4 gap-4">
             <div>
-              <h2 class="font-bold text-lg">{{ field.section_title }}</h2>
+              <h2 class="font-bold text-lg">{{ __(field.section_title) }}</h2>
               <div
                 v-if="field.description && field.description?.msg"
                 class="text-base mt-2 flex gap-2"
@@ -39,7 +39,7 @@
                     v-if="fd.section_title"
                     class="text-base text-gray-700 font-bold mb-2"
                   >
-                    {{ fd.section_title }}
+                    {{ __(fd.section_title) }}
                   </div>
                   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <template v-for="fsc in fd.fields">
@@ -72,7 +72,7 @@ import DialogImage from '@/components/DialogImage.vue'
 const props = defineProps({
   title: {
     type: String,
-    default: 'Thông tin chung',
+    default: 'General information',
   },
 })
 const fieldsComponent = defineModel()

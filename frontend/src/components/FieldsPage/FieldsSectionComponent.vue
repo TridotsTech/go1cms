@@ -5,7 +5,7 @@
   >
     <div class="p-2">
       <div class="mb-4">
-        <h2 class="font-bold text-xl">{{ title }}</h2>
+        <h2 class="font-bold text-xl">{{ __(title) }}</h2>
       </div>
       <div v-for="(field, idx) in fieldsComponent" :key="field.name">
         <div v-if="field.show_edit" class="border-t py-4">
@@ -13,7 +13,7 @@
             <div class="flex flex-wrap items-center mb-4 gap-4">
               <div class="flex items-center">
                 <h2 class="font-bold text-lg">
-                  {{ field.section_title }}
+                  {{ __(field.section_title) }}
                 </h2>
                 <!-- <Tooltip text="Sửa tiêu đề" :hover-delay="1" :placement="'top'">
                   <div>
@@ -99,7 +99,7 @@ import DialogImage from '@/components/DialogImage.vue'
 const props = defineProps({
   title: {
     type: String,
-    default: 'Các thành phần của trang',
+    default: 'Page components',
   },
 })
 const fieldsComponent = defineModel()

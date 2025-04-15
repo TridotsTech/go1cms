@@ -5,6 +5,11 @@
       <div class="mt-6 flex items-center justify-center space-x-1.5">
         <span class="text-3xl font-semibold text-gray-900">MBW CMS</span>
       </div>
+      <div class="flex justify-center">
+        <div class="w-52">
+          <SelectLangeuage></SelectLangeuage>
+        </div>
+      </div>
       <div class="mx-auto mt-6 w-full px-4 sm:w-96">
         <form
           v-if="showEmailLogin"
@@ -22,7 +27,7 @@
                   : 'email'
               "
               required
-              label="Email"
+              :label="__('Email')"
               v-model="email"
               placeholder="jane@example.com"
               :disabled="session.login.loading"
@@ -33,7 +38,7 @@
               required
               variant="outline"
               size="md"
-              label="Mật khẩu"
+              :label="__('Password')"
               v-model="password"
               placeholder="••••••"
               :disabled="session.login.loading"
@@ -46,7 +51,7 @@
             class="mt-6 w-full"
             :loading="session.login.loading"
           >
-            Đăng nhập
+            {{ __('Login') }}
           </Button>
           <button
             v-if="authProviders.data.length"
@@ -82,6 +87,7 @@ import CMSLogo from '@/components/Icons/CMSLogo.vue'
 import { sessionStore } from '@/stores/session'
 import { createResource } from 'frappe-ui'
 import { ref } from 'vue'
+import SelectLangeuage from '@/components/Settings/SelectLanguage.vue'
 
 const session = sessionStore()
 let showEmailLogin = ref(false)

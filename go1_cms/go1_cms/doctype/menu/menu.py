@@ -10,13 +10,18 @@ class Menu(Document):
     def default_list_data():
         columns = [
             {
-                "label": "Tên menu",
+                "label": "Menu name",
                 "type": "Data",
                 "key": "title",
                 "width": "473px"
             },
             {
-                "label": "Hành động",
+                "label": "Last Modified",
+                "type": "Datetime",
+                "key": "modified"
+            },
+            {
+                "label": "Action",
                 "key": "action_button"
             }
         ]

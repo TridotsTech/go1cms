@@ -1,5 +1,5 @@
 <template>
-  <Tooltip text="Xem ảnh mẫu" :hover-delay="1" :placement="'top'">
+  <Tooltip :text="__('View sample image')" :hover-delay="1" :placement="'top'">
     <div>
       <Button
         variant="subtle"
@@ -13,7 +13,7 @@
   </Tooltip>
   <Dialog v-model="showPreviewImage" :options="{ size: '4xl' }">
     <template #body-title>
-      <h3>{{ title }}</h3>
+      <h3>{{ __(title) }}</h3>
     </template>
     <template #body-content>
       <div class="flex justify-center">

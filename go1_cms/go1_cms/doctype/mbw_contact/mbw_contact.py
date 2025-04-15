@@ -10,7 +10,7 @@ class MBWContact(Document):
     def default_list_data():
         columns = [
             {
-                "label": "Họ và tên",
+                "label": "Full name",
                 "type": "Data",
                 "key": "full_name",
                 "width": "10rem"
@@ -22,7 +22,7 @@ class MBWContact(Document):
                 "width": "16rem"
             },
             {
-                "label": "Số điện thoại",
+                "label": "Phone number",
                 "type": "Data",
                 "key": "phone_number",
                 "width": "10rem"
@@ -40,13 +40,13 @@ class MBWContact(Document):
                 "width": "10rem"
             },
             {
-                "label": "Thời gian gửi",
+                "label": "Sent time",
                 "type": "Datetime",
-                "key": "send_time",
+                "key": "sent_time",
                 "width": "12rem"
             },
             {
-                "label": "Hành động",
+                "label": "Action",
                 "key": "action_button"
             }
         ]

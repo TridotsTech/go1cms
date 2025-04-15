@@ -1,6 +1,5 @@
 import frappe
 from frappe import _
-from pypika import Criterion
 from go1_cms.go1_cms.doctype.web_page_builder.web_page_builder import import_sections_from_template
 from go1_cms.api.common import (
     copy_header_component,
@@ -38,9 +37,8 @@ def get_web_templates(repo):
 @frappe.whitelist()
 @check_user_admin
 def get_web_template(name):
-    WebTemplate = frappe.qb.DocType("MBW Website Template")
     if not frappe.db.exists('MBW Website Template', name):
-        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
+        frappe.throw(_("Interface not found"), frappe.DoesNotExistError)
     template = frappe.get_doc('MBW Website Template', name).as_dict()
     published = 0
     web_client = frappe.db.exists(
@@ -185,16 +183,22 @@ def create_client_website(name):
         template.save(ignore_permissions=True)
 
         return {'name': website.name, 'template_edit': None}
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        frappe.throw(_("Có lỗi xảy ra"))
+        frappe.throw(_("An error has occurred"))
 
 
 @frappe.whitelist()
 @check_user_admin
 def prepare_file_template(name):
-    # return {'code': 200, 'msg': "Tải giao diện thành công"}
+    # return {'code': 200, 'msg': _("Interface loaded successfully")}
     rs = install_template(name)
     if rs:
-        return {'code': 200, 'msg': "Tải giao diện thành công"}
+        return {'code': 200, 'msg': _("Interface loaded successfully")}
     else:
-        return {'code': 0, 'msg': "Tải giao diện thất bại"}
+        return {'code': 0, 'msg': _("Failed to load interface")}

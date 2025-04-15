@@ -17,7 +17,7 @@ from go1_cms.api.wrapper_api import (
 @check_user_admin
 def get_info_page(name):
     if not frappe.db.exists("MBW Client Website Item", name):
-        frappe.throw(_("Không tìm thấy trang"), frappe.DoesNotExistError)
+        frappe.throw(_("Page not found"), frappe.DoesNotExistError)
     web_item = frappe.db.get_value(
         'MBW Client Website Item', name, ['name', 'page_id', 'name_page', 'allow_delete', 'page_type', 'category'], as_dict=1)
     web_edit = frappe.db.get_value(
@@ -34,11 +34,11 @@ def get_info_page(name):
     fields_page = {
         'allow_edit': web_item.page_type == "Trang chi tiết tin tức",
         'show_edit': web_item.page_type == "Trang chi tiết tin tức",
-        'section_title': 'Áp dụng trang cho bài viết',
+        'section_title': 'Apply page to post',
         'show_prv_image': False,
         'fields': [
             {
-                'field_label': 'Thuộc danh mục',
+                'field_label': 'Belongs to category',
                 'field_key': 'category',
                 'field_type': 'Link',
                 'content': web_item.category,
@@ -58,18 +58,16 @@ def get_info_page(name):
     fields_page = {
         'allow_edit':  web_item.page_type == "",
         'show_edit': web_item.page_type == "",
-        'section_title': 'Chuyển hướng',
+        'section_title': 'Redirect',
         'show_prv_image': False,
         'fields': [
             {
-                'field_label': 'Link chuyển hướng',
+                'field_label': 'Redirect link',
                 'field_key': 'route_template',
                 'field_type': 'Data',
                 'content': web_page.route,
                 'allow_edit': web_item.allow_delete,
                 'show_edit': True,
-                'description': web_page.route,
-                'label_des': f'<strong>{domain}/</strong>',
             },
             {
                 'field_label': 'Route Default',
@@ -92,7 +90,7 @@ def get_info_page(name):
         'show_prv_image': False,
         'fields': [
             {
-                'field_label': 'Thẻ tiêu đề',
+                'field_label': 'Meta title',
                 'field_key': 'meta_title',
                 'field_type': 'Data',
                 'content': web_page.meta_title,
@@ -105,7 +103,7 @@ def get_info_page(name):
                 'show_edit': True,
                 'fields': [
                     {
-                        'field_label': 'Thẻ mô tả',
+                        'field_label': 'Meta description',
                         'field_key': 'meta_description',
                         'field_type': 'Small Text',
                         'content': web_page.meta_description,
@@ -113,7 +111,7 @@ def get_info_page(name):
                         'show_edit': True,
                     },
                     {
-                        'field_label': 'Thẻ từ khóa',
+                        'field_label': 'Meta keywords',
                         'field_key': 'meta_keywords',
                         'field_type': 'Small Text',
                         'content': web_page.meta_keywords,
@@ -190,8 +188,7 @@ def update_info_page(data):
 
         return {'name': web_page.name}
     except Exception as ex:
-        print("ex::", ex)
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_('An error has occurred'))
 
 
 @frappe.whitelist()
@@ -201,16 +198,21 @@ def delete_page(name):
         web_item = frappe.db.get_value('MBW Client Website Item', name, [
                                        'page_id', 'allow_delete'], as_dict=1)
         if not web_item:
-            frappe.throw(_("Không tìm thấy trang xóa"),
+            frappe.throw(_("Page not found"),
                          frappe.DoesNotExistError)
         if web_item.allow_delete == 0:
-            frappe.throw(_("Trang không thể xóa"),
+            frappe.throw(_("Page cannot be deleted"),
                          frappe.DoesNotExistError)
 
         # delete MBW Client Website Item
         frappe.delete_doc('MBW Client Website Item', name)
         # delete Web Page Builder
         frappe.delete_doc('Web Page Builder', web_item.page_id)
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        print(ex)
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_("An error has occurred"))

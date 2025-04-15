@@ -1564,6 +1564,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, doc_name=None, a
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
         allow = True
+
+        if not data_source:
+            return html_list, js_list
+
         if data_source.get('dynamic_data') == 1:
             if data_source['section_type'] in ['Slider', 'Predefined Section', 'Custom Section', 'Lists', 'Tabs']:
                 pg_doc = frappe.get_doc('Page Section', data_source['section'])
@@ -1763,6 +1767,10 @@ def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
         allow = True
+
+        if not data_source:
+            return sections_data
+
         if data_source.get('dynamic_data') == 1:
             if data_source['section_type'] in ['Predefined Section', 'Custom Section', 'Lists', 'Tabs']:
                 pg_doc = frappe.get_doc('Page Section', data_source['section'])
@@ -2334,6 +2342,10 @@ def get_page_data(doc, sections, source_doc, device_type, page_no=0, page_len=5)
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
         allow = True
+
+        if not data_source:
+            return data_list
+
         if data_source.get('dynamic_data') == 1:
             if data_source['section_type'] in ['Predefined Section', 'Custom Section', 'Lists', 'Tabs']:
                 pg_doc = frappe.get_doc('Page Section', data_source['section'])

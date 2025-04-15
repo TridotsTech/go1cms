@@ -13,13 +13,13 @@
    "fieldname": "image",
    "fieldtype": "Attach",
    "in_list_view": 1,
-   "label": "\u1ea2nh"
+   "label": "Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-31 14:32:41.412092",
+ "modified": "2025-04-15 10:22:21.504447",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Preview Image",

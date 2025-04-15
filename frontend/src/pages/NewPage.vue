@@ -9,7 +9,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           :disabled="!dirty"
           @click="cancelSaveDoc"
         ></Button>
@@ -17,7 +17,7 @@
           :variant="'solid'"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           :disabled="!dirty"
           @click="callUpdateDoc"
         >
@@ -26,7 +26,7 @@
           variant="subtle"
           theme="green"
           size="md"
-          label="Tạo trang"
+          :label="__('Create page')"
           :disabled="dirty"
           @click="showDialogCreate = true"
         >
@@ -36,7 +36,9 @@
   </LayoutHeader>
   <div ref="refToTop" class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="pageExists">
@@ -52,26 +54,28 @@
       >
         <LoadingIndicator class="h-8 w-8" />
       </div>
-      <div v-else>Chưa có mẫu nào để thực hiện cho việc thêm mới trang.</div>
+      <div v-else>
+        {{ __('No templates available for creating a new page.') }}
+      </div>
     </div>
   </div>
   <Dialog v-model="showDialogCreate" :options="{ size: 'xl' }">
     <template #body-title>
-      <h3>Thông tin trang</h3>
+      <h3>{{ __('Page information') }}</h3>
     </template>
     <template #body-content>
       <div class="grid grid-cols-1 gap-4">
         <div>
           <div class="mb-2">
             <label for="name_page" class="text-sm text-gray-600">
-              {{ __('Tên trang') }}
+              {{ __('Website name') }}
               <span class="text-red-500">*</span>
             </label>
           </div>
           <FormControl
             id="name_page"
             type="text"
-            :placeholder="__('Nhập tên trang')"
+            :placeholder="__('Enter')"
             v-model="namePage"
           />
         </div>
@@ -79,14 +83,14 @@
           <div>
             <div class="mb-2">
               <label for="route_page" class="text-sm text-gray-600">
-                {{ __('Link chuyển hướng') }}
+                {{ __('Redirect link') }}
               </label>
             </div>
             <FormControl
               class="flex-auto"
               id="route_page"
               type="text"
-              :placeholder="__('Nhập link')"
+              :placeholder="__('Enter')"
               v-model="routePage"
             />
           </div>
@@ -100,9 +104,9 @@
     </template>
     <template #actions>
       <div class="flex justify-end gap-2">
-        <Button @click="showDialogCreate = false"> Đóng </Button>
+        <Button @click="showDialogCreate = false"> {{ __('Close') }} </Button>
         <Button theme="blue" variant="solid" @click="handleCreatePage">
-          Tạo mới
+          {{ __('Create') }}
         </Button>
       </div>
     </template>
@@ -157,16 +161,16 @@ const page = createResource({
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })
 
 // handle allow actions
 const dirty = computed(() => {
-  if(JSON.stringify(_page.value) == '{}'){
+  if (JSON.stringify(_page.value) == '{}') {
     return false
   }
   return JSON.stringify(page.data) !== JSON.stringify(_page.value)
@@ -175,10 +179,10 @@ const pageExists = computed(() => {
   return JSON.stringify(_page.value) !== '{}'
 })
 
-const breadcrumbs = [{ label: 'Thêm trang mới', route: { name: 'New Page' } }]
+const breadcrumbs = [{ label: __('Add New Page'), route: { name: 'New Page' } }]
 
 async function callUpdateDoc() {
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     let data = JSON.parse(JSON.stringify(_page.value))
     // upload image
@@ -200,7 +204,7 @@ async function callUpdateDoc() {
       page.reload()
 
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -210,9 +214,9 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -235,10 +239,10 @@ async function handleCreatePage() {
   try {
     msgErrorDialog.value = ''
     if (!namePage.value) {
-      msgErrorDialog.value = 'Tên trang không được để trống'
+      msgErrorDialog.value = __('Website name') + ' ' + __('cannot be empty')
       return false
     }
-    changeLoadingValue(true, 'Đang tạo trang...')
+    changeLoadingValue(true, __('Creating page...'))
 
     let docCreate = await call('go1_cms.api.new_page.create_new_page', {
       name: _page.value?.web_page?.doc_page,
@@ -248,7 +252,7 @@ async function handleCreatePage() {
 
     if (docCreate.name) {
       createToast({
-        title: 'Tạo mới thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -259,9 +263,9 @@ async function handleCreatePage() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

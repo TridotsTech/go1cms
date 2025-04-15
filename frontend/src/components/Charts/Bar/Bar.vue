@@ -33,7 +33,7 @@ const lineChartOptions = computed(() => {
         let data = params[0]
         let html = `
           <div class="font-bold">${data.axisValue}</div>
-          <div>Số lượt xem: <span class="font-bold">${data.value}</span></div>
+          <div>${__('Number of views')}: <span class="font-bold">${data.value}</span></div>
         `
         if (data?.data.compare != undefined) {
           let arrow = ''
@@ -69,7 +69,7 @@ const lineChartOptions = computed(() => {
           </svg>${formatNumber(data?.data.compare)}%</div>`
           }
           html = `
-          <div class="flex gap-2">Số lượt xem: <span class="font-bold">${data.value}</span> ${arrow}</div>
+          <div class="flex gap-2">${__('Number of views')}: <span class="font-bold">${data.value}</span> ${arrow}</div>
           `
         }
         return html
@@ -89,7 +89,9 @@ const lineChartOptions = computed(() => {
     },
     toolbox: {
       feature: {
-        saveAsImage: {},
+        saveAsImage: {
+          title: __('Save as Image'),
+        },
       },
     },
     xAxis: {

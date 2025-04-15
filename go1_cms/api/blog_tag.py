@@ -17,7 +17,7 @@ def get_blog_tag(name):
 
     tags = query.run(as_dict=True)
     if not len(tags):
-        frappe.throw(_("Blog tag not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Tag not found"), frappe.DoesNotExistError)
     tags = tags.pop()
     return tags
 
@@ -27,9 +27,9 @@ def get_blog_tag(name):
 def create_blog_tag(data):
     title = data.get('title')
     if not title:
-        frappe.throw(_("Tên tag không được để trống"))
+        frappe.throw(_("Tag name") + ' ' + _("cannot be empty"))
     if frappe.db.exists("MBW Blog Tag", {"title": title}):
-        frappe.throw(_("Tên tag đã tồn tại"))
+        frappe.throw(_("Tag name already exists"))
 
     doc_new = frappe.new_doc('MBW Blog Tag')
     doc_new.title = title
@@ -46,13 +46,13 @@ def update_blog_tag(data):
     doc_name = data.get('name')
     title = data.get('title')
     if not frappe.db.exists("MBW Blog Tag", doc_name):
-        frappe.throw(_("Blog tag not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Tag not found"), frappe.DoesNotExistError)
 
     if not title:
-        frappe.throw(_("Tên tag không được để trống"))
+        frappe.throw(_("Tag name") + ' ' + _("cannot be empty"))
 
     if frappe.db.exists("MBW Blog Tag", {"title": title, "name": ("!=", doc_name)}):
-        frappe.throw(_("Tên tag đã tồn tại"))
+        frappe.throw(_("Tag name already exists"))
 
     doc = frappe.get_doc('MBW Blog Tag', doc_name)
     if doc.name != title:
@@ -72,17 +72,10 @@ def update_blog_tag(data):
 def delete_blog_tag(name):
     try:
         if not frappe.db.exists("MBW Blog Tag", name):
-            frappe.throw(_("Blog tag not found"), frappe.DoesNotExistError)
+            frappe.throw(_("Tag not found"), frappe.DoesNotExistError)
 
-        MBWlogTag = frappe.qb.DocType("Mbw Blog Post")
-        query = (
-            frappe.qb.from_(MBWlogTag)
-            .select("name")
-            .where(MBWlogTag.blog_tag == name)
-        )
-        blogs = query.run(as_dict=True)
-        if blogs:
-            frappe.throw(_("Tag này đã được liên kết, không thể xóa."))
+        if frappe.db.exists("MBW Blog Tag Item", {"tag": name}):
+            frappe.throw(_("This tag is linked and cannot be deleted."))
 
         frappe.delete_doc('MBW Blog Tag', name)
 
@@ -90,6 +83,12 @@ def delete_blog_tag(name):
         return result
     except frappe.LinkExistsError as ex:
         frappe.clear_last_message()
-        frappe.throw(_("Tag này đã được liên kết, không thể xóa."))
+        frappe.throw(_("This tag is linked and cannot be deleted."))
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        frappe.throw(_(f"Lỗi: {str(ex)}"))
+        frappe.throw(_("An error has occurred"))

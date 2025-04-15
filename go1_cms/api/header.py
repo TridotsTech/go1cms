@@ -34,17 +34,17 @@ def get_info_header_component():
     fields_btn = {
         'allow_edit':  True,
         'show_edit': True,
-        'section_title': 'Thông tin các nút',
+        'section_title': 'Button information',
         'image': header_component.image_btn,
         'show_prv_image': True,
         'fields': [
             {
                 'group_name': 'group 1',
-                'section_title': 'Nút 1',
+                'section_title': 'First button',
                 'show_edit': header_component.active_button == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Nhãn nút',
+                        'field_label': 'Label',
                         'field_key': 'button_text',
                         'field_type': 'Data',
                         'content': header_component.button_text,
@@ -52,7 +52,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text == 1
                     },
                     {
-                        'field_label': 'Nhãn phụ nút',
+                        'field_label': 'Button sublabel',
                         'field_key': 'sub_text',
                         'field_type': 'Data',
                         'content': header_component.sub_text,
@@ -68,26 +68,26 @@ def get_info_header_component():
                         'show_edit': header_component.use_action == 'link'
                     },
                     {
-                        'field_label': 'Mục tiêu Link',
+                        'field_label': 'Redirect link',
                         'field_key': 'link_target',
                         'field_type': 'Select',
                         'content': header_component.link_target,
                         'allow_edit':  True,
                         'show_edit': header_component.use_action == 'link',
                         'options': [
-                            {'label': 'Trang hiện tại', 'value': '_self'},
-                            {'label': 'Trang mới', 'value': '_blank'}
+                            {'label': _('Current page'), 'value': '_self'},
+                            {'label': _('New page'), 'value': '_blank'}
                         ]
                     },
                 ]
             },
             {
                 'group_name': 'group 2',
-                'section_title': 'Nút 2',
+                'section_title': 'Second button',
                 'show_edit': header_component.active_button_2 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Nhãn nút',
+                        'field_label': _('Label'),
                         'field_key': 'button_text_2',
                         'field_type': 'Data',
                         'content': header_component.button_text_2,
@@ -95,7 +95,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_2 == 1
                     },
                     {
-                        'field_label': 'Nhãn phụ nút',
+                        'field_label': _('Button sublabel'),
                         'field_key': 'sub_text_2',
                         'field_type': 'Data',
                         'content': header_component.sub_text_2,
@@ -111,26 +111,26 @@ def get_info_header_component():
                         'show_edit': header_component.use_action_2 == 'link'
                     },
                     {
-                        'field_label': 'Mục tiêu Link',
+                        'field_label': _('Redirect link'),
                         'field_key': 'link_target_2',
                         'field_type': 'Select',
                         'content': header_component.link_target_2,
                         'allow_edit':  True,
                         'show_edit': header_component.use_action_2 == 'link',
                         'options': [
-                            {'label': 'Trang hiện tại', 'value': '_self'},
-                            {'label': 'Trang mới', 'value': '_blank'}
+                            {'label': _('Current page'), 'value': '_self'},
+                            {'label': _('New page'), 'value': '_blank'}
                         ]
                     },
                 ],
             },
             {
                 'group_name': 'group 3',
-                'section_title': 'Nút 3',
+                'section_title': 'Third button',
                 'show_edit': header_component.active_button_3 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Nhãn nút',
+                        'field_label': _('Label'),
                         'field_key': 'button_text_3',
                         'field_type': 'Data',
                         'content': header_component.button_text_3,
@@ -138,7 +138,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_3 == 1
                     },
                     {
-                        'field_label': 'Nhãn phụ nút',
+                        'field_label': _('Button sublabel'),
                         'field_key': 'sub_text_3',
                         'field_type': 'Data',
                         'content': header_component.sub_text_3,
@@ -154,26 +154,26 @@ def get_info_header_component():
                         'show_edit': header_component.use_action_3 == 'link'
                     },
                     {
-                        'field_label': 'Mục tiêu Link',
+                        'field_label': _('Redirect link'),
                         'field_key': 'link_target_3',
                         'field_type': 'Select',
                         'content': header_component.link_target_3,
                         'allow_edit':  True,
                         'show_edit': header_component.use_action_3 == 'link',
                         'options': [
-                            {'label': 'Trang hiện tại', 'value': '_self'},
-                            {'label': 'Trang mới', 'value': '_blank'}
+                            {'label': _('Current page'), 'value': '_self'},
+                            {'label': _('New page'), 'value': '_blank'}
                         ]
                     },
                 ],
             },
             {
                 'group_name': 'group 4',
-                'section_title': 'Nút 4',
+                'section_title': 'Fourth button',
                 'show_edit': header_component.active_button_4 == 1 and header_component.call_to_action_button == 1,
                 'fields': [
                     {
-                        'field_label': 'Nhãn nút',
+                        'field_label': _('Label'),
                         'field_key': 'button_text_4',
                         'field_type': 'Data',
                         'content': header_component.button_text_4,
@@ -181,7 +181,7 @@ def get_info_header_component():
                         'show_edit': header_component.show_btn_text_4 == 1
                     },
                     {
-                        'field_label': 'Nhãn phụ nút',
+                        'field_label': _('Button sublabel'),
                         'field_key': 'button_text_4',
                         'field_type': 'Data',
                         'content': header_component.button_text_4,
@@ -197,15 +197,15 @@ def get_info_header_component():
                         'show_edit': header_component.use_action_4 == 'link'
                     },
                     {
-                        'field_label': 'Mục tiêu Link',
+                        'field_label': _('Redirect link'),
                         'field_key': 'link_target_4',
                         'field_type': 'Select',
                         'content': header_component.link_target_4,
                         'allow_edit':  True,
                         'show_edit': header_component.use_action_4 == 'link',
                         'options': [
-                            {'label': 'Trang hiện tại', 'value': '_self'},
-                            {'label': 'Trang mới', 'value': '_blank'}
+                            {'label': _('Current page'), 'value': '_self'},
+                            {'label': _('New page'), 'value': '_blank'}
                         ]
                     },
                 ],
@@ -213,7 +213,12 @@ def get_info_header_component():
         ],
         'name': 'header-1'
     }
-    fields_cp.append(fields_btn)
+
+    for f in fields_btn.get('fields'):
+        if f.get('show_edit'):
+            fields_cp.append(fields_btn)
+            break
+
     web_page = {
         'route': web_edit.route_web
     }
@@ -228,11 +233,9 @@ def update_info_header_component(data):
         web_edit = frappe.db.get_value(
             'MBW Client Website', {"edit": 1}, ['name', 'header_component'], as_dict=1)
         if not web_edit or not web_edit.header_component:
-            frappe.throw(_("Header not found"),
-                         frappe.DoesNotExistError)
+            frappe.throw(_("Header not found"), frappe.DoesNotExistError)
         if not frappe.db.exists("Header Component", web_edit.header_component):
-            frappe.throw(_("Header not found"),
-                         frappe.DoesNotExistError)
+            frappe.throw(_("Header not found"), frappe.DoesNotExistError)
 
         header_component = frappe.get_doc(
             "Header Component", web_edit.header_component)
@@ -254,6 +257,11 @@ def update_info_header_component(data):
         header_component.save()
 
         return {'name': header_component.name}
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        print("ex::", ex)
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_("An error has occurred"))

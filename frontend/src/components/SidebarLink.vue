@@ -29,7 +29,7 @@
               : 'ml-2 w-auto opacity-100'
           "
         >
-          {{ label }}
+          {{ __(label) }}
         </span>
       </div>
       <slot name="right" />

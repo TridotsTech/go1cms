@@ -5,7 +5,7 @@
       size: '3xl',
       actions: [
         {
-          label: editMode ? 'Cập nhật' : 'Thêm',
+          label: editMode ? __('Update') : __('Add'),
           variant: 'solid',
           onClick: () => updateSection(),
         },
@@ -15,7 +15,7 @@
     <template #body-title>
       <div class="flex items-center gap-3">
         <h3 class="text-2xl font-semibold leading-6 text-gray-900">
-          {{ editMode ? 'Chỉnh sửa' : 'Thêm mới' }} - {{ title }}
+          {{ editMode ? __('Edit') : __('Add New') }} - {{ __(title) }}
         </h3>
       </div>
     </template>

@@ -17,23 +17,25 @@ def sort_options(doctype: str):
     fields = [field for field in fields if field.fieldtype not in no_value_fields]
     fields = [
         {
-            "label": _(field.label),
+            "label": field.label,
             "value": field.fieldname,
+            "fieldname": field.fieldname,
         }
         for field in fields
         if field.label and field.fieldname
     ]
 
     standard_fields = [
-        # {"label": "Name", "value": "name"},
-        {"label": "Thời gian tạo", "value": "creation"},
-        {"label": "Lần sửa đổi cuối", "value": "modified"},
-        # {"label": "Modified By", "value": "modified_by"},
-        # {"label": "Owner", "value": "owner"},
+        {"label": "Name", "fieldname": "name"},
+        {"label": "Created On", "fieldname": "creation"},
+        {"label": "Last Modified", "fieldname": "modified"},
+        {"label": "Modified By", "fieldname": "modified_by"},
+        {"label": "Owner", "fieldname": "owner"},
     ]
 
     for field in standard_fields:
-        field["label"] = _(field["label"])
+        field["label"] = field["label"]
+        field["value"] = field["fieldname"]
         fields.append(field)
 
     return fields
@@ -110,7 +112,7 @@ def get_filterable_fields(doctype: str):
         # {"fieldname": "_comments", "fieldtype": "Text", "label": "Comments"},
         # {"fieldname": "_assign", "fieldtype": "Text", "label": "Assigned To"},
         {"fieldname": "creation", "fieldtype": "Datetime", "label": "Created On"},
-        {"fieldname": "modified", "fieldtype": "Datetime", "label": "Last Updated On"},
+        {"fieldname": "modified", "fieldtype": "Datetime", "label": "Last Modified"},
     ]
     for field in standard_fields:
         if (
@@ -121,7 +123,8 @@ def get_filterable_fields(doctype: str):
             res.append(field)
 
     for field in res:
-        field["label"] = _(field.get("label"))
+        field["label"] = field.get("label")
+        field["value"] = field.get("fieldname")
 
     return res
 
@@ -163,8 +166,6 @@ def get_group_by_fields(doctype: str):
         {"label": "Liked By", "value": "_liked_by"},
         {"label": "Assigned To", "value": "_assign"},
         {"label": "Comments", "value": "_comments"},
-        {"label": "Created On", "value": "creation"},
-        {"label": "Modified On", "value": "modified"},
     ]
 
     for field in standard_fields:
@@ -207,7 +208,7 @@ def get_quick_filters(doctype: str):
                              for option in field.options]
             field.options.insert(0, {"label": "", "value": ""})
         quick_filters.append({
-            "label": _(field.label),
+            "label": field.label,
             "name": field.fieldname,
             "type": field.fieldtype,
             "options": field.options,
@@ -379,8 +380,8 @@ def get_list_data(
 
     std_fields = [
         # {"label": "Name", "type": "Data", "value": "name"},
-        {"label": "Thời gian tạo", "type": "Datetime", "value": "creation"},
-        {"label": "Lần sửa đổi cuối", "type": "Datetime", "value": "modified"},
+        {"label": "Created On", "type": "Datetime", "value": "creation"},
+        {"label": "Last Modified", "type": "Datetime", "value": "modified"},
         # {
         #     "label": "Modified By",
         #     "type": "Link",

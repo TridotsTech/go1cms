@@ -67,7 +67,7 @@
                     ],
                   },
                   {
-                    group: 'Xóa',
+                    group: __('Delete'),
                     items: [
                       {
                         label: 'Xóa website',
@@ -196,9 +196,11 @@
     </template>
     <template #actions>
       <div class="flex justify-end gap-4">
-        <Button class="ml-2" @click="showModalEditName = false"> Đóng </Button>
+        <Button class="ml-2" @click="showModalEditName = false">
+          {{ __('Close') }}
+        </Button>
         <Button variant="solid" theme="blue" @click="changeNameWebsite">
-          Xác nhận
+          {{ __('Confirm') }}
         </Button>
       </div>
     </template>
@@ -209,7 +211,7 @@
       title: 'Xóa website',
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -225,7 +227,9 @@
           <b>"{{ selectedItem.name_web }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600"> Không thể hoàn tác</b>.</p>
+          <p>
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -278,10 +282,10 @@
   <!-- dialog set primary -->
   <Dialog
     :options="{
-      title: 'Đặt website là bản chính',
+      title: __('Set as main website'),
       actions: [
         {
-          label: 'Đặt website là website chính',
+          label: __('Set as main website'),
           variant: 'solid',
           theme: 'blue',
           onClick: (close) => setPrimaryMyWebsite(close),
@@ -293,8 +297,8 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn đặt website có tên
-          <b>"{{ selectedItem.name_web }}"</b> là website hoạt động chính?
+          {{ __( `Are you sure you want to set the website named <b>{0}</b> as
+          the primary active website?`, [selectedItem.name_web], ) }}
         </div>
       </div>
     </template>
@@ -377,24 +381,24 @@ function handleShowModal(item) {
 
 async function changeNameWebsite() {
   if (!inputValues.name_web) {
-    errorTextMessage.value.name_web = 'Tên website được để trống'
+    errorTextMessage.value.name_web =
+      __('Website name') + ' ' + __('cannot be empty')
     return false
   }
 
-  if (inputValues.name_web === selectedItem.value.name_web) {
-    errorTextMessage.value.name_web = 'Tên mới không thể trùng với tên cũ'
-    return false
-  }
   errorTextMessage.value.name_web = ''
+  if (inputValues.name_web === selectedItem.value.name_web) {
+    return true
+  }
 
-  changeLoadingValue(true, 'Đang cập nhật...')
+  changeLoadingValue(true, __('Updating...'))
   try {
     await call('go1_cms.api.client_website.change_name_web_client_website', {
       name: selectedItem.value.name,
       name_web: inputValues.name_web,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -408,9 +412,9 @@ async function changeNameWebsite() {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -428,14 +432,14 @@ function handleShowDialog(item, type_modal) {
   } else if (type_modal == 'set publish') {
     if (item.published == 1) {
       contentDialogPublish.value = {
-        title: 'Dứng kích hoạt website',
-        message: `Bạn chắc chắn muốn dừng kích hoạt website có tên:
+        title: __('Deactivate Website'),
+        message: `${__('Are you sure you want to deactivate the website named')}:
           <b>"${selectedItem.value.name_web}"</b>?`,
       }
     } else {
       contentDialogPublish.value = {
-        title: 'Kích hoạt website',
-        message: `Bạn chắc chắn muốn kích hoạt website có tên:
+        title: __('Activate Website'),
+        message: `${__('Are you sure you want to activate the website named')}:
           <b>"${selectedItem.value.name_web}"</b>?`,
       }
     }
@@ -447,21 +451,21 @@ function handleShowDialog(item, type_modal) {
 async function setPrimaryMyWebsite(close) {
   if (selectedItem.value.type_web == 'Bản chính') {
     createToast({
-      title: 'Không thể chuyển đổi',
-      text: 'Website đã đặt là website chính',
+      title: __('Cannot convert'),
+      text: __('The website is set as the main website'),
       icon: 'alert-circle',
       iconClasses: 'text-orange-600',
     })
     return false
   }
 
-  changeLoadingValue(true, 'Đang đặt...')
+  changeLoadingValue(true, __('Configuring...'))
   try {
     await call('go1_cms.api.client_website.set_primary_client_website', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -470,9 +474,9 @@ async function setPrimaryMyWebsite(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -482,21 +486,21 @@ async function setPrimaryMyWebsite(close) {
 async function setEditMyWebsite(close) {
   if (selectedItem.value.edit == 1) {
     createToast({
-      title: 'Không thể chuyển đổi',
-      text: 'Website đã đặt là chỉnh sửa',
+      title: __('Cannot convert'),
+      text: __('The website is set to edit mode'),
       icon: 'alert-circle',
       iconClasses: 'text-orange-600',
     })
     return false
   }
 
-  changeLoadingValue(true, 'Đang đặt...')
+  changeLoadingValue(true, __('Configuring...'))
   try {
     await call('go1_cms.api.client_website.update_edit_client_website', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -507,9 +511,9 @@ async function setEditMyWebsite(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -517,9 +521,9 @@ async function setEditMyWebsite(close) {
 
 // set published
 async function setPublishedMyWebsite(close) {
-  let loadingText = 'Đang kích hoạt website...'
+  let loadingText = __('Activating website...')
   if (selectedItem.value.published == 1) {
-    loadingText = 'Đang dừng kích hoạt website...'
+    loadingText = __('Deactivating website...')
   }
 
   changeLoadingValue(true, loadingText)
@@ -529,7 +533,7 @@ async function setPublishedMyWebsite(close) {
       published: selectedItem.value.published == 1 ? 0 : 1,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -538,9 +542,9 @@ async function setPublishedMyWebsite(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -548,13 +552,13 @@ async function setPublishedMyWebsite(close) {
 
 // delete
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.client_website.delete_client_website', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -568,9 +572,9 @@ async function deleteDoc(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

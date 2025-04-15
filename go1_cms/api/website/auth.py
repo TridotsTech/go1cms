@@ -131,7 +131,7 @@ def sign_up(**kwargs):
         if type(ex) in [frappe.ValidationError, frappe.DuplicateEntryError]:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Có lỗi xảy ra')
+            frappe.throw(_('An error has occurred'))
 
 
 def create_info_after_create_user(info_user={}):

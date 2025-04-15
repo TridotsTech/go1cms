@@ -711,7 +711,7 @@ function add_new_list_item(wrapper, doc) {
 function edit_list_item(wrapper, doc, index) {
   var fieldslist = JSON.parse(doc.fields_json);
   fieldslist.unshift({
-    field_label: "STT",
+    field_label: __("No."),
     field_key: "idx",
     field_type: "Int",
     idx: fieldslist.length + 1,

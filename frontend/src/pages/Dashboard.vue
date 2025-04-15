@@ -6,7 +6,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <FilterDashboard
@@ -18,14 +20,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
       <div class="col-span-1 lg:col-span-4">
         <div class="p-4 border border-gray-300 shadow-2xl rounded-sm">
-          <h4 class="mb-4">Phiên truy cập</h4>
+          <h4 class="mb-4">{{ __('Sessions') }}</h4>
           <div>
             <div
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-4"
             >
               <div class="col-span-1">
                 <CardDashboard
-                  title="Tổng số người dùng"
+                  :title="__('Total users')"
                   :value="report.data?.rp_range_start.so_nguoi_dung"
                   :valuePrevious="report.data?.rp_range_end?.so_nguoi_dung"
                   :customStyle="{ 'background-color': cardColors[0] }"
@@ -37,7 +39,7 @@
               </div>
               <div class="col-span-1">
                 <CardDashboard
-                  title="Tổng số phiên truy cập"
+                  :title="__('Total sessions')"
                   :value="report.data?.rp_range_start.so_truy_cap"
                   :valuePrevious="report.data?.rp_range_end?.so_truy_cap"
                   :customStyle="{ 'background-color': cardColors[1] }"
@@ -48,7 +50,7 @@
               </div>
               <div class="col-span-1">
                 <CardDashboard
-                  title="Thời gian xem trung bình (s)"
+                  :title="__('Average view time (s)')"
                   :value="report.data?.rp_range_start.thoi_gian_xem_tb"
                   :valuePrevious="report.data?.rp_range_end?.thoi_gian_xem_tb"
                   :customStyle="{ 'background-color': cardColors[2] }"
@@ -67,7 +69,7 @@
           class="h-1/2 flex flex-col gap-2 col-span-1 min-h-28 w-full shadow-2xl p-6 justify-center"
           :style="{ 'background-color': cardColors[3] }"
         >
-          <p class="text-2xl">Số người truy cập hiện tại</p>
+          <p class="text-2xl">{{ __('Current active users') }}</p>
           <h5 class="text-[34px] font-bold">
             {{ formatNumber(report.data?.truy_cap_hien_tai) || '0' }}
           </h5>
@@ -76,7 +78,7 @@
           class="h-1/2 flex flex-col gap-2 col-span-1 min-h-28 w-full shadow-2xl p-6 justify-center"
           :style="{ 'background-color': cardColors[4] }"
         >
-          <p class="text-2xl">Số người truy cập 30 phút qua</p>
+          <p class="text-2xl">{{ __('Users in the last 30 minutes') }}</p>
           <h5 class="text-[34px] font-bold">
             {{ formatNumber(report.data?.truy_cap_30p) || '0' }}
           </h5>
@@ -87,18 +89,18 @@
       <div
         class="flex flex-col col-span-1 p-4 border border-gray-300 shadow-2xl rounded-sm mb-4"
       >
-        <h4 class="mb-4">Những trang được xem nhiều nhất</h4>
+        <h4 class="mb-4">{{ __('Most viewed pages') }}</h4>
         <div v-if="options.chart_page?.rows.length">
           <Bar :options="options.chart_page"></Bar>
         </div>
         <div v-else class="flex items-center justify-center text-center h-full">
-          Chưa có dữ liệu báo cáo
+          {{ __('No report data available') }}
         </div>
       </div>
       <div
         class="col-span-1 p-4 border border-gray-300 shadow-2xl rounded-sm mb-4"
       >
-        <h4 class="mb-4">Số lượt điền form</h4>
+        <h4 class="mb-4">{{ __('Form submissions') }}</h4>
         <div>
           <Line :options="options?.chart_form"></Line>
         </div>
@@ -251,9 +253,9 @@ const report = createResource({
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })

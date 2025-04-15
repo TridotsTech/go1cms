@@ -60,7 +60,7 @@ def get_menu(name):
 def create_menu(data):
     title = data.get('title')
     if not title:
-        frappe.throw(_("Tên menu không được để trống"))
+        frappe.throw(_('Menu name') + ' ' + _('cannot be empty'))
 
     # init menu
     web_edit = frappe.db.get_value(
@@ -108,7 +108,7 @@ def update_menu(data):
         frappe.throw(_("Menu not found"), frappe.DoesNotExistError)
 
     if not title:
-        frappe.throw(_("Tên menu không được để trống"))
+        frappe.throw(_('Menu name') + ' ' + _('cannot be empty'))
 
     doc = frappe.get_doc('Menu', doc_name)
 
@@ -163,11 +163,14 @@ def delete_menu(name):
         frappe.delete_doc('Menu', name)
         result = {'name': name}
         return result
-    except Exception as ex:
+    except frappe.LinkExistsError as ex:
         frappe.clear_last_message()
-        if type(ex) == frappe.LinkExistsError:
-            frappe.throw(_("Menu này đã được liên kết, không thể xóa."))
-        elif type(ex) == frappe.DoesNotExistError:
-            frappe.throw(str(ex), type(ex))
-        else:
-            frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_("This menu is linked and cannot be deleted."))
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
+    except Exception as ex:
+        frappe.throw(_("An error has occurred"))

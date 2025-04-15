@@ -29,13 +29,13 @@ class MbwBlogPost(WebsiteGenerator):
     def default_list_data():
         columns = [
             {
-                "label": "Tiêu đề",
+                "label": "Title",
                 "type": "Data",
                 "key": "title",
                 "width": "20rem"
             },
             {
-                "label": "Danh mục",
+                "label": "Category",
                 "type": "Data",
                 "key": "category",
                 "width": "10rem"
@@ -47,13 +47,18 @@ class MbwBlogPost(WebsiteGenerator):
                 "width": "8rem"
             },
             {
-                "label": "Ngày đăng",
+                "label": "Publish on",
                 "type": "Date",
                 "key": "published_on",
                 "width": "10rem"
             },
             {
-                "label": "Hành động",
+                "label": "Last Modified",
+                "type": "Datetime",
+                "key": "modified"
+            },
+            {
+                "label": "Action",
                 "key": "action_button"
             }
         ]

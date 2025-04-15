@@ -9,7 +9,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           :disabled="!dirty"
           @click="cancelSaveDoc"
         ></Button>
@@ -17,7 +17,7 @@
           :variant="'solid'"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           :disabled="!dirty"
           @click="callUpdateDoc"
         >
@@ -27,62 +27,63 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="JSON.stringify(_settings) != '{}'">
       <FieldsComponent
-        title="Cài đặt chung"
+        :title="__('General Settings')"
         v-model="_settings.fields_cp"
       ></FieldsComponent>
       <div class="p-6 border border-gray-300 rounded-sm mb-4">
-        <div class="mb-4 font-bold text-xl">Hướng dẫn</div>
+        <div class="mb-4 font-bold text-xl">{{ __('Instructions') }}</div>
         <div class="text-base py-4 border-t">
           <div class="font-bold text-lg mb-4">
-            Các biến được dùng trong mẫu email
+            {{ __('Variables used in the email template') }}
           </div>
           <div class="mb-4">
-            <SectionDropdown label="Các biến sử dụng chung">
+            <SectionDropdown :label="__('Commonly used variables')">
               <template #content>
                 <div class="text-gray-600">
                   <div class="mb-2">
                     <strong v-pre>{{ time }}: </strong>
-                    <span>thời gian tạo</span>
+                    <span>{{ __('creation time') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ full_name }}: </strong>
-                    <span>họ và tên khách hàng</span>
+                    <span>{{ __('customer full name') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ phone_number }}: </strong>
-                    <span>số điện thoại khách hàng</span>
+                    <span>{{ __('customer phone number') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ email }}: </strong>
-                    <span>email khách hàng</span>
+                    <span>{{ __('customer email') }}</span>
                   </div>
                 </div>
               </template>
             </SectionDropdown>
           </div>
           <div class="mb-4">
-            <SectionDropdown label="Các biến sử dụng trong mẫu có liên hệ mới">
+            <SectionDropdown
+              :label="__('Variables used in the new contact template')"
+            >
               <template #content>
                 <div class="text-gray-600">
                   <div class="mb-2">
-                    <strong v-pre>Bao gồm các biến sử dụng chung.</strong>
-                  </div>
-                  <div class="mb-2">
                     <strong v-pre>{{ address }}: </strong>
-                    <span>địa chỉ khách hàng</span>
+                    <span>{{ __('customer address') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ content }}: </strong>
-                    <span>nội dung khách hàng gửi kèm</span>
+                    <span>{{ __('message content from customer') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ source }}: </strong>
-                    <span>nguồn gửi của khách hàng</span>
+                    <span>{{ __('customer source') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ utm_source }}: </strong>
@@ -93,12 +94,12 @@
                     <span>utm campaign</span>
                   </div>
                   <div class="mb-2">
-                    <strong v-pre>{{ send_time }}: </strong>
-                    <span>thời gian gửi</span>
+                    <strong v-pre>{{ sent_time }}: </strong>
+                    <span>{{ __('submission time') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span>đường dẫn xem chi tiết liên hệ mới</span>
+                    <span>{{ __('link to view new contact details') }}</span>
                   </div>
                 </div>
               </template>
@@ -106,19 +107,19 @@
           </div>
           <div class="mb-4">
             <SectionDropdown
-              label="Các biến sử dụng trong mẫu tài khoản đăng ký mới"
+              :label="
+                __('Variables used in the new account registration template')
+              "
             >
               <template #content>
                 <div class="text-gray-600">
                   <div class="mb-2">
-                    <strong v-pre>Bao gồm các biến sử dụng chung.</strong>
-                  </div>
-                  <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span
-                      >đường dẫn xem chi tiết tài khoản mới(cho quản trị viên) /
-                      đường dẫn tới trang đăng nhập(cho khách hàng)</span
-                    >
+                    <span>{{
+                      __(
+                        'link to view new account details (for admin) / login page link (for customer)',
+                      )
+                    }}</span>
                   </div>
                 </div>
               </template>
@@ -126,133 +127,136 @@
           </div>
           <div class="mb-4">
             <SectionDropdown
-              label="Các biến sử dụng trong mẫu có CV ứng tuyển mới"
+              :label="
+                __('Variables used in the new job application CV template')
+              "
             >
               <template #content>
                 <div class="text-gray-600">
-                  <div class="mb-2">
-                    <strong v-pre>Bao gồm các biến sử dụng chung.</strong>
-                  </div>
                   <div class="mb-2">
                     <strong v-pre>{{ job_title }}: </strong>
-                    <span>tên công việc</span>
+                    <span>{{ __('job title') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ designation }}: </strong>
-                    <span>vị trí công việc</span>
+                    <span>{{ __('job position') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ location }}: </strong>
-                    <span>nơi làm việc</span>
+                    <span>{{ __('work location') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ employment_type }}: </strong>
-                    <span>hình thức làm việc</span>
+                    <span>{{ __('employment type') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ department }}: </strong>
-                    <span>phòng ban</span>
+                    <span>{{ __('department') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ lower_range }}: </strong>
-                    <span>lương tối thiểu</span>
+                    <span>{{ __('minimum salary') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ upper_range }}: </strong>
-                    <span>lương giới hạn</span>
+                    <span>{{ __('maximum salary') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ currency }}: </strong>
-                    <span>đơn vị tiền tệ</span>
+                    <span>{{ __('currency') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ salary_per }}: </strong>
-                    <span>lương trả theo tháng/năm</span>
+                    <span>{{ __('salary paid by month/year') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ content }}: </strong>
-                    <span>nội dung khách hàng gửi kèm</span>
+                    <span>{{ __('customer-submitted content') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span>đường dẫn xem chi tiết đơn ứng tuyển</span>
+                    <span>{{ __('application detail link') }}</span>
                   </div>
                 </div>
               </template>
             </SectionDropdown>
           </div>
           <div class="mb-4">
-            <SectionDropdown label="Các biến sử dụng trong mẫu đơn hàng">
+            <SectionDropdown
+              :label="__('Variables used in the order template')"
+            >
               <template #content>
                 <div class="text-gray-600">
                   <div class="mb-2">
-                    <strong v-pre>Bao gồm các biến sử dụng chung.</strong>
-                  </div>
-                  <div class="mb-2">
                     <strong v-pre>{{ order_code }}: </strong>
-                    <span>mã đơn hàng</span>
+                    <span>{{ __('order code') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ order_status }}: </strong>
-                    <span>trạng thái đơn hàng</span>
+                    <span>{{ __('order status') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ address }}: </strong>
-                    <span>địa chỉ khách hàng</span>
+                    <span>{{ __('customer address') }}</span>
                   </div>
                   <div class="mb-2">
                     <div>
                       <strong v-pre>items: </strong>
-                      <span>danh sách sản phẩm</span>
+                      <span>{{ __('product list') }}</span>
                     </div>
                     <div class="flex flex-col gap-2 m-2">
                       <div>
                         -
                         <strong v-pre>item: </strong>
-                        <span>biến chứa thông tin của 1 sản phẩm</span>
+                        <span>{{
+                          __('variable containing information of one product')
+                        }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{% for item in items %}: </strong>
-                        <span>biến mở vòng lặp</span>
+                        <span>{{ __('loop start variable') }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{{ item.item_name }}: </strong>
-                        <span>tên của sản phẩm</span>
+                        <span>{{ __('product name') }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{{ item.rate }}: </strong>
-                        <span>đơn giá / 1 đơn vị sản phẩm</span>
+                        <span>{{ __('unit price per product') }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{{ item.qty }}: </strong>
-                        <span>số lượng của 1 sản phẩm</span>
+                        <span>{{ __('product quantity') }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{{ item.amount }}: </strong>
-                        <span>tổng số tiền của 1 sản phẩm</span>
+                        <span>{{ __('total amount for one product') }}</span>
                       </div>
                       <div>
                         -
                         <strong v-pre>{% endfor %}: </strong>
-                        <span>biến đóng vòng lặp</span>
+                        <span>{{ __('loop end variable') }}</span>
                       </div>
                     </div>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ grand_total }}: </strong>
-                    <span>tổng số tiền tạm tính</span>
+                    <span>{{ __('subtotal amount') }}</span>
                   </div>
                   <div class="mb-2">
                     <strong v-pre>{{ redirect_to }}: </strong>
-                    <span
-                      >đường dẫn xem chi tiết đơn hàng mới(cho quản trị viên) /
-                      đường dẫn xem đơn hàng(cho khách hàng)</span
-                    >
+                    <span>
+                      {{
+                        __(
+                          'order detail link (for admin) / order view link (for customer)',
+                        )
+                      }}
+                    </span>
                   </div>
                 </div>
               </template>
@@ -284,7 +288,7 @@ import { viewsStore } from '@/stores/views'
 const { views } = viewsStore()
 const { changeLoadingValue } = globalStore()
 
-const breadcrumbs = [{ label: 'Cài đặt', route: { name: 'CMS Settings' } }]
+const breadcrumbs = [{ label: __('Settings'), route: { name: 'CMS Settings' } }]
 const _settings = ref({})
 const msgError = ref()
 
@@ -301,9 +305,9 @@ const settings = createResource({
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })
@@ -332,7 +336,7 @@ watch(dirty, (val) => {
 })
 
 async function callUpdateDoc() {
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     let data = JSON.parse(JSON.stringify(_settings.value))
 
@@ -345,7 +349,7 @@ async function callUpdateDoc() {
       views.reload()
 
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -354,9 +358,9 @@ async function callUpdateDoc() {
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

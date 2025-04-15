@@ -9,7 +9,7 @@ def login(usr, pwd):
     login_manager.authenticate(usr, pwd)
     login_manager.get_user_info()
     if login_manager.user_type != "System User":
-        frappe.throw(_('Email hoặc mật khẩu không chính xác.'),
+        frappe.throw(_('Incorrect email or password.'),
                      frappe.AuthenticationError)
     login_manager.post_login()
 

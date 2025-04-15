@@ -34,12 +34,12 @@ def get_info_footer_component():
     fields_footer = {
         'allow_edit':  True,
         'show_edit': True if footer_component.footer_bg_image else False,
-        'section_title': 'Thiết kế',
+        'section_title': 'Design',
         'image': None,
         'show_prv_image': False,
         'fields': [
             {
-                'field_label': 'Ảnh nền',
+                'field_label': 'Background image',
                 'field_key': 'footer_bg_image',
                 'field_type': 'upload_image',
                 'content': footer_component.footer_bg_image,
@@ -56,12 +56,12 @@ def get_info_footer_component():
     fields_copyright = {
         'allow_edit':  True,
         'show_edit': footer_component.enable_copyright == 1,
-        'section_title': 'Nội dung bản quyền',
+        'section_title': 'Copyright content',
         'image': footer_component.image_copyright,
         'show_prv_image': True,
         'fields': [
             {
-                'field_label': 'Nội dung cột 1',
+                'field_label': 'First column',
                 'field_key': 'cp_fc_content',
                 'field_type': 'Small Text',
                 'content': footer_component.cp_fc_content,
@@ -69,12 +69,12 @@ def get_info_footer_component():
                 'show_edit': footer_component.fc_ct_type == 'Custom'
             },
             {
-                'field_label': 'Nội dung cột 2',
+                'field_label': 'Second column',
                 'field_key': 'cp_sc_content',
                 'field_type': 'Small Text',
                 'content': footer_component.cp_sc_content,
                 'allow_edit': True,
-                'show_edit': footer_component.sc_ct_type == 'Custom'
+                'show_edit': footer_component.copyright_layout == 'Two Column' and footer_component.sc_ct_type == 'Custom'
             }
         ],
         'name': 'footer-1'
@@ -95,11 +95,9 @@ def update_info_footer_component(data):
         web_edit = frappe.db.get_value(
             'MBW Client Website', {"edit": 1}, ['name', 'footer_component'], as_dict=1)
         if not web_edit or not web_edit.footer_component:
-            frappe.throw(_("Footer not found"),
-                         frappe.DoesNotExistError)
+            frappe.throw(_("Footer not found"), frappe.DoesNotExistError)
         if not frappe.db.exists("Footer Component", web_edit.footer_component):
-            frappe.throw(_("Footer not found"),
-                         frappe.DoesNotExistError)
+            frappe.throw(_("Footer not found"), frappe.DoesNotExistError)
 
         footer_component = frappe.get_doc(
             "Footer Component", web_edit.footer_component)
@@ -121,6 +119,11 @@ def update_info_footer_component(data):
         footer_component.save()
 
         return {'name': footer_component.name}
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        print("ex::", ex)
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_("An error has occurred"))

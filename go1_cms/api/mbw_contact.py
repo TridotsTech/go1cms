@@ -60,7 +60,7 @@ def create_contact(**kwargs):
     doc.source = kwargs.get("source") or ''
     doc.utm_source = kwargs.get("utm_source") or ''
     doc.utm_campaign = kwargs.get("utm_campaign") or ''
-    doc.send_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    doc.sent_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # insert contact
     doc.insert(ignore_permissions=True)
 
@@ -97,7 +97,7 @@ def create_contact(**kwargs):
         'source': doc.source,
         'utm_source': doc.utm_source,
         'utm_campaign': doc.utm_campaign,
-        'send_time': doc.send_time.strftime("%d/%m/%Y %H:%M:%S"),
+        'sent_time': doc.sent_time.strftime("%d/%m/%Y %H:%M:%S"),
         'redirect_to': f'{domain}/cms/contacts/{doc.name}'
     }
     send_email_manage(None, "email_send_contact", args)

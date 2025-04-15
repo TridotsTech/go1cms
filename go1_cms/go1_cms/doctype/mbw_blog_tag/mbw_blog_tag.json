@@ -15,7 +15,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Title",
+   "label": "Tag name",
    "reqd": 1,
    "unique": 1
   },
@@ -27,7 +27,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-29 09:43:09.209779",
+ "modified": "2025-04-12 09:23:58.359802",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Blog Tag",

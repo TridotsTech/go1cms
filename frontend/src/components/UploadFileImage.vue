@@ -2,11 +2,11 @@
   <div class="flex flex-wrap gap-4">
     <div>
       <label v-if="title" class="block text-base text-gray-600 mb-2">
-        {{ title }}
+        {{ __(title) }}
       </label>
       <Button
         iconLeft="paperclip"
-        label="Upload ảnh"
+        :label="__('Upload image')"
         @click="$refs.refFile.click()"
       ></Button>
       <input
@@ -30,7 +30,7 @@ import { ref, watch } from 'vue'
 const props = defineProps({
   title: {
     type: String,
-    default: 'Ảnh',
+    default: 'Image',
   },
 })
 
@@ -59,7 +59,9 @@ function validateFile(files) {
     let file = files[0]
     let extn = file.name.split('.').pop().toLowerCase()
     if (!['png', 'jpg', 'jpeg', 'svg'].includes(extn)) {
-      messageError.value = 'Chỉ cho phép hình ảnh PNG và JPG'
+      messageError.value = __(
+        'Only images with PNG, JPG, JPEG, SVG extensions are allowed.',
+      )
       return
     } else {
       messageError.value = ''

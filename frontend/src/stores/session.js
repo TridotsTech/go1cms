@@ -25,7 +25,7 @@ export const sessionStore = defineStore('cms-session', () => {
   const login = createResource({
     url: 'go1_cms.api.auth.login',
     onError() {
-      throw new Error('Email hoặc mật khẩu không chính xác.')
+      throw new Error(__('Incorrect email or password.'))
     },
     onSuccess() {
       userResource.reload()

@@ -31,7 +31,7 @@
             </span>
           </div>
           <div class="flex gap-1 items-center">
-            <Tooltip text="Chỉnh sửa" :hover-delay="1" :placement="'top'">
+            <Tooltip :text="__('Edit')" :hover-delay="1" :placement="'top'">
               <span>
                 <Button
                   variant="ghost"
@@ -50,7 +50,7 @@
                 </Button>
               </span>
             </Tooltip>
-            <Tooltip text="Xóa" :hover-delay="1" :placement="'top'">
+            <Tooltip :text="__('Delete')" :hover-delay="1" :placement="'top'">
               <span>
                 <Button
                   variant="ghost"
@@ -82,7 +82,7 @@
       </div>
     </template>
     <template #footer role="group" aria-label="Basic example" key="footer">
-      <Tooltip text="Thêm" :hover-delay="1" :placement="'top'">
+      <Tooltip :text="__('Add')" :hover-delay="1" :placement="'top'">
         <span>
           <Button
             variant="ghost"

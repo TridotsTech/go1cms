@@ -17,7 +17,7 @@ def get_form(name):
 
     mbw_form = query.run(as_dict=True)
     if not len(mbw_form):
-        frappe.throw(_("Không tìm thấy biểu mẫu"), frappe.DoesNotExistError)
+        frappe.throw(_("Form not found"), frappe.DoesNotExistError)
     mbw_form = mbw_form.pop()
 
     form_fields = frappe.db.get_all("MBW Form Item", filters={"parent": name, "parentfield": "form_fields"}, fields=[
@@ -33,10 +33,10 @@ def update_form(data):
     doc_name = data.get('name')
     form_name = data.get('form_name')
     if not frappe.db.exists("MBW Form", doc_name):
-        frappe.throw(_("Không tìm thấy biểu mẫu"), frappe.DoesNotExistError)
+        frappe.throw(_("Form not found"), frappe.DoesNotExistError)
 
     if not form_name:
-        frappe.throw(_("Tên biểu mẫu không được để trống"))
+        frappe.throw(_('Form name') + ' ' + _('cannot be empty'))
 
     doc = frappe.get_doc('MBW Form', doc_name)
 

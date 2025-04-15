@@ -21,13 +21,13 @@
             variant="solid"
             theme="green"
             size="sm"
-            label="Sử dụng trang web"
+            :label="__('Use website')"
             @click="handleModalUseTemplate"
           >
           </Button>
         </div>
         <div v-if="template.data?.template_in_use">
-          <Tooltip text="Xem trang web" :hover-delay="1" placement="top">
+          <Tooltip :text="__('View Website')" :hover-delay="1" placement="top">
             <div>
               <Button
                 variant="subtle"
@@ -46,7 +46,7 @@
           variant="solid"
           theme="blue"
           size="sm"
-          label="Cài đặt giao diện"
+          :label="__('Install Interface')"
           @click="prepareFileTemplate"
         >
         </Button>
@@ -60,27 +60,27 @@
           class="flex flex-col gap-2 p-4 border-l border-b border-gray-300 min-w-64 rounded-bl-lg text-base text-gray-700"
         >
           <div>
-            <strong>Trạng thái:</strong>
+            <strong>{{ __('Status') }}: </strong>
             <span v-if="!template.data?.installed_template" class="text-black">
-              Chưa cài đặt</span
-            >
+              {{ __('Not Installed') }}
+            </span>
             <span
               v-else-if="template.data?.template_in_use"
               class="text-green-700"
             >
-              Đang sử dụng</span
+              {{ __('In Use') }}</span
             >
-            <span v-else class="text-orange-500"> Bản nháp</span>
+            <span v-else class="text-orange-500">{{ __('Draft') }}</span>
           </div>
           <div v-if="template.data?.template_in_use">
-            <strong>Trang web:</strong>
+            <strong>{{ __('Website') }}: </strong>
             <span
               v-if="template.data?.client_web.published"
               class="text-blue-700"
             >
-              Đang kích hoạt</span
-            >
-            <span v-else class="text-orange-500"> Dừng kích hoạt</span>
+              {{ __('Activating') }}
+            </span>
+            <span v-else class="text-orange-500">{{ __('Deactivating') }}</span>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@
       <div
         class="flex flex-wrap justify-center font-bold text-lg text-gray-700 italic border border-b-0 rounded-t-md border-gray-300"
       >
-        <p class="p-3">Ảnh xem trước</p>
+        <p class="p-3">{{ __('Preview Image') }}</p>
       </div>
       <div
         class="py-4 rounded-b-md border border-gray-300 focus-visible:outline-none"
@@ -107,7 +107,7 @@
               <photo-provider :loop="true">
                 <photo-consumer
                   v-for="src in template.data?.images"
-                  :intro="`Ảnh xem trước ${src.idx}`"
+                  :intro="`Image ${src.idx}`"
                   :key="src.idx"
                   :src="src.image"
                 >
@@ -150,7 +150,7 @@
       <div
         class="flex flex-wrap justify-center font-bold text-lg text-gray-700 italic border border-b-0 rounded-t-md border-gray-300"
       >
-        <p class="p-3">Mô tả</p>
+        <p class="p-3">{{ __('Description') }}</p>
       </div>
       <div
         class="rounded-b-md mb-6 p-4 border border-gray-300"
@@ -168,10 +168,10 @@
   <!-- dialog delete -->
   <Dialog
     :options="{
-      title: 'Xóa trang web',
+      title: __('Delete Website'),
       actions: [
         {
-          label: 'Xác nhận',
+          label: __('Confirm'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -183,25 +183,36 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa website đã tạo từ mẫu:
-          <b>"{{ template.data?.template_name }}"</b>?
+          {{
+            __(
+              'Are you sure you want to delete the website created from the template',
+            )
+          }}: <b>"{{ template.data?.template_name }}"</b>?
         </div>
         <div class="text-base text-red-600">
           <p>
             -
             <b>
-              Điều nãy sẽ xóa toàn bộ dữ liệu đã cài đặt cho trang web trước
-              đó</b
-            >.
+              {{
+                __(
+                  'This will delete all previously installed data for the website.',
+                )
+              }}
+            </b>
           </p>
           <p>
             -
             <b>
-              Sau khi xóa, sẽ không vào được trang web nếu trang web đang sử
-              dụng</b
-            >.
+              {{
+                __(
+                  'After deletion, the website will no longer be accessible if it is currently in use.',
+                )
+              }}
+            </b>
           </p>
-          <p>- <b> Không thể hoàn tác</b>.</p>
+          <p>
+            - <b> {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -209,10 +220,10 @@
   <!-- dialog use web -->
   <Dialog
     :options="{
-      title: 'Sử dụng trang web',
+      title: __('Use website'),
       actions: [
         {
-          label: 'Xác nhận',
+          label: __('Confirm'),
           variant: 'solid',
           theme: 'green',
           onClick: (close) => handleUseTemplate(close),
@@ -224,19 +235,25 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn sử dụng trang web:
+          {{ __('Are you sure you want to use the website') }}:
           <b>"{{ template.data?.template_name }}"</b>?
         </div>
         <div class="text-base text-red-600">
           <p>
             -
-            <b
-              >Dữ liệu từ trang web đã sử dụng trước đó sẽ không được áp dụng
-              khi chuyển đổi</b
-            >.
+            <b>
+              {{
+                __(
+                  'Data from the previously used website will not be applied during the switch.',
+                )
+              }}
+            </b>
           </p>
           <p>
-            - <b>Trang web này sẽ được sử dụng là trang web chính của bạn</b>.
+            -
+            <b>
+              {{ __('This website will be set as your primary website.') }}</b
+            >
           </p>
         </div>
       </div>
@@ -246,11 +263,11 @@
   <Dialog
     :options="{
       title: template.data?.client_web.published
-        ? 'Dừng kích hoạt trang web'
-        : 'Kích hoạt trang web',
+        ? __('Deactivate Website')
+        : __('Activate Website'),
       actions: [
         {
-          label: 'Xác nhận',
+          label: __('Confirm'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => setPublishedMyWebsite(close),
@@ -267,11 +284,23 @@
         >
           <p>
             -
-            <b>Sau khi dừng kích hoạt, trang web sẽ không thể vào được</b>.
+            <b>
+              {{
+                __(
+                  'After deactivation, the website will no longer be accessible.',
+                )
+              }}
+            </b>
           </p>
         </div>
         <div v-else class="text-base text-blue-600">
-          <p>- <b>Sau khi kích hoạt, trang web sẽ hoạt động trở lại</b>.</p>
+          <p>
+            -<b>
+              {{
+                __('After activation, the website will become active again.')
+              }}</b
+            >
+          </p>
         </div>
       </div>
     </template>
@@ -329,9 +358,9 @@ watch(isSidebarCollapsed, () => {
 // set publish web
 const showDialogSetPublish = ref(false)
 async function setPublishedMyWebsite(close) {
-  let loadingText = 'Đang kích hoạt website...'
+  let loadingText = __('Activating website...')
   if (template.data?.client_web.published == 1) {
-    loadingText = 'Đang dừng kích hoạt website...'
+    loadingText = __('Deactivating website...')
   }
 
   changeLoadingValue(true, loadingText)
@@ -341,7 +370,7 @@ async function setPublishedMyWebsite(close) {
       published: template.data?.client_web.published == 1 ? 0 : 1,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -352,9 +381,9 @@ async function setPublishedMyWebsite(close) {
     validErrApi(err, router)
 
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -363,13 +392,13 @@ async function setPublishedMyWebsite(close) {
 // delete web
 const showDialogDelete = ref(false)
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.client_website.delete_client_website', {
       name: template.data?.name,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -385,9 +414,9 @@ async function deleteDoc(close) {
     validErrApi(err, router)
 
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -401,13 +430,13 @@ const handleModalUseTemplate = () => {
 }
 
 const handleUseTemplate = async (close) => {
-  changeLoadingValue(true, 'Đang cấu hình...')
+  changeLoadingValue(true, __('Configuring...'))
   try {
     await call('go1_cms.api.client_website.set_primary_client_website', {
       name: template.data?.name,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -422,9 +451,9 @@ const handleUseTemplate = async (close) => {
     validErrApi(err, router)
 
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -440,15 +469,15 @@ const template = createResource({
     validErrApi(err, router)
 
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })
 
 async function prepareFileTemplate() {
-  changeLoadingValue(true, 'Đang tải giao diện...')
+  changeLoadingValue(true, __('Loading interface...'))
   try {
     await call('go1_cms.api.mbw_website_template.prepare_file_template', {
       name: props.interfaceId,
@@ -457,27 +486,27 @@ async function prepareFileTemplate() {
         addWebTemplate()
       } else {
         changeLoadingValue(false)
-        errorMessage('Có lỗi xảy ra', d.msg)
+        errorMessage(__('An error has occurred'), d.msg)
       }
     })
   } catch (err) {
     changeLoadingValue(false)
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     }
   }
 }
 
 // add web template
 async function addWebTemplate() {
-  changeLoadingValue(true, 'Đang cài đặt giao diện...')
+  changeLoadingValue(true, __('Installing interface...'))
   try {
     await call('go1_cms.api.mbw_website_template.create_client_website', {
       name: props.interfaceId,
     }).then((d) => {
       if (d) {
         createToast({
-          title: 'Cài đặt giao diện thành công',
+          title: __('Success'),
           icon: 'check',
           iconClasses: 'text-green-600',
         })
@@ -490,14 +519,17 @@ async function addWebTemplate() {
   } catch (err) {
     changeLoadingValue(false)
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     }
   }
 }
 
 const breadcrumbs = computed(() => {
   let items = [
-    { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
+    {
+      label: __('Interface Repository'),
+      route: { name: 'Interface Repository' },
+    },
   ]
 
   items.push({
@@ -513,10 +545,10 @@ const breadcrumbs = computed(() => {
 const opstionsDropdown = computed(() => {
   let ops = [
     {
-      group: 'Xóa',
+      group: __('Delete'),
       items: [
         {
-          label: 'Xóa trang web',
+          label: __('Delete Website'),
           icon: 'trash',
           onClick: () => {
             showDialogDelete.value = true
@@ -527,12 +559,12 @@ const opstionsDropdown = computed(() => {
   ]
   if (template.data?.template_in_use) {
     ops.unshift({
-      group: 'Trang web',
+      group: __('Website'),
       items: [
         {
           label: template.data?.client_web.published
-            ? 'Dừng kích hoạt'
-            : 'Kích hoạt',
+            ? __('Deactivate')
+            : __('Activate'),
           icon: 'globe',
           onClick: () => {
             showDialogSetPublish.value = true

@@ -33,16 +33,16 @@ def get_setup():
             'section_title': 'Domain',
             'fields': [
                 {
-                    'field_label': 'Sử dụng tên miền khác',
+                    'field_label': _('Use a different domain'),
                     'field_key': 'use_other_domain',
-                    'label_input': 'Sử dụng',
+                    'label_input': _('Use'),
                     'content': cms_settings.use_other_domain == 1,
                     'field_type': 'checkbox',
                     'allow_edit': True,
                     'show_edit': True,
                 },
                 {
-                    'field_label': 'Tên miền',
+                    'field_label': _('Domain'),
                     'field_key': 'domain',
                     'field_type': 'Data',
                     'content': cms_settings.domain,
@@ -58,10 +58,10 @@ def get_setup():
         fields_email = {
             'allow_edit':  True,
             'show_edit': True,
-            'section_title': 'Email thông báo tới quản trị viên',
+            'section_title': _('Notification email to admin'),
             'fields': [
                 {
-                    'field_label': 'Email gửi',
+                    'field_label': _('Sender email'),
                     'field_key': 'system_email',
                     'field_type': 'Link',
                     'content': cms_settings.system_email,
@@ -76,27 +76,27 @@ def get_setup():
                     ]
                 },
                 {
-                    'field_label': 'Nhận thông báo email',
+                    'field_label': _('Receive email notifications'),
                     'field_key': 'allow_send_email_contact',
-                    'label_input': 'Cho phép',
+                    'label_input': _('Allow'),
                     'content': cms_settings.allow_send_email_contact == 1,
                     'field_type': 'checkbox',
                     'allow_edit': True,
                     'show_edit': True,
-                    'description': '<strong>Nhận email trong các trường hợp:</strong> khi có liên hệ mới, khi có CV tuyển dụng mới, khi có đơn hàng mới và khi có tài khoản đăng ký mới'
+                    'description': '<strong>' + _('Receive emails in the following cases') + ':</strong> ' + _('when there is a new contact, a new job application, a new order, or a new account registration.')
                 },
                 {
-                    'field_label': 'Danh sách email nhận thông báo',
+                    'field_label': _('Email notification recipient list'),
                     'field_key': 'list_email_receipt',
                     'field_type': 'textarea',
                     'content': cms_settings.list_email_receipt,
                     'allow_edit': True,
                     'show_edit': cms_settings.allow_send_email_contact == 1,
                     'placeholder': "`test@gmail.com;demo@gmail.com` or `test@gmail.com; demo@gmail.com`",
-                    'description': "Mỗi email cách nhau bởi dấu `;`."
+                    'description': _('Each email should be separated by `;`.')
                 },
                 {
-                    'field_label': 'Mẫu email khi có liên hệ mới (*)',
+                    'field_label': _('Email template for new contact (*)'),
                     'field_key': 'ad_email_temp_new_contact',
                     'field_type': 'Link',
                     'content': cms_settings.ad_email_temp_new_contact,
@@ -111,7 +111,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi có CV ứng tuyển mới (*)',
+                    'field_label': _('Email template for new job application (*)'),
                     'field_key': 'ad_email_temp_new_cv_apply',
                     'field_type': 'Link',
                     'content': cms_settings.ad_email_temp_new_cv_apply,
@@ -126,7 +126,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi có đơn hàng mới (*)',
+                    'field_label': _('Email template for new order (*)'),
                     'field_key': 'ad_email_temp_new_order',
                     'field_type': 'Link',
                     'content': cms_settings.ad_email_temp_new_order,
@@ -141,7 +141,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi có tài khoản đăng ký mới (*)',
+                    'field_label': _('Email template for new account registration (*)'),
                     'field_key': 'ad_email_temp_new_account',
                     'field_type': 'Link',
                     'content': cms_settings.ad_email_temp_new_account,
@@ -163,10 +163,10 @@ def get_setup():
         fields_email = {
             'allow_edit':  active_email in [5],
             'show_edit': active_email in [5],
-            'section_title': 'Email thông báo tới khách hàng',
+            'section_title': _('Customer notification email'),
             'fields': [
                 {
-                    'field_label': 'Email gửi',
+                    'field_label': _('Sender email'),
                     'field_key': 'cskh_email',
                     'field_type': 'Link',
                     'content': cms_settings.cskh_email,
@@ -181,17 +181,17 @@ def get_setup():
                     ]
                 },
                 {
-                    'field_label': 'Gửi thông báo email',
+                    'field_label': _('Send email notifications'),
                     'field_key': 'allow_send_email_customer',
-                    'label_input': 'Cho phép',
+                    'label_input': _('Allow'),
                     'content': cms_settings.allow_send_email_customer == 1,
                     'field_type': 'checkbox',
                     'allow_edit': active_email in [5],
                     'show_edit': active_email in [5],
-                    'description': '<strong>Gửi email trong các trường hợp:</strong> khi đặt đơn hàng mới, khi đơn hàng đang được giao, khi hoàn thành đơn hàng, khi hủy đơn hàng và khi đăng ký tài khoản'
+                    'description': '<strong>' + _('Send emails in the following cases') + ':</strong> ' + _('when a new order is placed, when the order is being delivered, when the order is completed, when the order is cancelled, and when an account is registered.')
                 },
                 {
-                    'field_label': 'Mẫu email khi đặt đơn hàng mới (*)',
+                    'field_label': _('Email template for new order placement (*)'),
                     'field_key': 'cus_email_temp_new_order',
                     'field_type': 'Link',
                     'content': cms_settings.cus_email_temp_new_order,
@@ -206,7 +206,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi đơn hàng đang được giao (*)',
+                    'field_label': _('Email template for order in delivery (*)'),
                     'field_key': 'cus_email_temp_delivery_order',
                     'field_type': 'Link',
                     'content': cms_settings.cus_email_temp_delivery_order,
@@ -221,7 +221,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi hoàn thành đơn hàng (*)',
+                    'field_label': _('Email template for order completion (*)'),
                     'field_key': 'cus_email_temp_order_success',
                     'field_type': 'Link',
                     'content': cms_settings.cus_email_temp_order_success,
@@ -236,7 +236,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi hủy đơn hàng (*)',
+                    'field_label': _('Email template for order cancellation (*)'),
                     'field_key': 'cus_email_temp_cancel_order',
                     'field_type': 'Link',
                     'content': cms_settings.cus_email_temp_cancel_order,
@@ -251,7 +251,7 @@ def get_setup():
                     ],
                 },
                 {
-                    'field_label': 'Mẫu email khi đăng ký tài khoản (*)',
+                    'field_label': _('Email template for account registration (*)'),
                     'field_key': 'cus_email_temp_new_account',
                     'field_type': 'Link',
                     'content': cms_settings.cus_email_temp_new_account,
@@ -277,19 +277,19 @@ def get_setup():
         }
         if 'crm' not in frappe.get_installed_apps():
             description = {
-                'msg': 'Vui lòng cài đặt app `CRM` để sử dụng tính năng này.',
+                'msg': _('Please install the `CRM` app to use this feature.'),
                 'type': 'warn'
             }
 
         fields_sync = {
             'allow_edit':  True,
             'show_edit': True,
-            'section_title': 'Đồng bộ liên hệ sang Lead(App CRM)',
+            'section_title': _('Sync contacts to Lead (CRM App)'),
             'fields': [
                 {
-                    'field_label': 'Cho phép đồng bộ',
+                    'field_label': _('Allow synchronization'),
                     'field_key': 'sync_lead_data',
-                    'label_input': 'Cho phép',
+                    'label_input': _('Allow'),
                     'content': cms_settings.sync_lead_data == 1,
                     'field_type': 'checkbox',
                     'allow_edit': 'crm' in frappe.get_installed_apps(),
@@ -307,7 +307,7 @@ def get_setup():
         if type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Có lỗi xảy ra')
+            frappe.throw(_('An error has occurred'))
 
 
 @frappe.whitelist()
@@ -321,9 +321,11 @@ def update_setup(data):
             frappe.db.set_value('CMS Settings', 'CMS Settings', data_update)
 
         return {'name': 'CMS Settings'}
-    except Exception as ex:
+    except frappe.ValidationError as ex:
         frappe.clear_last_message()
-        if type(ex) == frappe.DoesNotExistError:
-            frappe.throw(str(ex), type(ex))
-        else:
-            frappe.throw('Có lỗi xảy ra')
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
+    except Exception as ex:
+        frappe.throw(_("An error has occurred"))

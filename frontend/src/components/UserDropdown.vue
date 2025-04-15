@@ -7,8 +7,8 @@
           isCollapsed
             ? 'px-0 w-auto'
             : open
-            ? 'bg-white shadow-sm px-2 w-52'
-            : 'hover:bg-gray-200 px-2 w-52'
+              ? 'bg-white shadow-sm px-2 w-52'
+              : 'hover:bg-gray-200 px-2 w-52'
         "
       >
         <CMSLogo class="w-8 h-8 rounded flex-shrink-0" />
@@ -52,6 +52,7 @@ import { sessionStore } from '@/stores/session'
 import { usersStore } from '@/stores/users'
 import { Dropdown } from 'frappe-ui'
 import { computed } from 'vue'
+import { showLanguage } from '@/composables/language.js'
 
 const props = defineProps({
   isCollapsed: {
@@ -68,12 +69,17 @@ const user = computed(() => getUser() || {})
 const userDropdownOptions = [
   {
     icon: 'corner-up-left',
-    label: 'Switch to Desk',
+    label: __('Switch to Desk'),
     onClick: () => window.location.replace('/app'),
   },
   {
+    icon: 'globe',
+    label: __('Language'),
+    onClick: () => (showLanguage.value = true),
+  },
+  {
     icon: 'log-out',
-    label: 'Log out',
+    label: __('Log out'),
     onClick: () => logout.submit(),
   },
 ]

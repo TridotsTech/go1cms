@@ -43,7 +43,7 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <ContactsIconV1 class="h-10 w-10" />
-        <span>{{ __('Chưa có liên hệ nào') }}</span>
+        <span>{{ __('No contacts available') }}</span>
       </div>
     </div>
   </div>
@@ -57,9 +57,7 @@ import ViewControls from '@/components/ViewControls.vue'
 import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
-const breadcrumbs = [
-  { label: 'Danh sách liên hệ', route: { name: 'Contacts' } },
-]
+const breadcrumbs = [{ label: __('Contact List'), route: { name: 'Contacts' } }]
 
 // leads data is loaded in the ViewControls component
 const contacts = ref({})

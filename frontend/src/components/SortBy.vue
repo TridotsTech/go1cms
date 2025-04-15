@@ -3,7 +3,7 @@
     v-if="!sortValues?.size"
     :options="options"
     value=""
-    :placeholder="__('First Name')"
+    :placeholder="__('Search')"
     @change="(e) => setSort(e)"
   >
     <template #target="{ togglePopover }">
@@ -240,7 +240,7 @@ function getSortLabel() {
   if (!sortValues.value.size) return __('Sort')
   let values = Array.from(sortValues.value)
   let label = sortOptions.data?.find(
-    (option) => option.value === values[0].fieldname
+    (option) => option.value === values[0].fieldname,
   )?.label
 
   return label || sort.fieldname

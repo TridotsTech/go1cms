@@ -24,7 +24,7 @@
                   class="overflow-hidden text-ellipsis whitespace-nowrap text-base leading-5"
                   v-if="selectedValue"
                 >
-                  {{ displayValue(selectedValue) }}
+                  {{ __(displayValue(selectedValue)) }}
                 </span>
                 <span class="text-base leading-5 text-gray-500" v-else>
                   {{ placeholder || '' }}
@@ -54,7 +54,7 @@
                 "
                 :displayValue="(e) => query"
                 autocomplete="off"
-                placeholder="Search"
+                :placeholder="__('Search')"
               />
               <button
                 class="absolute right-1.5 inline-flex h-7 w-7 items-center justify-center"
@@ -77,7 +77,7 @@
                   v-if="group.group && !group.hideLabel"
                   class="px-2.5 py-1.5 text-sm font-medium text-gray-500"
                 >
-                  {{ group.group }}
+                  {{ __(group.group) }}
                 </div>
                 <ComboboxOption
                   as="template"
@@ -100,7 +100,7 @@
                       name="item-label"
                       v-bind="{ active, selected, option }"
                     >
-                      {{ option.label }}
+                      {{ __(option.label) }}
                     </slot>
                   </li>
                 </ComboboxOption>
@@ -109,7 +109,7 @@
                 v-if="groups.length == 0"
                 class="mt-1.5 rounded-md px-2.5 py-1.5 text-base text-gray-600"
               >
-                No results found
+                {{ __('No results found') }}
               </li>
             </ComboboxOptions>
             <div v-if="slots.footer" class="border-t p-1.5 pb-0.5">
@@ -227,7 +227,7 @@ function filterOptions(options) {
   return options.filter((option) => {
     let searchTexts = [option.label, option.value]
     return searchTexts.some((text) =>
-      (text || '').toString().toLowerCase().includes(query.value.toLowerCase())
+      (text || '').toString().toLowerCase().includes(query.value.toLowerCase()),
     )
   })
 }

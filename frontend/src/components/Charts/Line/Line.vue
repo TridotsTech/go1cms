@@ -88,7 +88,9 @@ const lineChartOptions = computed(() => {
     },
     toolbox: {
       feature: {
-        saveAsImage: {},
+        saveAsImage: {
+          title: __('Save as Image'),
+        },
       },
     },
     xAxis: {

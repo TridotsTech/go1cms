@@ -8,10 +8,10 @@
         <Dropdown
           :options="[
             {
-              group: 'Xóa',
+              group: __('Delete'),
               items: [
                 {
-                  label: 'Xóa liên hệ',
+                  label: __('Delete contact'),
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -31,7 +31,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           @click="contact.reload()"
           :disabled="!dirty"
         ></Button>
@@ -39,7 +39,7 @@
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callUpdateDoc"
           :disabled="!dirty"
         ></Button>
@@ -48,7 +48,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="_contact" class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -64,10 +66,10 @@
   </div>
   <Dialog
     :options="{
-      title: 'Xóa liên hệ',
+      title: __('Delete contact'),
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -79,11 +81,13 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa liên hệ:
+          {{ __('Are you sure you want to delete the contact') }}:
           <b>"{{ _contact?.email }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
+          <p>
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -125,39 +129,39 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Họ',
+          label: 'Last name',
           mandatory: false,
           name: 'last_name',
           type: 'data',
-          placeholder: 'Nhập tên họ',
+          placeholder: 'Last name',
         },
         {
-          label: 'Tên',
+          label: 'First name',
           mandatory: false,
           name: 'first_name',
           type: 'data',
-          placeholder: 'Nhập tên',
+          placeholder: 'First name',
         },
         {
-          label: 'Họ và tên',
+          label: 'Full name',
           mandatory: false,
           name: 'full_name',
           type: 'data',
-          placeholder: 'Nhập họ và tên',
+          placeholder: 'Full name',
         },
         {
           label: 'Email',
           mandatory: false,
           name: 'email',
           type: 'data',
-          placeholder: 'Nhập email',
+          placeholder: 'Email',
         },
         {
-          label: 'Số điện thoại',
+          label: 'Phone number',
           mandatory: false,
           name: 'phone_number',
           type: 'data',
-          placeholder: 'Nhập số điện thoại',
+          placeholder: 'Phone',
         },
       ],
     },
@@ -168,17 +172,17 @@ const sections = computed(() => {
       hideBorder: true,
       fields: [
         {
-          label: 'Thông tin thêm / Dịch vụ tư vấn',
+          label: 'Message',
           name: 'message',
           type: 'textarea',
-          placeholder: 'Nhập thông tin',
+          placeholder: 'Message',
           rows: 10,
         },
         {
-          label: 'Nguồn',
+          label: 'Source',
           name: 'source',
           type: 'textarea',
-          placeholder: 'Nhập nguồn',
+          placeholder: 'Source',
           rows: 10,
         },
         {
@@ -186,14 +190,14 @@ const sections = computed(() => {
           mandatory: false,
           name: 'utm_source',
           type: 'data',
-          placeholder: 'Nhập utm source',
+          placeholder: 'Utm source',
         },
         {
           label: 'Utm Campaign',
           mandatory: false,
           name: 'utm_campaign',
           type: 'data',
-          placeholder: 'Nhập utm campaign',
+          placeholder: 'Utm campaign',
         },
       ],
     },
@@ -231,11 +235,11 @@ async function callUpdateDoc() {
   msgError.value = null
 
   if (JSON.stringify(contact.data) == JSON.stringify(_contact.value)) {
-    warningMessage('Tài liệu không thay đổi')
+    warningMessage(__('No changes in document'))
     return
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.mbw_contact.update_contact', {
       data: {
@@ -244,7 +248,7 @@ async function callUpdateDoc() {
     })
     if (doc.name) {
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -254,22 +258,22 @@ async function callUpdateDoc() {
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
 }
 
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.mbw_contact.delete_contact', {
       name: props.contactId,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -282,9 +286,9 @@ async function deleteDoc(close) {
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -302,7 +306,7 @@ watch(
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Danh sách liên hệ', route: { name: 'Contacts' } }]
+  let items = [{ label: __('Contact List'), route: { name: 'Contacts' } }]
   items.push({
     label:
       contact.data?.email ||

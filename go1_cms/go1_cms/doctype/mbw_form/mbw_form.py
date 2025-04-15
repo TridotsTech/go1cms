@@ -10,19 +10,24 @@ class MBWForm(Document):
     def default_list_data():
         columns = [
             {
-                "label": "Tên biểu mẫu",
+                "label": "Form name",
                 "type": "Data",
                 "key": "form_name",
                 "width": "473px"
             },
             {
-                "label": "Loại biểu mẫu",
+                "label": "Form type",
                 "type": "Data",
                 "key": "form_type",
                 "width": "15rem"
             },
             {
-                "label": "Hành động",
+                "label": "Last Modified",
+                "type": "Datetime",
+                "key": "modified"
+            },
+            {
+                "label": "Action",
                 "key": "action_button"
             }
         ]

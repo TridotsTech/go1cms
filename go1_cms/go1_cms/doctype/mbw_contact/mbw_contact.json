@@ -8,7 +8,7 @@
   "full_name",
   "last_name",
   "first_name",
-  "send_time",
+  "sent_time",
   "column_break_vhqr",
   "email",
   "phone_number",
@@ -22,19 +22,19 @@
   {
    "fieldname": "last_name",
    "fieldtype": "Data",
-   "label": "H\u1ecd"
+   "label": "Last name"
   },
   {
    "fieldname": "first_name",
    "fieldtype": "Data",
-   "label": "T\u00ean"
+   "label": "First name"
   },
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "H\u1ecd v\u00e0 t\u00ean"
+   "label": "Full name"
   },
   {
    "fieldname": "column_break_vhqr",
@@ -52,17 +52,12 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i"
+   "label": "Phone number"
   },
   {
    "fieldname": "message",
    "fieldtype": "Text",
-   "label": "Th\u00f4ng tin th\u00eam"
-  },
-  {
-   "fieldname": "send_time",
-   "fieldtype": "Datetime",
-   "label": "Th\u1eddi gian g\u1eedi"
+   "label": "Message"
   },
   {
    "fieldname": "section_break_qgmw",
@@ -71,7 +66,7 @@
   {
    "fieldname": "source",
    "fieldtype": "Text",
-   "label": "Ngu\u1ed3n"
+   "label": "Source"
   },
   {
    "fieldname": "utm_source",
@@ -82,11 +77,16 @@
    "fieldname": "utm_campaign",
    "fieldtype": "Data",
    "label": "UTM Campaign"
+  },
+  {
+   "fieldname": "sent_time",
+   "fieldtype": "Datetime",
+   "label": "Sent time"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-26 08:51:39.347306",
+ "modified": "2025-04-14 08:22:00.163517",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Contact",

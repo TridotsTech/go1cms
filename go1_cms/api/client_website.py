@@ -1,6 +1,5 @@
 import frappe
 from frappe import _
-from pypika import Criterion
 from frappe.model.document import get_controller
 from go1_cms.api.wrapper_api import (
     check_user_admin
@@ -53,9 +52,10 @@ def get_client_websites():
 @check_user_admin
 def change_name_web_client_website(name, name_web):
     if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
-        frappe.throw(_("My website not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Website not found"), frappe.DoesNotExistError)
     if not name_web:
-        frappe.throw(_("Tên không được để trống"), frappe.DoesNotExistError)
+        frappe.throw(_("Name" + ' ' + _('cannot be empty')),
+                     frappe.DoesNotExistError)
 
     frappe.db.set_value('MBW Client Website', name, 'name_web', name_web)
 
@@ -66,20 +66,20 @@ def change_name_web_client_website(name, name_web):
 @check_user_admin
 def set_primary_client_website(name):
     if not frappe.db.exists({"doctype": "MBW Website Template", "name": name}):
-        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
+        frappe.throw(_("Interface not found"), frappe.DoesNotExistError)
 
     web_template = frappe.db.get_value(
         'MBW Website Template', name, ['template_in_use', 'installed_template'], as_dict=1)
     if web_template.installed_template == 0:
-        frappe.throw(_("Giao diện chưa được cài đặt"))
+        frappe.throw(_("Interface not installed"))
     if web_template.template_in_use == 1:
-        frappe.throw(_("Giao diện đã sử dụng từ trước"))
+        frappe.throw(_("Interface already in use"))
 
     name_client_web = frappe.db.get_value(
         'MBW Client Website', {'setting_from_template': name}, ['name'])
 
     if not name_client_web:
-        frappe.throw(_("Không tìm thấy giao diện"), frappe.DoesNotExistError)
+        frappe.throw(_("Website not found"), frappe.DoesNotExistError)
 
     doc = frappe.get_doc('MBW Client Website', name_client_web)
     doc.type_web = 'Bản chính'
@@ -101,13 +101,13 @@ def update_published_client_website(name, published):
     client_web = frappe.db.get_value(
         'MBW Client Website', {'setting_from_template': name}, ['name', 'published'], as_dict=1)
     if not client_web:
-        frappe.throw(_("Không tìm thấy trang web"), frappe.DoesNotExistError)
+        frappe.throw(_("Website not found"), frappe.DoesNotExistError)
 
     if published == client_web.published:
         if published == 0:
-            frappe.throw(_("Trang web đã được dừng kích hoạt trước đó"))
+            frappe.throw(_("The website has already been deactivated"))
         else:
-            frappe.throw(_("Trang web đã được kích hoạt trước đó"))
+            frappe.throw(_("The website has already been activated"))
 
     doc = frappe.get_doc('MBW Client Website', client_web.name)
     doc.published = published
@@ -120,10 +120,10 @@ def update_published_client_website(name, published):
 @check_user_admin
 def update_edit_client_website(name):
     if not frappe.db.exists({"doctype": "MBW Client Website", "name": name}):
-        frappe.throw(_("My website not found"), frappe.DoesNotExistError)
+        frappe.throw(_("Website not found"), frappe.DoesNotExistError)
 
     frappe.db.set_value('MBW Client Website', name, 'edit', 1)
-    existing_list = frappe.db.sql(
+    frappe.db.sql(
         '''UPDATE `tabMBW Client Website` SET edit=0 WHERE name!="{web_name}" AND edit=1'''.format(web_name=name))
     frappe.db.commit()
 
@@ -137,8 +137,7 @@ def delete_client_website(name):
         name_client_web = frappe.db.get_value(
             'MBW Client Website', {'setting_from_template': name}, ['name'])
         if not name_client_web:
-            frappe.throw(_("Không tìm thấy trang web"),
-                         frappe.DoesNotExistError)
+            frappe.throw(_("Website not found"), frappe.DoesNotExistError)
 
         frappe.delete_doc('MBW Client Website', name_client_web)
 
@@ -168,5 +167,11 @@ def delete_client_website(name):
                               web_template_dict.footer_component)
 
         return name
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        frappe.throw(_("Có lỗi xảy ra"))
+        frappe.throw(_('An error has occurred'))

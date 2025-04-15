@@ -9,7 +9,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           @click="form.reload()"
           :disabled="!dirty"
         ></Button>
@@ -17,7 +17,7 @@
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callUpdateDoc"
           :disabled="!dirty"
         ></Button>
@@ -26,7 +26,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="_form" class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -34,15 +36,15 @@
         <Fields :sections="sections" :data="_form" />
       </div>
       <div>
-        <p class="text-sm text-gray-600 mb-2">Danh sách các trường</p>
+        <p class="text-sm text-gray-600 mb-2">{{ __('Field List') }}</p>
         <div class="flex flex-col overflow-y-auto">
           <table class="text-base">
             <tr class="border">
-              <th class="border p-2 w-auto">STT</th>
-              <th class="border p-2 min-w-48">Tên hiển thị</th>
-              <th class="border p-2 min-w-48">Tên trường</th>
-              <th class="border p-2 min-w-48">Trường bắt buộc</th>
-              <th class="border p-2 min-w-48">Hiển thị</th>
+              <th class="border p-2 w-auto">{{ __('No.') }}</th>
+              <th class="border p-2 min-w-48">{{ __('Display Name') }}</th>
+              <th class="border p-2 min-w-48">{{ __('Field Name') }}</th>
+              <th class="border p-2 min-w-48">{{ __('Required Field') }}</th>
+              <th class="border p-2 min-w-48">{{ __('Visible') }}</th>
               <th class="border p-2 min-w-32"></th>
             </tr>
             <template v-if="_form.form_fields?.length">
@@ -69,11 +71,23 @@
                     <td class="border p-2">
                       {{ element.field_name }}
                     </td>
-                    <td class="border p-2">
-                      {{ element.field_mandatory ? 'Có' : 'Không' }}
+                    <td class="border p-2 checkbox-custom">
+                      <!-- {{ element.field_mandatory ? __('Yes') : __('No') }} -->
+                      <FormControl
+                        type="checkbox"
+                        label=""
+                        :modelValue="element.field_mandatory"
+                        :disabled="true"
+                      />
                     </td>
-                    <td class="border p-2">
-                      {{ element.field_hidden ? 'Hiện' : 'Ẩn' }}
+                    <td class="border p-2 checkbox-custom">
+                      <!-- {{ element.field_hidden ? __('Show') : __('Hide') }} -->
+                      <FormControl
+                        type="checkbox"
+                        label=""
+                        :modelValue="element.field_hidden"
+                        :disabled="true"
+                      />
                     </td>
                     <td>
                       <div class="p-2 flex gap-2">
@@ -81,7 +95,7 @@
                           variant="solid"
                           theme="gray"
                           size="sm"
-                          label="Chỉnh sửa"
+                          :label="__('Edit')"
                           @click="editItem(element, index)"
                         ></Button>
                       </div>
@@ -96,7 +110,7 @@
                   class="p-3 text-center text-base text-gray-600"
                   :colspan="6"
                 >
-                  Không có dữ liệu
+                  {{ __('No data available') }}
                 </td>
               </tr>
             </template>
@@ -149,30 +163,39 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên biểu mẫu',
+          label: 'Form name',
           mandatory: true,
           name: 'form_name',
           type: 'data',
-          placeholder: 'Nhập tên biểu mẫu',
+          placeholder: 'Enter name',
         },
         {
-          label: 'Loại biểu mẫu',
+          label: 'Form type',
           mandatory: false,
           name: 'form_type',
           type: 'select',
-          placeholder: 'Chọn loại',
+          placeholder: 'Select',
           disabled: true,
           options: [
+            { label: 'Form lọc', value: 'Form lọc' },
             { label: 'Form liên hệ', value: 'Form liên hệ' },
-            { label: 'Form Tuyển dụng', value: 'Form Tuyển dụng' },
+            { label: 'Form tuyển dụng', value: 'Form tuyển dụng' },
+            {
+              label: 'Form đăng nhập tài khoản',
+              value: 'Form đăng nhập tài khoản',
+            },
+            {
+              label: 'Form đăng ký tài khoản',
+              value: 'Form đăng ký tài khoản',
+            },
           ],
         },
         {
-          label: 'Nội dung nút gửi',
+          label: 'Label for submit button',
           mandatory: false,
           name: 'btn_text',
           type: 'data',
-          placeholder: 'Nhập nội dung',
+          placeholder: 'Enter',
         },
       ],
     },
@@ -207,7 +230,7 @@ watch(dirty, (val) => {
 async function callUpdateDoc() {
   msgError.value = null
   if (JSON.stringify(form.data) == JSON.stringify(_form.value)) {
-    warningMessage('Tài liệu không thay đổi')
+    warningMessage(__('No changes in document'))
     return
   }
 
@@ -217,12 +240,15 @@ async function callUpdateDoc() {
   })
 
   if (!formUpdate.form_name) {
-    msgError.value = 'Tên biểu mẫu không được để trống'
-    errorMessage('Có lỗi xảy ra', 'Tên biểu mẫu không được để trống')
+    msgError.value = __('Form name') + ' ' + __('cannot be empty')
+    errorMessage(
+      __('An error has occurred'),
+      __('Form name') + ' ' + __('cannot be empty'),
+    )
     return
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.forms.update_form', {
       data: {
@@ -231,7 +257,7 @@ async function callUpdateDoc() {
     })
     if (doc.name) {
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -242,9 +268,9 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -259,38 +285,38 @@ const positionEdit = ref()
 function editItem(el, idx) {
   let fields = [
     {
-      field_label: 'STT',
+      field_label: __('No.'),
       field_key: 'idx',
       field_type: 'number',
       disabled: true,
       value: el.idx,
     },
     {
-      field_label: 'Tên hiển thị',
+      field_label: __('Display Name'),
       field_key: 'field_label',
       field_type: 'text',
       disabled: false,
       value: el.field_label,
     },
     {
-      field_label: 'Văn bản gợi ý',
+      field_label: __('Text placeholder'),
       field_key: 'field_placeholder',
       field_type: 'textarea',
       disabled: false,
       value: el.field_placeholder,
     },
     {
-      field_label: 'Trường bắt buộc',
+      field_label: __('Required Field'),
       field_key: 'field_mandatory',
       field_type: 'checkbox',
-      labelInput: 'Có',
+      labelInput: 'Yes',
       disabled: false,
       value: el.field_mandatory,
     },
     {
-      field_label: 'Hiển thị',
+      field_label: __('Visible'),
       field_key: 'field_hidden',
-      labelInput: 'Hiện',
+      labelInput: 'Show',
       field_type: 'checkbox',
       disabled: false,
       value: el.field_hidden,
@@ -299,7 +325,7 @@ function editItem(el, idx) {
 
   if (el.field_type == 'file') {
     fields.push({
-      field_label: 'Dung lượng tối đa của file (MB)',
+      field_label: __('Maximum file size (MB)'),
       field_key: 'max_file_size',
       field_type: 'number',
       disabled: false,
@@ -307,7 +333,7 @@ function editItem(el, idx) {
     })
   } else if (['checkbox', 'select', 'radio'].includes(el.field_type)) {
     fields.push({
-      field_label: 'Các lựa chọn (Mỗi lựa chọn trên 1 dòng)',
+      field_label: __('Options (one per line)'),
       field_key: 'field_options',
       field_type: 'textarea',
       disabled: false,
@@ -333,7 +359,7 @@ watch(
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Quản lý biểu mẫu', route: { name: 'Forms' } }]
+  let items = [{ label: __('Form management'), route: { name: 'Forms' } }]
   items.push({
     label: form.data?.form_name,
     route: {},
@@ -348,3 +374,8 @@ function applySort() {
   }))
 }
 </script>
+<style>
+.checkbox-custom input[type='checkbox'] {
+  color: gray;
+}
+</style>

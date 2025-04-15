@@ -25,7 +25,11 @@
           <template #prefix> </template>
           <div v-if="column.key === 'action_button'">
             <div class="flex align-middle gap-4">
-              <Tooltip text="Chi tiết" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('View detail')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -40,8 +44,7 @@
               </Tooltip>
             </div>
           </div>
-          <Tooltip
-            :text="item.label"
+          <div
             v-if="
               [
                 'modified',
@@ -53,8 +56,12 @@
             "
             class="truncate text-base"
           >
-            {{ item.timeAgo }}
-          </Tooltip>
+            <Tooltip :text="item" :hover-delay="1" placement="top">
+              <div>
+                {{ timeAgo(item) }}
+              </div>
+            </Tooltip>
+          </div>
           <div
             v-else-if="column.key === 'sla_status'"
             class="truncate text-base"
@@ -94,6 +101,7 @@ import {
   Tooltip,
 } from 'frappe-ui'
 import { watch } from 'vue'
+import { timeAgo } from '@/utils'
 
 const props = defineProps({
   rows: {

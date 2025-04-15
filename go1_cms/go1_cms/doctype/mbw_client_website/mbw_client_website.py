@@ -10,31 +10,31 @@ class MBWClientWebsite(Document):
     def default_list_data():
         columns = [
             {
-                "label": "Tên Website",
+                "label": "Website name",
                 "type": "Data",
                 "key": "name_web",
                 "width": "276px"
             },
             {
-                "label": "Loại website",
+                "label": "Website type",
                 "type": "Select",
                 "key": "type_web",
                 "width": "116px"
             },
             {
-                "label": "Kích hoạt",
+                "label": "Activate",
                 "type": "Check",
                 "key": "published",
                 "width": "149px"
             },
             {
-                "label": "Chỉnh sửa",
+                "label": 'Edit',
                 "type": "Check",
                 "key": "edit",
                 "width": "149px"
             },
             {
-                "label": "Hành động",
+                "label": "Action",
                 "key": "action_button"
             }
         ]

@@ -5,7 +5,7 @@
     </template>
     <template #right-header>
       <div class="flex gap-2 justify-end" v-if="alreadyActions">
-        <Tooltip text="Xem trang" :hover-delay="1" :placement="'top'">
+        <Tooltip :text="__('View page')" :hover-delay="1" :placement="'top'">
           <div>
             <Button
               variant="subtle"
@@ -24,7 +24,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           :disabled="!dirty"
           @click="cancelSaveDoc"
         ></Button>
@@ -32,7 +32,7 @@
           :variant="'solid'"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           :disabled="!dirty"
           @click="callUpdateDoc"
         >
@@ -42,7 +42,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="JSON.stringify(_header) != '{}'">
@@ -64,7 +66,7 @@ import LayoutHeader from '@/components/LayoutHeader.vue'
 import FieldsComponent from '@/components/FieldsPage/FieldsComponent.vue'
 import FieldsSectionComponent from '@/components/FieldsPage/FieldsSectionComponent.vue'
 import { Breadcrumbs, ErrorMessage, createResource, call } from 'frappe-ui'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import {
   createToast,
   errorMessage,
@@ -78,7 +80,7 @@ const { views } = viewsStore()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const breadcrumbs = [{ label: 'Đầu trang', route: { name: 'Header Page' } }]
+const breadcrumbs = [{ label: __('Header'), route: { name: 'Header Page' } }]
 const _header = ref({})
 const msgError = ref()
 const alreadyActions = ref(false)
@@ -96,9 +98,9 @@ const header = createResource({
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })
@@ -113,7 +115,7 @@ const dirty = computed(() => {
 })
 
 async function callUpdateDoc() {
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     let data = JSON.parse(JSON.stringify(_header.value))
 
@@ -136,7 +138,7 @@ async function callUpdateDoc() {
       header.reload()
 
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -146,9 +148,9 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

@@ -25,7 +25,11 @@
           <template #prefix> </template>
           <div v-if="column.key === 'action_button'">
             <div class="flex align-middle gap-4">
-              <Tooltip text="Chi tiết" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('View detail')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -38,7 +42,11 @@
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa danh mục" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('Delete category')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -53,8 +61,7 @@
               </Tooltip>
             </div>
           </div>
-          <Tooltip
-            :text="item.label"
+          <div
             v-if="
               [
                 'modified',
@@ -66,8 +73,12 @@
             "
             class="truncate text-base"
           >
-            {{ item.timeAgo }}
-          </Tooltip>
+            <Tooltip :text="item" :hover-delay="1" placement="top">
+              <div>
+                {{ timeAgo(item) }}
+              </div>
+            </Tooltip>
+          </div>
           <div
             v-else-if="column.key === 'sla_status'"
             class="truncate text-base"
@@ -105,10 +116,10 @@
 
   <Dialog
     :options="{
-      title: 'Xóa danh mục',
+      title: __('Delete category'),
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -120,16 +131,13 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa danh mục:
+          {{ __('Are you sure you want to delete the category') }}:
           <b>"{{ selectedItem.category_title }}"</b>?
         </div>
         <div class="text-base">
           <p>
-            - Điều này sẽ
-            <b class="text-red-600">xóa toàn bộ các bài viết</b>
-            liên quan đến danh mục này.
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
           </p>
-          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
         </div>
       </div>
     </template>
@@ -151,6 +159,7 @@ import {
 import { createToast, errorMessage } from '@/utils'
 import { ref, watch } from 'vue'
 import { globalStore } from '@/stores/global'
+import { timeAgo } from '@/utils'
 
 const { changeLoadingValue } = globalStore()
 const props = defineProps({
@@ -198,13 +207,13 @@ function handleShowModalDelete(item) {
 }
 
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.category.delete_category', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -213,7 +222,7 @@ async function deleteDoc(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     }
   }
   changeLoadingValue(false)

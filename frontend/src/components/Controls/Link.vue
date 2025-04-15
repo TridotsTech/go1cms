@@ -47,7 +47,7 @@
           <Button
             variant="ghost"
             class="w-full !justify-start"
-            label="Clear"
+            :label="__('Clear')"
             @click="() => clearValue(close)"
           >
             <template #prefix>
@@ -113,13 +113,13 @@ watchDebounced(
     // text.value = val
     reload(val)
   },
-  { debounce: 300, immediate: true }
+  { debounce: 300, immediate: true },
 )
 
 watchDebounced(
   () => props.doctype,
   () => reload(value.value),
-  { debounce: 300, immediate: true }
+  { debounce: 300, immediate: true },
 )
 
 const options = createResource({

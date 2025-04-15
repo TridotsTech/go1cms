@@ -62,7 +62,7 @@
               <div class="flex gap-1.5">
                 <component :is="view.icon" class="h-4 w-4 text-gray-700" />
                 <span class="uppercase">
-                  {{ view.name }}
+                  {{ __(view.name) }}
                 </span>
               </div>
               <FeatherIcon
@@ -87,13 +87,13 @@
     </div>
     <div class="m-2 flex flex-col gap-1">
       <SidebarLink
-        label="Tài liệu"
+        label="Docs"
         :isCollapsed="isSidebarCollapsed"
         icon="book-open"
         @click="() => openDocs()"
       />
       <SidebarLink
-        :label="isSidebarCollapsed ? 'Mở rộng' : 'Thu nhỏ'"
+        :label="isSidebarCollapsed ? 'Expand' : 'Collapse'"
         :isCollapsed="isSidebarCollapsed"
         @click="isSidebarCollapsed = !isSidebarCollapsed"
         class=""
@@ -109,6 +109,7 @@
       </SidebarLink>
     </div>
     <!-- <Notifications /> -->
+    <ChangeLanguageDialog />
   </div>
 </template>
 
@@ -151,6 +152,7 @@ import { storeToRefs } from 'pinia'
 import { globalStore } from '@/stores/global'
 const { changeNameWebsiteEdit } = globalStore()
 const { name_website_edit } = storeToRefs(globalStore())
+import ChangeLanguageDialog from '@/components/Settings/ChangeLanguageDialog.vue'
 
 const { views } = viewsStore()
 
@@ -163,7 +165,7 @@ const links = [
   //   to: 'My Website',
   // },
   {
-    label: 'Kho giao diện',
+    label: 'Interface Repository',
     icon: DisplayIcon,
     to: 'Interface Repository',
   },
@@ -183,7 +185,7 @@ const allViews = computed(() => {
     changeNameWebsiteEdit(views.data?.name_web)
     //
     _views.push({
-      name: 'Bảng chính',
+      name: 'Dashboard',
       opened: true,
       views: [
         {
@@ -196,12 +198,12 @@ const allViews = computed(() => {
 
     //
     _views.push({
-      name: 'Cấu hình chung',
+      name: 'General Settings',
       opened: true,
       // icon: SettingsIcon,
       views: [
         {
-          label: 'Thiết lập website',
+          label: 'Website Settings',
           icon: SettingsIcon,
           to: 'Website Setup',
         },
@@ -211,7 +213,7 @@ const allViews = computed(() => {
           to: 'Menu',
         },
         {
-          label: 'Cài đặt',
+          label: 'Settings',
           icon: FormSetupIcon,
           to: 'CMS Settings',
         },
@@ -221,12 +223,12 @@ const allViews = computed(() => {
     if (views.data?.list_page) {
       let items_view = [
         {
-          label: 'Đầu trang',
+          label: 'Header',
           icon: HeaderIcon,
           to: 'Header Page',
         },
         {
-          label: 'Chân trang',
+          label: 'Footer',
           icon: FooterIcon,
           to: 'Footer Page',
         },
@@ -242,13 +244,13 @@ const allViews = computed(() => {
         })
       })
       items_view.push({
-        label: 'Thêm trang mới',
+        label: 'Add New Page',
         icon: NewPageIcon,
         to: 'New Page',
       })
 
       _views.push({
-        name: 'Danh sách trang',
+        name: 'Page List',
         opened: true,
         // icon: InboxIcon,
         views: items_view,
@@ -257,22 +259,22 @@ const allViews = computed(() => {
 
     //
     _views.push({
-      name: 'Bài viết & biểu mẫu',
+      name: 'Posts & Forms',
       opened: true,
       // icon: InboxIcon,
       views: [
         {
-          label: 'Quản lý bài viết',
+          label: 'Post management',
           icon: PostIcon,
           to: 'Posts',
         },
         {
-          label: 'Quản lý biểu mẫu',
+          label: 'Form management',
           icon: FormIcon,
           to: 'Forms',
         },
         {
-          label: 'Danh sách liên hệ',
+          label: 'Contact List',
           icon: ContactsIconV1,
           to: 'Contacts',
         },

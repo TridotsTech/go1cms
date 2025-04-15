@@ -9,7 +9,7 @@
           :variant="'solid'"
           theme="blue"
           size="sm"
-          label="Thêm mới"
+          :label="__('Add New')"
           iconLeft="plus-circle"
           route="/menu/create"
         >
@@ -52,8 +52,8 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <PostIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có menu nào') }}</span>
-        <Button :label="__('Thêm mới')" route="/menu/create">
+        <span>{{ __('No menus available') }}</span>
+        <Button :label="__('Add New')" route="/menu/create">
           <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
         </Button>
       </div>
@@ -81,7 +81,6 @@ const viewControls = ref(null)
 // Columns
 const columns = computed(() => {
   if (!menu.value?.data?.columns) return []
-
   let _columns = menu.value?.data?.columns
   if (!_columns.find((el) => el.key == 'action_button')) {
     _columns.push({ label: __('Action'), key: 'action_button' })

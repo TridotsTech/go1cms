@@ -31,7 +31,7 @@
    "fieldname": "name_template",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "T\u00ean m\u1eabu"
+   "label": "Template name"
   },
   {
    "fieldname": "column_break_blsa",
@@ -51,7 +51,7 @@
   {
    "fieldname": "page_type",
    "fieldtype": "Select",
-   "label": "Lo\u1ea1i trang",
+   "label": "Page type",
    "options": "\nTrang chi ti\u1ebft tin t\u1ee9c\nTrang chi ti\u1ebft s\u1ea3n ph\u1ea9m\nTrang chi ti\u1ebft tuy\u1ec3n d\u1ee5ng\nTrang m\u1edbi"
   },
   {
@@ -76,7 +76,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-21 11:16:11.418906",
+ "modified": "2025-04-15 10:21:23.717262",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template Item",

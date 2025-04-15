@@ -3,7 +3,7 @@
     <template v-if="field.field_type == 'List'">
       <div class="lg:col-span-2 overflow-y-hidden">
         <div class="text-base text-gray-700 font-bold mb-2">
-          {{ field.field_label }}
+          {{ __(field.field_label) }}
         </div>
         <div class="border overflow-auto max-h-[500px]">
           <table
@@ -11,10 +11,10 @@
           >
             <thead class="sticky top-0 z-[2]">
               <tr class="box-border border-b bg-gray-50 min-h-16">
-                <th class="p-2 w-auto sticky left-0 py-5">STT</th>
+                <th class="p-2 w-auto sticky left-0 py-5">{{ __('No.') }}</th>
                 <template v-for="f in field.fields_json">
                   <th class="p-2 min-w-48">
-                    {{ f.field_label }}
+                    {{ __(f.field_label) }}
                   </th>
                 </template>
                 <th class="p-2 min-w-32 sticky right-0 py-5"></th>
@@ -69,14 +69,14 @@
                           variant="solid"
                           theme="gray"
                           size="sm"
-                          label="Sửa"
+                          :label="__('Edit')"
                           @click="editItemSection(field, index)"
                         ></Button>
                         <Button
                           variant="solid"
                           theme="red"
                           size="sm"
-                          label="Xóa"
+                          :label="__('Delete')"
                           @click="deleteItemSection(field, index)"
                         ></Button>
                       </div>
@@ -92,7 +92,7 @@
                     class="p-3 text-center text-base text-gray-600"
                     :colspan="field.fields_json?.length + 2"
                   >
-                    Không có dữ liệu
+                    {{ __('No data available') }}
                   </td>
                 </tr>
               </tbody>
@@ -104,7 +104,7 @@
             variant="solid"
             theme="blue"
             size="sm"
-            label="Thêm"
+            :label="__('Add Row')"
             @click="createItemSection(field)"
           ></Button>
         </div>
@@ -113,7 +113,7 @@
     <template v-else-if="field.field_type == 'Button'">
       <div class="lg:col-span-2">
         <div class="text-base text-gray-700 font-bold mb-2">
-          {{ field.field_label }}
+          {{ __(field.field_label) }}
         </div>
         <div class="grid lg:grid-cols-2 gap-4">
           <div class="flex flex-col" v-for="f in field.fields_json">
@@ -229,7 +229,7 @@ function createItemSection(field) {
   }))
 
   fields.unshift({
-    field_label: 'STT',
+    field_label: 'No.',
     field_key: 'idx',
     field_type: 'number',
     disabled: true,
@@ -252,7 +252,7 @@ function editItemSection(field, idx) {
     upload_file_image: null,
   }))
   fields.unshift({
-    field_label: 'STT',
+    field_label: 'No.',
     field_key: 'idx',
     field_type: 'number',
     disabled: true,

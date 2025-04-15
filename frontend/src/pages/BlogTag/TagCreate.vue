@@ -9,14 +9,14 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           route="/blog-tags"
         ></Button>
         <Button
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callInsertDoc"
         ></Button>
       </div>
@@ -24,7 +24,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -39,7 +41,7 @@
 import Fields from '@/components/Fields.vue'
 import LayoutHeader from '@/components/LayoutHeader.vue'
 import { Breadcrumbs, call, ErrorMessage } from 'frappe-ui'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { createToast, errorMessage, validErrApi } from '@/utils'
 import { globalStore } from '@/stores/global'
@@ -47,8 +49,8 @@ const { changeLoadingValue } = globalStore()
 
 const router = useRouter()
 const breadcrumbs = [
-  { label: 'Quản lý tag', route: { name: 'Blog Tags' } },
-  { label: 'Thêm mới', route: { name: 'Blog Tags Create' } },
+  { label: __('Tag management'), route: { name: 'Blog Tags' } },
+  { label: __('Add New'), route: { name: 'Blog Tags Create' } },
 ]
 
 let _tag = ref({})
@@ -62,11 +64,11 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên tag',
+          label: 'Tag name',
           mandatory: true,
           name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên tag',
+          placeholder: 'Enter',
         },
       ],
     },
@@ -76,10 +78,10 @@ const sections = computed(() => {
       hideBorder: true,
       fields: [
         {
-          label: 'Mô tả',
+          label: 'Description',
           name: 'description',
           type: 'textarea',
-          placeholder: 'Nhập mô tả',
+          placeholder: 'Enter',
           rows: 10,
         },
       ],
@@ -91,11 +93,11 @@ async function callInsertDoc() {
   msgError.value = null
   const regex = /[&\/\\#+()$~%.`'":*?<>{}]/g
   if (regex.test(_tag.value.title)) {
-    msgError.value = `Tên tag không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
+    msgError.value = `${__('Tag name must not contain special characters:')} [&\/\\#+()$~%.\`'":*?<>{}]`
     return false
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.blog_tag.create_blog_tag', {
       data: {
@@ -103,7 +105,7 @@ async function callInsertDoc() {
       },
     })
     createToast({
-      title: 'Thêm mới thành công',
+      title: __('Saved'),
       icon: 'check',
       iconClasses: 'text-green-600',
     })
@@ -116,7 +118,7 @@ async function callInsertDoc() {
     validErrApi(err, router)
 
     msgError.value = err.messages.join(', ')
-    errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    errorMessage(__('An error has occurred'), err.messages.join(', '))
   }
   changeLoadingValue(false)
 }

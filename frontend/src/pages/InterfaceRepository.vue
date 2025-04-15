@@ -28,26 +28,30 @@
                 v-if="temp.template_in_use"
                 class="bg-green-100 shadow-lg p-2 rounded-lg text-green-700 font-bold text-base"
               >
-                Đang sử dụng
+                {{ __('In Use') }}
               </div>
               <div
                 v-else-if="temp.installed_template"
                 class="bg-gray-100 shadow-lg p-2 rounded-lg text-orange-500 font-bold text-base"
               >
-                Bản nháp
+                {{ __('Draft') }}
               </div>
               <div
                 v-else
                 class="bg-gray-100 shadow-lg p-2 rounded-lg text-black font-bold text-base"
               >
-                Chưa cài đặt
+                {{ __('Not Installed') }}
               </div>
             </div>
             <div
               v-if="temp.template_in_use"
               class="absolute top-6 right-4 z-[1]"
             >
-              <Tooltip text="Xem trang web" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('View Website')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     variant="subtle"
@@ -99,7 +103,7 @@
                   variant="solid"
                   theme="green"
                   size="sm"
-                  label="Sử dụng trang web"
+                  :label="__('Use website')"
                   @click="() => handleModalUseTemplate(temp)"
                 >
                 </Button>
@@ -107,7 +111,7 @@
                   :variant="'outline'"
                   theme="gray"
                   size="sm"
-                  label="Xem chi tiết"
+                  :label="__('View detail')"
                   :route="'/interface-repository/' + temp.name"
                 >
                 </Button>
@@ -133,17 +137,19 @@
       >
         <DisplayIcon class="h-10 w-10" />
         <span>{{
-          __('Giao diện đang được cập nhật thêm, vui lòng quay lại sau')
+          __(
+            'The interface is currently being updated, please check back later.',
+          )
         }}</span>
       </div>
     </div>
   </div>
   <Dialog
     :options="{
-      title: 'Sử dụng giao diện',
+      title: __('Use the interface'),
       actions: [
         {
-          label: 'Xác nhận',
+          label: __('Confirm'),
           variant: 'solid',
           theme: 'green',
           onClick: (close) => handleUseTemplate(close),
@@ -189,7 +195,10 @@ import { viewsStore } from '@/stores/views'
 const { views } = viewsStore()
 
 const breadcrumbs = [
-  { label: 'Kho giao diện', route: { name: 'Interface Repository' } },
+  {
+    label: __('Interface Repository'),
+    route: { name: 'Interface Repository' },
+  },
 ]
 
 //
@@ -206,13 +215,13 @@ const handleModalUseTemplate = (temp) => {
 }
 
 const handleUseTemplate = async (close) => {
-  changeLoadingValue(true, 'Đang cấu hình...')
+  changeLoadingValue(true, __('Setting up...'))
   try {
     await call('go1_cms.api.client_website.set_primary_client_website', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Thành công',
+        title: __('Success'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -226,9 +235,9 @@ const handleUseTemplate = async (close) => {
   } catch (err) {
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages[0])
+      errorMessage(__('An error has occurred'), err.messages[0])
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

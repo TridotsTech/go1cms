@@ -9,7 +9,7 @@
           :variant="'solid'"
           theme="blue"
           size="sm"
-          label="Thêm mới"
+          :label="__('Add New')"
           iconLeft="plus-circle"
           route="/categories/create"
         >
@@ -55,8 +55,8 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <PostIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có danh mục nào') }}</span>
-        <Button :label="__('Thêm mới')" route="/categories/create">
+        <span>{{ __('No categories available') }}</span>
+        <Button :label="__('Add New')" route="/categories/create">
           <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
         </Button>
       </div>
@@ -73,8 +73,8 @@ import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
 const breadcrumbs = [
-  { label: 'Quản lý bài viết', route: { name: 'Posts' } },
-  { label: 'Quản lý danh mục', route: { name: 'Categories' } },
+  { label: __('Post management'), route: { name: 'Posts' } },
+  { label: __('Category management'), route: { name: 'Categories' } },
 ]
 
 // leads data is loaded in the ViewControls component

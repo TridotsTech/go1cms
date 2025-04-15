@@ -7,10 +7,10 @@
         <div class="flex justify-center">
           <AccessDeniedIcon class="w-10 h-10"></AccessDeniedIcon>
         </div>
-        <div class="font-medium">Trang không hợp lệ</div>
+        <div class="font-medium">{{ __('This page is invalid') }}</div>
         <Button :route="{ name: 'Interface Repository' }">
           <template #prefix><ArrowUpRightIcon class="w-4 h-4" /></template>
-          Kho giao diện
+          {{ __('Interface Repository') }}
         </Button>
       </div>
     </div>

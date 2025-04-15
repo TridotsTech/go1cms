@@ -27,9 +27,9 @@ def get_category(name):
 def create_category(data):
     category_title = data.get('category_title')
     if not category_title:
-        frappe.throw(_("Tên danh mục không được để trống"))
+        frappe.throw(_("Category name") + ' ' + _("cannot be empty"))
     if frappe.db.exists("Mbw Blog Category", {"category_title": category_title}):
-        frappe.throw(_("Tên danh mục đã tồn tại"))
+        frappe.throw(_("Category name already exists"))
 
     doc_new = frappe.new_doc('Mbw Blog Category')
     doc_new.category_title = category_title
@@ -49,10 +49,10 @@ def update_category(data):
         frappe.throw(_("Category not found"), frappe.DoesNotExistError)
 
     if not category_title:
-        frappe.throw(_("Tên danh mục không được để trống"))
+        frappe.throw(_("Category name") + ' ' + _("cannot be empty"))
 
     if frappe.db.exists("Mbw Blog Category", {"category_title": category_title, "name": ("!=", doc_name)}):
-        frappe.throw(_("Tên danh mục đã tồn tại"))
+        frappe.throw(_("Category name already exists"))
 
     doc = frappe.get_doc('Mbw Blog Category', doc_name)
     if doc.name != category_title:
@@ -74,15 +74,9 @@ def delete_category(name):
         if not frappe.db.exists("Mbw Blog Category", name):
             frappe.throw(_("Category not found"), frappe.DoesNotExistError)
 
-        MbwBlogPost = frappe.qb.DocType("Mbw Blog Post")
-        query = (
-            frappe.qb.from_(MbwBlogPost)
-            .select("name")
-            .where(MbwBlogPost.blog_category == name)
-        )
-        blogs = query.run(as_dict=True)
-        for blog in blogs:
-            frappe.delete_doc('Mbw Blog Post', blog.name)
+        if frappe.db.exists("Mbw Blog Post", {"category": name}):
+            frappe.throw(
+                _("This category is linked and cannot be deleted."))
 
         frappe.delete_doc('Mbw Blog Category', name)
 
@@ -90,6 +84,12 @@ def delete_category(name):
         return result
     except frappe.LinkExistsError as ex:
         frappe.clear_last_message()
-        frappe.throw(_("Danh mục này đã được liên kết, không thể xóa."))
+        frappe.throw(_("This category is linked and cannot be deleted."))
+    except frappe.ValidationError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
     except Exception as ex:
-        frappe.throw(_(f"Lỗi: {str(ex)}"))
+        frappe.throw(_("An error has occurred"))

@@ -43,7 +43,7 @@
                     :value="f.field.fieldname"
                     :options="filterableFields.data"
                     @change="(e) => updateFilter(e, i)"
-                    :placeholder="__('Nhập từ tìm kiếm')"
+                    :placeholder="__('Enter search term')"
                   />
                 </div>
                 <div id="operator">
@@ -62,7 +62,7 @@
                     :is="getValSelect(f)"
                     v-model="f.value"
                     @change="(v) => updateValue(v, f)"
-                    :placeholder="__('Nhập từ tìm kiếm')"
+                    :placeholder="__('Enter search term')"
                   />
                 </div>
               </div>
@@ -73,7 +73,8 @@
               class="mb-3 flex items-center justify-end gap-2"
             >
               <p class="text-sm text-gray-700">
-                <strong>Chú ý:</strong> Mỗi từ tiềm kiếm cách nhau bởi dấu `;`.
+                <strong>{{ __('Note') }}:</strong>
+                {{ __('Each search term is separated by a `;`') }}
               </p>
             </div>
           </div>
@@ -203,7 +204,7 @@ function convertFilters(data, allFilters) {
   let f = []
   for (let [key, value] of Object.entries(allFilters)) {
     let field = data.find((f) => f.fieldname === key)
-    if (typeof value !== 'object') {
+    if (typeof value !== 'object' || !value) {
       value = ['=', value]
       if (field?.fieldtype === 'Check') {
         value = ['equals', value[1] ? 'Yes' : 'No']
@@ -326,11 +327,11 @@ function getValSelect(f) {
       type: 'select',
       options: [
         {
-          label: 'Set',
+          label: __('Set'),
           value: 'set',
         },
         {
-          label: 'Not Set',
+          label: __('Not Set'),
           value: 'not set',
         },
       ],
@@ -348,7 +349,7 @@ function getValSelect(f) {
     return h(FormControl, {
       type: 'select',
       options: _options.map((o) => ({
-        label: o,
+        label: __(o),
         value: o,
       })),
     })
@@ -417,6 +418,8 @@ function setfilter(data) {
 }
 
 function updateFilter(data, index) {
+  if (!data.fieldname) return
+
   filters.value.delete(Array.from(filters.value)[index])
   filters.value.add({
     fieldname: data.value,

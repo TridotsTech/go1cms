@@ -28,31 +28,31 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "T\u00ean m\u1eabu",
+   "label": "Template name",
    "reqd": 1
   },
   {
    "fieldname": "image_preview",
    "fieldtype": "Attach Image",
-   "label": "\u1ea2nh b\u00eca"
+   "label": "Image preview"
   },
   {
    "fieldname": "content",
    "fieldtype": "Text Editor",
-   "label": "N\u1ed9i dung chi ti\u1ebft"
+   "label": "Content"
   },
   {
    "fieldname": "type_template",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Lo\u1ea1i m\u1eabu",
+   "label": "Template type",
    "options": "Website gi\u1edbi thi\u1ec7u\nWebsite tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng\nWebsite b\u00e1n h\u00e0ng d\u1ea1ng li\u00ean h\u1ec7 \u0111\u1eb7t h\u00e0ng v\u00e0 tuy\u1ec3n d\u1ee5ng\nWebsite b\u00e1n h\u00e0ng c\u00f3 gi\u1ecf h\u00e0ng"
   },
   {
    "fieldname": "page_templates",
    "fieldtype": "Table",
-   "label": "C\u00e1c trang m\u1eabu",
+   "label": "Pages",
    "options": "MBW Website Template Item"
   },
   {
@@ -62,16 +62,16 @@
   {
    "fieldname": "header_component",
    "fieldtype": "Link",
-   "label": "\u0110\u1ea7u trang",
+   "label": "Header",
    "options": "Header Component",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "footer_component",
    "fieldtype": "Link",
-   "label": "Ch\u00e2n trang",
+   "label": "Footer",
    "options": "Footer Component",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "section_break_bblf",
@@ -82,12 +82,12 @@
    "fieldtype": "Link",
    "label": "Web Theme",
    "options": "Web Theme",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "images",
    "fieldtype": "Table",
-   "label": "Danh s\u00e1ch m\u1eabu \u1ea3nh",
+   "label": "Images",
    "options": "MBW Website Template Preview Image"
   },
   {
@@ -102,25 +102,25 @@
    "fieldname": "template_in_use",
    "fieldtype": "Check",
    "in_standard_filter": 1,
-   "label": "\u0110ang s\u1eed d\u1ee5ng"
+   "label": "In Use"
   },
   {
    "default": "0",
    "fieldname": "installed_template",
    "fieldtype": "Check",
    "in_standard_filter": 1,
-   "label": "\u0110\u00e3 c\u00e0i \u0111\u1eb7t"
+   "label": "Installed"
   },
   {
    "fieldname": "link_download",
    "fieldtype": "Small Text",
-   "label": "\u0110\u01b0\u1eddng d\u1eabn download"
+   "label": "Link download"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-10-29 13:46:34.013555",
+ "modified": "2025-04-15 10:21:49.893007",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "MBW Website Template",

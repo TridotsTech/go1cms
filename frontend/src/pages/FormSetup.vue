@@ -9,7 +9,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           :disabled="!dirty"
           @click="cancelSaveDoc"
         ></Button>
@@ -17,7 +17,7 @@
           :variant="'solid'"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           :disabled="!dirty"
           @click="callUpdateDoc"
         >
@@ -27,7 +27,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="JSON.stringify(_email_setup) != '{}'">
@@ -75,9 +77,9 @@ const form_setup = createResource({
     validErrApi(err, router)
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   },
 })
@@ -100,7 +102,7 @@ watch(dirty, (val) => {
 })
 
 async function callUpdateDoc() {
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     let data = JSON.parse(JSON.stringify(_email_setup.value))
 
@@ -112,7 +114,7 @@ async function callUpdateDoc() {
       form_setup.reload()
 
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -122,9 +124,9 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

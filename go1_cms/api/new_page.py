@@ -39,7 +39,7 @@ def get_info_template_page():
         'show_prv_image': False,
         'fields': [
             {
-                'field_label': 'Thẻ tiêu đề',
+                'field_label': 'Meta title',
                 'field_key': 'meta_title',
                 'field_type': 'Data',
                 'content': web_page.meta_title,
@@ -53,7 +53,7 @@ def get_info_template_page():
                 'show_edit': True,
                 'fields': [
                     {
-                        'field_label': 'Thẻ mô tả',
+                        'field_label': 'Meta description',
                         'field_key': 'meta_description',
                         'field_type': 'Small Text',
                         'content': web_page.meta_description,
@@ -62,7 +62,7 @@ def get_info_template_page():
                         'upload_file_image': None
                     },
                     {
-                        'field_label': 'Thẻ từ khóa',
+                        'field_label': 'Meta keywords',
                         'field_key': 'meta_keywords',
                         'field_type': 'Small Text',
                         'content': web_page.meta_keywords,
@@ -121,17 +121,16 @@ def update_info_template_page(data):
 
         return {'name': web_page.name}
     except Exception as ex:
-        print("ex::", ex)
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_('An error has occurred'))
 
 
 @frappe.whitelist()
 @check_user_admin
 def create_new_page(**kwargs):
     if not kwargs.get('name'):
-        frappe.throw(_("Mã trang mẫu không tồn tại"))
+        frappe.throw(_("Template page does not exist"))
     if not kwargs.get('name_page'):
-        frappe.throw(_("Tên trang mới không được để trống"))
+        frappe.throw(_('Website name' + ' ' + _('cannot be empty')))
 
     if kwargs.get('route_page') and kwargs.get('route_page').strip():
         route_page = slugify(kwargs.get('route_page'))

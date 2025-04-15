@@ -25,7 +25,11 @@
           <template #prefix> </template>
           <div v-if="column.key === 'action_button'">
             <div class="flex align-middle gap-4">
-              <Tooltip text="Chi tiết" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('View detail')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -38,7 +42,11 @@
                   </Button>
                 </div>
               </Tooltip>
-              <Tooltip text="Xóa liên hệ" :hover-delay="1" :placement="'top'">
+              <Tooltip
+                :text="__('Delete contact')"
+                :hover-delay="1"
+                :placement="'top'"
+              >
                 <div>
                   <Button
                     :variant="'subtle'"
@@ -97,10 +105,10 @@
 
   <Dialog
     :options="{
-      title: 'Xóa liên hệ',
+      title: __('Delete contact'),
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -112,11 +120,13 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa liên hệ:
+          {{ __('Are you sure you want to delete the contact') }}:
           <b class="break-words">"{{ selectedItem.email }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
+          <p>
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -185,13 +195,13 @@ function handleShowModalDelete(item) {
 }
 
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.mbw_contact.delete_contact', {
       name: selectedItem.value?.name,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -200,7 +210,7 @@ async function deleteDoc(close) {
     })
   } catch (err) {
     if (err.messages && err.messages.length) {
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     }
   }
   changeLoadingValue(false)

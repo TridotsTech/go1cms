@@ -5,7 +5,7 @@
       size: 'xl',
       actions: [
         {
-          label: 'Cập nhật',
+          label: __('Update'),
           variant: 'solid',
           onClick: () => updateSection(),
         },
@@ -15,7 +15,7 @@
     <template #body-title>
       <div class="flex items-center gap-3">
         <h3 class="text-2xl font-semibold leading-6 text-gray-900">
-          Chỉnh sửa
+          {{ __('Edit') }}
         </h3>
       </div>
     </template>

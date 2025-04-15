@@ -24,7 +24,7 @@
       size: 'xl',
       actions: [
         {
-          label: editMode ? 'Cập nhật' : 'Thêm',
+          label: editMode ? __('Update') : __('Add'),
           variant: 'solid',
           onClick: () => handleUpdateMenu(),
         },
@@ -34,7 +34,7 @@
     <template #body-title>
       <div class="flex items-center gap-3">
         <h3 class="text-2xl font-semibold leading-6 text-gray-900">
-          {{ editMode ? 'Chỉnh sửa' : 'Thêm mới' }}
+          {{ editMode ? __('Edit') : __('Add New') }}
         </h3>
       </div>
     </template>
@@ -46,26 +46,26 @@
             :options="options_suggest"
             size="sm"
             variant="subtle"
-            label="Chọn menu đã có"
+            :label="__('Select existing menu')"
             v-model="currentSuggest"
           />
         </div>
         <div>
           <div class="mb-2 text-sm text-gray-600">
-            Tên menu
+            {{ __('Menu name') }}
             <span class="text-red-500">*</span>
           </div>
           <FormControl
             type="text"
-            :placeholder="__('Nhập tên')"
+            :placeholder="__('Enter name')"
             v-model="currentItem.menu_label"
           />
         </div>
         <div>
-          <div class="mb-2 text-sm text-gray-600">URL chuyển hướng</div>
+          <div class="mb-2 text-sm text-gray-600">{{ __('Redirect URL') }}</div>
           <FormControl
             type="text"
-            :placeholder="__('Nhập url')"
+            :placeholder="__('Enter url')"
             v-model="currentItem.redirect_url"
           />
         </div>
@@ -131,7 +131,8 @@ export default {
     },
     handleUpdateMenu() {
       if (!this.currentItem.menu_label) {
-        this.msgErr['menu_label'] = 'Tên menu không được để trống'
+        this.msgErr['menu_label'] =
+          __('Menu name') + ' ' + __('cannot be empty')
         return false
       }
       let newMenus = [...this.modelValue]

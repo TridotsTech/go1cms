@@ -71,7 +71,7 @@
                     variant="solid"
                     theme="blue"
                     size="sm"
-                    label="Lọc"
+                    :label="__('Filter')"
                     @click="() => handleSelectPeriod(close)"
                   >
                   </Button>
@@ -196,72 +196,72 @@ const msgError = ref({})
 
 const selectedPeriod = ref({
   value: '7_ngay_qua',
-  label: '7 ngày qua',
+  label: __('Last 7 days'),
 })
 const selectedPeriodCurrent = ref({
   value: '7_ngay_qua',
-  label: '7 ngày qua',
+  label: __('Last 7 days'),
 })
 const optionsPeriods = [
   {
     value: 'hom_nay',
-    label: 'Hôm nay',
+    label: __('Today'),
   },
   {
     value: 'hom_qua',
-    label: 'Hôm qua',
+    label: __('Yesterday'),
   },
   {
     value: '7_ngay_qua',
-    label: '7 ngày qua',
+    label: __('Last 7 days'),
   },
   {
     value: '30_ngay_qua',
-    label: '30 ngày qua',
+    label: __('Last 30 days'),
   },
   {
     value: 'tuan_truoc',
-    label: 'Tuần trước',
+    label: __('Last week'),
   },
   {
     value: 'tuan_nay',
-    label: 'Tuần này',
+    label: __('This week'),
   },
   {
     value: 'thang_truoc',
-    label: 'Tháng trước',
+    label: __('Last month'),
   },
   {
     value: 'thang_nay',
-    label: 'Tháng này',
+    label: __('This month'),
   },
   {
     value: 'tuy_chon',
-    label: 'Tùy chọn',
+    label: __('Options'),
   },
 ]
 
 const selectedCompare = ref({
   value: 'khong_so_sanh',
-  label: 'Không so sánh',
+  label: __('No comparison'),
 })
 const selectedCompareCurrent = ref({
   value: 'khong_so_sanh',
-  label: 'Không so sánh',
+  label: __('No comparison'),
 })
 
 const optionsCompare = [
   {
     value: 'khong_so_sanh',
-    label: 'Không so sánh',
+    label: __('No comparison'),
   },
   {
     value: 'so_sanh_ky_truoc',
-    label: 'So sánh với kỳ trước',
+    label: __('Compare with previous period'),
   },
   {
     value: 'tuy_chon',
-    label: 'Tùy chọn',
+    label: __('Options'),
   },
 ]
 function handleSetLabelCompare() {
@@ -274,7 +274,7 @@ function handleSetLabelCompare() {
       if (timeRangeEndCurrent.value) {
         let p = timeRangeEndCurrent.value
         str_time = `${moment(p[0]).format('DD/MM/YYYY')} - ${moment(
-          p[1]
+          p[1],
         ).format('DD/MM/YYYY')}`
         setLabelCompare(str_time)
       }
@@ -289,7 +289,7 @@ function handleSelectCompare(close, allow_close = true) {
     selectedCompareCurrent.value.value == 'tuy_chon' &&
     !timeRangeEndCurrent.value
   ) {
-    msgError.value.rangeEnd = 'Vui lòng chọn khoảng thời gian'
+    msgError.value.rangeEnd = __('Please select a date range')
     return
   }
   selectedCompare.value = { ...selectedCompareCurrent.value }
@@ -306,7 +306,7 @@ function handleSelectPeriod(close, allow_close = true) {
     selectedPeriodCurrent.value.value == 'tuy_chon' &&
     !timeRangeStartCurrent.value
   ) {
-    msgError.value.rangeStart = 'Vui lòng chọn khoảng thời gian'
+    msgError.value.rangeStart = __('Please select a date range')
     return
   }
   selectedPeriod.value = { ...selectedPeriodCurrent.value }
@@ -332,14 +332,14 @@ function setQueryParams() {
   if (selectedPeriod.value.value == 'tuy_chon') {
     let p = timeRangeStartCurrent.value
     p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format(
-      'YYYY-MM-DD'
+      'YYYY-MM-DD',
     )}`
     query.time_range_start = p
   }
   if (selectedCompare.value.value == 'tuy_chon') {
     let p = timeRangeEndCurrent.value
     p = `${moment(p[0]).format('YYYY-MM-DD')},${moment(p[1]).format(
-      'YYYY-MM-DD'
+      'YYYY-MM-DD',
     )}`
     query.time_range_end = p
   }
@@ -352,9 +352,9 @@ function setQueryParams() {
 
 function getQueryParams() {
   // period
-  let default_period = { value: '7_ngay_qua', label: '7 ngày qua' }
+  let default_period = { value: '7_ngay_qua', label: __('Last 7 days') }
   let period = optionsPeriods.find(
-    (el) => el.value == route.query.selected_period
+    (el) => el.value == route.query.selected_period,
   )
 
   selectedPeriod.value = period ? period : default_period
@@ -365,7 +365,7 @@ function getQueryParams() {
     if (t.length == 2) {
       timeRangeStartCurrent.value = [new Date(t[0]), new Date(t[1])]
       let textLeft = `${moment(new Date(t[0])).format('DD/MM/YYYY')} - ${moment(
-        new Date(t[1])
+        new Date(t[1]),
       ).format('DD/MM/YYYY')}`
       setLablePeriod(textLeft)
     }
@@ -376,10 +376,10 @@ function getQueryParams() {
   // compare
   let default_compare = {
     value: 'khong_so_sanh',
-    label: 'Không so sánh',
+    label: __('No comparison'),
   }
   let compare = optionsCompare.find(
-    (el) => el.value == route.query.selected_compare
+    (el) => el.value == route.query.selected_compare,
   )
 
   selectedCompare.value = compare ? compare : default_compare
@@ -395,7 +395,7 @@ function getQueryParams() {
     let t = timeRangeEndCurrent.value
     if (t) {
       timeRangeEnd.value = `${moment(new Date(t[0])).format(
-        'YYYY-MM-DD'
+        'YYYY-MM-DD',
       )},${moment(new Date(t[1])).format('YYYY-MM-DD')}`
     }
   }
@@ -463,11 +463,11 @@ function setLablePeriod(text) {
 function setLabelCompare(str_time) {
   let val = selectedCompare.value.value
   if (val == 'so_sanh_ky_truoc') {
-    labelCompare.value = `So với: ${str_time}`
+    labelCompare.value = `${__('Compared to')}: ${str_time}`
   } else if (val == 'tuy_chon') {
-    labelCompare.value = `Tùy chọn (${str_time})`
+    labelCompare.value = `Options (${str_time})`
   } else {
-    labelCompare.value = 'Không so sánh'
+    labelCompare.value = __('No comparison')
   }
 }
 
@@ -477,10 +477,10 @@ function changeFilter(d_time) {
   let fromDate1 = getDateMinusDays(fromDate, d_time.numberOfDays)
   let toDate1 = getDateMinusDays(fromDate, 1)
   let textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
-    new Date(toDate)
+    new Date(toDate),
   ).format('DD/MM/YYYY')}`
   let textRight = `${moment(new Date(fromDate1)).format(
-    'DD/MM/YYYY'
+    'DD/MM/YYYY',
   )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
   setLabelText(textLeft, textRight)
   setValueTime(fromDate, toDate, fromDate1, toDate1)
@@ -531,10 +531,10 @@ function changeValueTime() {
       fromDate1 = getDateMinusDays(fromDate, 7)
       toDate1 = getDateMinusDays(fromDate, 1)
       textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
-        new Date(toDate)
+        new Date(toDate),
       ).format('DD/MM/YYYY')}`
       textRight = `${moment(new Date(fromDate1)).format(
-        'DD/MM/YYYY'
+        'DD/MM/YYYY',
       )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
       setLabelText(textLeft, textRight)
       setValueTime(fromDate, toDate, fromDate1, toDate1)
@@ -545,10 +545,10 @@ function changeValueTime() {
       fromDate1 = getDateMinusDays(fromDate, 30)
       toDate1 = getDateMinusDays(fromDate, 1)
       textLeft = `${moment(new Date(fromDate)).format('DD/MM/YYYY')} - ${moment(
-        new Date(toDate)
+        new Date(toDate),
       ).format('DD/MM/YYYY')}`
       textRight = `${moment(new Date(fromDate1)).format(
-        'DD/MM/YYYY'
+        'DD/MM/YYYY',
       )} - ${moment(new Date(toDate1)).format('DD/MM/YYYY')}`
       setLabelText(textLeft, textRight)
       setValueTime(fromDate, toDate, fromDate1, toDate1)
@@ -619,22 +619,22 @@ function calculateDaysBetweenDates(strStart, strEnd) {
 watch(timeRangeStartCurrent, (val) => {
   if (val) {
     let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(
-      val[1]
+      val[1],
     ).format('YYYY-MM-DD')}`
     timeRangeStart.value = str_time
   } else {
-    msgError.value.rangeStart = 'Vui lòng chọn khoảng thời gian'
+    msgError.value.rangeStart = __('Please select a date range')
   }
 })
 
 watch(timeRangeEndCurrent, (val) => {
   if (val) {
     let str_time = `${moment(val[0]).format('YYYY-MM-DD')},${moment(
-      val[1]
+      val[1],
     ).format('YYYY-MM-DD')}`
     timeRangeEnd.value = str_time
   } else {
-    msgError.value.rangeEnd = 'Vui lòng chọn khoảng thời gian'
+    msgError.value.rangeEnd = __('Please select a date range')
   }
 })
 </script>

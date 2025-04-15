@@ -9,14 +9,14 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           route="/menu"
         ></Button>
         <Button
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callInsertDoc"
         ></Button>
       </div>
@@ -24,7 +24,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -32,7 +34,7 @@
         <Fields :sections="sections" :data="_menu" />
       </div>
       <div>
-        <p class="text-sm text-gray-600 mb-2">Menus</p>
+        <p class="text-sm text-gray-600 mb-2">{{ __('Menu list') }}</p>
         <DraggableNested
           v-model="_menu.menus"
           :maxLevel="3"
@@ -57,7 +59,7 @@ const { changeLoadingValue } = globalStore()
 const router = useRouter()
 const breadcrumbs = [
   { label: 'Menu', route: { name: 'Menu' } },
-  { label: 'Thêm mới', route: {} },
+  { label: __('Add New'), route: {} },
 ]
 
 let _menu = ref({
@@ -74,11 +76,11 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên menu',
+          label: 'Menu name',
           mandatory: true,
           name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên menu',
+          placeholder: 'Enter name',
         },
       ],
     },
@@ -123,12 +125,15 @@ async function callInsertDoc() {
   let menuUpdate = { ..._menu.value, menus: extractMenus(_menu.value.menus) }
 
   if (!menuUpdate.title) {
-    msgError.value = 'Tên menu không được để trống'
-    errorMessage('Có lỗi xảy ra', 'Tên menu không được để trống')
+    msgError.value = __('Menu name') + ' ' + __('cannot be empty')
+    errorMessage(
+      __('An error has occurred'),
+      __('Menu name') + ' ' + __('cannot be empty'),
+    )
     return
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.menu.create_menu', {
       data: {
@@ -136,7 +141,7 @@ async function callInsertDoc() {
       },
     })
     createToast({
-      title: 'Thêm mới thành công',
+      title: __('Saved'),
       icon: 'check',
       iconClasses: 'text-green-600',
     })
@@ -148,7 +153,7 @@ async function callInsertDoc() {
   } catch (err) {
     validErrApi(err, router)
     msgError.value = err.messages.join(', ')
-    errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+    errorMessage(__('An error has occurred'), err.messages.join(', '))
   }
   changeLoadingValue(false)
 }

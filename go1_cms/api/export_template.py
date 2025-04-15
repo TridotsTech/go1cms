@@ -39,11 +39,15 @@ def install_template(name):
         delete_file_or_folder(files_path_remove)
 
         # download file
+        template_download_url = frappe.db.get_single_value(
+            'CMS Settings', 'template_download_url')
         url = frappe.db.get_value(
             'MBW Website Template', name, 'link_download')
-        if not url:
+        if not url or not template_download_url:
             return False
-        response = requests.get(url)
+
+        template_download_url += url
+        response = requests.get(template_download_url)
         if response.status_code == 200:
             with open(zip_file_path, 'wb') as file:
                 file.write(response.content)
@@ -495,6 +499,12 @@ def insert_page_template(path, version, allow_update=0):
                                      "insert_page_template")
 
 
+def get_fields_not_update(doctype):
+    if doctype == 'MBW Website Template':
+        return ['images', 'link_download', 'image_preview']
+    return []
+
+
 def read_module_path_mbw(path, file_name, allow_update=0):
     file_path = os.path.join(path, file_name)
 
@@ -515,8 +525,12 @@ def read_module_path_mbw(path, file_name, allow_update=0):
                     doc = frappe.get_doc(
                         i.get('doctype'), i.get('name')).as_dict()
                     data_update = {}
+                    fields_not_update = ['name', 'doctype']
+                    fields_not_update.extend(
+                        get_fields_not_update(i.get('doctype')))
+
                     for x, y in i.items():
-                        if x not in ['name']:
+                        if x not in fields_not_update:
                             if frappe.get_meta(i.get('doctype')).has_field(x):
                                 if type(y) not in [list]:
                                     data_update[x] = y
@@ -563,5 +577,25 @@ def unzip_section_images(path, folder_name):
                 file_doc.is_private = 0
                 file_doc.save()
 
+                url_part = file_doc.file_url.split('/')
+                if len(url_part) == 3 and url_part[2] != file_doc.file_name:
+                    generate_file(file_doc.name)
+
         except Exception as ex:
             print('ex:: unzip_section_images===>>', ex)
+
+
+def generate_file(file_name):
+    try:
+        file_doc = frappe.get_doc("File", file_name)
+        new_doc = frappe.new_doc("File")
+        new_doc.is_private = file_doc.is_private
+        new_doc.file_name = file_doc.file_name
+        new_doc.file_url = file_doc.file_url
+        new_doc.save_file(content=file_doc.get_content(),
+                          ignore_existing_file_check=True)
+
+        file_doc.file_url = new_doc.file_url
+        file_doc.save(ignore_permissions=True)
+    except Exception as e:
+        print(e)

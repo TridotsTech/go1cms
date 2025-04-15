@@ -42,17 +42,17 @@
             :href="actions[0] + actions[1]"
             target="_blank"
             rel=""
-            >Thêm mới</a
+            >{{ __('Add New') }}</a
           >
         </div>
         <div v-if="actions[2]">
-          hoặc
+          {{ __('or') }}
           <a
             class="text-blue-500 underline"
             :href="actions[0] + actions[2]"
             target="_blank"
             rel=""
-            >Chỉnh sửa</a
+            >{{ __('Edit') }}</a
           >
         </div>
       </div>
@@ -218,8 +218,9 @@
         v-if="field.labelInput"
         class="ml-2 text-sm text-gray-600"
         :for="field.name"
-        >{{ field.labelInput }}</label
       >
+        {{ __(field.labelInput) }}
+      </label>
     </div>
     <div
       v-if="field.description"

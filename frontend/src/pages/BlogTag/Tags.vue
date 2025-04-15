@@ -9,7 +9,7 @@
           :variant="'solid'"
           theme="blue"
           size="sm"
-          label="Thêm mới"
+          :label="__('Add New')"
           iconLeft="plus-circle"
           route="/blog-tags/create"
         >
@@ -55,8 +55,8 @@
         class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
       >
         <TagIcon class="h-10 w-10" />
-        <span>{{ __('Chưa có tag nào') }}</span>
-        <Button :label="__('Thêm mới')" route="/blog-tags/create">
+        <span>{{ __('No tags available') }}</span>
+        <Button :label="__('Add New')" route="/blog-tags/create">
           <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
         </Button>
       </div>
@@ -73,8 +73,8 @@ import { Breadcrumbs } from 'frappe-ui'
 import { ref, computed } from 'vue'
 
 const breadcrumbs = [
-  { label: 'Quản lý bài viết', route: { name: 'Posts' } },
-  { label: 'Quản lý tag', route: { name: 'Blog Tags' } },
+  { label: __('Post management'), route: { name: 'Posts' } },
+  { label: __('Tag management'), route: { name: 'Blog Tags' } },
 ]
 
 // leads data is loaded in the ViewControls component

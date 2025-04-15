@@ -163,7 +163,7 @@ def cancel_order(order_name):
 
         return {'status': 0, 'msg': 'Không thể hủy đơn hàng này'}
     except Exception as ex:
-        frappe.throw('Có lỗi xảy ra')
+        frappe.throw(_('An error has occurred'))
 
 
 @frappe.whitelist(methods=['GET'])

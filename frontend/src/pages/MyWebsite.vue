@@ -9,7 +9,7 @@
           :variant="'solid'"
           theme="blue"
           size="sm"
-          label="Thêm mới"
+          :label="__('Add New')"
           iconLeft="plus-circle"
           route="/interface-repository"
         >
@@ -45,7 +45,7 @@
           <span>{{
             __('Chọn một mẫu website từ kho giao diện để bắt đầu')
           }}</span>
-          <Button :label="__('Thêm mới')" route="/interface-repository">
+          <Button :label="__('Add New')" route="/interface-repository">
             <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
           </Button>
         </div>

@@ -8,10 +8,10 @@
         <Dropdown
           :options="[
             {
-              group: 'Xóa',
+              group: __('Delete'),
               items: [
                 {
-                  label: 'Xóa tag',
+                  label: __('Delete tag'),
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -31,7 +31,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           @click="tag.reload()"
           :disabled="!dirty"
         ></Button>
@@ -39,7 +39,7 @@
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callUpdateDoc"
           :disabled="!dirty"
         ></Button>
@@ -48,7 +48,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="_tag" class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -64,10 +66,10 @@
   </div>
   <Dialog
     :options="{
-      title: 'Xóa tag',
+      title: __('Delete tag'),
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -79,11 +81,13 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa tag:
+          {{ __('Are you sure you want to delete the tag') }}:
           <b>"{{ _tag?.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
+          <p>
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -125,11 +129,11 @@ const sections = computed(() => {
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên tag',
+          label: 'Tag name',
           mandatory: true,
           name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên tag',
+          placeholder: 'Enter',
         },
       ],
     },
@@ -140,10 +144,10 @@ const sections = computed(() => {
       hideBorder: true,
       fields: [
         {
-          label: 'Mô tả',
+          label: 'Description',
           name: 'description',
           type: 'textarea',
-          placeholder: 'Nhập mô tả',
+          placeholder: 'Enter',
           rows: 10,
         },
       ],
@@ -182,16 +186,16 @@ async function callUpdateDoc() {
   msgError.value = null
   const regex = /[&\/\\#+()$~%.`'":*?<>{}]/g
   if (regex.test(_tag.value.title)) {
-    msgError.value = `Tên tag không được phép chứa các ký tự đặc biệt: [&\/\\#+()$~%.\`'":*?<>{}]`
+    msgError.value = `${__('Tag name must not contain special characters:')} [&\/\\#+()$~%.\`'":*?<>{}]`
     return false
   }
 
   if (JSON.stringify(tag.data) == JSON.stringify(_tag.value)) {
-    warningMessage('Tài liệu không thay đổi')
+    warningMessage(__('No changes in document'))
     return
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.blog_tag.update_blog_tag', {
       data: {
@@ -200,7 +204,7 @@ async function callUpdateDoc() {
     })
     if (doc.name) {
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -219,22 +223,22 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
 }
 
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.blog_tag.delete_blog_tag', {
       name: props.tagId,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -248,9 +252,9 @@ async function deleteDoc(close) {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
@@ -268,7 +272,7 @@ watch(
 
 // breadcrumbs
 const breadcrumbs = computed(() => {
-  let items = [{ label: 'Quản lý tag', route: { name: 'Blog Tags' } }]
+  let items = [{ label: __('Tag management'), route: { name: 'Blog Tags' } }]
   items.push({
     label: tag.data?.name,
     route: {},

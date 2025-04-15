@@ -11,13 +11,18 @@ class MbwBlogCategory(Document):
     def default_list_data():
         columns = [
             {
-                "label": "Tên danh mục",
+                "label": "Category name",
                 "type": "Data",
                 "key": "category_title",
                 "width": "473px"
             },
             {
-                "label": "Hành động",
+                "label": "Last Modified",
+                "type": "Datetime",
+                "key": "modified"
+            },
+            {
+                "label": "Action",
                 "key": "action_button"
             }
         ]

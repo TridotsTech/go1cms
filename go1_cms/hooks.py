@@ -9,6 +9,21 @@ app_color = "grey"
 app_email = "info@tridotstech.com"
 app_license = "MIT"
 
+# Apps
+# ------------------
+
+# required_apps = []
+add_to_apps_screen = [
+    {
+        "name": "go1_cms",
+        "logo": "/assets/go1_cms/images/logo.png",
+        "title": "Go1 CMS",
+        "route": "/cms",
+        "has_permission": "go1_cms.api.check_app_permission",
+    }
+]
+
+
 # Includes in <head>
 # ------------------
 

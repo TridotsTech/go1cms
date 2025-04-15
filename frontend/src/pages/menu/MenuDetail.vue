@@ -8,10 +8,10 @@
         <Dropdown
           :options="[
             {
-              group: 'Xóa',
+              group: __('Delete'),
               items: [
                 {
-                  label: 'Xóa menu',
+                  label: __('Delete menu'),
                   icon: 'trash',
                   onClick: () => {
                     showModalDelete = true
@@ -31,7 +31,7 @@
           variant="subtle"
           theme="gray"
           size="md"
-          label="Hủy"
+          :label="__('Cancel')"
           @click="menu.reload()"
           :disabled="!dirty"
         ></Button>
@@ -39,7 +39,7 @@
           variant="solid"
           theme="blue"
           size="md"
-          label="Lưu"
+          :label="__('Save')"
           @click="callUpdateDoc"
           :disabled="!dirty"
         ></Button>
@@ -48,7 +48,9 @@
   </LayoutHeader>
   <div class="p-6 overflow-auto">
     <div v-if="msgError" class="p-4 border border-gray-300 rounded-sm mb-4">
-      <div class="text-base text-red-600 font-bold mb-2">Có lỗi xảy ra:</div>
+      <div class="text-base text-red-600 font-bold mb-2">
+        {{ __('An error has occurred') }}:
+      </div>
       <ErrorMessage :message="msgError" />
     </div>
     <div v-if="_menu" class="p-4 border border-gray-300 rounded-sm mb-4">
@@ -56,7 +58,7 @@
         <Fields :sections="sections" :data="_menu" />
       </div>
       <div>
-        <p class="text-sm text-gray-600 mb-2">Menus</p>
+        <p class="text-sm text-gray-600 mb-2">{{ __('Menu list') }}</p>
         <DraggableNested
           v-model="_menu.menus"
           :maxLevel="3"
@@ -72,10 +74,10 @@
   </div>
   <Dialog
     :options="{
-      title: 'Xóa menu',
+      title: __('Delete menu'),
       actions: [
         {
-          label: 'Xóa',
+          label: __('Delete'),
           variant: 'solid',
           theme: 'red',
           onClick: (close) => deleteDoc(close),
@@ -87,11 +89,13 @@
     <template v-slot:body-content>
       <div>
         <div>
-          Bạn chắc chắn muốn xóa menu:
+          {{ __('Are you sure you want to delete the menu') }}:
           <b>"{{ _menu?.title }}"</b>?
         </div>
         <div class="text-base">
-          <p>- <b class="text-red-600">Không thể hoàn tác</b>.</p>
+          <p>
+            <b class="text-red-600">- {{ __('Cannot be undone.') }}</b>
+          </p>
         </div>
       </div>
     </template>
@@ -130,16 +134,16 @@ const countId = ref(0)
 const sections = computed(() => {
   return [
     {
-      section: 'menu Name',
+      section: 'Menu name',
       columns: 1,
       class: 'md:grid-cols-2',
       fields: [
         {
-          label: 'Tên menu',
+          label: 'Menu name',
           mandatory: true,
           name: 'title',
           type: 'data',
-          placeholder: 'Nhập tên menu',
+          placeholder: 'Enter name',
         },
       ],
     },
@@ -252,19 +256,22 @@ function extractMenus(data) {
 async function callUpdateDoc() {
   msgError.value = null
   if (JSON.stringify(menu.data) == JSON.stringify(_menu.value)) {
-    warningMessage('Tài liệu không thay đổi')
+    warningMessage(__('No changes in document'))
     return
   }
 
   let menuUpdate = { ..._menu.value, menus: extractMenus(_menu.value.menus) }
 
   if (!menuUpdate.title) {
-    msgError.value = 'Tên menu không được để trống'
-    errorMessage('Có lỗi xảy ra', 'Tên menu không được để trống')
+    msgError.value = __('Menu name') + ' ' + __('cannot be empty')
+    errorMessage(
+      __('An error has occurred'),
+      __('Menu name') + ' ' + __('cannot be empty'),
+    )
     return
   }
 
-  changeLoadingValue(true, 'Đang lưu...')
+  changeLoadingValue(true, __('Saving...'))
   try {
     const doc = await call('go1_cms.api.menu.update_menu', {
       data: {
@@ -273,7 +280,7 @@ async function callUpdateDoc() {
     })
     if (doc.name) {
       createToast({
-        title: 'Cập nhật thành công',
+        title: __('Saved'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -284,22 +291,22 @@ async function callUpdateDoc() {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)
 }
 
 async function deleteDoc(close) {
-  changeLoadingValue(true, 'Đang xóa...')
+  changeLoadingValue(true, __('Deleting...'))
   try {
     await call('go1_cms.api.menu.delete_menu', {
       name: props.menuId,
     }).then(() => {
       createToast({
-        title: 'Xóa thành công',
+        title: __('Deleted'),
         icon: 'check',
         iconClasses: 'text-green-600',
       })
@@ -313,9 +320,9 @@ async function deleteDoc(close) {
 
     if (err.messages && err.messages.length) {
       msgError.value = err.messages.join(', ')
-      errorMessage('Có lỗi xảy ra', err.messages.join(', '))
+      errorMessage(__('An error has occurred'), err.messages.join(', '))
     } else {
-      errorMessage('Có lỗi xảy ra', err)
+      errorMessage(__('An error has occurred'), err)
     }
   }
   changeLoadingValue(false)

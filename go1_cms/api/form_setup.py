@@ -77,12 +77,14 @@ def get_setup():
         fields_cp.append(fields_sync)
 
         return {'fields_cp': fields_cp, 'docname': 'CMS Settings'}
-    except Exception as ex:
+    except frappe.ValidationError as ex:
         frappe.clear_last_message()
-        if type(ex) == frappe.DoesNotExistError:
-            frappe.throw(str(ex), type(ex))
-        else:
-            frappe.throw('Có lỗi xảy ra')
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
+    except Exception as ex:
+        frappe.throw(_("An error has occurred"))
 
 
 @frappe.whitelist()
@@ -96,9 +98,11 @@ def update_setup(data):
             frappe.db.set_value('CMS Settings', 'CMS Settings', data_update)
 
         return {'name': 'CMS Settings'}
-    except Exception as ex:
+    except frappe.ValidationError as ex:
         frappe.clear_last_message()
-        if type(ex) == frappe.DoesNotExistError:
-            frappe.throw(str(ex), type(ex))
-        else:
-            frappe.throw('Có lỗi xảy ra')
+        frappe.throw(str(ex))
+    except frappe.DoesNotExistError as ex:
+        frappe.clear_last_message()
+        frappe.throw(str(ex), frappe.DoesNotExistError)
+    except Exception as ex:
+        frappe.throw(_("An error has occurred"))

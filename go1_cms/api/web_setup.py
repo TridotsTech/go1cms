@@ -82,7 +82,7 @@ def get_setup():
         if type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Có lỗi xảy ra')
+            frappe.throw(_('An error has occurred'))
 
 
 @frappe.whitelist()
@@ -110,4 +110,4 @@ def update_setup(data):
         if type(ex) == frappe.DoesNotExistError:
             frappe.throw(str(ex), type(ex))
         else:
-            frappe.throw('Có lỗi xảy ra')
+            frappe.throw(_('An error has occurred'))

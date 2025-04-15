@@ -1046,6 +1046,10 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
         data_source = next(
             (x for x in data if x.get('section') == item.section), None)
         allow = True
+
+        if not data_source:
+            return html_list, js_list
+
         if data_source.get('dynamic_data') == 1:
             if data_source['section_type'] in ['Slider', 'Predefined Section', 'Custom Section', 'Lists', 'Tabs']:
                 pg_doc = frappe.get_doc('Page Section', data_source['section'])

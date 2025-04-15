@@ -111,7 +111,7 @@ onClickOutside(
   },
   {
     ignore: ['#notifications-btn'],
-  }
+  },
 )
 
 function toggleNotificationPanel() {

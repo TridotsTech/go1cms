@@ -11,6 +11,7 @@
   "is_updated",
   "enable_go1_builder",
   "generate_html",
+  "template_download_url",
   "styles_to_update",
   "field_type_properties",
   "route_prefix_section",
@@ -220,12 +221,17 @@
    "fieldtype": "Link",
    "label": "M\u1eabu email khi \u0111\u01a1n h\u00e0ng \u0111ang \u0111\u01b0\u1ee3c giao",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "template_download_url",
+   "fieldtype": "Data",
+   "label": "Template Download URL"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-25 09:47:10.499939",
+ "modified": "2025-04-10 10:32:04.739425",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Settings",
