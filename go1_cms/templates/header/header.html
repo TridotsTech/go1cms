@@ -58,9 +58,7 @@
 </div>
 </div>
 {%endif%}
-{{theme_settings}}----
-{{header}}-----
-{{footer}}
+
 <div class="desktop__header {%if header.is_transparent_header and header.sticky_header%}transparent_sticky{%endif%}">
    <div  class="web__header go1-cms-header {%if header.is_transparent_header%}transparent_header{%endif%}">
        <div class="container"> 
@@ -71,9 +69,12 @@
                
                   {%if col.columns%}
                     {%for each_col in col.columns%}
+
                     {%set col_index = loop.index %}
                         <div style="width: {{each_col.width}}">
                             {%for sec_item in header.get("items")%}
+                            {{col_index}} == {{sec_item.column_index+1}}
+                            {{sec_item.section_name}}
                                 {%if col_index == (sec_item.column_index+1) %}
                                     {%if sec_item.section_name == "Header Logo"%}
                                         {%if header.sticky_header %}
