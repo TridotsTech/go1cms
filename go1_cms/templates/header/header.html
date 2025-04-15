@@ -75,23 +75,26 @@
                             {%for sec_item in header.get("items")%}
                                 {%if col_index == (sec_item.column_index+1) %}
                                     {%if sec_item.section_name == "Header Logo"%}
+                                    <div class="container-fluid">
                                         {%if header.sticky_header %}
                                             {% if theme_settings.website_logo %}
-                                                <a href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.website_logo}}"/></a>
+                                                <a class="navbar-brand" href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.website_logo}}"/></a>
                                             {%endif%}    
                                         {%endif%}
                                         {%if header.is_transparent_header %}
                                             {%if theme_settings.secondary_logo %}
-                                               <a href="/{{route}}"> <img class="logo transparent-logo" src="{{theme_settings.secondary_logo}}"/></a>
+                                               <a class="navbar-brand" href="/{{route}}"> <img class="logo transparent-logo" src="{{theme_settings.secondary_logo}}"/></a>
                                             {%endif%}
                                         {%endif%}
                                         {%if not header.sticky_header and not header.is_transparent_header%}
                                             {% if theme_settings.website_logo %}
-                                               <a href="/{{route}}"> <img class="logo" src="{{theme_settings.website_logo}}"/></a>
+                                               <a class="navbar-brand" href="/{{route}}"> <img class="logo" src="{{theme_settings.website_logo}}"/></a>
                                             {%endif%}    
                                         {%endif%}
+                                    </div>
                                     {%endif%}
                                     {%if sec_item.section_name == "Header Menu"%}
+                                    <div class="collapse navbar-collapse" id="mainNavigation">
                                         <ul class="default_header d__flex go1-cms-menu">
                                             {% if sec_item.get("menus") %}
                                             {%for menu_item in sec_item.get("menus")%}
@@ -199,6 +202,7 @@
                                             {%endfor%}
                                             {% endif %}
                                         </ul>
+                                    </div>
                                     {%endif%}
                                      {%if sec_item.section_name == "Header Button"%}
                                      {%if header.call_to_action_button==1%}
