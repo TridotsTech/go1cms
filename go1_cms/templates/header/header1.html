@@ -72,11 +72,10 @@
 
                     {%set col_index = loop.index %}
                         <div style="width: {{each_col.width}}">
-                            <div class="container-fluid">
                             {%for sec_item in header.get("items")%}
                                 {%if col_index == (sec_item.column_index+1) %}
                                     {%if sec_item.section_name == "Header Logo"%}
-                                    
+                                    <div class="container-fluid">
                                         {%if header.sticky_header %}
                                             {% if theme_settings.website_logo %}
                                                 <a class="navbar-brand" href="/{{route}}"><img class="logo sticky-logo" src="{{theme_settings.website_logo}}"/></a>
@@ -92,7 +91,7 @@
                                                <a class="navbar-brand" href="/{{route}}"> <img class="logo" src="{{theme_settings.website_logo}}"/></a>
                                             {%endif%}    
                                         {%endif%}
-                                  
+                                    </div>
                                     {%endif%}
                                     {%if sec_item.section_name == "Header Menu"%}
                                     <div class="collapse navbar-collapse" id="mainNavigation">
@@ -217,7 +216,6 @@
                                      {%endif%}
                                 {%endif%}
                             {%endfor%}
-                              </div>
                         </div>
                     {%endfor%}
                   {%endif%}
