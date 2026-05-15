@@ -16,6 +16,7 @@ from frappe.model.naming import make_autoname
 # 	get_settings_value_from_domain, get_theme_settings
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from go1_cms.go1_cms.proposal_api import generate_token
+from go1_cms.go1_cms.doctype.web_page_builder.web_page_builder import convert_template_to_section
 from urllib.parse import urljoin, unquote, urlencode
 
 class Proposal(WebsiteGenerator):
@@ -1007,6 +1008,9 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 				else:
 					frappe.db.set_value('Page Section', section, 'custom_section_data',"[]")
 
+	# Trigger Page Section save to regenerate static JSON cache via on_update hook
+	frappe.get_doc('Page Section', section).save(ignore_permissions=True)
+
 	return {'status':'Success'}
 
 @frappe.whitelist()
@@ -1710,7 +1714,7 @@ def get_page_data(doc, sections, source_doc, device_type, page_no=0, page_len=5)
 				if product_box:
 						data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 				try:
-						data_list.append({'data_source': data_source, 'section': item.section})
+						data_list.append({'data_source': data_source, 'section': item.section, 'name': item.name})
 				except Exception as e:
 						frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html") 
 	return data_list
@@ -2327,3 +2331,50 @@ def get_attachement_email_id(file_url,quotation_id):
 		frappe.local.response.email = frappe.db.get_value(quotation_to,party_name,"email_id")
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.proposal.proposa.get_attachement_email_id")
+
+@frappe.whitelist()
+def update_section_order(page, sections):
+	if isinstance(sections, str):
+		sections = json.loads(sections)
+	
+	doc = frappe.get_doc('Proposal', page)
+	
+	# Handle Deletions
+	existing_incoming_ids = [s for s in sections if not s.startswith('NEW:')]
+	new_web_sections = []
+	for row in doc.web_section:
+		if row.name in existing_incoming_ids or row.section in existing_incoming_ids:
+			new_web_sections.append(row)
+	
+	doc.web_section = new_web_sections
+	
+	# Handle Reorder and Additions
+	for i, section_id in enumerate(sections):
+		if section_id.startswith('NEW:'):
+			template_name = section_id.replace('NEW:', '')
+			# Use existing conversion logic
+			new_section = convert_template_to_section(template_name, business=doc.business)
+			if new_section:
+				doc.append('web_section', {
+					'section': new_section.name,
+					'section_name': new_section.section_name,
+					'idx': i + 1
+				})
+		else:
+			for row in doc.web_section:
+				if row.name == section_id or row.section == section_id:
+					row.idx = i + 1
+					break
+	
+	doc.save(ignore_permissions=True)
+	
+	# Return updated sections to sync frontend state
+	updated_sections = []
+	for item in doc.web_section:
+		try:
+			ps_doc = frappe.get_doc('Page Section', item.section)
+			updated_sections.append(ps_doc.run_method('section_data'))
+		except Exception:
+			pass
+			
+	return {'status': 'Success', 'sections': updated_sections}

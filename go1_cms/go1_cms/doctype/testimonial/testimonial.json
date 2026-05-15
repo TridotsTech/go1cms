@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "is_home",
   "title",
   "posted_by",
   "image",
@@ -76,11 +77,17 @@
    "fieldname": "content_section",
    "fieldtype": "Section Break",
    "label": "Content"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_home",
+   "fieldtype": "Check",
+   "label": "Is Home"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-03 19:08:49.411991",
+ "modified": "2026-03-09 15:29:57.044490",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Testimonial",
@@ -100,6 +107,8 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

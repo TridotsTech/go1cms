@@ -352,7 +352,18 @@ def get_page_content(route=None, user=None, customer=None, domain=None,business=
 				if page_builder_dt[0].is_transparent_header:
 					header_content.is_transparent_header = 1
 
-	return {"sub_header":sub_header,"side_menu":side_menu,"list_content":list_content,"list_style":list_style,"page_type":page_type,"page_content":page_content,"header_content":header_content,"footer_content":footer_content}
+	return {
+		"sub_header":sub_header,
+		"side_menu":side_menu,
+		"list_content":list_content,
+		"list_style":list_style,
+		"page_type":page_type,
+		"page_content":page_content,
+		"header_content":header_content,
+		"footer_content":footer_content,
+		"page_id": check_builder[0].name if (check_builder and len(check_builder)>0) else None,
+		"builder_type": "Web Page Builder"
+	}
 
 @frappe.whitelist(allow_guest=True)
 def get_detail_page_content(route):

@@ -72,17 +72,31 @@ class PageSection(Document):
 	def on_update(self):
 		#created by boopathy
 		if not self.class_name:
-			
 			self.class_name = get_class_name()
 			self.save()
-
 		#end
 
-		pages = frappe.db.sql('''select distinct parent from `tabMobile Page Section` where section = %(section)s and parenttype="Web Page Builder"''',{'section': self.name}, as_dict=1)
+		pages = frappe.db.sql('''select distinct parent, parenttype from `tabMobile Page Section` where section = %(section)s and parenttype in ("Web Page Builder", "Proposal")''',{'section': self.name}, as_dict=1)
 		if pages:
 			for item in pages:
-				doc = frappe.get_doc('Web Page Builder', item.parent)
+				doc = frappe.get_doc(item.parenttype, item.parent)
 				doc.run_method('validate')
+
+		# Push updated content fields to any open frontend tab belonging to
+		# the session user, so the page re-renders without a manual refresh.
+		try:
+			fields_map = {
+				item.field_key: item.content
+				for item in (self.content or [])
+				if item.get('content_type') == 'Data' and item.get('field_key')
+			}
+			frappe.publish_realtime(
+				'cms_section_updated',
+				{'section': self.name, 'fields': fields_map},
+				user=frappe.session.user
+			)
+		except Exception:
+			pass
 
 	
 	def section_data(self, customer=None, add_info=None,store_business=None):

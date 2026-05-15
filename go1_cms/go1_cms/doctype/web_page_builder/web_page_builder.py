@@ -694,22 +694,11 @@ def get_section_content(section, content_type):
 	section = frappe.db.get_all('Page Section', filters={'name': section}, fields=['section_type','name','reference_document','fetch_product','reference_name', 'no_of_records', 'custom_section_data', 'display_data_randomly','dynamic_data', 'is_login_required','allow_update_to_style','menu','section_title','class_name','css_json','is_full_width'])
 	
 	if section:
-		section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content,allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
-		# if section[0].content[0]['css_properties_list']:section[0].content[0]['css_properties_list']=json.loads(section[0].content[0]['css_properties_list'])
-		# if section[0].section_title:
-		# 	style_fields = frappe.get_list("Section Template",filters={"name":section[0].section_title},fields={"css_field_list","allow_update_to_style"})
-		# 	if style_fields:styles = style_fields[0]['css_field_list']
-			# frappe.log_error(styles,"styles")
-	# styles = frappe.db.get_single_value("CMS Settings","styles_to_update")
-	# frappe.log_error(styles)
-	# if styles:
-	# 	section[0].styles =  json.loads((styles))
-	# section[0]['allow_update_to_style']= style_fields[0]['allow_update_to_style']
-	# if section[0]['css_json']:section[0]['css_json']=json.loads(section[0]['css_json'])
-	# frappe.log_error(section[0],"section[0]")
-	fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
-	section[0].fonts_list = fonts_list
-	return section[0]
+		section[0].content = frappe.db.sql('''select field_label, field_key, field_type, content, options, allow_update_to_style, css_properties_list, name, group_name, fields_json,css_json,css_text,image_dimension from `tabSection Content` where parent = %(parent)s and content_type = %(content_type)s and parenttype = "Page Section" order by idx''',{'parent': section[0].name, 'content_type': content_type}, as_dict=1)
+		fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
+		section[0].fonts_list = fonts_list
+		return section[0]
+	return None
 
 @frappe.whitelist()
 def get_component_content(section, content_type):
@@ -980,6 +969,11 @@ def generate_css_file():
 
 @frappe.whitelist()
 def update_section_content(docs, section, lists_data='[]', business=None):
+	allowed_roles = {'System Manager', 'Administrator', 'CMS Admin'}
+	user_roles = set(frappe.get_roles(frappe.session.user))
+	if not (user_roles & allowed_roles):
+		frappe.throw('Not permitted', frappe.PermissionError)
+
 	#hided by boopathy
 	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
 	#end
@@ -1157,6 +1151,21 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 	ps_layout_json = []
 	if ps_json:
 		ps_layout_json = json.loads(ps_json)
+
+	# Notify the session user's frontend so it can update in real-time
+	fields_map = {
+		item.get('field_key'): item.get('content')
+		for item in return_data if item.get('field_key')
+	}
+	frappe.publish_realtime(
+		'cms_section_updated',
+		{'section': section, 'fields': fields_map},
+		user=frappe.session.user
+	)
+
+	# Trigger Page Section save to regenerate static JSON cache via on_update hook
+	frappe.get_doc('Page Section', section).save(ignore_permissions=True)
+
 	return {'status':'Success','data':return_data,'layout_json':ps_layout_json}
 
 @frappe.whitelist()
@@ -1861,7 +1870,7 @@ def get_page_data(doc, sections, source_doc, device_type, page_no=0, page_len=5)
 				if product_box:
 						data_source['product_box'] = frappe.db.get_value('Product Box', product_box, 'route')
 				try:
-						data_list.append({'data_source': data_source, 'section': item.section})
+						data_list.append({'data_source': data_source, 'section': item.section, 'name': item.name})
 				except Exception as e:
 						frappe.log_error(frappe.get_traceback(), "ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_page_html") 
 	return data_list
@@ -2377,3 +2386,50 @@ def get_global_fonts(parent):
 		return frappe.db.sql(query_1,as_dict=1)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_global_fonts")
+
+@frappe.whitelist()
+def update_section_order(page, sections):
+	if isinstance(sections, str):
+		sections = json.loads(sections)
+	
+	doc = frappe.get_doc('Web Page Builder', page)
+	
+	# Handle Deletions
+	existing_incoming_ids = [s for s in sections if not s.startswith('NEW:')]
+	new_web_sections = []
+	for row in doc.web_section:
+		if row.name in existing_incoming_ids or row.section in existing_incoming_ids:
+			new_web_sections.append(row)
+	
+	doc.web_section = new_web_sections
+	
+	# Handle Reorder and Additions
+	for i, section_id in enumerate(sections):
+		if section_id.startswith('NEW:'):
+			template_name = section_id.replace('NEW:', '')
+			# Use existing conversion logic
+			new_section = convert_template_to_section(template_name, business=doc.business)
+			if new_section:
+				doc.append('web_section', {
+					'section': new_section.name,
+					'section_name': new_section.section_name,
+					'idx': i + 1
+				})
+		else:
+			for row in doc.web_section:
+				if row.name == section_id or row.section == section_id:
+					row.idx = i + 1
+					break
+	
+	doc.save(ignore_permissions=True)
+	
+	# Return updated sections to sync frontend state
+	updated_sections = []
+	for item in doc.web_section:
+		try:
+			ps_doc = frappe.get_doc('Page Section', item.section)
+			updated_sections.append(ps_doc.run_method('section_data'))
+		except Exception:
+			pass
+			
+	return {'status': 'Success', 'sections': updated_sections}
