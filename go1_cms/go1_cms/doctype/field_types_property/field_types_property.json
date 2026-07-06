@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-08 21:08:35.430953",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "field_type",
+  "choose_style_properties",
+  "css_properties_list"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Select",
+   "label": "Field Type",
+   "options": "Text\nSmall Text\nLong Text\nAttach\nButton\nBorder\nh1\nh2\nh3\nh4\nh5\nh6\np - Paragraph\na - Anchor\nblockquote - Quote\npre - Formatted\nli - List\nprimary - btn\nsecondary - btn\ntertiary - btn\ncp - h1\ncp - h2\ncp - h3\ncp - h4\ncp - h5\ncp - h6\ncp - p - Paragraph\ncp - a - Anchor\ncp - blockquote - Quote\ncp - pre - Formatted\ncp - primary - btn\ncp - secondary - btn\ncp - tertiary - btn\nPage Section\nSection Column"
+  },
+  {
+   "fieldname": "choose_style_properties",
+   "fieldtype": "Button",
+   "label": "Choose Style Properties"
+  },
+  {
+   "fieldname": "css_properties_list",
+   "fieldtype": "Code",
+   "label": "CSS Properties List"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-09-20 20:09:43.612290",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Field Types Property",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -1,0 +1,174 @@
+<link rel="stylesheet" href="print_page_builder\print_page_builder.css">
+<div class="container">
+    <div class="layout-main row grid">
+        <div class="sidebar col-md-4">
+            <div class="filter-searchbox">
+                <input type="text" class="form-control input-sm filter-fields" name="filter-fields"
+                    placeholder="{%= __("Filter...") %}">
+            </div>
+            <div class="print-format-builder-sidebar-fields">
+                {% for (var i=0, l=fields.length; i < l; i++) { var f = fields[i]; %}
+                    {% if(!in_list(["Section Break", "Tab Break", "Column Break", "Fold"], f.fieldtype)) { %}
+                    <div class="print-format-builder-field-placeholder"
+                        data-fieldname="{%= f.fieldname %}">
+                        <div title="{{f.label}}" class="field-label btn btn-default btn-sm sidebar-field ellipsis"
+                            style="display: inline-block">
+                            <!-- <span class="drag-handle">
+                                <svg class="icon icon-xs"><use href="#icon-drag"></use></svg>
+                            </span> -->
+                            {%= __(f.label) || __(f.fieldname) %}
+                        </div>
+                    </div>
+                    {% } %}
+                {% } %}
+            </div>
+            <div>
+            </div>
+        </div>
+    
+        <div class="col-md-10">
+            <div class="text-center print-format-help-message">
+                <!-- {%= __("Drag elements from the sidebar to add. Drag them back to trash.") %} -->
+                Drag elements from the sidebar to add. Drag them back to trash.
+            </div>
+            <div class="print-format-builder-header">
+                <div class="text-right print-format-builder-header-edit">
+                    <a class="edit-heading btn btn-default btn-xs">
+                        <!-- {%= __("Edit Heading") %} -->
+                        Edit Heading
+                        <!-- <span>
+                            <svg class="icon icon-xs"><use href="#icon-edit"></use></svg>
+                        </span> -->
+                    </a>
+                </div>
+                <div class="print-format-builder-print-heading">    
+                    <!-- {{ me.print_heading_template }} -->
+                    <div class="print-heading">
+                        <h2>test page</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="print-format-builder-layout">
+                <!-- {% for(var i=0; i < data.length; i++) { %}
+                    {%= frappe.render_template("print_format_builder_section",
+                        {section: data[i], me:me}) %}
+                {% } %} -->
+              
+                <div class="print-format-builder-section row" data-label="name">
+                    <div class="print-format-builder-section-head col-md-12">
+                        <div class="section-settings pull-right cursor-pointer">
+                            <svg class="icon icon-sm"><use href="#icon-setting-gear"></use></svg>
+                        </div>
+                        <!-- <span class="drag-handle">
+                            <svg class="icon icon-xs"><use href="#icon-drag"></use></svg>
+                        </span> -->
+                        <span class="section-label">
+                            <!-- {{ section.label || "" }} -->
+                            Section label
+                        </span>
+                    </div>
+                        <!-- {% for(var j=0; j < section.columns.length; j++) {
+                            var column = section.columns[j]; %} -->
+                        <!-- <div class="col-md-{%= 12 / section.no_of_columns %} section-column"> -->
+                            <div class="col-md-{%= 12 / 1 %} section-column">
+                            <div class="print-format-builder-column">
+                                <!-- {% for(var k=0; k < column.fields.length; k++) {
+                                    var field = column.fields[k]; %}
+                                {%= frappe.render_template("print_format_builder_field",
+                                    {field: field, me:me}) %}
+                                {% } %} -->
+                                field column
+                            </div>
+                        </div>
+                        <!-- {% } %} -->
+                </div>
+             
+
+   
+
+            </div>
+            <div class="print-format-builder-add-section">
+                <!-- <span class="flex align-center">
+                    <svg class="icon icon-xs"><use href="#icon-add"></use></svg>
+                </span> -->
+                <span>
+                    <!-- {%= __("Add a new section") %} -->
+                    Add a new Section
+                </span>
+            </div>
+        </div>
+         
+       
+    </div>
+</div>
+
+<style>
+    :root{
+        --padding-xs:10px;
+        --margin-sm:10px;
+        --control-bg-on-gray:#ffffff;
+        --border-radius:10px;
+        --bg-light-gray:lightgray;
+        --text-md:12px;
+        --text-color:black;
+        --dark-border-color:lightgray;
+        --padding-sm:5px;
+    }
+    .sidebar{
+      width: 15%;
+    }
+    /* .filter-searchbox {
+	padding: 0 var(--padding-xs);
+	margin-bottom: var(--margin-sm);
+}
+
+.filter-searchbox input {
+	background-color: var(--control-bg-on-gray);
+}
+.print-format-builder-sidebar-fields {
+	padding: var(--padding-xs);
+	overflow-y: auto;
+	height: 75vh;
+}
+
+.print-format-builder-field {
+	padding: 8px;
+	width: 100%;
+	display: inline-block;
+	border-radius: var(--border-radius);
+	background: var(--bg-light-gray);
+	margin-bottom: var(--margin-sm);
+	font-size: var(--text-md);
+	color: var(--text-color);
+}
+
+.print-format-builder-field:last-child {
+	margin-bottom: 0;
+}
+
+.print-format-builder-field .field-label {
+	vertical-align: middle;
+}
+
+.print-format-builder-column .print-format-builder-field {
+	cursor: move;
+}
+.print-format-builder-field .drag-handle {
+	margin-right: var(--margin-sm);
+}
+
+
+.print-format-builder-field-placeholder {
+	margin-bottom: var(--margin-sm);
+}
+.print-format-builder-field-placeholder .field-label{
+    height: 30px;
+}
+.print-format-builder-field-placeholder:last-child {
+	margin-bottom: 0;
+}
+
+.print-format-builder-field-placeholder .drag-handle {
+	margin-right: var(--margin-sm);
+} */
+</style>

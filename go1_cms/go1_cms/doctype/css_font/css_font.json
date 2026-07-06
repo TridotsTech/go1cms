@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:font_name",
+ "creation": "2022-08-08 21:12:08.352836",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "font_name",
+  "font_type",
+  "font_url",
+  "font_family",
+  "column_break_5",
+  "font_family_category",
+  "font_files_section",
+  "font_files"
+ ],
+ "fields": [
+  {
+   "fieldname": "font_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Font Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "font_type",
+   "fieldtype": "Select",
+   "label": "Font Type",
+   "options": "Google\nCustom"
+  },
+  {
+   "depends_on": "eval:doc.font_type == \"Google\"",
+   "fieldname": "font_url",
+   "fieldtype": "Data",
+   "label": "Font Url"
+  },
+  {
+   "fieldname": "font_family",
+   "fieldtype": "Data",
+   "label": "Font Family"
+  },
+  {
+   "depends_on": "eval:doc.font_type == \"Custom\"",
+   "fieldname": "font_files_section",
+   "fieldtype": "Section Break",
+   "label": "Font Files"
+  },
+  {
+   "fieldname": "font_files",
+   "fieldtype": "Table",
+   "label": "Font Files",
+   "options": "Fonts File"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "font_family_category",
+   "fieldtype": "Select",
+   "label": "Font Family Category",
+   "options": "\nSans-serif\nSerif"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-09-02 12:41:06.575343",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CSS Font",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

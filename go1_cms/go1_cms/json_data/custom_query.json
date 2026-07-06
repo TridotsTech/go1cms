@@ -1,0 +1,4 @@
+[
+	{"doctype": "Custom Query","title":"Blog Post", "query":"select thumbnail_image,title,published_on,blog_intro,route from `tabBlog Post` where published=1 order by published desc"},
+	{"doctype": "Custom Query","title":"FAQs", "query":"select question,answer from `tabFAQ` order by creation desc"}
+]

@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:builder_name",
+ "creation": "2026-05-25 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "builder_name",
+  "builder_title",
+  "column_break_3",
+  "status",
+  "project_type",
+  "section_break_4",
+  "pages_section",
+  "pages",
+  "section_break_6",
+  "theme_settings",
+  "theme_name",
+  "column_break_11",
+  "custom_css",
+  "custom_js",
+  "section_break_12",
+  "metadata",
+  "custom_metadata"
+ ],
+ "fields": [
+  {
+   "fieldname": "builder_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Builder Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "builder_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Builder Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nPublished\nArchived"
+  },
+  {
+   "default": "CMS",
+   "fieldname": "project_type",
+   "fieldtype": "Select",
+   "label": "Project Type",
+   "options": "CMS\nPortfolio\nBlog\nCustom"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Pages & Sections"
+  },
+  {
+   "fieldname": "pages_section",
+   "fieldtype": "HTML",
+   "label": "Pages Section"
+  },
+  {
+   "fieldname": "pages",
+   "fieldtype": "Table",
+   "label": "Pages",
+   "options": "CMS Builder Page"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break",
+   "label": "Theme & Styling"
+  },
+  {
+   "default": "0",
+   "fieldname": "theme_settings",
+   "fieldtype": "Check",
+   "label": "Enable Custom Theme Settings"
+  },
+  {
+   "depends_on": "eval:doc.theme_settings == 1",
+   "fieldname": "theme_name",
+   "fieldtype": "Link",
+   "label": "Web Theme",
+   "options": "Web Theme"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.theme_settings == 1",
+   "fieldname": "custom_css",
+   "fieldtype": "Code",
+   "ignore_xss_filter": 1,
+   "label": "Custom CSS",
+   "options": "css"
+  },
+  {
+   "depends_on": "eval:doc.theme_settings == 1",
+   "fieldname": "custom_js",
+   "fieldtype": "Code",
+   "ignore_xss_filter": 1,
+   "label": "Custom JavaScript",
+   "options": "javascript"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break",
+   "label": "Metadata"
+  },
+  {
+   "fieldname": "metadata",
+   "fieldtype": "HTML",
+   "label": "Metadata Info"
+  },
+  {
+   "fieldname": "custom_metadata",
+   "fieldtype": "Code",
+   "label": "Custom Metadata",
+   "options": "json"
+  }
+ ],
+ "has_web_view": 1,
+ "links": [],
+ "modified": "2026-05-25 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "CMS Page Builder",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

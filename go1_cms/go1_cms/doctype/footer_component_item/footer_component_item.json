@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-09 13:13:24.976155",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "section_type",
+  "column_count",
+  "menu"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title "
+  },
+  {
+   "fieldname": "section_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Section Type",
+   "options": "Menu\nAbout Us\nContact\nContact Form\nNewsletter Subscription Form\nAddress and Download App\nPayment Gateways\nDownload App\nPayment Gateways and Download App"
+  },
+  {
+   "fieldname": "column_count",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Column Count",
+   "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
+  },
+  {
+   "fieldname": "menu",
+   "fieldtype": "Link",
+   "label": "Menu",
+   "options": "Menu"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-08-09 13:13:24.976155",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Footer Component Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

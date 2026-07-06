@@ -1,0 +1,70 @@
+[
+{
+    "name": "Default Header menu",
+    "owner": "Administrator",
+    "creation": "2022-09-21 15:21:24.384572",
+    "modified": "2022-09-22 21:02:44.859904",
+    "modified_by": "Administrator",
+    "idx": 0,
+    "docstatus": 0,
+    "title": "Default Header menu",
+    "is_static_menu": 1,
+    "doctype": "Menu",
+    "menus": [
+    {
+        "name": "877b6e00a6",
+        "owner": "Administrator",
+        "creation": "2022-09-21 15:21:24.384572",
+        "modified": "2022-09-22 21:02:44.859904",
+        "modified_by": "Administrator",
+        "parent": "Core menu",
+        "parentfield": "menus",
+        "parenttype": "Menu",
+        "idx": 1,
+        "docstatus": 0,
+        "menu_label": "Home",
+        "redirect_url": "/",
+        "position": "Left",
+        "doctype": "Menus Item"
+    },
+    {
+        "name": "67ce270ba8",
+        "owner": "Administrator",
+        "creation": "2022-09-21 15:21:24.384572",
+        "modified": "2022-09-22 21:02:44.859904",
+        "modified_by": "Administrator",
+        "parent": "Core menu",
+        "parentfield": "menus",
+        "parenttype": "Menu",
+        "idx": 2,
+        "docstatus": 0,
+        "menu_label": "About Us",
+        "redirect_url": "#",
+        "position": "Left",
+        "doctype": "Menus Item"
+    },
+    
+    {
+        "name": "b0f5b100a0",
+        "owner": "Administrator",
+        "creation": "2022-09-21 15:21:24.384572",
+        "modified": "2022-09-22 21:02:44.859904",
+        "modified_by": "Administrator",
+        "parent": "Core menu",
+        "parentfield": "menus",
+        "parenttype": "Menu",
+        "idx": 6,
+        "docstatus": 0,
+        "menu_label": "Contact Us",
+        "redirect_url": "#",
+        "position": "Left",
+        "doctype": "Menus Item"
+    }
+   ],
+    "__last_sync_on": "2022-09-27T12:12:19.680Z"
+}
+,{"name":"Pages","owner":"Administrator","creation":"2022-09-17 13:29:12.344411","modified":"2022-09-17 13:29:12.344411","modified_by":"Administrator","idx":0,"docstatus":0,"title":"Pages","is_static_menu":1,"doctype":"Menu","menus":[{"name":"2506fe7b6b","owner":"Administrator","creation":"2022-09-17 13:29:12.344411","modified":"2022-09-17 13:29:12.344411","modified_by":"Administrator","parent":"Pages","parentfield":"menus","parenttype":"Menu","idx":1,"docstatus":0,"menu_label":"About Us","position":"Left","doctype":"Menus Item"},{"name":"1847175d23","owner":"Administrator","creation":"2022-09-17 13:29:12.344411","modified":"2022-09-17 13:29:12.344411","modified_by":"Administrator","parent":"Pages","parentfield":"menus","parenttype":"Menu","idx":2,"docstatus":0,"menu_label":"Contact Us","position":"Left","doctype":"Menus Item"},{"name":"d42a403e63","owner":"Administrator","creation":"2022-09-17 13:29:12.344411","modified":"2022-09-17 13:29:12.344411","modified_by":"Administrator","parent":"Pages","parentfield":"menus","parenttype":"Menu","idx":3,"docstatus":0,"menu_label":"Blog","position":"Left","doctype":"Menus Item"},{"name":"a290767fb5","owner":"Administrator","creation":"2022-09-17 13:29:12.344411","modified":"2022-09-17 13:29:12.344411","modified_by":"Administrator","parent":"Pages","parentfield":"menus","parenttype":"Menu","idx":4,"docstatus":0,"menu_label":"Shop","position":"Left","doctype":"Menus Item"}],"__last_sync_on":"2022-09-27T12:24:13.426Z"}
+,{"name":"Company","owner":"Administrator","creation":"2022-09-21 18:43:58.801220","modified":"2022-09-21 18:44:30.763659","modified_by":"Administrator","idx":0,"docstatus":0,"title":"Company","is_static_menu":1,"doctype":"Menu","menus":[{"name":"1ebc43a9cc","owner":"Administrator","creation":"2022-09-21 18:43:58.801220","modified":"2022-09-21 18:44:30.763659","modified_by":"Administrator","parent":"Company","parentfield":"menus","parenttype":"Menu","idx":1,"docstatus":0,"menu_label":"Contact & Support","position":"Left","doctype":"Menus Item"},{"name":"797440f7a2","owner":"Administrator","creation":"2022-09-21 18:43:58.801220","modified":"2022-09-21 18:44:30.763659","modified_by":"Administrator","parent":"Company","parentfield":"menus","parenttype":"Menu","idx":2,"docstatus":0,"menu_label":"Success History","position":"Left","doctype":"Menus Item"},{"name":"665ff1eeee","owner":"Administrator","creation":"2022-09-21 18:43:58.801220","modified":"2022-09-21 18:44:30.763659","modified_by":"Administrator","parent":"Company","parentfield":"menus","parenttype":"Menu","idx":3,"docstatus":0,"menu_label":"Setting & Privacy","position":"Left","doctype":"Menus Item"}],"__last_sync_on":"2022-09-27T12:25:15.719Z"}
+,{"name":"Contact Us","owner":"Administrator","creation":"2022-09-21 18:44:48.752154","modified":"2022-09-21 18:45:35.150360","modified_by":"Administrator","idx":0,"docstatus":0,"title":"Contact Us","is_static_menu":1,"doctype":"Menu","menus":[{"name":"b43b6defe5","owner":"Administrator","creation":"2022-09-21 18:44:48.752154","modified":"2022-09-21 18:45:35.150360","modified_by":"Administrator","parent":"Contact Us","parentfield":"menus","parenttype":"Menu","idx":1,"docstatus":0,"menu_label":"Location","position":"Left","doctype":"Menus Item"},{"name":"133ca2b499","owner":"Administrator","creation":"2022-09-21 18:44:48.752154","modified":"2022-09-21 18:45:35.150360","modified_by":"Administrator","parent":"Contact Us","parentfield":"menus","parenttype":"Menu","idx":2,"docstatus":0,"menu_label":"Email","position":"Left","doctype":"Menus Item"},{"name":"83d3e0d64c","owner":"Administrator","creation":"2022-09-21 18:44:48.752154","modified":"2022-09-21 18:45:35.150360","modified_by":"Administrator","parent":"Contact Us","parentfield":"menus","parenttype":"Menu","idx":3,"docstatus":0,"menu_label":"Telephone","position":"Left","doctype":"Menus Item"}],"__last_sync_on":"2022-09-27T12:26:00.814Z"}
+,{"name":"Social Media","owner":"Administrator","creation":"2022-09-21 18:45:50.856132","modified":"2022-09-21 18:46:18.535653","modified_by":"Administrator","idx":0,"docstatus":0,"title":"Social Media","is_static_menu":1,"doctype":"Menu","menus":[{"name":"96eff95ccd","owner":"Administrator","creation":"2022-09-21 18:45:50.856132","modified":"2022-09-21 18:46:18.535653","modified_by":"Administrator","parent":"Social Media","parentfield":"menus","parenttype":"Menu","idx":1,"docstatus":0,"menu_label":"Facebook","position":"Left","doctype":"Menus Item"},{"name":"3ccafdbebf","owner":"Administrator","creation":"2022-09-21 18:45:50.856132","modified":"2022-09-21 18:46:18.535653","modified_by":"Administrator","parent":"Social Media","parentfield":"menus","parenttype":"Menu","idx":2,"docstatus":0,"menu_label":"Instagram","position":"Left","doctype":"Menus Item"},{"name":"1c69d0ccff","owner":"Administrator","creation":"2022-09-21 18:45:50.856132","modified":"2022-09-21 18:46:18.535653","modified_by":"Administrator","parent":"Social Media","parentfield":"menus","parenttype":"Menu","idx":3,"docstatus":0,"menu_label":"Twitter","position":"Left","doctype":"Menus Item"}],"__last_sync_on":"2022-09-27T12:26:42.081Z"}
+]

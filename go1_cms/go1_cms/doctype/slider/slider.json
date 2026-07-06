@@ -1,0 +1,208 @@
+{
+ "actions": [],
+ "autoname": "SLD-.#####",
+ "creation": "2022-09-22 14:43:35.024671",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "slider_type",
+  "button_text",
+  "column_break_4",
+  "sub_title",
+  "redirect_url",
+  "column_break_8",
+  "enable_button",
+  "published",
+  "display_order",
+  "section_break_11",
+  "web_image",
+  "column_break_13",
+  "mobile_image",
+  "column_break_15",
+  "mobile_app_image",
+  "section_break_18",
+  "video_type",
+  "web_videoyoutube_id",
+  "upload_video_for_web",
+  "column_break_22",
+  "mobile_videoyoutube_id",
+  "upload_video_for_mobile",
+  "column_break_25",
+  "mobile_app_videoyoutube_id",
+  "upload_video_for_mobile_app"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "default": "Image",
+   "fieldname": "slider_type",
+   "fieldtype": "Select",
+   "label": "Slider Type",
+   "options": "\nImage\nVideo"
+  },
+  {
+   "fieldname": "button_text",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Button Text"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sub_title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Sub Title"
+  },
+  {
+   "fieldname": "redirect_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Redirect Url"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_button",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Enable Button"
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Published"
+  },
+  {
+   "fieldname": "display_order",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Display Order",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.slider_type==\"Image\"",
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "web_image",
+   "fieldtype": "Attach Image",
+   "label": "Web Image (Image Size - 1350 X 300)"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mobile_image",
+   "fieldtype": "Attach Image",
+   "label": "Mobile Image (Image Size - 320X165)"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mobile_app_image",
+   "fieldtype": "Attach Image",
+   "label": "Mobile App Image (Image Size - 320X165)"
+  },
+  {
+   "depends_on": "eval:doc.slider_type==\"Video\"",
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Youtube",
+   "fieldname": "video_type",
+   "fieldtype": "Select",
+   "label": "Video Type",
+   "options": "Youtube\nUpload Video"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Youtube\"",
+   "fieldname": "web_videoyoutube_id",
+   "fieldtype": "Data",
+   "label": "Web Video(Youtube Id)"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Upload Video\"",
+   "fieldname": "upload_video_for_web",
+   "fieldtype": "Attach",
+   "label": "Upload Video For Web (Video only up to10 MB)"
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Youtube\"",
+   "fieldname": "mobile_videoyoutube_id",
+   "fieldtype": "Data",
+   "label": "Mobile Video(Youtube Id)"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Upload Video\"",
+   "fieldname": "upload_video_for_mobile",
+   "fieldtype": "Attach",
+   "label": "Upload Video For Mobile (Video only up to10 MB)"
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Youtube\"",
+   "fieldname": "mobile_app_videoyoutube_id",
+   "fieldtype": "Data",
+   "label": "Mobile App Video(Youtube Id)"
+  },
+  {
+   "depends_on": "eval:doc.video_type==\"Upload Video\"",
+   "fieldname": "upload_video_for_mobile_app",
+   "fieldtype": "Attach",
+   "label": "Upload Video For Mobile App (Video only up to10 MB)"
+  }
+ ],
+ "links": [],
+ "modified": "2022-09-22 14:43:35.024671",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Slider",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1
+}

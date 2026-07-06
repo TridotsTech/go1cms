@@ -1,0 +1,63 @@
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
+<select class="form-select" id="sections" aria-label="Default select example">
+	{% for (var j=0, t=groups.length; j < t; j++) { var g = groups[j]; %}
+	<option value="{{g.group_name}}" onClick>
+       {{ g.group_name}}
+	</option>
+	{% } %}
+	<!-- {% for (var i=0, l=fields.length; i < l; i++) { var f = fields[i]; %}
+	{% if( f.section_group == selected_section) { %}
+	<div class="print-format-builder-field-placeholder"
+		data-fieldname="{%= f.name %}">
+		<div title="{{f.label}}" class="field-label btn btn-default btn-sm sidebar-field ellipsis
+			{%= (f.fieldtype==="Custom HTML") ? "sidebar-custom-field" : "" %}"
+			style="display: inline-block">
+			<img src="{{f.image}}" height="100px" width="180px"/>
+			<div>{{f.name}}</div>
+		</div>
+	</div>
+	{% } %}
+{% } %} -->
+  </select>
+		  {% for (var j=0, t=groups.length; j < t; j++) { var g = groups[j]; %}
+		  <div class="dropdown">
+			<button  style="width: 200px;margin-top:10px;height: 50px;" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			 {{g.group_name}}
+			</button>
+				<div class="dropdown-menu print-format-builder-sidebar-fields section_{{j}}" style="z-index: 99;">
+	          {% for (var i=0, l=fields.length; i < l; i++) { var f = fields[i]; %}
+				{% if(g.group_name && f.section_group == g.group_name) { %}
+				<div class="dropdown-item print-format-builder-field-placeholder"
+					data-fieldname="{%= f.name %}">
+					<div title="{{f.label}}" class="field-label btn btn-default btn-sm sidebar-field ellipsis
+						{%= (f.fieldtype==="Custom HTML") ? "sidebar-custom-field" : "" %}"
+						style="display: inline-block">
+						<img src="{{f.image}}" height="100px" width="180px"/>
+						<div>{{f.name}}</div>
+					</div>
+				</div>
+				{% } %}
+			{% } %}
+		</div>
+		  </div>	 
+	  {% } %}
+
+	<!-- {% for (var i=0, l=fields.length; i < l; i++) { var f = fields[i]; %}
+		{% if(!in_list(["Section Break", "Tab Break", "Column Break", "Fold"], f.fieldtype)) { %}
+		
+		<div class="print-format-builder-field-placeholder"
+			data-fieldname="{%= f.name %}">
+			<div title="{{f.label}}" class="field-label btn btn-default btn-sm sidebar-field ellipsis
+				{%= (f.fieldtype==="Custom HTML") ? "sidebar-custom-field" : "" %}"
+				style="display: inline-block">
+				<span class="drag-handle">
+					<svg class="icon icon-xs"><use href="#icon-drag"></use></svg>
+				</span>
+				<img src="{{f.image}}" height="100px" width="180px"/>
+				<div>{{f.name}}</div>
+			</div>
+		</div>
+		{% } %}
+	{% } %} -->

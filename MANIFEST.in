@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include go1_cms *.css
+recursive-include go1_cms *.csv
+recursive-include go1_cms *.html
+recursive-include go1_cms *.ico
+recursive-include go1_cms *.js
+recursive-include go1_cms *.json
+recursive-include go1_cms *.md
+recursive-include go1_cms *.png
+recursive-include go1_cms *.py
+recursive-include go1_cms *.svg
+recursive-include go1_cms *.txt
+recursive-exclude go1_cms *.pyc

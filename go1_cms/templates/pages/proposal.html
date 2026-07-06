@@ -1,0 +1,846 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+<!-- <img src="/files/shape1ca97b0.png" class="shape1">
+<img src="/files/shape27f15df.png" class="shape2"> -->
+
+<div class="proposal-format-1-4zn">
+   <!-- <div class="auto-group-udvs-J8S">
+      <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
+   </div> -->
+   <input type="Data" name="viewcount" id="ViewCount" value="{{doc.viewcount}}" hidden/>
+   <input type="Data" name="proposalname" id="ProposalName" value="{{doc.name}}" hidden/>
+   <div class="auto-group-qqf8-kuY">
+      <div class="auto-group-xtcw-gYJ" style="display: flex;gap: 40px;justify-content: unset;margin-bottom: 20px;">
+        <div>
+         <img class="tridots-1-P9t" src="/files/imageedit_21_4613386941.png"/>
+       </div>
+         <div>
+         <p class="core-title core-implementation-development-business-proposal-p8i">
+	 {{doc.name}}
+         </p>
+	 <!--<p class="pro-000001-434">#{{doc.name}}</p> -->
+       </div>
+       <div><span class="label-status label-success" id="proposal-status-title">{{doc.status}}</span></div>
+      </div>
+      <div class="auto-group-a8e6-mCN" style="position:relative;">
+         <div class="auto-group-cqz4-4hG">
+            {{htmldata}}
+         </div>
+         <div class="auto-group-6bfp-5nr" id="myHeader">
+            <div class="auto-group-p8zn-E9x">
+               <div class="auto-group-xqbc-jsQ">
+                  {%if doc.status=="Pending"%}
+                  <div id="hide-btn" class="" style="margin-bottom: 25px;">
+                     <button class="btn btn-sm btn-dec" id="download-form" style="" onclick="download_pdf()">Download</button>
+                     <button class="btn btn-sm btn-dec" id="reject-form" style=""><i class="fa fa-close"></i>Decline</button>
+                     <button class="btn btn-sm btn-success" id="accept-form">Accept</button>
+                  </div>
+                  {%endif%}
+                    <p>
+<strong>{{quotation_data.company}}</strong> <br/>
+                      {%if quotation_data.company_address_display%}
+                     {{quotation_data.company_address_display}}
+                     {%endif%}
+                  </p>
+                 
+                  <span class="span-0">
+                     Prepared for:
+                     
+                     <br/>
+                      
+                  </span>
+
+                  <div>
+                     <!-- <img class="" style="width:20px;" src="/files/favicon.svg"/> -->
+                     <p style="margin-bottom: 0px;padding-bottom: 0px;"><strong>{{quotation_data.customer_name}}</strong></p>
+                     <p class="">
+                   
+                       {%if quotation_data.address_display%}
+                     {{quotation_data.address_display}}
+                     {%endif%}
+                  </p>
+                  </div>
+                  
+                 
+                  <p style="margin-bottom: 0;padding-bottom: 5px">
+                     <span style="font-size: 16px;">
+                     <strong>
+                     Total
+                     </strong>
+                     </span>
+                  </p>
+                  <p >
+                     {%if quotation_data%}
+                     <span style="font-size: 18px;"><strong>{% if currency %} {{currency}}{% else %} ${% endif %}{{"%0.2f" % quotation_data.grand_total | float }}</strong></span>
+                     {%endif%}
+                  </p>
+                   <p style="margin-bottom:0px;padding-bottom: 0;" id="proposal-status">Status: {{doc.status}}</p>
+                   <p style="margin-bottom:0px;padding-bottom: 0;">Date: {{quotation_data.transaction_date.strftime('%m-%d-%Y')}}</p>
+                    <p style="margin-bottom:0px;">Open Till: {{quotation_data.valid_till.strftime('%m-%d-%Y')}}</p>
+                  <br/>
+                
+               </div>
+            </div>
+            <div class="auto-group-ey1l-jES" >
+            
+               <div class="auto-group-knua-qRt" >
+                <img class="auto-group-gsqi-P46" src="/assets/go1_cms/images/location.png"/>
+                  <p class="">
+                    <strong>{{quotation_data.company}}</strong> <br/>
+                     {%if quotation_data.company_address_display%}
+                     {{quotation_data.company_address_display}}
+                     {%endif%}
+                    <!--  Triton Innovation,
+                        <br/>
+                        261 Tillson Ave, Tillsonburg,
+                        
+                        <br/>
+                         Ontario, N4G 5X2. -->
+                     <!-- {%if quotation_data.company%}
+                     {{quotation_data.address_display}}
+                     {%endif%} -->
+                  </p>
+               </div>
+               <div class="auto-group-knua-qRt" >
+                 <img class="iconly-light-outline-call-iMG" src="/assets/go1_cms/images/call1.png" />
+                  <p class="item-91-98401-35354-GXC" id="1:74">519-914-4320</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- <div id="myModal" class="modal"><div class="modal-content">
+  <span class="close">&times;</span><p id="model-content">Proposal Accepted!</p>
+</div></div> -->
+<div class="modal" id="myModal">
+    <div class="modal-content">
+      <div class="col-md-12">
+     <span class="close-button1" style="
+    float: left !important;
+"></span>
+        <span class="close-button">&times;</span>
+    </div>
+        
+       <p id="model-content">Thank you for your response.We will check and our team will connect soon!</p>
+    </div>
+</div>
+<div id="acceptconfirm" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content" style="
+    padding: 0;
+">
+  <div class="modal-body" style="
+    padding: 25px 15px;
+">
+    Are you sure want to accept this proposal?
+  </div>
+  <div class="modal-footer" style="
+   
+    padding: 5px;
+">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="confirm_accept()">Accept</button>
+    <button type="button" data-dismiss="modal" class="btn btn-danger" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="hide_modal()">Cancel</button>
+  
+    </div>
+    </div>
+</div>
+</div>
+
+<div id="rejectconfirm" class="modal">
+    <div class="modal-dialog">
+    <div class="modal-content" style="
+    padding: 0;
+">
+  <div class="modal-body" style="
+    padding: 25px 15px;
+">
+    Are you sure want to decline this proposal?
+  </div>
+  <div class="modal-footer" style="
+   
+    padding: 5px;
+">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="accept" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="confirm_reject()">Decline</button>
+    <button type="button" data-dismiss="modal" class="btn btn-danger" style="
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+" onclick="hide_modal()">Cancel</button>
+  
+    </div>
+    </div>
+</div>
+</div>
+<!--  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+    
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" style="display:none">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p id="model-content">Proposal Accepted!</p>
+        </div>
+       
+      </div>
+      
+    </div>
+  </div> -->
+
+<style type="">
+
+
+   body{
+   margin: 0; 
+   }
+   .btn-dec{
+     color:#93adc7;
+     border: 1px solid #ddd !important;
+     padding: 10px 30px;
+     background-color: #eee !important;
+   }
+   .btn-default {
+   color: inherit;
+   background-color: #f0f4f7;
+   border-color: transparent;
+   }
+   .btn-success {
+   color: #fff;
+    background-color: #10A60F !important;
+   border-color: #10A60F !important;
+   }
+   .btn-primary {
+   color: #fff;
+   background-color: #10A60F !important;
+   border-color: #10A60F !important;
+   }
+   .btn-sm, .btn-group-sm > .btn {
+   padding: 4px 10px;
+   font-size: 13px !important;
+   line-height: 1.5;
+   border-radius: 0;
+   }
+   .btn {
+   display: inline-block;
+   padding: 8px 15px !important;
+   margin-bottom: 0;
+   font-size: 16px !important;
+   font-weight: normal;
+   line-height: 1.42857143;
+   text-align: center;
+   white-space: nowrap;
+   vertical-align: middle;
+   -ms-touch-action: manipulation;
+   touch-action: manipulation;
+   cursor: pointer;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+   background-image: none;
+   border: 1px solid transparent;
+   border-radius: 4px;
+   font-family: Poppins, 'Source Sans Pro' !important;
+   }
+   #myHeader p{
+   font-size: 14px !important;
+   font-family: Poppins, 'Source Sans Pro';
+   line-height: 28px;
+   font-weight: 400;
+   padding-bottom: 10px;
+   margin: 0;
+   padding-top: 5px;
+   }
+   .span-0{
+   color: #212121;
+   font-size: 14px;
+   font-weight: 600;
+   line-height: 1.6666666667;
+   }
+   .span-1 {
+   color: #212121;
+   font-family: Inter, 'Source Sans Pro';
+   /*font-size: 12px;*/
+   font-weight: 500;
+   line-height: 1.6666666667;
+   }
+   .span-2 {
+   color: #757575;
+   font-family: Inter, 'Source Sans Pro';
+   /*font-size: 12px;*/
+   font-weight: 500;
+   line-height: 1.6666666667;
+   }
+   .proposal-format-1-4zn {
+   align-items: center;
+   /*background-color: #f5f9ff;*/
+   background-color: #f9f9f9;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   position: relative;
+   width: 100%;
+   }
+   .auto-group-udvs-J8S {
+   background-color: #ffffff;
+   box-shadow: 0 0 0 rgba(0, 41, 89, 0.1000000015), -0.2rem 0 0.5rem rgba(0, 41, 89, 0.1000000015), -1rem 0 1rem rgba(0, 41, 89, 0.0900000036), -2.2rem 0 1.3rem rgba(0, 41, 89, 0.0500000007), -3.8rem 0 1.5rem rgba(0, 41, 89, 0.0099999998), -6rem 0 1.7rem rgba(0, 41, 89, 0);
+   box-sizing: border-box;
+   flex-shrink: 0;
+   padding: 15px 100px 15px 100px;
+   width: 100%;
+   }
+   .tridots-1-P9t {
+   height: 5.4rem;
+   object-fit: contain;
+   position: relative;
+   vertical-align: top;
+   }
+   .auto-group-qqf8-kuY {
+   box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   padding: 30px 100px 30px 100px;
+   /* padding: 3.9rem 10.5rem 5.7rem 10.3rem;*/
+   width: 100%;
+   }
+   .auto-group-xtcw-gYJ {
+   flex-shrink: 0;
+   position: relative;
+   }
+   .core-title, .core-implementation-development-business-proposal-p8i {
+   color: #212121;
+   font-family: Poppins, 'Source Sans Pro';
+   font-size: 1.8rem !important;
+   font-weight: 600;
+   line-height: 28px;
+   /*margin: 10px 0px 40px 0;*/
+   }
+   .pro-000001-434 {
+   color: #757575;
+   font-family: Poppins, 'Source Sans Pro';
+   font-size: 1.4rem;
+   font-weight: 500;
+   line-height: 28px;
+   padding: 0;
+   margin: 10px 0 10px 0;
+   }
+   .auto-group-a8e6-mCN {
+   align-items: flex-start;
+   display: flex;
+   flex-shrink: 0;
+   height: auto;
+   margin-left: 0.2rem;
+   width: calc(100% - 0.2rem);
+   }
+   .auto-group-cqz4-4hG {
+   background-color: #ffffff;
+   border: solid 0.1rem #d642164f;
+   border-radius: 0.5rem;
+   box-sizing: border-box;
+   flex-shrink: 0;
+   /*height: 100%;*/
+   margin-right: 1.9rem;
+   position: relative;
+   width: 70%;
+   /* width: 64.4rem;*/
+   }
+   .auto-group-6bfp-5nr {
+   align-items: flex-end;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   width: 30%;
+  flex: 0 0 30%;
+/*  position: absolute;*/
+    right: 75px;
+    width: 25%;
+    top: 135px;
+   }
+   .auto-group-6bfp-5nr.sticky{
+     position: fixed;
+   top: 0;
+   
+   }
+   .auto-group-p8zn-E9x {
+   background-color: #ffffff;
+   border: solid 0.1rem #d642164f;
+   border-radius: 0.5rem;
+   box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   padding:1.6rem 1.6rem 1.6rem 1.6rem;
+   /*margin-bottom: 3.1rem;*/
+   /*padding: 3.6rem 1.6rem 3.6rem 1.6rem;*/
+   width: 100%;
+   padding-bottom: 0;
+   }
+   .auto-group-6bfp-5nr.sticky{
+    width: 25%;
+    right: 75px;
+   }
+   .auto-group-6bfp-5nr.sticky-bt{
+       position: fixed;
+        bottom: 0;
+        right: 75px;
+        width: 25%;
+        top:auto;
+    }
+   .auto-group-xqbc-jsQ {
+   flex-shrink: 0;
+   /*height: 34.1rem;*/
+   margin: 0rem;
+   position: relative;
+   }
+   .auto-group-ey1l-jES {
+   align-items: center;
+   flex-shrink: 0;
+   margin-left: 0.6rem;
+   width: calc(100% - 0.6rem);
+   padding: 3.6rem 1.6rem 3.6rem 1.6rem;
+   }
+   .auto-group-q65x-4Gi {
+   align-items: flex-end;
+   display: flex;
+   flex-direction: column;
+   flex-shrink: 0;
+   height: calc(100% - 1.7rem);
+   margin: 0.7rem 0.2rem 1rem 0rem;
+   }
+   .auto-group-gsqi-P46 {
+   flex-shrink: 0;
+   /*height: 3rem;*/
+   margin-right: 0.5rem;
+   object-fit: contain;
+   position: relative;
+   vertical-align: top;
+   /*width: 3rem;*/
+   }
+   .auto-group-knua-qRt {
+       flex-shrink: 0;
+       height: 100%;
+       position: relative;
+       display: flex;
+   }
+   .auto-group-knua-qRt img{
+        width: 16px;
+        height: 16px;
+        margin-right: 11px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        top: 10px;
+   }
+   .shape1{
+        position: absolute;
+        top: 155px;
+        z-index: 1;
+        right: 120px;
+   }
+   .shape2{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+   }
+   .auto-group-ey1l-jES{
+    width: 100%;
+   }
+   /*css end*/
+   @media only screen and (max-width: 768px) {
+     .auto-group-6bfp-5nr{
+     width: 100%;
+     margin-top: 15px;
+     }
+     .auto-group-cqz4-4hG{
+        width: 100%;
+     }
+     .auto-group-a8e6-mCN{
+        display: block;
+        height: auto;
+     }
+     .page{
+          padding: 20px 10px 20px 10px;
+     }
+     .page .center{
+          text-align: center !important;
+          width: 200px;
+          height: auto;
+     }
+     .auto-group-6bfp-5nr.sticky{
+          top: 0;
+     }
+     .auto-group-qqf8-kuY{
+        padding: 40px 15px !important;
+     }
+     .auto-group-p8zn-E9x{
+            margin-bottom: 0;
+     }
+     .auto-group-a8e6-mCN{
+          display: block;
+     }
+     .auto-group-6bfp-5nr{
+          right: 0;
+              position: relative;
+                  z-index: 2;
+     }
+
+     .auto-group-p8zn-E9x{
+          width: 100%;
+     }
+     .auto-group-udvs-J8S{
+          padding: 15px 15px 15px 15px;
+          text-align: center;
+     }
+     .mobile-hide{
+      display: none;
+     }
+   }
+
+   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;900&display=swap');
+</style>
+<script>
+        window.frappe = {};
+        frappe.ready_events = [];
+        frappe.ready = function(fn) {
+          frappe.ready_events.push(fn);
+        }
+        window.dev_server = {{ dev_server }};
+        window.socketio_port = {{ frappe.socketio_port }};
+        </script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!-- <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script> -->
+<!-- <script type="text/javascript" src="/assets/frappe/js/frappe-web.bundle.js"></script> -->
+{{ include_script('frappe-web.bundle.js') }}
+  <!-- csrf_token -->
+<script>
+  $(document).ready( function () {
+    let customerip =""
+ 
+        
+      
+
+    var count = parseInt("{{doc.viewcount}}");
+    console.log(count)
+    count += 1
+    $("#ViewCount").val(count);
+       $.getJSON("https://api.ipify.org?format=json", function(data) {
+        customerip = data.ip
+   
+      $.ajax({
+      type: 'POST',
+      Accept: 'application/json',
+      ContentType: 'application/json;charset=utf-8',
+      url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_data',
+      data: { 'viewcount': count, "name":"{{doc.name}}","customerip": customerip},
+      dataType: "json",
+      async: false,
+      headers: {
+          'X-Frappe-CSRF-Token': frappe.csrf_token
+      },
+      success: function(r) {
+        console.log(r)
+      }
+    })
+      })
+  });
+  var triggerTop = $(".auto-group-a8e6-mCN").offset().top;
+    var triggerBottom = triggerTop + $(".auto-group-cqz4-4hG").height();
+    var item = $('#myHeader');
+
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+function download_pdf() {
+   window.open(
+                        window.location.origin + '/api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf?page={{doc.name}}&&name={{doc.quotation}}&&ptype=download',
+                        '_blank'
+                        );
+                        
+            
+
+  // $.ajax({
+  //   type: 'POST',
+  //   Accept: 'application/json',
+  //   ContentType: 'application/json;charset=utf-8',
+  //   url: window.location.origin + 'api/method/go1_cms.go1_cms.doctype.proposal.proposal.generate_pdf',
+  //   data: { 'page': "{{doc.name}}", "name":"{{doc.quotation}}", "ptype":"download" },
+  //   dataType: "json",
+  //   async: false,
+  //   headers: {
+  //       'X-Frappe-CSRF-Token': frappe.csrf_token
+  //   },
+  //   success: function(r) {
+  //     var data = r.message;
+  //     console.log(data)
+  //   }
+  // })
+}
+function myFunction() {
+  //   console.log(sticky)
+  //    console.log(window.pageYOffset)
+  // console.log(window)
+  // if (window.pageYOffset > sticky) {
+  //   header.classList.add("sticky");
+  // } else {
+  //   header.classList.remove("sticky");
+  // }
+
+  
+    var curentScroll = $(window).scrollTop()+500;
+    var isSticky = curentScroll > triggerTop && curentScroll < triggerBottom
+     if ($(window).scrollTop() >= $(
+              '.auto-group-a8e6-mCN').offset().top + $('.auto-group-a8e6-mCN').
+                outerHeight() - window.innerHeight) {
+                isSticky = false;
+            }
+    if(curentScroll<=720){
+        $("#myHeader").removeClass("sticky-bt");
+         $("#myHeader").removeClass("sticky");
+    }
+    else{
+        if(isSticky){
+            $("#myHeader").removeClass("sticky-bt");
+            $("#myHeader").addClass("sticky");
+
+        }
+        else{
+            $("#myHeader").removeClass("sticky");
+            $("#myHeader").addClass("sticky-bt");
+        }
+    }
+    // item.toggleClass('sticky', isSticky);
+}
+function hide_modal(){
+    $(".modal-backdrop").remove();
+    $("#acceptconfirm").removeAttr("style");
+    $("#rejectconfirm").removeAttr("style");
+}
+function confirm_accept(){
+     var status="Accepted";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
+    hide_modal();
+}
+function confirm_reject(){
+     var status="Rejected";
+    var proposal = $('#ProposalName').val();
+    update_status(proposal, status)
+    hide_modal();
+}
+ $('#accept-form').on("click", function(){
+    // console.log("accept")
+    // var status="Accepted";
+    // var proposal = $('#ProposalName').val();
+    // update_status(proposal, status)
+    $("#acceptconfirm").attr('style',"display:block");
+
+  })
+  $('#reject-form').on("click", function(){
+    console.log("reject")
+    // var status="Rejected";
+    // var proposal = $('#ProposalName').val();
+    // update_status(proposal, status)
+    $("#rejectconfirm").attr('style',"display:block");
+  })
+  function update_status(proposal, status){
+  $.ajax({
+    type: 'POST',
+    Accept: 'application/json',
+    ContentType: 'application/json;charset=utf-8',
+    url: window.location.origin + '/api/method/go1_cms.go1_cms.proposal_api.update_proposal_status',
+    data: { 'proposal': proposal, "status":status },
+    dataType: "json",
+    async: false,
+    headers: {
+        'X-Frappe-CSRF-Token': frappe.csrf_token
+    },
+    success: function(r) {
+      var data = r.message;
+      console.log(data)
+  
+      if(data.status=="Accepted"){
+             
+              $('#model-content').html("Thank you for your response.We will check and our team will connect soon!")
+              $('#myModal').show();
+              $('#hide-btn').hide();
+              $("#proposal-status").text("Status: "+data.status);
+              $("#proposal-status-title").text(data.status);
+      }
+       if(data.status=="Rejected"){
+              $('#model-content').html("Thank you for your response.We will check and our team will connect soon!")
+              $('#myModal').show();
+              $('#hide-btn').hide();
+              $("#proposal-status").text("Status: "+data.status);
+              $("#proposal-status-title").text(data.status);
+        
+      }
+    }
+})
+}
+$('.close-button').on("click", function(){
+   $('#myModal').hide();
+})
+</script>
+
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<style>
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /*opacity: 0;*/
+    visibility: visible;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1rem 1.5rem;
+    width: 24rem;
+    border-radius: 0.5rem;
+}
+
+.close-button1 {
+    float: left;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+ .close-button {
+    float: right;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+
+.close-button:hover {
+    background-color: darkgray;
+}
+
+.show-modal {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+.label-success {
+    background-color: #5cb85c;
+}
+.label-status {
+    align-items: center;
+    border-radius: 0.5rem;
+    display: inline-flex;
+   font-size: 16px;
+    font-weight: 500;
+    line-height: 1rem;
+    padding: 10px 15px;
+}
+.label-success {
+    --tw-border-opacity: 1;
+    --tw-bg-opacity: 1;
+    --tw-text-opacity: 1;
+    background-color: rgb(240 253 244/1);
+    border-color: rgb(187 247 208/1);
+    border-style: solid;
+    border-width: 1px;
+    color: rgb(22 163 74/1);
+}
+div#hide-btn .btn {
+    font-size: 14px !important;
+    padding: 5px 10px !important;
+    float: left;
+    margin-right: 5px;
+    text-transform: capitalize;
+}
+div#hide-btn
+{
+        width: 100%;
+    float: left;
+
+}
+p#model-content {
+    font-size: 15px;
+    margin-top: 15px;
+}
+.modal-backdrop.show {
+    display: none;
+}
+</style>
+
+

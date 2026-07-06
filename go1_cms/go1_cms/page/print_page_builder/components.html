@@ -1,0 +1,60 @@
+<!-- <div class="print-format-builder-field" style="position: relative;"
+	{% if(field.print_hide) { %}style="background-color: #F7FAFC; color: #8D99A6;"
+		title="{{ __("Hidden") }}"{% } %}
+	data-fieldname="{%= field.fieldname %}"
+	data-label="{{ __(field.label) }}"
+
+	{% if field.align %}data-align="{{ field.align }}"{% endif %}
+	data-fieldtype="{%= field.fieldtype %}"
+	>
+	{% if !in_list(["Table", "HTML", "Custom HTML"], field.fieldtype) %}
+	<div style="display: flex;flex-direction:column;align-items: center;">
+		<h3>
+			This is {{field.name}} Section 
+		</h3>
+		<div>
+			<img src="{{field.image}}"/>
+		</div>
+	</div> 
+</div> -->
+
+
+{% if data =="Header" %}
+	  <div style="display: flex;justify-content:space-between;height: 80px;">
+		<div>
+			<h1>{{data}}</h1>
+		</div>
+		<div>
+			<button class="btn btn-primary">about</button>
+			<button>Blog</button>
+			<button>contact</button>
+		</div>
+	  </div>
+{% endif %}
+{% if data =="Title" %}
+	  <h1>{{data}}</h1>
+{% endif %}
+{% if data =="Subtitle" %}
+	  <div >
+		<div>
+			<p>{{data}}</p>
+		</div>
+	  </div>
+{% endif %}
+{% if data =="Image" %}
+	  <div >
+		<div>
+			<img src="https://demo.go1cms.com//files/Pepper%20Potts.jpg" alt="">
+		</div>
+	  </div>
+{% endif %}
+{% if data =="Card" %}
+	  <div class="card">
+		<div>
+			<h1>{{data}}</h1>
+		</div>
+		<div>
+			<button class="btn btn-primary">submit</button>
+		</div>
+	  </div>
+{% endif %}

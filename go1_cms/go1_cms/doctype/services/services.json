@@ -1,0 +1,139 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:title",
+ "creation": "2022-09-16 19:01:31.267168",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "service_category",
+  "icon_type",
+  "section_break_4",
+  "service_icon",
+  "image_icon",
+  "image",
+  "is_active",
+  "section_break_9",
+  "short_description",
+  "description",
+  "route",
+  "meta_information_section",
+  "meta_title",
+  "meta_keywords",
+  "meta_description"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Service Title",
+   "unique": 1
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Cover Image"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Small Text",
+   "label": "Short Description"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "fieldname": "meta_information_section",
+   "fieldtype": "Section Break",
+   "label": "Meta Information"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title"
+  },
+  {
+   "fieldname": "meta_keywords",
+   "fieldtype": "Data",
+   "label": "Meta Keywords"
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description"
+  },
+  {
+   "fieldname": "icon_type",
+   "fieldtype": "Select",
+   "label": "List Icon Type",
+   "options": "Font\nImage"
+  },
+  {
+   "depends_on": "eval:doc.icon_type=='Font'",
+   "fieldname": "service_icon",
+   "fieldtype": "Icon",
+   "label": "Service Icon"
+  },
+  {
+   "depends_on": "eval:doc.icon_type==\"Image\"",
+   "fieldname": "image_icon",
+   "fieldtype": "Attach Image",
+   "label": "Image Icon"
+  },
+  {
+   "fieldname": "service_category",
+   "fieldtype": "Link",
+   "label": "Service Category",
+   "options": "Page Category"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "has_web_view": 1,
+ "index_web_pages_for_search": 1,
+ "is_published_field": "is_active",
+ "links": [],
+ "modified": "2022-09-20 11:50:20.726788",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Services",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

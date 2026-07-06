@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-09-07 11:32:48.450539",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "name1",
+  "column_break_2",
+  "type",
+  "column_break_4",
+  "edit_styles",
+  "css_design",
+  "style_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Name",
+   "read_only_depends_on": "eval:(doc.name1==\"Primary Button\") || (doc.name1 == \"Secondary Button\") || (doc.name1==\"Tertiary Button\")"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "primary - btn\nsecondary - btn\ntertiary - btn",
+   "read_only_depends_on": "eval:(doc.name1==\"Primary Button\") || (doc.name1 == \"Secondary Button\") || (doc.name1==\"Tertiary Button\")"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "edit_styles",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Edit Styles"
+  },
+  {
+   "fieldname": "css_design",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Css Design",
+   "read_only": 1
+  },
+  {
+   "fieldname": "style_json",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Style Json",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-09-08 11:42:47.033824",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Web Theme Button",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
