@@ -9,8 +9,7 @@ app_color = "grey"
 app_email = "info@tridotstech.com"
 app_license = "MIT"
 
-# Includes in <head>
-# ------------------
+
 
 # include js, css files in header of desk.html
 app_include_css = "/assets/go1_cms/css/cms.css"
