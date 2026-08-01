@@ -232,11 +232,65 @@ class WebPageBuilder(WebsiteGenerator):
         finally:
             frappe.flags.in_builder_sync = False
 
+    RESOURCE_TYPES = ("Document List", "Document", "API Resource")
+    VARIABLE_TYPES = ("String", "Number", "Boolean", "Object")
+
+    def validate_layout_data_definitions(self):
+        """Structural validation of layout.resources / layout.variables
+        (the fb2 events/data-source system). Only validates when the keys are
+        present, so legacy layouts are untouched."""
+        import json as _json
+        for fieldname in ("draft_layout_json", "layout_json"):
+            raw = self.get(fieldname)
+            if not raw:
+                continue
+            try:
+                layout = _json.loads(raw) if isinstance(raw, str) else raw
+            except Exception:
+                continue
+            if not isinstance(layout, dict):
+                continue
+
+            resources = layout.get("resources")
+            if resources is not None:
+                if not isinstance(resources, list):
+                    frappe.throw(f"{fieldname}: 'resources' must be a list")
+                seen = set()
+                for res in resources:
+                    if not isinstance(res, dict) or not res.get("resource_name"):
+                        frappe.throw(f"{fieldname}: each resource needs a 'resource_name'")
+                    if res.get("resource_type") not in self.RESOURCE_TYPES:
+                        frappe.throw(
+                            f"{fieldname}: resource '{res.get('resource_name')}' has invalid type "
+                            f"'{res.get('resource_type')}' (allowed: {', '.join(self.RESOURCE_TYPES)})"
+                        )
+                    if res["resource_name"] in seen:
+                        frappe.throw(f"{fieldname}: duplicate resource name '{res['resource_name']}'")
+                    seen.add(res["resource_name"])
+
+            variables = layout.get("variables")
+            if variables is not None:
+                if not isinstance(variables, list):
+                    frappe.throw(f"{fieldname}: 'variables' must be a list")
+                seen = set()
+                for var in variables:
+                    if not isinstance(var, dict) or not var.get("variable_name"):
+                        frappe.throw(f"{fieldname}: each variable needs a 'variable_name'")
+                    if var.get("variable_type") and var["variable_type"] not in self.VARIABLE_TYPES:
+                        frappe.throw(
+                            f"{fieldname}: variable '{var['variable_name']}' has invalid type "
+                            f"'{var['variable_type']}' (allowed: {', '.join(self.VARIABLE_TYPES)})"
+                        )
+                    if var["variable_name"] in seen:
+                        frappe.throw(f"{fieldname}: duplicate variable name '{var['variable_name']}'")
+                    seen.add(var["variable_name"])
+
     def validate(self):
         # frappe.log_error(frappe.local.session.data.csrf_token,'token')
         if self.is_new():
             self.file_path=""
         self.sync_sections()
+        self.validate_layout_data_definitions()
         
         # Only reconstruct static HTML/JSON files if layout_json has actually changed
         # (Avoid compiling on pure draft saving to draft_layout_json)

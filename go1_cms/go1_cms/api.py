@@ -254,11 +254,13 @@ def find_web_page_builder_by_route(route_str):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_page_content(route=None, user=None, customer=None, domain=None, business=None, application_type="mobile", is_builder=0):
+def get_page_content(route=None, user=None, customer=None, domain=None, business=None, application_type="mobile", is_builder=0, start=0, page_length=0):
 	page_content = page_type = list_content = list_style = detail_content  = None
 	side_menu = sub_header = None
 	is_builder = int(is_builder) if is_builder else 0
-	
+	start = int(start) if start else 0
+	page_length = int(page_length) if page_length else 0
+
 	if user and not customer:
 		customer_info = frappe.db.get_all('Customers', filters={'user_id': user})
 		if customer_info: customer = customer_info[0].name
@@ -268,7 +270,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		home = frappe.db.get_all('Web Page Builder', filters={'business': business}, fields=['name', 'page_type'])
 		if home:
 			check_builder = home
-			page_content =  get_page_builder_data(home, customer, application_type, business=business, is_builder=is_builder)
+			page_content =  get_page_builder_data(home, customer, application_type, business=business, is_builder=is_builder, start=start, page_length=page_length)
 			
 	if not check_domain("multi_store"):
 		business = None
@@ -278,13 +280,13 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		if check_website and check_website[0].home_page:
 			check_builder = find_web_page_builder_by_route(check_website[0].home_page)
 			if check_builder:
-				page_content =  get_page_builder_data(check_builder, customer, business=business, is_builder=is_builder)	
+				page_content =  get_page_builder_data(check_builder, customer, business=business, is_builder=is_builder, start=start, page_length=page_length)	
 				
 	if not route and not domain:
 		home_page = frappe.db.get_single_value('Website Settings', 'home_page')
 		check_builder = find_web_page_builder_by_route(home_page)
 		if check_builder:
-			page_content =  get_page_builder_data(check_builder, customer, application_type, business=business, is_builder=is_builder)
+			page_content =  get_page_builder_data(check_builder, customer, application_type, business=business, is_builder=is_builder, start=start, page_length=page_length)
 	elif route:
 		if check_domain("saas"):
 			business = get_business_from_web_domain(domain)
@@ -292,7 +294,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		if check_builder:
 			page_type = check_builder[0].w_page_type
 			if check_builder[0].page_type !="List" and check_builder[0].page_type != "Detail":
-				page_content =  get_page_builder_data(check_builder, customer, application_type, business=business, is_builder=is_builder)
+				page_content =  get_page_builder_data(check_builder, customer, application_type, business=business, is_builder=is_builder, start=start, page_length=page_length)
 		else:
 			check_section = frappe.db.get_all('Page Section', filters={'route': route}, fields=['name'])
 			if check_section:
@@ -300,6 +302,8 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 				page_content =  get_section_data(check_section[0].name, customer)
 
 	elements = []
+	page_resources = []
+	page_variables = []
 	page_title = None
 	if check_builder:
 		try:
@@ -309,6 +313,8 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			if layout_str:
 				layout = json.loads(layout_str)
 				elements = layout.get('elements', [])
+				page_resources = layout.get('resources', []) or []
+				page_variables = layout.get('variables', []) or []
 		except Exception:
 			pass
 
@@ -402,8 +408,181 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		"page_id": check_builder[0].name if (check_builder and len(check_builder)>0) else None,
 		"page_title": page_title,
 		"builder_type": "Web Page Builder",
-		"elements": elements
+		"elements": elements,
+		"resources": page_resources,
+		"variables": page_variables
 	}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_theme_layout():
+	"""Lightweight header/footer for the SPA shell.
+
+	The global header/footer composables previously fetched get_page_content
+	for a hardcoded page just to read header_content/footer_content, which
+	resolved every section of that page server-side. This returns only the
+	active theme's default header and footer.
+	"""
+	header_content = None
+	footer_content = None
+	theme_settings = frappe.db.get_all("Web Theme", filters={"is_active": 1}, fields=['default_header', 'default_footer'])
+	if theme_settings:
+		if theme_settings[0].default_header:
+			header_content = get_header_info(theme_settings[0].default_header)
+		if theme_settings[0].default_footer:
+			footer_content = get_footer_info(theme_settings[0].default_footer)
+	return {"header_content": header_content, "footer_content": footer_content}
+
+
+# ── fb2 events/data system: guest-safe data proxy ────────────────────────────
+# Published pages define named resources (layout.resources) and repeater
+# collections, but guests cannot call frappe.client.get_list. These endpoints
+# execute ONLY definitions already stored in the page layout — the stored
+# definition is the allowlist. Clients pick the page + name and paginate;
+# they can never inject a doctype, filter, or field list.
+
+FB2_BLOCKED_DOCTYPES = {
+	"User", "DocType", "DocField", "DocPerm", "Custom Field", "Property Setter",
+	"Sessions", "DefaultValue", "Email Account", "Email Queue", "Email Queue Recipient",
+	"OAuth Client", "OAuth Bearer Token", "OAuth Authorization Code", "Token Cache",
+	"Connected App", "Installed Application", "Scheduled Job Type", "Scheduled Job Log",
+	"Error Log", "Activity Log", "Access Log", "Route History", "View Log",
+	"System Settings", "Website Settings",
+}
+
+# Doctypes where '*' would leak sensitive columns get a fixed safe field list
+# instead (Web Page Builder is the default repeater collection, but its layout
+# blobs include unpublished draft content).
+FB2_DOCTYPE_SAFE_FIELDS = {
+	"Web Page Builder": ["name", "page_title", "route", "image", "og_image", "modified", "creation"],
+}
+
+
+def _fb2_load_page_layout(route, is_builder=0):
+	check_builder = find_web_page_builder_by_route(route)
+	if not check_builder:
+		frappe.throw("Page not found", frappe.DoesNotExistError)
+	values = frappe.db.get_value(
+		"Web Page Builder", check_builder[0].name,
+		["published", "layout_json", "draft_layout_json"])
+	published, layout_json, draft_layout_json = values or (0, None, None)
+	is_builder = int(is_builder) if is_builder else 0
+	if is_builder and frappe.session.user != "Guest" and draft_layout_json:
+		layout_str = draft_layout_json
+	else:
+		if not published:
+			frappe.throw("Page not published", frappe.PermissionError)
+		layout_str = layout_json
+	if not layout_str:
+		frappe.throw("Page has no layout", frappe.DoesNotExistError)
+	try:
+		layout = json.loads(layout_str)
+	except Exception:
+		frappe.throw("Invalid page layout")
+	if not isinstance(layout, dict):
+		frappe.throw("Invalid page layout")
+	return layout
+
+
+def _fb2_sanitize_fields(fields):
+	# '*' is allowed (repeater bindings reference arbitrary record fields);
+	# anything that is not a plain column name is dropped.
+	if not fields or fields == "*" or "*" in fields:
+		return ["*"]
+	safe = [f for f in fields if isinstance(f, str) and re.match(r"^[a-zA-Z0-9_]+$", f)]
+	return safe or ["name"]
+
+
+def _fb2_order_by(sort_field, sort_order):
+	if not sort_field or not re.match(r"^[a-zA-Z0-9_]+$", str(sort_field)):
+		return None
+	order = "desc" if str(sort_order or "").lower() == "desc" else "asc"
+	return f"`{sort_field}` {order}"
+
+
+def _fb2_run_doctype_query(doctype, fields, filters, sort_field, sort_order, start, page_length):
+	if not doctype or doctype in FB2_BLOCKED_DOCTYPES or not frappe.db.exists("DocType", doctype):
+		frappe.throw("This data source is not available", frappe.PermissionError)
+	if frappe.get_meta(doctype).issingle:
+		frappe.throw("This data source is not available", frappe.PermissionError)
+	start = max(int(start or 0), 0)
+	page_length = int(page_length or 0) or 20
+	page_length = min(max(page_length, 1), 100)
+	safe_fields = _fb2_sanitize_fields(fields)
+	if safe_fields == ["*"] and doctype in FB2_DOCTYPE_SAFE_FIELDS:
+		safe_fields = FB2_DOCTYPE_SAFE_FIELDS[doctype]
+	return frappe.get_all(
+		doctype,
+		fields=safe_fields,
+		filters=filters or {},
+		order_by=_fb2_order_by(sort_field, sort_order),
+		limit_start=start,
+		limit_page_length=page_length,
+	)
+
+
+@frappe.whitelist(allow_guest=True)
+def run_page_resource(route=None, resource_name=None, start=0, page_length=0, is_builder=0, document_name=None):
+	layout = _fb2_load_page_layout(route, is_builder)
+	res = None
+	for r in layout.get("resources") or []:
+		if isinstance(r, dict) and r.get("resource_name") == resource_name:
+			res = r
+			break
+	if not res:
+		frappe.throw("Resource not found on this page", frappe.DoesNotExistError)
+
+	rtype = res.get("resource_type")
+	if rtype == "Document List":
+		limit = int(page_length or 0) or int(res.get("limit") or 20)
+		return _fb2_run_doctype_query(
+			res.get("document_type"), res.get("fields"), res.get("filters"),
+			res.get("sort_field"), res.get("sort_order"), start, limit)
+
+	if rtype == "Document":
+		stored_name = res.get("document_name") or ""
+		# A client-supplied name is honored only when the author stored a
+		# dynamic template (e.g. "{{ route.params.id }}") — the doctype is
+		# still fixed by the stored definition.
+		docname = document_name if ("{{" in str(stored_name) and document_name) else stored_name
+		if not docname or "{{" in str(docname):
+			frappe.throw("Document resource has no resolvable document name")
+		rows = _fb2_run_doctype_query(
+			res.get("document_type"), res.get("fields"), {"name": docname},
+			None, None, 0, 1)
+		if not rows:
+			frappe.throw("Document not found", frappe.DoesNotExistError)
+		return rows[0]
+
+	frappe.throw("API resources are called on their own URL, not through this proxy")
+
+
+def _fb2_find_repeater_settings(layout, node_id):
+	def walk(nodes):
+		for node in nodes or []:
+			if not isinstance(node, dict):
+				continue
+			if node.get("id") == node_id and node.get("type") == "repeater":
+				return node.get("collectionSettings") or {}
+			found = walk(node.get("children"))
+			if found is not None:
+				return found
+		return None
+	return walk(layout.get("sections"))
+
+
+@frappe.whitelist(allow_guest=True)
+def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, is_builder=0):
+	layout = _fb2_load_page_layout(route, is_builder)
+	settings = _fb2_find_repeater_settings(layout, node_id)
+	if settings is None:
+		frappe.throw("Repeater not found on this page", frappe.DoesNotExistError)
+	if (settings.get("source") or "doctype") != "doctype":
+		frappe.throw("This repeater uses an external API and is fetched directly")
+	limit = int(page_length or 0) or int(settings.get("limit") or 5)
+	return _fb2_run_doctype_query(
+		settings.get("doctype"), ["*"], settings.get("filters"),
+		settings.get("sortBy"), settings.get("sortOrder"), start, limit)
 
 
 @frappe.whitelist(allow_guest=False)
@@ -748,7 +927,7 @@ def parse_template_content(tmpl):
 	return mapped_content
 
 
-def get_page_builder_data(page, customer=None,application_type="mobile",business=None, is_builder=0):
+def get_page_builder_data(page, customer=None,application_type="mobile",business=None, is_builder=0, start=0, page_length=0):
 	# frappe.log_error(customer, "---customer--page-builder--")
 	path = frappe.utils.get_files_path()
 	import os
@@ -770,7 +949,18 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 		if layout_str:
 			try:
 				layout = json.loads(layout_str)
-				sections_list = layout.get('sections', [])
+				sections_list = [s for s in layout.get('sections', []) if s]
+				page_animation = layout.get('pageAnimation')
+				# Paginate sections BEFORE resolving them (templates/dynamic data are
+				# expensive), so the published page can lazy-load sections on scroll.
+				start = int(start) if start else 0
+				page_length = int(page_length) if page_length else 0
+				if page_length > 0:
+					sections_list = sections_list[start:start + page_length]
+					if not sections_list:
+						# Past the last section — return an empty page instead of
+						# falling through to the legacy data_source file path.
+						return []
 				if sections_list:
 					lists = []
 					from go1_cms.go1_cms.doctype.page_section.page_section import get_data_source
@@ -809,6 +999,8 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 						item['name'] = sec.get('id') or sec.get('section')
 						item['section_name'] = sec.get('name') or sec.get('section_name')
 						item['section_type'] = sec.get('type') or sec.get('section_type') or sec.get('name')
+						if page_animation and sec.get('type') == 'freebuilder':
+							item['_page_animation'] = page_animation
 						if sec.get('style') and isinstance(sec['style'], dict):
 							item['background_color'] = sec['style'].get('bgColor', '')
 							item['style'] = sec.get('style')
@@ -1862,3 +2054,448 @@ def update_section_template_cms_v4(section_template_name, cms_v4_enabled=False):
 			"status": "error",
 			"message": str(e)
 		}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GO1CMS Web Clipper — Chrome Extension API
+# ─────────────────────────────────────────────────────────────────────────────
+
+@frappe.whitelist()
+def import_section_from_extension(section_name, section_html, category="General",
+                                  thumbnail_base64="", source_url=""):
+	"""
+	Receives a section captured by the GO1CMS Web Clipper Chrome extension
+	and saves it as a reusable 'Clipped Section' in GO1CMS.
+
+	Args:
+		section_name    (str): Human-readable name for the section.
+		section_html    (str): The captured HTML (with inlined computed styles).
+		category        (str): Section category (Hero, Navbar, Footer, etc.)
+		thumbnail_base64(str): Base64-encoded JPEG screenshot of the section.
+		source_url      (str): The URL of the page this section was clipped from.
+
+	Returns:
+		dict: { status, name, message }
+	"""
+	try:
+		if not section_name or not section_html:
+			frappe.throw("section_name and section_html are required.")
+
+		# Sanitise name for use as docname
+		safe_name = section_name.strip()[:80]
+
+		# Save thumbnail to file if provided
+		thumbnail_url = ""
+		if thumbnail_base64 and thumbnail_base64.startswith("data:image"):
+			try:
+				import base64
+				header, encoded = thumbnail_base64.split(",", 1)
+				file_data = base64.b64decode(encoded)
+				file_name = frappe.scrub(safe_name) + "_clipper_thumb.jpg"
+				file_doc = frappe.get_doc({
+					"doctype": "File",
+					"file_name": file_name,
+					"content": file_data,
+					"is_private": 0,
+					"decode": False,
+				})
+				file_doc.insert(ignore_permissions=True)
+				thumbnail_url = file_doc.file_url
+			except Exception:
+				frappe.log_error(frappe.get_traceback(), "go1cms_clipper.save_thumbnail")
+
+		# Check if a doctype called 'Clipped Section' exists (custom doctype we create)
+		# If not, fall back to saving as a Page Section or just a custom record
+		if frappe.db.exists("DocType", "Clipped Section"):
+			doc = frappe.get_doc({
+				"doctype": "Clipped Section",
+				"section_name": safe_name,
+				"section_html": section_html,
+				"category": category,
+				"thumbnail": thumbnail_url,
+				"source_url": source_url,
+				"clipped_by": frappe.session.user,
+				"clipped_on": frappe.utils.now(),
+			})
+			doc.insert(ignore_permissions=True)
+			frappe.db.commit()
+			return {"status": "ok", "name": doc.name, "message": "Section imported successfully."}
+
+		else:
+			# Fallback: store in a simple JSON file or frappe cache
+			# Save as a predefined section entry in go1_cms custom storage
+			existing = frappe.cache().get_value("go1cms_clipped_sections") or []
+			import uuid
+			entry = {
+				"id": str(uuid.uuid4()),
+				"name": safe_name,
+				"html": section_html,
+				"category": category,
+				"thumbnail": thumbnail_url,
+				"source_url": source_url,
+				"clipped_by": frappe.session.user,
+				"clipped_on": frappe.utils.now(),
+			}
+			existing.append(entry)
+			frappe.cache().set_value("go1cms_clipped_sections", existing)
+			return {"status": "ok", "name": entry["id"], "message": "Section imported to cache."}
+
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "go1cms.import_section_from_extension")
+		return {"status": "error", "error": str(e), "message": "Import failed."}
+
+
+@frappe.whitelist()
+def get_imported_sections(category=None):
+	"""
+	Returns all sections imported via the GO1CMS Web Clipper.
+	Used by the builder sidebar to show clipped sections.
+
+	Args:
+		category (str, optional): Filter by category.
+
+	Returns:
+		list: List of clipped section dicts.
+	"""
+	try:
+		if frappe.db.exists("DocType", "Clipped Section"):
+			filters = {}
+			if category:
+				filters["category"] = category
+			sections = frappe.get_all(
+				"Clipped Section",
+				filters=filters,
+				fields=["name", "section_name", "category", "thumbnail", "source_url",
+				        "section_html", "clipped_by", "clipped_on"],
+				order_by="clipped_on desc",
+				limit=100,
+			)
+			return {"status": "ok", "sections": sections}
+		else:
+			# Read from cache fallback
+			all_sections = frappe.cache().get_value("go1cms_clipped_sections") or []
+			if category:
+				all_sections = [s for s in all_sections if s.get("category") == category]
+			return {"status": "ok", "sections": all_sections}
+
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "go1cms.get_imported_sections")
+		return {"status": "error", "error": str(e), "sections": []}
+
+
+@frappe.whitelist()
+def save_clipped_section_to_page(page_route, section_html, section_name="Clipped Section"):
+	"""
+	Attaches a clipped section (raw HTML from Web Clipper) to a Web Page Builder page
+	as a new page section, so it appears in the builder canvas.
+
+	Args:
+		page_route   (str): The route of the Web Page Builder page.
+		section_html (str): The captured HTML string.
+		section_name (str): Display name for the section.
+
+	Returns:
+		dict: { page_section } — the new section ID for the builder to render.
+	"""
+	try:
+		import uuid
+
+		page_builder = frappe.get_doc('Web Page Builder', {"route": page_route})
+		new_section_id = "clipped_" + str(uuid.uuid4()).replace("-", "")[:12]
+
+		# Build a minimal layout_json for the clipped section
+		layout_json = [{
+			"u_id": new_section_id + "_row",
+			"type": "row",
+			"columns": [{
+				"u_id": new_section_id + "_col",
+				"bs_width": "col-md-12",
+				"rows": [],
+				"components": [{
+					"component_title": "Custom HTML",
+					"cid": new_section_id + "_cmp",
+					"custom_html": section_html,
+				}]
+			}]
+		}]
+
+		# Append as a Web Section child record
+		page_builder.append("web_section", {
+			"section": None,
+			"section_title": section_name,
+			"layout_type": "Clipped Section",
+			"page_section": new_section_id,
+			"layout_json": frappe.as_json(layout_json),
+			"clipped_html": section_html,
+		})
+
+		page_builder.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		return {"status": "ok", "page_section": new_section_id}
+
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "go1cms.save_clipped_section_to_page")
+		return {"status": "error", "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Page share links — a view-only external preview URL for one page
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SHARE_ALLOWED_ROLES = {'System Manager', 'Administrator', 'CMS Admin'}
+
+
+def _share_guard(page):
+	"""Only page editors may create, read, rotate or send a share link."""
+	user_roles = set(frappe.get_roles(frappe.session.user))
+	if not (user_roles & SHARE_ALLOWED_ROLES):
+		frappe.throw('Not permitted to share pages', frappe.PermissionError)
+	if not frappe.db.exists('Web Page Builder', page):
+		frappe.throw('Page not found', frappe.DoesNotExistError)
+
+
+def _get_share_doc(page, create=False):
+	name = frappe.db.get_value('Web Page Share', {'page': page})
+	if name:
+		return frappe.get_doc('Web Page Share', name)
+	if not create:
+		return None
+	doc = frappe.get_doc({
+		'doctype': 'Web Page Share',
+		'page': page,
+		'enabled': 0,
+		'invites': '[]',
+	})
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def _share_base_url():
+	"""Public base for share links — the configured CMS domain wins, exactly as
+	the Desk 'Preview' button resolves public URLs."""
+	here = (get_url() or '').rstrip('/')
+	# While working locally, a link to the production domain would 404 — that
+	# site has neither this token nor the draft. Keep local links local.
+	if 'localhost' in here or '127.0.0.1' in here:
+		return here
+	try:
+		settings = frappe.get_cached_doc('CMS Settings', 'CMS Settings')
+		if settings and int(settings.get('use_other_domain') or 0) and settings.get('domain'):
+			return settings.get('domain').rstrip('/')
+	except Exception:
+		pass
+	return here
+
+
+def _share_payload(doc):
+	try:
+		invites = json.loads(doc.invites or '[]')
+	except Exception:
+		invites = []
+	try:
+		layout = json.loads(doc.layout or '{}')
+	except Exception:
+		layout = {}
+	return {
+		'page': doc.page,
+		'token': doc.token,
+		'enabled': int(doc.enabled or 0),
+		# The link is only handed out while sharing is on.
+		'url': '{}/preview/{}'.format(_share_base_url(), doc.token) if doc.enabled else '',
+		'invites': invites,
+		'layout': layout,
+	}
+
+
+def _store_layout(doc, layout):
+	"""The owner's canvas arrangement travels with the link so the shared
+	preview renders exactly what the builder's preview mode shows."""
+	if layout in (None, ''):
+		return False
+	if isinstance(layout, six.string_types):
+		try:
+			layout = json.loads(layout)
+		except Exception:
+			return False
+	if not isinstance(layout, dict):
+		return False
+	doc.layout = json.dumps(layout)
+	return True
+
+
+@frappe.whitelist()
+def get_page_share_link(page, layout=None):
+	"""Current share state for a page (creates a dormant, disabled link row).
+	Any canvas layout passed in is stored, keeping the shared view in step with
+	the builder canvas the owner is looking at."""
+	_share_guard(page)
+	doc = _get_share_doc(page, create=True)
+	if _store_layout(doc, layout):
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+	return _share_payload(doc)
+
+
+@frappe.whitelist()
+def set_page_share_link(page, enabled=1, regenerate=0, layout=None):
+	"""Turn link sharing on/off, optionally rotating the token."""
+	from frappe.utils import random_string
+
+	_share_guard(page)
+	doc = _get_share_doc(page, create=True)
+	doc.enabled = 1 if int(enabled or 0) else 0
+	_store_layout(doc, layout)
+	if int(regenerate or 0) or not doc.token:
+		doc.token = random_string(32)
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+	return _share_payload(doc)
+
+
+@frappe.whitelist()
+def invite_to_page_share(page, emails, message=None):
+	"""Email the view-only preview link to one or more people."""
+	_share_guard(page)
+	try:
+		recipients = json.loads(emails) if isinstance(emails, six.string_types) else (emails or [])
+	except Exception:
+		recipients = [e.strip() for e in (emails or '').split(',')]
+	recipients = [e.strip() for e in recipients if e and e.strip()]
+	if not recipients:
+		frappe.throw('No email address given')
+
+	doc = _get_share_doc(page, create=True)
+	if not doc.enabled:
+		doc.enabled = 1
+		doc.save(ignore_permissions=True)
+
+	payload = _share_payload(doc)
+	url = payload['url']
+	page_title = frappe.db.get_value('Web Page Builder', page, 'page_title') or page
+	sender_name = frappe.db.get_value('User', frappe.session.user, 'full_name') or frappe.session.user
+
+	body = """
+		<p>{sender} shared a preview of <b>{title}</b> with you.</p>
+		{note}
+		<p><a href="{url}" style="display:inline-block;background:#1b6bf9;color:#fff;
+			padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;">Open preview</a></p>
+		<p style="color:#6b7280;font-size:12px;">This is a view-only link — the page cannot be edited from it.<br>{url}</p>
+	""".format(
+		sender=frappe.utils.escape_html(sender_name),
+		title=frappe.utils.escape_html(page_title),
+		note='<p>{}</p>'.format(frappe.utils.escape_html(message)) if message else '',
+		url=url,
+	)
+
+	sent, failed = [], []
+	for email in recipients:
+		try:
+			frappe.sendmail(
+				recipients=[email],
+				subject='{} shared a preview: {}'.format(sender_name, page_title),
+				message=body,
+				reference_doctype='Web Page Share',
+				reference_name=doc.name,
+			)
+			sent.append(email)
+		except Exception:
+			# No outgoing email account (common on dev sites) — keep the invite
+			# recorded so the link can still be copied out by hand.
+			frappe.log_error(frappe.get_traceback(), 'go1cms.invite_to_page_share')
+			failed.append(email)
+
+	try:
+		invites = json.loads(doc.invites or '[]')
+	except Exception:
+		invites = []
+	known = {i.get('email') for i in invites}
+	for email in recipients:
+		if email not in known:
+			invites.append({'email': email, 'invited_on': now(), 'invited_by': frappe.session.user})
+	doc.invites = json.dumps(invites)
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+
+	result = _share_payload(doc)
+	result.update({'sent': sent, 'failed': failed})
+	return result
+
+
+def _shared_page_payload(row):
+	raw = row.get('draft_layout_json') or row.get('layout_json')
+	layout = {}
+	if raw:
+		try:
+			layout = json.loads(raw) if isinstance(raw, six.string_types) else raw
+		except Exception:
+			layout = {}
+	return {
+		'id': row.get('name'),
+		'title': row.get('page_title') or row.get('name'),
+		'route': row.get('route') or '',
+		'custom_css': row.get('custom_css') or '',
+		'page_animation': layout.get('pageAnimation'),
+		'sections': layout.get('sections') or [],
+	}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_shared_page_preview(token):
+	"""Read-only payload behind a share token: the shared page plus the rest of
+	its project, so the preview is a navigable site. The ONLY guest entry point
+	for draft layouts — the token is the capability, nothing else is exposed.
+
+	A page with no project shares only itself; it must never drag every other
+	unassigned draft on the site into a public link."""
+	if not token:
+		frappe.throw('Preview link not found', frappe.DoesNotExistError)
+
+	share = frappe.db.get_value(
+		'Web Page Share', {'token': token, 'enabled': 1}, ['name', 'page', 'layout'], as_dict=True)
+	if not share:
+		frappe.throw('This preview link is no longer available', frappe.PermissionError)
+	try:
+		layout = json.loads(share.get('layout') or '{}')
+	except Exception:
+		layout = {}
+
+	fields = ['name', 'page_title', 'route', 'custom_css', 'project', 'draft_layout_json', 'layout_json']
+	entry = frappe.db.get_value('Web Page Builder', share.page, fields, as_dict=True)
+	if not entry:
+		frappe.throw('Page not found', frappe.DoesNotExistError)
+
+	project_label = ''
+	if entry.get('project'):
+		project_label = frappe.db.get_value('CMS Project', entry.get('project'), 'project_name') or entry.get('project')
+
+	# The canvas the owner shared defines the page set: the frames they had laid
+	# out. Falling back to the project, then to the page on its own — a page with
+	# no project and no captured canvas must never drag other drafts along.
+	wanted = [k for k in (layout.get('positions') or {}).keys()]
+	rows = []
+	if wanted:
+		rows = frappe.get_all(
+			'Web Page Builder', filters={'name': ['in', wanted]},
+			fields=fields, order_by='creation asc', limit_page_length=0) or []
+	if not rows and entry.get('project'):
+		rows = frappe.get_all(
+			'Web Page Builder', filters={'project': entry.get('project')},
+			fields=fields, order_by='creation asc', limit_page_length=0) or []
+	if not rows:
+		rows = [entry]
+	if not any(r.get('name') == share.page for r in rows):
+		rows.insert(0, entry)
+
+	pages = [_shared_page_payload(r) for r in rows]
+	# the shared page always opens first
+	pages.sort(key=lambda p: 0 if p['id'] == share.page else 1)
+
+	return {
+		'project': project_label,
+		'entry': share.page,
+		'page_title': entry.get('page_title') or share.page,
+		'pages': pages,
+		'layout': layout,
+		'view_only': True,
+	}

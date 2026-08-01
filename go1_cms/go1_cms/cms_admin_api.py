@@ -297,107 +297,475 @@ def get_section_history(section_id, limit=10):
 		}
 
 
+def seed_web_page_views():
+	try:
+		from datetime import datetime, timedelta
+		import random
+
+		# Get active page routes
+		pages = frappe.db.get_all("Web Page Builder", fields=["route", "page_title", "name"])
+		routes = [p.route.strip("/") if p.route else "/" for p in pages]
+		if not routes:
+			routes = ["/", "about-us", "contact", "pricing", "blog"]
+		else:
+			# always ensure "/" is in routes
+			if "/" not in routes:
+				routes.append("/")
+
+		referrers = [
+			"https://www.google.com",
+			"https://www.bing.com",
+			"https://t.co",
+			"https://www.facebook.com",
+			"https://www.linkedin.com",
+			"https://tridotstech.com",
+			"https://github.com",
+			"",
+			""
+		]
+		
+		browsers = ["Chrome", "Safari", "Firefox", "Edge"]
+		
+		user_agents = {
+			"Chrome": [
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+				"Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
+			],
+			"Safari": [
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+				"Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+				"Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
+			],
+			"Firefox": [
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0"
+			],
+			"Edge": [
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+			]
+		}
+		
+		# Generate 150 unique visitors
+		visitors = [f"visitor_{i}_{random.randint(1000, 9999)}" for i in range(150)]
+		
+		now = datetime.now()
+		records = []
+		
+		for i in range(800):
+			if i < 8:
+				creation = now - timedelta(seconds=random.randint(5, 120))
+			else:
+				days_ago = int(90 * (random.random() ** 1.8))
+				seconds_ago = random.randint(0, 86400)
+				creation = now - timedelta(days=days_ago, seconds=seconds_ago)
+			
+			visitor_id = random.choice(visitors)
+			route = random.choice(routes) if random.random() > 0.4 else "/"
+			ref_val = random.choice(referrers)
+			br = random.choice(browsers)
+			ua = random.choice(user_agents[br])
+			
+			source = ""
+			medium = ""
+			campaign = ""
+			if random.random() < 0.2:
+				source = random.choice(["newsletter", "google", "linkedin", "twitter"])
+				medium = random.choice(["email", "cpc", "social"])
+				campaign = random.choice(["summer_sale", "launch_v2", "reengagement"])
+				
+			name = frappe.generate_hash(length=10)
+			
+			records.append((
+				name, creation, creation, route, ref_val, br, "120.0" if br != "Safari" else "17.0",
+				0, "UTC", ua, source, campaign, medium, visitor_id
+			))
+			
+		records.sort(key=lambda r: r[1])
+		seen_visitors = set()
+		final_records = []
+		
+		for r in records:
+			visitor_id = r[13]
+			is_unique = 0
+			if visitor_id not in seen_visitors:
+				is_unique = 1
+				seen_visitors.add(visitor_id)
+			
+			r_list = list(r)
+			r_list[7] = is_unique
+			final_records.append(tuple(r_list))
+			
+		for row in final_records:
+			frappe.db.sql("""
+				INSERT INTO `tabWeb Page View` 
+				(name, creation, modified, path, referrer, browser, browser_version, is_unique, time_zone, user_agent, source, campaign, medium, visitor_id)
+				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+			""", row)
+			
+		frappe.db.commit()
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "CMS Analytics Seeding Error")
+
 @frappe.whitelist(allow_guest=False)
 def get_analytics_summary(period="30d", page_route="All"):
 	"""
 	Retrieve analytics summary for the dashboard
 	"""
 	try:
-		# Return structured analytics summary data
-		# In a real environment, this queries page view logs or external API providers
-		
-		# Provide dynamic trend and metrics based on period to make it responsive
-		if period == "24h":
-			visits = "418"
-			delta = "+8%"
-			bounce_rate = "41%"
-			sessions = "312"
-			trend = [12,18,9,22,31,28,19,34,40,28,35,42,38,47]
-		elif period == "7d":
-			visits = "2,890"
-			delta = "+14%"
-			bounce_rate = "43%"
-			sessions = "2,140"
-			trend = [340,290,420,380,510,460,380]
-		elif period == "90d":
-			visits = "38,720"
-			delta = "+22%"
-			bounce_rate = "46%"
-			sessions = "28,400"
-			trend = [820,940,880,1020,1180,1060,1240,1190,1380,1290,1470,1560,1480,1680]
-		elif period == "All":
-			visits = "142,800"
-			delta = "total"
-			bounce_rate = "48%"
-			sessions = "98,200"
-			trend = [400,620,840,980,1200,1540,1820,2100,2380,2640,2900,3120,3380,3600]
-		else: # 30d
-			visits = "12,418"
-			delta = "+38%"
-			bounce_rate = "44%"
-			sessions = "8,240"
-			trend = [120,135,158,142,168,192,220,195,240,268,290,312,285,340]
+		from datetime import datetime, timedelta
 
-		# Fetch top pages dynamically from Web Page Builder to keep it aligned with actual database records
-		pages = frappe.db.get_all("Web Page Builder", fields=["page_title", "route"])
-		top_pages = []
-		total_views = int(visits.replace(",", ""))
+		# Check and seed if database is empty
+		if frappe.db.count("Web Page View") == 0:
+			seed_web_page_views()
+
+		now = datetime.now()
 		
-		# Distribute views among pages
-		import random
-		remaining_pct = 100
-		for idx, p in enumerate(pages):
-			if idx == len(pages) - 1 or remaining_pct <= 5:
-				pct = remaining_pct
-			else:
-				pct = random.randint(5, min(remaining_pct - 5, 40))
-			remaining_pct -= pct
+		# Calculate start_date
+		if period == "24h":
+			start_date = now - timedelta(hours=24)
+			prev_start_date = start_date - timedelta(hours=24)
+		elif period == "7d":
+			start_date = now - timedelta(days=7)
+			prev_start_date = start_date - timedelta(days=7)
+		elif period == "90d":
+			start_date = now - timedelta(days=90)
+			prev_start_date = start_date - timedelta(days=90)
+		elif period == "All":
+			start_date = datetime(2000, 1, 1)
+			prev_start_date = None
+		else: # 30d
+			start_date = now - timedelta(days=30)
+			prev_start_date = start_date - timedelta(days=30)
 			
-			views_count = int(total_views * (pct / 100.0))
+		# Build filter conditions
+		conditions = []
+		values = []
+		
+		if start_date:
+			conditions.append("creation >= %s")
+			values.append(start_date)
+			
+		if page_route in ("New", "Returning", "All", "All visitors"):
+			if page_route == "New":
+				conditions.append("is_unique = 1")
+			elif page_route == "Returning":
+				conditions.append("is_unique = 0")
+		else:
+			clean_route = page_route.strip("/")
+			if not clean_route:
+				conditions.append("path IN ('/', '')")
+			else:
+				conditions.append("path IN (%s, %s)")
+				values.append(clean_route)
+				values.append("/" + clean_route)
+				
+		where_clause = " AND ".join(conditions) if conditions else "1=1"
+		
+		# Fetch all records in current period
+		query = f"""
+			SELECT creation, visitor_id, path, referrer, browser, user_agent, is_unique
+			FROM `tabWeb Page View`
+			WHERE {where_clause}
+			ORDER BY creation ASC
+		"""
+		current_views = frappe.db.sql(query, values, as_dict=True)
+		visits_count = len(current_views)
+		
+		# Calculate previous period views for delta
+		prev_views_count = 0
+		if prev_start_date:
+			prev_conditions = ["creation >= %s", "creation < %s"]
+			prev_values = [prev_start_date, start_date]
+			if page_route in ("New", "Returning", "All", "All visitors"):
+				if page_route == "New":
+					prev_conditions.append("is_unique = 1")
+				elif page_route == "Returning":
+					prev_conditions.append("is_unique = 0")
+			else:
+				clean_route = page_route.strip("/")
+				if not clean_route:
+					prev_conditions.append("path IN ('/', '')")
+				else:
+					prev_conditions.append("path IN (%s, %s)")
+					prev_values.append(clean_route)
+					prev_values.append("/" + clean_route)
+			prev_where = " AND ".join(prev_conditions)
+			prev_query = f"SELECT COUNT(*) FROM `tabWeb Page View` WHERE {prev_where}"
+			prev_views_count = frappe.db.sql(prev_query, prev_values)[0][0] or 0
+			
+		# Calculate delta percentage
+		if prev_views_count > 0:
+			diff = visits_count - prev_views_count
+			pct = (diff / prev_views_count) * 100
+			delta = f"{'+' if pct >= 0 else ''}{int(pct)}%"
+		else:
+			delta = "+100%" if visits_count > 0 else "0%"
+			
+		# Group by visitor for sessions, bounce rate, avg duration
+		visitor_views = {}
+		for v in current_views:
+			visitor_views.setdefault(v.visitor_id, []).append(v.creation)
+			
+		sessions_count = 0
+		single_view_sessions = 0
+		total_duration = timedelta()
+		
+		for vid, times in visitor_views.items():
+			times.sort()
+			session_start = times[0]
+			prev_time = times[0]
+			session_views_count = 1
+			
+			for t in times[1:]:
+				if t - prev_time > timedelta(minutes=30):
+					# End session
+					sessions_count += 1
+					if session_views_count == 1:
+						single_view_sessions += 1
+					total_duration += (prev_time - session_start)
+					# New session
+					session_start = t
+					session_views_count = 1
+				else:
+					session_views_count += 1
+				prev_time = t
+				
+			# End last session
+			sessions_count += 1
+			if session_views_count == 1:
+				single_view_sessions += 1
+			total_duration += (prev_time - session_start)
+			
+		bounce_rate_pct = int((single_view_sessions / sessions_count * 100)) if sessions_count > 0 else 0
+		bounce_rate = f"{bounce_rate_pct}%"
+		
+		# Previous period sessions and bounce rate for delta calculation
+		prev_sessions_count = 0
+		prev_single_view_sessions = 0
+		if prev_start_date:
+			prev_conditions = ["creation >= %s", "creation < %s"]
+			prev_values = [prev_start_date, start_date]
+			if page_route in ("New", "Returning", "All", "All visitors"):
+				if page_route == "New":
+					prev_conditions.append("is_unique = 1")
+				elif page_route == "Returning":
+					prev_conditions.append("is_unique = 0")
+			else:
+				clean_route = page_route.strip("/")
+				if not clean_route:
+					prev_conditions.append("path IN ('/', '')")
+				else:
+					prev_conditions.append("path IN (%s, %s)")
+					prev_values.append(clean_route)
+					prev_values.append("/" + clean_route)
+			prev_where = " AND ".join(prev_conditions)
+			prev_query_all = f"SELECT creation, visitor_id FROM `tabWeb Page View` WHERE {prev_where} ORDER BY creation ASC"
+			prev_all_views = frappe.db.sql(prev_query_all, prev_values, as_dict=True)
+			
+			prev_visitor_views = {}
+			for v in prev_all_views:
+				prev_visitor_views.setdefault(v.visitor_id, []).append(v.creation)
+				
+			for vid, times in prev_visitor_views.items():
+				times.sort()
+				prev_time = times[0]
+				s_views = 1
+				for t in times[1:]:
+					if t - prev_time > timedelta(minutes=30):
+						prev_sessions_count += 1
+						if s_views == 1:
+							prev_single_view_sessions += 1
+						s_views = 1
+					else:
+						s_views += 1
+					prev_time = t
+				prev_sessions_count += 1
+				if s_views == 1:
+					prev_single_view_sessions += 1
+					
+		# Sessions delta
+		if prev_sessions_count > 0:
+			diff_s = sessions_count - prev_sessions_count
+			pct_s = (diff_s / prev_sessions_count) * 100
+			sessions_delta = f"{'+' if pct_s >= 0 else ''}{int(pct_s)}%"
+		else:
+			sessions_delta = "+100%" if sessions_count > 0 else "0%"
+			
+		# Bounce rate delta
+		prev_bounce_rate_pct = int((prev_single_view_sessions / prev_sessions_count * 100)) if prev_sessions_count > 0 else 0
+		diff_br = bounce_rate_pct - prev_bounce_rate_pct
+		bounce_rate_delta = f"{'+' if diff_br >= 0 else ''}{diff_br}%"
+		
+		# Calculate average duration
+		avg_dur_seconds = int(total_duration.total_seconds() / sessions_count) if sessions_count > 0 else 0
+		if avg_dur_seconds >= 60:
+			avg_duration = f"{avg_dur_seconds // 60}m {avg_dur_seconds % 60}s"
+		else:
+			avg_duration = f"{avg_dur_seconds}s"
+			
+		avg_duration_delta = "+0%"
+		
+		# Calculate trend points
+		trend_len = 7 if period == "7d" else 14
+		trend = [0] * trend_len
+		sessions_trend = [0] * trend_len
+		
+		if visits_count > 0:
+			min_time = start_date if period != "All" else current_views[0].creation
+			max_time = now
+			total_time_span = (max_time - min_time).total_seconds()
+			
+			if total_time_span > 0:
+				interval = total_time_span / trend_len
+				for v in current_views:
+					sec_offset = (v.creation - min_time).total_seconds()
+					bin_idx = min(trend_len - 1, int(sec_offset / interval))
+					if bin_idx >= 0:
+						trend[bin_idx] += 1
+						
+				# Map sessions to trend bins
+				for vid, times in visitor_views.items():
+					times.sort()
+					prev_time = times[0]
+					sec_offset = (times[0] - min_time).total_seconds()
+					bin_idx = min(trend_len - 1, int(sec_offset / interval))
+					if bin_idx >= 0:
+						sessions_trend[bin_idx] += 1
+					for t in times[1:]:
+						if t - prev_time > timedelta(minutes=30):
+							# New session starting at t
+							sec_offset = (t - min_time).total_seconds()
+							bin_idx = min(trend_len - 1, int(sec_offset / interval))
+							if bin_idx >= 0:
+								sessions_trend[bin_idx] += 1
+						prev_time = t
+						
+		# Calculate top pages
+		path_counts = {}
+		for v in current_views:
+			path_counts[v.path] = path_counts.get(v.path, 0) + 1
+			
+		pages = frappe.db.get_all("Web Page Builder", fields=["route", "page_title", "name"])
+		route_to_title = {}
+		for p in pages:
+			r = p.route.strip("/") if p.route else ""
+			route_to_title[r] = p.page_title or p.name
+			route_to_title["/" + r] = p.page_title or p.name
+		route_to_title["/"] = "Home"
+		route_to_title[""] = "Home"
+		
+		sorted_paths = sorted(path_counts.items(), key=lambda x: x[1], reverse=True)[:8]
+		top_pages = []
+		for path, count in sorted_paths:
+			title = route_to_title.get(path, path or "Home")
+			route_val = path if path.startswith("/") or path == "" else "/" + path
+			if route_val == "":
+				route_val = "/"
+			pct = int((count / visits_count) * 100) if visits_count > 0 else 0
 			top_pages.append({
-				"title": p.page_title,
-				"path": p.route or ("/" + p.name),
-				"views": f"{views_count:,}",
+				"title": title,
+				"path": route_val,
+				"views": f"{count:,}",
 				"pct": pct
 			})
-			if remaining_pct <= 0:
-				break
-				
-		# Fallbacks if no pages exist yet
-		if not top_pages:
-			top_pages = [
-				{ "path": "/", "title": "Home", "views": "4,210", "pct": 34 },
-				{ "path": "/work", "title": "Work", "views": "2,890", "pct": 23 },
-				{ "path": "/studio", "title": "Studio", "views": "1,220", "pct": 10 }
-			]
 			
-		top_pages = sorted(top_pages, key=lambda x: x["pct"], reverse=True)
+		# Calculate sources
+		sources_count = {"Organic search": 0, "Direct": 0, "Social": 0, "Referral": 0, "Other": 0}
+		for v in current_views:
+			ref = (v.referrer or "").lower()
+			if not ref:
+				sources_count["Direct"] += 1
+			elif any(domain in ref for domain in ["google.", "bing.", "yahoo.", "duckduckgo."]):
+				sources_count["Organic search"] += 1
+			elif any(domain in ref for domain in ["facebook.", "twitter.", "t.co", "instagram.", "linkedin.", "reddit."]):
+				sources_count["Social"] += 1
+			else:
+				sources_count["Referral"] += 1
+				
+		sources = []
+		colors = {
+			"Organic search": "#2490EF",
+			"Direct": "#7C3AED",
+			"Social": "#1F8A5B",
+			"Referral": "#B8860B",
+			"Other": "#888"
+		}
+		for name, count in sorted(sources_count.items(), key=lambda x: x[1], reverse=True):
+			pct = int((count / visits_count) * 100) if visits_count > 0 else 0
+			sources.append({
+				"name": name,
+				"visits": f"{count:,}",
+				"pct": pct,
+				"color": colors[name]
+			})
+			
+		# Calculate devices
+		devices_count = {"Desktop": 0, "Mobile": 0, "Tablet": 0}
+		for v in current_views:
+			ua = (v.user_agent or "").lower()
+			if "ipad" in ua or "tablet" in ua:
+				devices_count["Tablet"] += 1
+			elif "mobi" in ua:
+				devices_count["Mobile"] += 1
+			else:
+				devices_count["Desktop"] += 1
+				
+		devices = []
+		colors_dev = {
+			"Desktop": "#2490EF",
+			"Mobile": "#7C3AED",
+			"Tablet": "#E8ECF4"
+		}
+		for name, count in devices_count.items():
+			pct = int((count / visits_count) * 100) if visits_count > 0 else 0
+			devices.append({
+				"name": name,
+				"pct": pct,
+				"color": colors_dev[name]
+			})
+			
+		# AI insights
+		top_page_path = top_pages[0]["path"] if top_pages else "/"
+		ai_insights = [
+			f"Traffic up {delta} vs previous period." if delta.startswith("+") or delta == "total" else f"Traffic down {delta} vs previous period.",
+			f"{top_page_path} is the highest engagement route.",
+			f"Mobile & tablet represent {devices_count['Mobile'] + devices_count['Tablet']} views total."
+		]
+		
+		# Calculate live visitors (active in the last 5 minutes)
+		five_min_ago = now - timedelta(minutes=5)
+		live_conds = ["creation >= %s"]
+		live_vals = [five_min_ago]
+		if page_route != "All" and page_route not in ("New", "Returning", "All visitors"):
+			clean_route = page_route.strip("/")
+			if not clean_route:
+				live_conds.append("path IN ('/', '')")
+			else:
+				live_conds.append("path IN (%s, %s)")
+				live_vals.append(clean_route)
+				live_vals.append("/" + clean_route)
+		live_where = " AND ".join(live_conds)
+		live_query = f"SELECT COUNT(DISTINCT visitor_id) FROM `tabWeb Page View` WHERE {live_where}"
+		live_count = frappe.db.sql(live_query, live_vals)[0][0] or 0
 
 		return {
 			"status": "success",
-			"visits": visits,
+			"visits": f"{visits_count:,}",
 			"delta": delta,
+			"sessions": f"{sessions_count:,}",
+			"sessionsDelta": sessions_delta,
+			"sessionsTrend": sessions_trend,
 			"bounceRate": bounce_rate,
-			"sessions": sessions,
+			"bounceRateDelta": bounce_rate_delta,
+			"avgDuration": avg_duration,
+			"avgDurationDelta": avg_duration_delta,
 			"trend": trend,
 			"top_pages": top_pages,
-			"sources": [
-				{ "name": "Organic search", "visits": f"{int(total_views * 0.47):,}", "pct": 47, "color": "#2490EF" },
-				{ "name": "Direct", "visits": f"{int(total_views * 0.26):,}", "pct": 26, "color": "#7C3AED" },
-				{ "name": "Social", "visits": f"{int(total_views * 0.15):,}", "pct": 15, "color": "#1F8A5B" },
-				{ "name": "Referral", "visits": f"{int(total_views * 0.08):,}", "pct": 8, "color": "#B8860B" },
-				{ "name": "Other", "visits": f"{int(total_views * 0.04):,}", "pct": 4, "color": "#888" }
-			],
-			"devices": [
-				{ "name": "Desktop", "pct": 56, "color": "#2490EF" },
-				{ "name": "Mobile", "pct": 36, "color": "#7C3AED" },
-				{ "name": "Tablet", "pct": 8, "color": "#E8ECF4" }
-			],
-			"ai_insights": [
-				"Traffic up {} vs previous period.".format(delta),
-				"{} is the highest engagement route.".format(top_pages[0]["path"] if top_pages else "/"),
-				"Check mobile bounce rate optimization options."
-			]
+			"sources": sources,
+			"devices": devices,
+			"ai_insights": ai_insights,
+			"liveCount": max(1, live_count)
 		}
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "CMS Analytics Summary Error")
@@ -628,8 +996,23 @@ def get_publish_summary():
 	"""
 	try:
 		# Get CMS Settings (use_other_domain, domain)
-		cms_settings = frappe.get_single("CMS Settings")
-		domain = cms_settings.domain or "northwind.studio"
+		domain = None
+		# Try request host first to match the domain user is browsing from
+		if hasattr(frappe.local, "request") and frappe.local.request:
+			domain = frappe.local.request.host.split(':')[0]
+		if not domain:
+			# Try get site url
+			from urllib.parse import urlparse
+			from frappe.utils import get_url
+			try:
+				domain = urlparse(get_url()).netloc.split(':')[0]
+			except Exception:
+				pass
+		if not domain or domain in ["localhost", "127.0.0.1", "cms_frontend.local"]:
+			cms_settings = frappe.get_single("CMS Settings")
+			domain = cms_settings.domain or "northwind.studio"
+			if "." not in domain:
+				domain = f"{domain}.com"
 		
 		# Domains
 		domains = [

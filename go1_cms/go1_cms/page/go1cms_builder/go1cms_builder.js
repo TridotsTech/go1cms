@@ -738,12 +738,16 @@ async setup_add_section() {
 	}
 
 	
+			// ── Load Clipped Sections from extension API ──
+			let clipped_sections_html = '<div style="padding:20px;color:var(--text-muted);">Loading clipped sections…</div>';
+
 			let p_html =`<div class="full-container" id=${r___id}>
 							<div class="tabs-container">
 								<div class="tabs-sub-container">
 									<div class="speciality-section-tab active" value="Speciality Section">Speciality Section</div>
 									<div class="regular-section-tab" value="Regular Section">Regular Section</div>
 									<div class="section-template-tab" value="Predefined Section">Predefined Section</div>
+									<div class="clipped-section-tab" value="Clipped Sections" style="color:#6366f1;">🖱️ Clipped</div>
 								</div>
 							</div>
 							<div class="specality-main-div " style="display: block;width: 75%;float: left;border-left: 1px solid var(--border-color);margin-top: -15px;padding-top: 15px;min-height: 420px;max-height: 420px;overflow-y: auto;margin-bottom: -10px;" id=sp_${r___id} >
@@ -761,6 +765,11 @@ async setup_add_section() {
 								${st_add_html}
 							</div>
 						</div>
+						<div class="clipped-main-div" id=cl_${r___id} style="display:none;width: 75%;float: left;border-left: 1px solid var(--border-color);margin-top: -15px;padding-top: 15px;min-height: 420px;max-height: 420px;overflow-y: auto;margin-bottom: -10px;">
+							<div class="clipped-sub-div" style="display:flex;flex-wrap:wrap;gap:20px;padding:15px;">
+								${clipped_sections_html}
+							</div>
+						</div>
 						</div>
 						<style>
 							.tabs-sub-container{
@@ -774,16 +783,26 @@ async setup_add_section() {
 								width: 25%;
     float: left;
 							}
-							.section-template-tab,.regular-section-tab,.speciality-section-tab{
+							.section-template-tab,.regular-section-tab,.speciality-section-tab,.clipped-section-tab{
 								cursor: pointer;border-bottom: 1px solid var(--border-color);
     font-size: 14px;
     float: left;
     width: 100%;
     padding: 10px 15px;
 							}
-							.regular-section-tab.active,.speciality-section-tab.active,.section-template-tab.active {
+							.regular-section-tab.active,.speciality-section-tab.active,.section-template-tab.active,.clipped-section-tab.active {
     background-color: var(--border-color);font-weight:600;
 }
+							.go1cms-clipped-card {
+								cursor:pointer;flex:0 0 calc(50% - 10px);border:1px solid var(--border-color);
+								border-radius:6px;overflow:hidden;transition:box-shadow 0.15s;
+							}
+							.go1cms-clipped-card:hover{box-shadow:0 4px 16px rgba(99,102,241,0.2);border-color:#6366f1;}
+							.go1cms-clipped-card input[type=radio]{position:absolute;top:8px;right:8px;z-index:5;}
+							.go1cms-clipped-thumb{width:100%;height:90px;object-fit:cover;background:#f5f5f5;display:block;}
+							.go1cms-clipped-info{padding:8px 10px;}
+							.go1cms-clipped-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+							.go1cms-clipped-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
 						</style>`
 			$(layout_dialog_wrapper).html(p_html)
 			
@@ -817,14 +836,63 @@ async setup_add_section() {
 			})
 
 			layout_dialog_wrapper.find(`#${r___id}`).find(".section-template-tab").on("click",(e) =>{
-				// console.log(">> selected layout id <<",$(e.target).attr("value"))
 				section_type = 'predefined_section'
 				layout_dialog_wrapper.find(`#${r___id}`).find(`#r_${r___id}`).hide()
 				layout_dialog_wrapper.find(`#${r___id}`).find(`#sp_${r___id}`).hide()
+				layout_dialog_wrapper.find(`#${r___id}`).find(`#cl_${r___id}`).hide()
 				layout_dialog_wrapper.find(`#${r___id}`).find(`#st_${r___id}`).show();
-				$(".speciality-section-tab").removeClass("active");
-				$(".regular-section-tab").removeClass("active");
+				$(".speciality-section-tab,.regular-section-tab,.clipped-section-tab").removeClass("active");
 				layout_dialog_wrapper.find(`#${r___id}`).find(".section-template-tab").addClass("active")
+			})
+
+			// ── Clipped Sections Tab (from GO1CMS Web Clipper extension) ──
+			layout_dialog_wrapper.find(`#${r___id}`).find(".clipped-section-tab").on("click",(e) =>{
+				section_type = 'clipped_section'
+				layout_dialog_wrapper.find(`#${r___id}`).find(`#r_${r___id}`).hide()
+				layout_dialog_wrapper.find(`#${r___id}`).find(`#sp_${r___id}`).hide()
+				layout_dialog_wrapper.find(`#${r___id}`).find(`#st_${r___id}`).hide()
+				layout_dialog_wrapper.find(`#${r___id}`).find(`#cl_${r___id}`).show();
+				$(".speciality-section-tab,.regular-section-tab,.section-template-tab").removeClass("active");
+				layout_dialog_wrapper.find(`#${r___id}`).find(".clipped-section-tab").addClass("active")
+
+				// Load clipped sections from GO1CMS API
+				let clip_sub = layout_dialog_wrapper.find(`#cl_${r___id}`).find(".clipped-sub-div");
+				clip_sub.html('<div style="padding:20px;color:var(--text-muted);">Loading clipped sections…</div>');
+				frappe.call({
+					method: 'go1_cms.go1_cms.go1_cms.api.get_imported_sections',
+					args: {},
+					callback: function(r) {
+						let sections = (r.message && r.message.sections) || [];
+						if (!sections.length) {
+							clip_sub.html('<div style="padding:20px;text-align:center;"><div style="font-size:32px;">🖱️</div><p style="color:var(--text-muted);margin-top:8px;">No clipped sections yet.<br>Use the <strong>GO1CMS Web Clipper</strong> Chrome extension to import sections from any website.</p></div>');
+							return;
+						}
+						let cl_html = '';
+						sections.forEach(function(sec) {
+							let thumb = sec.thumbnail
+								? `<img class="go1cms-clipped-thumb" src="${sec.thumbnail}" alt="${sec.section_name || sec.name}" />`
+								: `<div class="go1cms-clipped-thumb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">🖱️</div>`;
+							cl_html += `<div class="go1cms-clipped-card" style="position:relative;">
+								<label style="cursor:pointer;display:block;" value="${sec.id || sec.name}">
+									${thumb}
+									<div class="go1cms-clipped-info">
+										<div class="go1cms-clipped-name">${sec.section_name || sec.name}</div>
+										<div class="go1cms-clipped-meta">${sec.category || ''} &nbsp;·&nbsp; ${(sec.clipped_on || '').split('.')[0]}</div>
+									</div>
+									<input type="radio" value="${sec.id || sec.name}" name="theme_radio" style="position:absolute;top:8px;right:8px;z-index:5;">
+								</label></div>`;
+						});
+						clip_sub.html(cl_html);
+
+						// Store clipped section map for lookup on save
+						window._go1cms_clipped_map = {};
+						sections.forEach(s => { window._go1cms_clipped_map[s.id || s.name] = s; });
+
+						clip_sub.find('input[type=radio]').on('click', function() {
+							seleted_layout_id = $(this).val();
+						});
+					}
+				});
 			})
 
 	}
@@ -833,15 +901,40 @@ async setup_add_section() {
 
 	function get_each_layout_data(layout_id){
 		// console.log(">> seleted layout id on save <<",layout_id)
-		if(section_type=="predefined_section"){
+		if(section_type=="clipped_section"){
+			// Insert a clipped section (from GO1CMS Web Clipper extension) as raw HTML
+			let clipped = window._go1cms_clipped_map && window._go1cms_clipped_map[layout_id];
+			if (!clipped) {
+				frappe.msgprint('Clipped section data not found. Please re-select.');
+				return;
+			}
+			frappe.call({
+				method: 'go1_cms.go1_cms.go1_cms.api.save_clipped_section_to_page',
+				args: {
+					page_route: page_route,
+					section_html: clipped.html || clipped.section_html || '',
+					section_name: clipped.name || clipped.section_name || 'Clipped Section',
+				},
+				freeze: true,
+				callback: function(r) {
+					if (r && r.message && r.message.page_section) {
+						$('.print-format-builder-layout').append(frappe.render_template("predefined_section",{
+							title: clipped.name || clipped.section_name || 'Clipped Section',
+							page_section: r.message.page_section,
+						}));
+						me.page_section = r.message.page_section;
+						frappe.show_alert({ message: '✅ Clipped section added!', indicator: 'green' });
+					}
+				},
+			});
+
+		}else if(section_type=="predefined_section"){
 
 			frappe.call({
 			method: "go1_cms.go1_cms.doctype.section_template_layout.section_template_layout.save_predefined_section",
 			args: {layout_id:layout_id,page_route:page_route},
 			freeze: true,
 			callback: function (r) {
-				// console.log(">> api response <<",r)
-				console.log(section_type);
 				if(r && r.message && r.message.length > 0){
 				   $('.print-format-builder-layout').append(frappe.render_template("predefined_section",{title:r.message[0].title,page_section:r.message[0].page_section}));
 					me.page_section = r.message[0].page_section;

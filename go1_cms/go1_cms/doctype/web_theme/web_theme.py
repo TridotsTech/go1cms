@@ -475,6 +475,17 @@ def get_theme_typography():
 		frappe.log_error(frappe.get_traceback(), "go1_cms: get_theme_typography")
 		return {}
 
+@frappe.whitelist(allow_guest=True)
+def get_theme_css():
+	try:
+		theme_name = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+		if not theme_name:
+			return ""
+		return frappe.db.get_value("Web Theme", theme_name, "page_css") or ""
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "go1_cms: get_theme_css")
+		return ""
+
 @frappe.whitelist()
 def save_color_palette(name, name1, primary_color, secondary_color, accent_color,
                        heading_text_color, body_text_color, dark_color, light_color):
