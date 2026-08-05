@@ -346,9 +346,10 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 
 	header_content = None
 	footer_content = None
+	page_builder_dt = None
 	if check_builder:
 		theme_settings = frappe.db.get_all("Web Theme",filters={"is_active":1},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width'])
-		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header'])
+		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design'])
 		if page_builder_dt:
 			if page_builder_dt[0].footer_component:
 				footer_content = get_footer_info(page_builder_dt[0].footer_component)
@@ -407,6 +408,19 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		"footer_content":footer_content,
 		"page_id": check_builder[0].name if (check_builder and len(check_builder)>0) else None,
 		"page_title": page_title,
+		# The page's own stylesheet. It carries the `:root { --tok-*: ... }` block
+		# a tokenized page is painted from, so the palette arrives with the page
+		# instead of after a second round-trip — no repaint flash. Home.vue has
+		# always called applyPageCustomCss(data.custom_css); until now nothing
+		# put the field in this payload.
+		"custom_css": (page_builder_dt[0].custom_css if page_builder_dt else "") or "",
+		# AI-generated pages style every node inline and ship their own CSS, so
+		# the site theme's global !important rules must not repaint them. The
+		# SPA suppresses that stylesheet on this flag — it was being written by
+		# the generator and read by Home.vue, but never carried across in
+		# between, so suppression never once fired. int(), because the reader
+		# does `!!data.owns_design` and a string "0" is truthy.
+		"owns_design": int(page_builder_dt[0].owns_design or 0) if page_builder_dt else 0,
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,

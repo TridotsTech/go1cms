@@ -3,8 +3,23 @@
 import frappe
 import json
 import os
+import re
 from frappe.utils import get_files_path
 from frappe.model.document import Document
+
+# The fence delimiting Theme Studio's generated block inside `page_css`.
+#
+# This doc owns page_css and get_theme_css() below serves it, so the markers are
+# declared here and imported by the writers (cms_frontend.design_tokens). They
+# used to be re-declared in each writer, and a third time in ThemeStudio.vue —
+# three copies of one regex, where changing the marker in one place would make
+# the others silently append a new block on every save instead of replacing the
+# old one, growing page_css without bound.
+THEME_STUDIO_CSS_START = "/* --- Theme Studio Generated Start --- */"
+THEME_STUDIO_CSS_END = "/* --- Theme Studio Generated End --- */"
+THEME_STUDIO_CSS_RE = re.compile(
+	re.escape(THEME_STUDIO_CSS_START) + r"[\s\S]*?" + re.escape(THEME_STUDIO_CSS_END)
+)
 
 class WebTheme(Document):
 	def validate(self):
