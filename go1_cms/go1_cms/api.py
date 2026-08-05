@@ -250,6 +250,23 @@ def find_web_page_builder_by_route(route_str):
 		res = frappe.db.get_all('Web Page Builder', filters={'route': pr}, fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'])
 		if res:
 			return res
+
+	# Detail-page fallback: a URL like `shop/product/<id>` has no page of its own.
+	# Drop trailing segments and retry so one saved page can serve every record,
+	# reading the id from the path. Exact matches above always win, so this only
+	# runs for routes that would otherwise 404.
+	parts = r.split("/")
+	while len(parts) > 1:
+		parts = parts[:-1]
+		parent = "/".join(parts)
+		for pr in (parent, "/" + parent, "p/" + parent, "/p/" + parent):
+			res = frappe.db.get_all(
+				'Web Page Builder',
+				filters={'route': pr},
+				fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'],
+			)
+			if res:
+				return res
 	return None
 
 
@@ -309,7 +326,14 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		try:
 			doc = frappe.get_doc("Web Page Builder", check_builder[0].name)
 			page_title = doc.page_title or doc.name
-			layout_str = doc.draft_layout_json if (is_builder and doc.draft_layout_json) else doc.layout_json
+			# Same rule as get_page_builder_data: is_builder must not hand a guest
+			# the draft. This matters more here — the draft's resources/variables
+			# describe data sources, not just design. This block swallows
+			# exceptions, so gate by selecting the layout rather than throwing.
+			if frappe.session.user == "Guest":
+				layout_str = doc.layout_json if doc.published else None
+			else:
+				layout_str = doc.draft_layout_json if (is_builder and doc.draft_layout_json) else doc.layout_json
 			if layout_str:
 				layout = json.loads(layout_str)
 				elements = layout.get('elements', [])
@@ -586,12 +610,22 @@ def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, 
 
 
 @frappe.whitelist(allow_guest=False)
-def get_pages_list(start=0, page_length=24, search=None, status=None):
+def get_pages_list(start=0, page_length=24, search=None, status=None, project=None):
 	start = int(start)
 	page_length = int(page_length)
 
 	filters = []
 	or_filters = []
+
+	# Scope to a CMS Project. Filtering here rather than in the client matters
+	# because this endpoint is paginated — a client-side filter would only ever
+	# narrow the current page. "__unassigned__" mirrors builder2's virtual
+	# project for pages that were never linked to one.
+	if project:
+		if project == '__unassigned__':
+			filters.append(['project', 'in', ['', None]])
+		else:
+			filters.append(['project', '=', project])
 	if status == 'Live':
 		filters.append(['published', '=', 1])
 	elif status == 'Draft':
@@ -945,7 +979,18 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 	if use_page_builder:
 		is_builder = int(is_builder) if is_builder else 0
 		doc = frappe.get_doc("Web Page Builder", page[0].name)
-		layout_str = doc.draft_layout_json if (is_builder and doc.draft_layout_json) else doc.layout_json
+		# get_page_content is allow_guest, so is_builder alone must never unlock a
+		# draft: an anonymous caller could otherwise read any page's unreleased
+		# edits just by appending is_builder=1. A share token is the only guest
+		# route to unpublished content (see get_shared_page_preview); everyone
+		# else gets exactly what has been published. Mirrors the guard in
+		# _fb2_load_page_layout.
+		if frappe.session.user == "Guest":
+			if not doc.published:
+				frappe.throw("Page not published", frappe.PermissionError)
+			layout_str = doc.layout_json
+		else:
+			layout_str = doc.draft_layout_json if (is_builder and doc.draft_layout_json) else doc.layout_json
 		if layout_str:
 			try:
 				layout = json.loads(layout_str)
