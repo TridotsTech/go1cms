@@ -3,8 +3,21 @@
 import frappe
 import json
 import os
+import re
 from frappe.utils import get_files_path
 from frappe.model.document import Document
+
+# The fence delimiting the Theme Studio generated block inside page_css. Declared
+# here because this doctype owns page_css; cms_frontend.design_tokens is the
+# writer and imports it rather than keeping a second copy — one regex, so a
+# marker change can never leave the writer appending blocks instead of replacing
+# them. Must stay in step with the emitter in design_tokens._studio_css_block.
+THEME_STUDIO_CSS_RE = re.compile(
+	r"/\*\s*---\s*Theme Studio Generated Start\s*---\s*\*/"
+	r"[\s\S]*?"
+	r"/\*\s*---\s*Theme Studio Generated End\s*---\s*\*/"
+)
+
 
 class WebTheme(Document):
 	def validate(self):
