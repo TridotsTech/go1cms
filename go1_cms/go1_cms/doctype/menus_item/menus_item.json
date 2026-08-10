@@ -13,8 +13,15 @@
   "mega_m_col_index",
   "column_break_4",
   "redirect_url",
+  "link_target",
   "position",
-  "icon"
+  "icon",
+  "is_visible",
+  "badge",
+  "css_class",
+  "hide_on",
+  "item_key",
+  "parent_key"
  ],
  "fields": [
   {
@@ -66,6 +73,58 @@
    "fieldname": "no_of_column",
    "fieldtype": "Int",
    "label": "Number Of Columns"
+  },
+  {
+   "fieldname": "link_target",
+   "fieldtype": "Select",
+   "label": "Open In",
+   "options": "\n_self\n_blank"
+  },
+  {
+   "default": "1",
+   "description": "Unticked items stay in the menu but are not served to visitors.",
+   "fieldname": "is_visible",
+   "fieldtype": "Check",
+   "label": "Visible"
+  },
+  {
+   "description": "Short flag shown beside the label, e.g. New or Sale.",
+   "fieldname": "badge",
+   "fieldtype": "Data",
+   "label": "Badge",
+   "length": 24
+  },
+  {
+   "description": "Extra class on this item's rendered link, for site-specific CSS.",
+   "fieldname": "css_class",
+   "fieldtype": "Data",
+   "label": "CSS Class",
+   "length": 140
+  },
+  {
+   "description": "Comma-separated breakpoints to hide this item on: desktop, tablet, mobile.",
+   "fieldname": "hide_on",
+   "fieldtype": "Data",
+   "label": "Hide On",
+   "length": 60
+  },
+  {
+   "description": "Stable identity for this row, assigned automatically. Hierarchy is stored against this, not the label.",
+   "fieldname": "item_key",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Item Key",
+   "length": 40,
+   "read_only": 1
+  },
+  {
+   "description": "Item Key of this row's parent. Written alongside Parent Menu, which is kept for the classic theme.",
+   "fieldname": "parent_key",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Parent Key",
+   "length": 40,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,

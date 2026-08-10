@@ -1,0 +1,5 @@
+[pre_model_sync]
+
+[post_model_sync]
+go1_cms.patches.v1_0.backfill_menus_item_keys
+go1_cms.patches.v1_0.default_menus_item_visible
