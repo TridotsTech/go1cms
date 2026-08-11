@@ -307,10 +307,16 @@ class WebPageBuilder(WebsiteGenerator):
                 self.construct_html('web', 'web_section')
             if self.mobile_section:
                 self.construct_html('mobile', 'mobile_section')
+        # "/" is the site root — a real route, not a missing one. Stripping the
+        # slashes turns it into "" and the block below then regenerates it from
+        # the title ("p/my-home-page"), so the home page lost its URL on every
+        # save and the site root went blank. Detect it before stripping.
+        is_root_route = (self.route or '').strip() == '/'
+
         if self.route:
             self.route = self.route.strip('/')
 
-        if not self.route:
+        if not self.route and not is_root_route:
             route_prefix = ""
             r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
             if r_prefix:
@@ -318,7 +324,11 @@ class WebPageBuilder(WebsiteGenerator):
             self.route = route_prefix+self.scrub(self.page_title)
             self.route = self.route.strip('/')
 
-        if self.project:
+        if is_root_route:
+            # No project slug either: prefixing the root would move the home
+            # page off "/", which is the one thing it must never do.
+            self.route = '/'
+        elif self.project:
             project_slug = frappe.db.get_value('CMS Project', self.project, 'project_slug')
             if project_slug:
                 project_slug = project_slug.strip('/')

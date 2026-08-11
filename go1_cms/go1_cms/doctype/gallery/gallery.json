@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "route",
   "column_break_2",
   "cover_image",
   "section_break_5",
@@ -46,13 +47,19 @@
   {
    "fieldname": "section_break_5",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "route"
   }
  ],
  "links": [],
- "modified": "2022-09-05 13:56:48.821780",
+ "modified": "2026-08-06 15:54:10.515970",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Gallery",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -68,6 +75,8 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

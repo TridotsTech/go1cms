@@ -4,8 +4,19 @@
 import frappe
 from frappe.model.document import Document
 
+from go1_cms.go1_cms.menu_api import clear_menu_tree_cache
+
+
 class Menu(Document):
-	pass
-	# def validate(self):
-	# 	if self.mega_menu_number_of_columns > 4:
-	# 		frappe.throw('Maximun no of columns should be less than or euqal to <b>4</b>')
+	# Invalidation lives here rather than in hooks.py doc_events so it catches
+	# every write path — the builder, the desk grid, patches, bench console,
+	# data import — with no dependency on hook registration order.
+	def on_update(self):
+		clear_menu_tree_cache(self.name)
+
+	def on_trash(self):
+		clear_menu_tree_cache(self.name)
+
+	def after_rename(self, old_name, new_name, merge=False):
+		clear_menu_tree_cache(old_name)
+		clear_menu_tree_cache(new_name)
