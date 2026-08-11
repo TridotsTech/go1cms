@@ -15,7 +15,9 @@
   "route_prefix",
   "website_settings_section",
   "use_other_domain",
-  "domain"
+  "domain",
+  "seo_section",
+  "seo_schema_types"
  ],
  "fields": [
   {
@@ -73,6 +75,17 @@
    "fieldtype": "Table",
    "label": "Route Prefix",
    "options": "CMS Route"
+  },
+  {
+   "fieldname": "seo_section",
+   "fieldtype": "Section Break",
+   "label": "SEO"
+  },
+  {
+   "description": "JSON array of schema.org types emitted site-wide, e.g. [\"Organization\", \"WebSite\"].",
+   "fieldname": "seo_schema_types",
+   "fieldtype": "Small Text",
+   "label": "Schema.org Types"
   }
  ],
  "index_web_pages_for_search": 1,

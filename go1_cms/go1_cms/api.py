@@ -656,7 +656,15 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 
 	pages = frappe.get_all(
 		'Web Page Builder',
-		fields=['name', 'page_title', 'route', 'published', 'modified', 'owner', 'draft_layout_json', 'layout_json', 'project', 'og_image', 'image'],
+		fields=[
+			'name', 'page_title', 'route', 'published', 'modified', 'owner',
+			'draft_layout_json', 'layout_json', 'project', 'image',
+			# SEO metadata — the SEO Manager scores pages on these, so they have to
+			# come back with the list rather than being fetched per page.
+			'meta_title', 'meta_description', 'meta_keywords',
+			'og_title', 'og_description', 'og_image', 'canonical_url',
+			'seo_focus_keyphrase',
+		],
 		filters=filters,
 		or_filters=or_filters,
 		order_by='modified desc',
@@ -1970,8 +1978,12 @@ def publish_page_builder(page_name):
 	
 	# Save triggers construct_html() to rewrite data_source/{page_name}_web.json
 	doc.save(ignore_permissions=True)
+
+	from go1_cms.go1_cms.doctype.web_page_publish_log.web_page_publish_log import record_publish
+	record_publish(doc, source="Page")
+
 	frappe.db.commit()
-	
+
 	return {"status": "success", "message": "Page published to production successfully"}
 
 @frappe.whitelist()
@@ -2002,6 +2014,8 @@ def publish_project(project_name, page_names=None):
 
 	pages = frappe.get_all("Web Page Builder", filters=filters, fields=["name"])
 
+	from go1_cms.go1_cms.doctype.web_page_publish_log.web_page_publish_log import record_publish
+
 	published_count = 0
 	for page in pages:
 		pdoc = frappe.get_doc("Web Page Builder", page.name)
@@ -2009,6 +2023,7 @@ def publish_project(project_name, page_names=None):
 			pdoc.layout_json = pdoc.draft_layout_json
 		pdoc.published = 1
 		pdoc.save(ignore_permissions=True)
+		record_publish(pdoc, source="Project")
 		published_count += 1
 
 	project.status = "Published"

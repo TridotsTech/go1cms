@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "hash",
+ "creation": "2026-08-07 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "page",
+  "page_title",
+  "project",
+  "published_on",
+  "published_by",
+  "source"
+ ],
+ "fields": [
+  {
+   "fieldname": "page",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Page",
+   "options": "Web Page Builder",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "description": "Page title captured at publish time, so the entry stays readable if the page is later renamed or deleted.",
+   "fieldname": "page_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Page Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "CMS Project",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "published_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Published On",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "published_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Published By",
+   "options": "User",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Page",
+   "description": "Whether the page was published on its own or as part of a whole-project publish.",
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Source",
+   "options": "Page\nProject",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-08-07 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Web Page Publish Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1
+  }
+ ],
+ "quick_entry": 0,
+ "sort_field": "published_on",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

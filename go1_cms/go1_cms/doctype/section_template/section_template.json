@@ -11,6 +11,7 @@
   "preview_html",
   "section_info_section",
   "section_group",
+  "industry",
   "is_full_width",
   "column_break_3",
   "section_type",
@@ -101,6 +102,14 @@
    "in_list_view": 1,
    "label": "Section Group",
    "options": "Section Template Group"
+  },
+  {
+   "fieldname": "industry",
+   "fieldtype": "Data",
+   "label": "Industry",
+   "description": "Industry this section is written for (e.g. Restaurant, Clinic). Empty means it is industry-neutral and fits any project.",
+   "in_standard_filter": 1,
+   "in_list_view": 1
   },
   {
    "fieldname": "section_type",
