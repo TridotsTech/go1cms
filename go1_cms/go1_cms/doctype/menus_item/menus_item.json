@@ -19,6 +19,7 @@
   "is_visible",
   "badge",
   "css_class",
+  "active_paths",
   "hide_on",
   "item_key",
   "parent_key"
@@ -100,6 +101,12 @@
    "fieldtype": "Data",
    "label": "CSS Class",
    "length": 140
+  },
+  {
+   "description": "Extra paths that should also light this item up, comma-separated. Use * as a wildcard, e.g. /blog/* so a post keeps the Blog tab active.",
+   "fieldname": "active_paths",
+   "fieldtype": "Small Text",
+   "label": "Also Highlight On"
   },
   {
    "description": "Comma-separated breakpoints to hide this item on: desktop, tablet, mobile.",

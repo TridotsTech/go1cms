@@ -45,6 +45,7 @@ MENU_ITEM_READ_FIELDS = [
 	"is_visible",
 	"badge",
 	"css_class",
+	"active_paths",
 	"hide_on",
 ]
 
@@ -171,6 +172,12 @@ def build_menu_tree(
 			"visible": int(row.get("is_visible") or 0),
 			"badge": row.get("badge") or "",
 			"cssClass": row.get("css_class") or "",
+			# Extra paths that also count as "this item's page" — a blog post
+			# keeping the Blog tab lit, say. Split here so every renderer gets a
+			# list and none of them has to know the storage format.
+			"activePaths": [
+				p.strip() for p in re.split(r"[,\n]", str(row.get("active_paths") or "")) if p.strip()
+			],
 			"hideOn": [p.strip() for p in str(row.get("hide_on") or "").split(",") if p.strip()],
 			"depth": 0,
 			"children": [],
@@ -475,6 +482,13 @@ def _validate_tree(tree, errors, warnings, labels, path=None, depth=0, parent=No
 		_validate_tree(children, errors, warnings, labels, here, depth + 1, node)
 
 
+def _keep_if_absent(node, key, existing_row, fieldname, computed):
+	"""`computed`, unless the client never sent `key` and the row already has a value."""
+	if key in node or existing_row is None:
+		return computed
+	return existing_row.get(fieldname) or computed
+
+
 def _flatten(tree, rows, known_rows, parent_label="", parent_key="", depth=0):
 	"""Depth-first pre-order, so sibling order stays monotonic within a parent."""
 	for node in tree:
@@ -499,6 +513,21 @@ def _flatten(tree, rows, known_rows, parent_label="", parent_key="", depth=0):
 			"is_visible": 0 if node.get("visible") in (0, False, "0") else 1,
 			"badge": (node.get("badge") or "").strip()[:24],
 			"css_class": (node.get("cssClass") or "").strip()[:140],
+			# Patterns only ever feed a client-side string compare, so the one
+			# thing worth enforcing is that nothing here can become an href.
+			#
+			# A node that omits the key entirely came from a client built before
+			# the field existed — a browser tab left open across the deploy — and
+			# an omission there means "I don't know about this", not "clear it".
+			# An empty list is a real instruction and does clear it.
+			"active_paths": _keep_if_absent(
+				node, "activePaths", known_rows.get(node.get("row")), "active_paths",
+				",".join(
+					p for p in (
+						str(x).strip()[:200] for x in (node.get("activePaths") or [])
+					) if p and not BLOCKED_URL_SCHEME.match(p)
+				)[:1000],
+			),
 			"hide_on": ",".join(
 				d for d in ("desktop", "tablet", "mobile")
 				if d in {str(x).strip().lower() for x in (node.get("hideOn") or [])}
@@ -551,7 +580,9 @@ def save_menu_tree(menu=None, tree=None):
 			)
 
 	doc = frappe.get_doc("Menu", menu)
-	known_rows = {r.name for r in (doc.menus or [])}
+	# name -> the row as it stands, so a save can both reject foreign row names
+	# and carry forward fields the submitting client never knew about.
+	known_rows = {r.name: r for r in (doc.menus or [])}
 
 	rows = []
 	_flatten(tree, rows, known_rows)
