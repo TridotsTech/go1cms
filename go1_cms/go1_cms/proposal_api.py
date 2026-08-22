@@ -341,18 +341,28 @@ def prepare_filter_condition(doctype, f, ignore_ifnull):
 def insert_enquiry(name,email,phone,message,subject=None):
 	try:
 		enquiry=frappe.new_doc('Contact Enquiry')
-		enquiry.user_name=name
-		enquiry.email=email
+		# Contact Enquiry's fields are full_name / email_id / phone_number.
+		# This used to set user_name / email / phone — none of which exist, so
+		# they were dropped on save and the two mandatory fields (full_name,
+		# phone_number) came out empty. Every submission then failed validation
+		# and was swallowed by the except below, so contact forms silently
+		# discarded every enquiry ever sent through this endpoint.
+		enquiry.full_name=name
+		enquiry.email_id=email
 		enquiry.message=message
 		if subject:
 			enquiry.subject=subject
-		enquiry.phone=phone
+		enquiry.phone_number=phone
 		enquiry.save(ignore_permissions=True)
-		
+
 		return enquiry
 		# return enquiry.__dict__
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.insert_enquiry")
+		# Losing a customer enquiry quietly is worse than showing an error:
+		# the caller is a public contact form, and returning None here let it
+		# report success on a submission that was never stored.
+		frappe.throw(_("Sorry, your enquiry could not be submitted. Please try again."))
 
 @frappe.whitelist(allow_guest=True)
 def insert_doc(doc):
