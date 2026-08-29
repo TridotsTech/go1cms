@@ -331,6 +331,11 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			page_title = doc.page_title or doc.name
 			seo = {k: doc.get(k) for k in ("meta_title", "meta_description", "meta_keywords",
 			                                "og_title", "og_description", "og_image", "robots")}
+			# Project-level tab icon (CMS Project.favicon) so the SPA can swap
+			# the favicon per project, including on the Vite dev server where
+			# the server-rendered head is not available.
+			if doc.get("project") and frappe.db.exists("DocType", "CMS Project"):
+				seo["favicon"] = frappe.db.get_value("CMS Project", doc.project, "favicon")
 			# Same rule as get_page_builder_data: is_builder must not hand a guest
 			# the draft. This matters more here — the draft's resources/variables
 			# describe data sources, not just design. This block swallows
@@ -444,6 +449,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		"og_description": seo.get("og_description"),
 		"og_image": seo.get("og_image"),
 		"robots": seo.get("robots"),
+		"favicon": seo.get("favicon"),
 		# The page's own stylesheet. It carries the `:root { --tok-*: ... }` block
 		# a tokenized page is painted from, so the palette arrives with the page
 		# instead of after a second round-trip — no repaint flash. Home.vue has
