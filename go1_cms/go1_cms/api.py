@@ -322,10 +322,15 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 	page_resources = []
 	page_variables = []
 	page_title = None
+	# SEO fields for the SPA's <head> (Home.vue updateMetaTags); without them
+	# the client could only fall back to page_title.
+	seo = {}
 	if check_builder:
 		try:
 			doc = frappe.get_doc("Web Page Builder", check_builder[0].name)
 			page_title = doc.page_title or doc.name
+			seo = {k: doc.get(k) for k in ("meta_title", "meta_description", "meta_keywords",
+			                                "og_title", "og_description", "og_image", "robots")}
 			# Same rule as get_page_builder_data: is_builder must not hand a guest
 			# the draft. This matters more here — the draft's resources/variables
 			# describe data sources, not just design. This block swallows
@@ -432,6 +437,13 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		"footer_content":footer_content,
 		"page_id": check_builder[0].name if (check_builder and len(check_builder)>0) else None,
 		"page_title": page_title,
+		"meta_title": seo.get("meta_title"),
+		"meta_description": seo.get("meta_description"),
+		"meta_keywords": seo.get("meta_keywords"),
+		"og_title": seo.get("og_title"),
+		"og_description": seo.get("og_description"),
+		"og_image": seo.get("og_image"),
+		"robots": seo.get("robots"),
 		# The page's own stylesheet. It carries the `:root { --tok-*: ... }` block
 		# a tokenized page is painted from, so the palette arrives with the page
 		# instead of after a second round-trip — no repaint flash. Home.vue has
