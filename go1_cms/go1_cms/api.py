@@ -6,6 +6,7 @@ import frappe
 import os, re, json, mimetypes
 from frappe.utils import getdate, nowdate, now, get_url
 from datetime import datetime, timezone
+from go1_cms.go1_cms.doctype.web_theme.web_theme import theme_studio_enabled_for
 import six
 
 @frappe.whitelist(allow_guest=True)
@@ -336,6 +337,26 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			# the server-rendered head is not available.
 			if doc.get("project") and frappe.db.exists("DocType", "CMS Project"):
 				seo["favicon"] = frappe.db.get_value("CMS Project", doc.project, "favicon")
+			# Record-level SEO for detail URLs: the same `cms_page_seo` hooks
+			# www/frontend.py renders into the server head, run here for the
+			# SPA payload — so a client-side navigation to /shop/product/<code>
+			# titles the tab and the share tags after the product, not after
+			# its template page. `route` is the full requested path; the hook
+			# decides whether it applies.
+			for hook in frappe.get_hooks("cms_page_seo") or []:
+				try:
+					extra = frappe.get_attr(hook)(doc, "/" + (route or "").strip("/"))
+				except Exception:
+					frappe.log_error(frappe.get_traceback(), "cms_page_seo: %s" % hook)
+					extra = None
+				if not extra:
+					continue
+				for key in ("meta_title", "meta_description", "meta_keywords", "og_image"):
+					if extra.get(key):
+						seo[key] = extra[key]
+				seo["og_title"] = extra.get("og_title") or extra.get("meta_title") or seo.get("og_title")
+				seo["og_description"] = extra.get("og_description") or extra.get("meta_description") or seo.get("og_description")
+				break
 			# Same rule as get_page_builder_data: is_builder must not hand a guest
 			# the draft. This matters more here — the draft's resources/variables
 			# describe data sources, not just design. This block swallows
@@ -383,7 +404,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 	page_builder_dt = None
 	if check_builder:
 		theme_settings = frappe.db.get_all("Web Theme",filters={"is_active":1},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width'])
-		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design'])
+		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design','project'])
 		if page_builder_dt:
 			if page_builder_dt[0].footer_component:
 				footer_content = get_footer_info(page_builder_dt[0].footer_component)
@@ -463,6 +484,11 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# between, so suppression never once fired. int(), because the reader
 		# does `!!data.owns_design` and a string "0" is truthy.
 		"owns_design": int(page_builder_dt[0].owns_design or 0) if page_builder_dt else 0,
+		# Whether the project has opted its website into the site-wide Theme
+		# Studio stylesheet + theme colour variables (CMS Project.use_theme_studio).
+		# Off, and Home.vue leaves the page to its own custom_css/inline styles
+		# exactly as an owns_design page is left. Missing/unknown resolves to on.
+		"theme_studio_enabled": theme_studio_enabled_for(page_builder_dt[0].get("project")) if page_builder_dt else 1,
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,
