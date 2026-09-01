@@ -497,6 +497,33 @@ def get_theme_css():
 		frappe.log_error(frappe.get_traceback(), "go1_cms: get_theme_css")
 		return ""
 
+def theme_studio_enabled_for(project=None):
+	"""Whether the site-wide Theme Studio stylesheet (get_theme_css) and the Web
+	Theme's colour variables may paint pages of `project`.
+
+	The flag lives on CMS Project.use_theme_studio (cms_frontend). It is the
+	one switch both delivery paths read — the SSR inline in www/frontend.py and
+	the SPA via get_page_content — so a page can never disagree with itself.
+	Unassigned pages, sites without the CMS Project doctype, and projects
+	created before the field existed all resolve to enabled: that is what
+	every page did before the switch, so nothing already published changes.
+	"""
+	if not project:
+		return 1
+	try:
+		if not frappe.db.exists("DocType", "CMS Project"):
+			return 1
+		if not frappe.get_meta("CMS Project").has_field("use_theme_studio"):
+			return 1
+		value = frappe.db.get_value("CMS Project", project, "use_theme_studio")
+		if value is None:
+			return 1
+		return 1 if frappe.utils.cint(value) else 0
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "go1_cms: theme_studio_enabled_for")
+		return 1
+
+
 @frappe.whitelist()
 def save_color_palette(name, name1, primary_color, secondary_color, accent_color,
                        heading_text_color, body_text_color, dark_color, light_color):
