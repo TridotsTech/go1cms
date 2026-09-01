@@ -337,6 +337,26 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			# the server-rendered head is not available.
 			if doc.get("project") and frappe.db.exists("DocType", "CMS Project"):
 				seo["favicon"] = frappe.db.get_value("CMS Project", doc.project, "favicon")
+			# Record-level SEO for detail URLs: the same `cms_page_seo` hooks
+			# www/frontend.py renders into the server head, run here for the
+			# SPA payload — so a client-side navigation to /shop/product/<code>
+			# titles the tab and the share tags after the product, not after
+			# its template page. `route` is the full requested path; the hook
+			# decides whether it applies.
+			for hook in frappe.get_hooks("cms_page_seo") or []:
+				try:
+					extra = frappe.get_attr(hook)(doc, "/" + (route or "").strip("/"))
+				except Exception:
+					frappe.log_error(frappe.get_traceback(), "cms_page_seo: %s" % hook)
+					extra = None
+				if not extra:
+					continue
+				for key in ("meta_title", "meta_description", "meta_keywords", "og_image"):
+					if extra.get(key):
+						seo[key] = extra[key]
+				seo["og_title"] = extra.get("og_title") or extra.get("meta_title") or seo.get("og_title")
+				seo["og_description"] = extra.get("og_description") or extra.get("meta_description") or seo.get("og_description")
+				break
 			# Same rule as get_page_builder_data: is_builder must not hand a guest
 			# the draft. This matters more here — the draft's resources/variables
 			# describe data sources, not just design. This block swallows
