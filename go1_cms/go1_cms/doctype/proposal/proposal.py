@@ -733,43 +733,10 @@ def update_section_properties(section_name,css_design,style_json,is_full_width):
 
 @frappe.whitelist()
 def generate_css_file():
-	path = get_files_path()
-	if not os.path.exists(os.path.join(path,'site_custom_css.css')):
-		res = frappe.get_doc({
-					"doctype": "File",
-					"file_name": "site_custom_css.css",
-					"is_private": 1,
-					})
-	css_content = ''
-	css_fonts = frappe.db.get_all("CSS Font",fields=['font_name','font_type','font_url','font_family'])
-	for x in css_fonts:
-		if x.font_type == "Google":
-			css_content+="@import url('"+x.font_url+"');"
-	pages = frappe.db.get_all("Proposal",filters={"published":1,"use_page_builder":1})
-	for page in pages:
-		web_sections = frappe.db.sql("""SELECT P.css_text,P.name FROM `tabMobile Page Section` M INNER JOIN `tabPage Section` P ON M.section=P.name WHERE M.parent = %(page_name)s""",{"page_name":page.name},as_dict=1)
-		for x in web_sections:
-			if x.css_text:
-				css_content+=x.css_text
-			section_content = frappe.db.get_all("Section Content",filters={"parent":x.name},fields=['css_text'])
-			for field in section_content:
-				if field.css_text:
-					css_content+=field.css_text
-	if css_content:
-		with open(os.path.join(path,('site_custom_css.css')), "w") as f:
-			f.write(css_content)
-	# import os
-	# from frappe.utils import get_files_path
-	# path = get_files_path()
-	# with open(os.path.join(path,'test.css'), "w") as f:
-	# 	content = content
-	# 	f.write(content)
-	# return {"status":"success","message":"completed successfully"}
-
-
-
-#end
-
+	"""Same file the Web Page Builder writes — one implementation, kept fast
+	(two bulk queries) there rather than a second copy here."""
+	from go1_cms.go1_cms.doctype.web_page_builder.web_page_builder import generate_css_file as _generate
+	return _generate()
 
 @frappe.whitelist()
 def get_proposal_html(page,name):

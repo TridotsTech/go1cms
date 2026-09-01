@@ -1748,7 +1748,13 @@ def generate_sections_json():
 
 @frappe.whitelist()
 def update_web_themes(doc,method):
-	frappe.enqueue(update_website_themes, queue='default',doc=doc)
+	# One rebuild per burst: a publish saves the page more than once, and every
+	# save landed here — three full theme rebuilds queued for one change. A
+	# queued/running job with this id absorbs the later requests.
+	frappe.enqueue(
+		update_website_themes, queue='default', doc=doc,
+		job_id="go1_cms:update_website_themes", deduplicate=True,
+	)
 def update_website_themes(doc):
 	update_themes = 1
 	# if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
@@ -2063,10 +2069,12 @@ def publish_page_builder(page_name):
 	if not doc.draft_layout_json:
 		frappe.throw("No draft layout found to publish")
 
-	# Promote draft to live layout
+	# Promote draft to live layout. The flags the editor used to write in a
+	# separate save beforehand are set here, so a publish is one save, not two.
 	doc.layout_json = doc.draft_layout_json
 	doc.published = 1
-	
+	doc.use_page_builder = 1
+
 	# Save triggers construct_html() to rewrite data_source/{page_name}_web.json
 	doc.save(ignore_permissions=True)
 
@@ -2075,7 +2083,9 @@ def publish_page_builder(page_name):
 
 	frappe.db.commit()
 
-	return {"status": "success", "message": "Page published to production successfully"}
+	# The route as validate() normalised it (project slug, scrubbing) — the
+	# editor shows and opens this, so it must not guess.
+	return {"status": "success", "message": "Page published to production successfully", "route": doc.route}
 
 @frappe.whitelist()
 def publish_project(project_name, page_names=None):
