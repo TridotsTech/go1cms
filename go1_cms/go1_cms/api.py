@@ -743,6 +743,53 @@ def get_pages_stats():
 
 
 @frappe.whitelist(allow_guest=False)
+def get_web_pages_count(doctype='Web Page Builder', search=None, status=None, project=None):
+	"""Total rows behind the builder's Pages / Components list.
+
+	The list itself is a paginated `frappe.client.get_list`, so the badge next
+	to it cannot be counted client-side — this applies the very same filters
+	(see `webPagesListFilters` in FreeBuilder2 / Builder2): `status` Live/Draft
+	on `published`, `project` by name or the virtual "unassigned" bucket, and
+	the search on the doctype's own title/route (or component) fields.
+	Returns {'count': int}."""
+	if doctype not in ('Web Page Builder', 'Web Component'):
+		doctype = 'Web Page Builder'
+
+	filters = []
+	or_filters = []
+
+	if status in ('Live', 'Published'):
+		filters.append(['published', '=', 1])
+	elif status == 'Draft':
+		filters.append(['published', '=', 0])
+	elif status in ('Review', 'Scheduled'):
+		# No backing state on either doctype yet — mirrors get_pages_list.
+		return {'count': 0}
+
+	if project:
+		if project in ('unassigned', '__unassigned__'):
+			filters.append(['project', 'is', 'not set'])
+		else:
+			filters.append(['project', '=', project])
+
+	search = (search or '').strip()
+	if search:
+		like = f'%{search}%'
+		if doctype == 'Web Component':
+			or_filters = [['title', 'like', like], ['component_name', 'like', like], ['name', 'like', like]]
+		else:
+			or_filters = [['page_title', 'like', like], ['route', 'like', like]]
+
+	rows = frappe.get_list(
+		doctype,
+		fields=['count(name) as count'],
+		filters=filters,
+		or_filters=or_filters,
+	)
+	return {'count': int(rows[0].get('count') or 0) if rows else 0}
+
+
+@frappe.whitelist(allow_guest=False)
 def save_page_sections(page, sections):
 	sections_data = json.loads(sections) if isinstance(sections, str) else sections
 	
