@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 import os, re, json, mimetypes
 from frappe.utils import getdate, nowdate, now, get_url
 from datetime import datetime, timezone
@@ -679,11 +680,7 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 	# because this endpoint is paginated — a client-side filter would only ever
 	# narrow the current page. "__unassigned__" mirrors builder2's virtual
 	# project for pages that were never linked to one.
-	if project:
-		if project == '__unassigned__':
-			filters.append(['project', 'in', ['', None]])
-		else:
-			filters.append(['project', '=', project])
+	filters.extend(_page_project_filter(project))
 	if status == 'Live':
 		filters.append(['published', '=', 1])
 	elif status == 'Draft':
@@ -761,11 +758,142 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 	return {'pages': pages, 'has_more': len(pages) == page_length}
 
 
+def _page_project_filter(project):
+	"""The list filter for one Pages-screen folder. `__unassigned__` is the
+	virtual folder for pages never linked to a CMS Project (same token as
+	get_pages_list and builder2)."""
+	if not project:
+		return []
+	if project == '__unassigned__':
+		return [['project', 'is', 'not set']]
+	return [['project', '=', project]]
+
+
 @frappe.whitelist(allow_guest=False)
-def get_pages_stats():
-	total = frappe.db.count('Web Page Builder')
-	live = frappe.db.count('Web Page Builder', {'published': 1})
+def get_pages_stats(project=None):
+	# `project` scopes the counts to one folder of the Pages screen, so the
+	# All / Publish / Draft tabs inside a project count that project alone.
+	base = _page_project_filter(project)
+	total = frappe.db.count('Web Page Builder', base)
+	live = frappe.db.count('Web Page Builder', base + [['published', '=', 1]])
 	return {'All': total, 'Live': live, 'Draft': total - live, 'Review': 0, 'Scheduled': 0}
+
+
+@frappe.whitelist(allow_guest=False)
+def get_page_projects():
+	"""The folders of the Pages screen: one per CMS Project, plus a virtual
+	"Unassigned" folder when pages exist without a project.
+
+	Each folder carries what its card shows without another round trip — page
+	/ live / draft counts, when a page in it last changed, and up to three
+	screenshot URLs of its most recently edited pages for the collage. Empty
+	projects are included on purpose: a freshly created project is exactly
+	where the next page goes, so it needs a folder to open."""
+	projects = frappe.get_all(
+		'CMS Project',
+		fields=['name', 'project_name', 'project_slug', 'status', 'modified'],
+		order_by='project_name asc',
+		limit_page_length=0,
+	)
+
+	stats = {}
+	for row in frappe.db.sql(
+		"""
+		select ifnull(project, '') as project,
+		       count(*) as total,
+		       sum(case when published = 1 then 1 else 0 end) as live,
+		       max(modified) as last_modified
+		from `tabWeb Page Builder`
+		group by ifnull(project, '')
+		""",
+		as_dict=True,
+	):
+		stats[row.project] = row
+
+	# Newest-first so the first three screenshots we meet per project are the
+	# freshest ones. Only pages that actually have an image are fetched.
+	previews = {}
+	for row in frappe.get_all(
+		'Web Page Builder',
+		fields=['project', 'image', 'og_image'],
+		or_filters=[['image', 'is', 'set'], ['og_image', 'is', 'set']],
+		order_by='modified desc',
+		limit_page_length=3000,
+	):
+		key = row.project or ''
+		bucket = previews.setdefault(key, [])
+		if len(bucket) >= 3:
+			continue
+		url = row.image or row.og_image
+		if url and url not in bucket:
+			bucket.append(url)
+
+	def folder(name, label, slug, status, modified):
+		st = stats.get(name if name != '__unassigned__' else '', {})
+		total = int(st.get('total') or 0)
+		live = int(st.get('live') or 0)
+		return {
+			'name': name,
+			'project_name': label,
+			'project_slug': slug or '',
+			'status': status or '',
+			'page_count': total,
+			'live_count': live,
+			'draft_count': total - live,
+			'last_modified': st.get('last_modified') or modified,
+			'previews': previews.get(name if name != '__unassigned__' else '', []),
+		}
+
+	out = [
+		folder(p.name, p.project_name or p.name, p.project_slug, p.status, p.modified)
+		for p in projects
+	]
+	if stats.get('', {}).get('total'):
+		out.append(folder('__unassigned__', 'Unassigned pages', '', '', None))
+	return out
+
+
+def _project_slug(name):
+	"""Same rule as the AI/template builders' `_slugify_route`, so a project
+	made from the Pages screen gets the slug a generated one would."""
+	s = re.sub(r'\s+', '-', (name or '').strip().lower())
+	s = re.sub(r'[^a-z0-9-]', '', s)
+	return re.sub(r'-+', '-', s).strip('-')
+
+
+@frappe.whitelist(allow_guest=False)
+def create_page_project(project_name, description=None):
+	"""Create the CMS Project a new page will be filed under.
+
+	The Pages screen requires every new page to belong to a project, and lets
+	the New page dialog create one on the spot — on a fresh site the first page
+	and the first project are the same act. Reuses an existing project with the
+	same name or slug rather than failing, mirroring template_builder's
+	_ensure_project, so a typo-free retry never leaves a duplicate behind.
+	Returns {name, project_name, project_slug, created}."""
+	project_name = (project_name or '').strip()
+	if not project_name:
+		frappe.throw(_('Project name is required'))
+	slug = _project_slug(project_name)
+
+	existing = None
+	if frappe.db.exists('CMS Project', project_name):
+		existing = project_name
+	elif slug:
+		existing = frappe.db.get_value('CMS Project', {'project_slug': slug}, 'name')
+	if existing:
+		row = frappe.db.get_value('CMS Project', existing, ['name', 'project_name', 'project_slug'], as_dict=True)
+		return {**row, 'created': False}
+
+	doc = frappe.get_doc({
+		'doctype': 'CMS Project',
+		'project_name': project_name,
+		'project_slug': slug,
+		'status': 'Draft',
+		'description': description or '',
+	})
+	doc.insert()
+	return {'name': doc.name, 'project_name': doc.project_name, 'project_slug': doc.project_slug, 'created': True}
 
 
 @frappe.whitelist(allow_guest=False)
