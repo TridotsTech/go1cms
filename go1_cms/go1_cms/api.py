@@ -272,6 +272,17 @@ def find_web_page_builder_by_route(route_str):
 	return None
 
 
+def _project_fallback_image(project):
+	if not project:
+		return ""
+	try:
+		if not frappe.get_meta("CMS Project").has_field("fallback_image"):
+			return ""
+		return frappe.db.get_value("CMS Project", project, "fallback_image") or ""
+	except Exception:
+		return ""
+
+
 @frappe.whitelist(allow_guest=True)
 def get_page_content(route=None, user=None, customer=None, domain=None, business=None, application_type="mobile", is_builder=0, start=0, page_length=0):
 	page_content = page_type = list_content = list_style = detail_content  = None
@@ -490,6 +501,10 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# Off, and Home.vue leaves the page to its own custom_css/inline styles
 		# exactly as an owns_design page is left. Missing/unknown resolves to on.
 		"theme_studio_enabled": theme_studio_enabled_for(page_builder_dt[0].get("project")) if page_builder_dt else 1,
+		# The project's own "no image" picture (CMS Project.fallback_image): what
+		# an image node shows when its file is missing or fails to load. Empty
+		# means the renderer's default stand-in.
+		"fallback_image": _project_fallback_image(page_builder_dt[0].get("project")) if page_builder_dt else "",
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,
