@@ -252,6 +252,39 @@ def build_menu_tree(
 	return {"items": _strip_raw(roots), "warnings": warnings}
 
 
+TABLET_NAV_OPTIONS = ("Inline navbar", "Hamburger")
+
+
+def _tablet_nav(menu):
+	"""Menu-level option (Menus screen › Tablet): how a header nav bound to this
+	menu behaves at 768–1023px. Defaults to the inline links; tolerant of a site
+	that has not migrated the column yet."""
+	try:
+		return frappe.db.get_value("Menu", menu, "tablet_nav") or TABLET_NAV_OPTIONS[0]
+	except Exception:
+		return TABLET_NAV_OPTIONS[0]
+
+
+@frappe.whitelist()
+def save_menu_settings(menu=None, tablet_nav=None):
+	"""Menu-level options from the Menus screen (today: tablet navigation).
+	Saving the doc clears the public tree cache, so navs pick it up at once."""
+	if not menu:
+		frappe.throw(_("menu is required"))
+	if not frappe.db.exists("Menu", menu):
+		frappe.throw(_("Menu {0} not found").format(menu), frappe.DoesNotExistError)
+	if not frappe.has_permission("Menu", "write", doc=menu):
+		frappe.throw(_("Not permitted to edit this menu."), frappe.PermissionError)
+	doc = frappe.get_doc("Menu", menu)
+	if tablet_nav is not None:
+		if tablet_nav not in TABLET_NAV_OPTIONS:
+			frappe.throw(_("Tablet navigation must be one of: {0}").format(", ".join(TABLET_NAV_OPTIONS)))
+		doc.tablet_nav = tablet_nav
+	doc.save()
+	frappe.db.commit()
+	return {"menu": menu, "tablet_nav": doc.tablet_nav or TABLET_NAV_OPTIONS[0]}
+
+
 @frappe.whitelist(allow_guest=True)
 def get_menu_tree(menu=None, name=None, include_hidden=0):
 	"""Public read for the FB2 renderer.
@@ -274,6 +307,7 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 		return {
 			"menu": menu,
 			"title": frappe.db.get_value("Menu", menu, "title") or menu,
+			"tablet_nav": _tablet_nav(menu),
 			"items": tree["items"],
 			"warnings": tree["warnings"],
 			"version": str(frappe.db.get_value("Menu", menu, "modified") or ""),
@@ -294,6 +328,7 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 	payload = {
 		"menu": menu,
 		"title": frappe.db.get_value("Menu", menu, "title") or menu,
+		"tablet_nav": _tablet_nav(menu),
 		"items": tree["items"],
 		"warnings": tree["warnings"],
 		"version": str(frappe.db.get_value("Menu", menu, "modified") or ""),

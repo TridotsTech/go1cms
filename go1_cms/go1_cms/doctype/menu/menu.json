@@ -9,6 +9,7 @@
  "field_order": [
   "title",
   "is_static_menu",
+  "tablet_nav",
   "menus"
  ],
  "fields": [
@@ -28,6 +29,14 @@
    "label": "Is Static Menu"
   },
   {
+   "default": "Inline navbar",
+   "description": "How a header nav bound to this menu behaves on tablets (768–1023px): the links inline, or a hamburger that opens the menu. Desktop and mobile are not affected.",
+   "fieldname": "tablet_nav",
+   "fieldtype": "Select",
+   "label": "Tablet navigation",
+   "options": "Inline navbar\nHamburger"
+  },
+  {
    "fieldname": "menus",
    "fieldtype": "Table",
    "label": "Menus",
@@ -36,7 +45,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-25 13:50:09.646957",
+ "modified": "2026-09-07 16:40:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menu",
