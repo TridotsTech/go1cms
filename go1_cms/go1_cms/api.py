@@ -272,6 +272,17 @@ def find_web_page_builder_by_route(route_str):
 	return None
 
 
+def _project_global_js(project):
+	"""CMS Project.global_js — '' when unset, or on a bench without the field."""
+	if not project:
+		return ""
+	try:
+		from cms_frontend.global_js import for_project
+		return for_project(project)
+	except Exception:
+		return ""
+
+
 def _project_fallback_image(project):
 	if not project:
 		return ""
@@ -505,6 +516,11 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# an image node shows when its file is missing or fails to load. Empty
 		# means the renderer's default stand-in.
 		"fallback_image": _project_fallback_image(page_builder_dt[0].get("project")) if page_builder_dt else "",
+		# The project this page belongs to, and the project's site-wide script
+		# (CMS Project.global_js). Home.vue runs the script once per project,
+		# the first time one of its pages is shown — see cms_frontend/global_js.py.
+		"project": (page_builder_dt[0].get("project") if page_builder_dt else "") or "",
+		"global_js": _project_global_js(page_builder_dt[0].get("project")) if page_builder_dt else "",
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,
