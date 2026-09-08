@@ -1233,6 +1233,36 @@ def parse_template_content(tmpl):
 	return mapped_content
 
 
+def get_page_section_content_overlay(page_doc, sec, template_id):
+	"""Content edited on the page's own copy of a template section.
+
+	Dropping a Section Template on a page creates a Page Section (see
+	Web Page Builder.sync), and the desk "edit section" dialog writes the
+	title / button / colour fields to that Page Section's content rows.
+	The template path here only ever read the Section Template's rows, so
+	those per-page edits never reached the response. Returns {field_key:
+	value} for the non-empty rows, or {} when no page copy exists.
+	"""
+	ps_name = None
+	sec_id = sec.get("id") or sec.get("section")
+	if sec_id:
+		ps_name = frappe.db.get_value("Page Section", {"layout_id": sec_id}, "name")
+	if not ps_name and page_doc:
+		for row in (page_doc.get("web_section") or []):
+			if row.section and (row.section_title == template_id or row.section_name == template_id):
+				ps_name = row.section
+				break
+	if not ps_name:
+		return {}
+	rows = frappe.db.get_all("Section Content", filters={"parent": ps_name, "parenttype": "Page Section"},
+		fields=["field_key", "content"], order_by="idx")
+	rows = [r for r in rows if r.field_key and r.content not in (None, "")]
+	if not rows:
+		return {}
+	parsed = parse_template_content({"content": rows, "name": template_id})
+	return {k: v for k, v in parsed.items() if not k.startswith("_") and v not in (None, "")}
+
+
 def get_template_dynamic_data(tmpl_doc, customer=None, business=None):
 	"""Live rows for a Section Template that has "Fetch Data Dynamically" on.
 
@@ -1325,6 +1355,10 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 									sec['content'] = {}
 								
 								merged_content = parsed.copy()
+								# Per-page edits made on the page's own Page Section copy
+								# win over the template's defaults; layout content still
+								# wins over both (applied last, as before).
+								merged_content.update(get_page_section_content_overlay(doc, sec, sec.get('templateId')))
 								merged_content.update(sec['content'])
 								# Dynamic templates (reference-document records, Slider
 								# rows): attach the live rows as `data`, the key the
