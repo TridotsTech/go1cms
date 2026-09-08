@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 import os, re, json, mimetypes
-from frappe.utils import getdate, nowdate, now, get_url
+from frappe.utils import getdate, nowdate, now, get_url, cint
 from datetime import datetime, timezone
 from go1_cms.go1_cms.doctype.web_theme.web_theme import theme_studio_enabled_for
 import six
@@ -1233,6 +1233,34 @@ def parse_template_content(tmpl):
 	return mapped_content
 
 
+def get_template_dynamic_data(tmpl_doc, customer=None, business=None):
+	"""Live rows for a Section Template that has "Fetch Data Dynamically" on.
+
+	A layout section that points at a Section Template is resolved from the
+	template itself, never through a Page Section, so the template's
+	Dynamic Section settings (reference document, condition, sort, count)
+	and a Slider template's slides were never queried and the page got only
+	the static content fields. This runs the same queries Page Section
+	uses and returns the rows, or None when the template is not dynamic.
+	"""
+	if not tmpl_doc or not cint(tmpl_doc.get("dynamic_data")):
+		return None
+	stype = tmpl_doc.get("section_type")
+	try:
+		if stype in ("Slider", "Slider With Banner"):
+			ps = frappe.new_doc("Page Section")
+			ps.section_type = stype
+			ps.business = business
+			out = ps.section_data(customer=customer, store_business=business) or {}
+			return out.get("data")
+		if stype == "Custom Section" and tmpl_doc.get("reference_document"):
+			from go1_cms.go1_cms.doctype.page_section.page_section import get_dynamic_data_source
+			return get_dynamic_data_source(tmpl_doc, customer=customer, store_business=business)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "get_template_dynamic_data: %s" % tmpl_doc.get("name"))
+	return None
+
+
 def get_page_builder_data(page, customer=None,application_type="mobile",business=None, is_builder=0, start=0, page_length=0):
 	# frappe.log_error(customer, "---customer--page-builder--")
 	path = frappe.utils.get_files_path()
@@ -1298,6 +1326,16 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 								
 								merged_content = parsed.copy()
 								merged_content.update(sec['content'])
+								# Dynamic templates (reference-document records, Slider
+								# rows): attach the live rows as `data`, the key the
+								# runtime already reads for dynamic sections. Additive —
+								# every existing key is left as it was.
+								dyn_rows = get_template_dynamic_data(tmpl_doc, customer=customer, business=business)
+								if dyn_rows is not None:
+									merged_content['data'] = dyn_rows
+									merged_content['dynamic_data'] = 1
+									if tmpl_doc.get('reference_document'):
+										merged_content['reference_document'] = tmpl_doc.reference_document
 								sec['content'] = merged_content
 								
 								sec['thumb'] = tmpl_doc.name
