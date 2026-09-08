@@ -137,9 +137,12 @@ class PageSection(Document):
 				json_obj['reference_document'] = self.reference_document
 		elif self.section_type in ['Slider', 'Slider With Banner']:
 			slider_cond = ''
-			if businesss:
+			# `business` is a custom field added to Slider by ecommerce_business_store;
+			# only select/filter on it when the column exists.
+			has_business = frappe.db.has_column("Slider", "business")
+			if businesss and has_business:
 				slider_cond = ' and business = "{0}"'.format(self.business)
-			if check_domain("multi_store") and not store_business:
+			if has_business and check_domain("multi_store") and not store_business:
 				multi_store_business = frappe.request.cookies.get('selected_store')
 				if not multi_store_business:
 					all_locations = frappe.db.get_all("Business",fields=['name','restaurant_name'],order_by="is_default desc")
@@ -149,10 +152,13 @@ class PageSection(Document):
 					multi_store_business = unquote(frappe.request.cookies.get('selected_store'))
 				if multi_store_business:		
 					slider_cond = ' and business = "{0}"'.format(multi_store_business)
-			if check_domain("multi_store"):
+			if has_business and check_domain("multi_store"):
 				if store_business:
 					slider_cond = ' and business = "{0}"'.format(store_business)
-			json_obj['data'] = frappe.db.sql('''select business,mobile_app_image,mobile_app_videoyoutube_id,mobile_image,mobile_videoyoutube_id,redirect_url,slider_type,upload_video_for_mobile,upload_video_for_mobile_app,upload_video_for_web,video_type,web_image,web_videoyoutube_id from `tabSlider` where published = 1 {cond} order by display_order'''.format(cond=slider_cond), as_dict=1)
+			slider_fields = 'mobile_app_image'
+			if has_business:
+				slider_fields = 'business,' + slider_fields
+			json_obj['data'] = frappe.db.sql('''select {fields},mobile_app_videoyoutube_id,mobile_image,mobile_videoyoutube_id,redirect_url,slider_type,upload_video_for_mobile,upload_video_for_mobile_app,upload_video_for_web,video_type,web_image,web_videoyoutube_id from `tabSlider` where published = 1 {cond} order by display_order'''.format(fields=slider_fields, cond=slider_cond), as_dict=1)
 		elif self.section_type == 'Custom Section':
 			frappe.log_error("--1--", self.content_type)
 			if self.content_type == 'Static':
