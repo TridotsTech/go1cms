@@ -1275,6 +1275,18 @@ def get_template_dynamic_data(tmpl_doc, customer=None, business=None):
 	"""
 	if not tmpl_doc or not cint(tmpl_doc.get("dynamic_data")):
 		return None
+	# An app can answer for a template it owns (`cms_template_dynamic_data`
+	# hooks, each called with (tmpl_doc, customer, business)): the first one
+	# returning a list wins, so a section can be fed from a product engine
+	# instead of the raw reference-document rows. None means "not mine".
+	for hook in frappe.get_hooks("cms_template_dynamic_data") or []:
+		try:
+			rows = frappe.get_attr(hook)(tmpl_doc, customer=customer, business=business)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), "cms_template_dynamic_data: %s" % hook)
+			rows = None
+		if rows is not None:
+			return rows
 	stype = tmpl_doc.get("section_type")
 	try:
 		if stype in ("Slider", "Slider With Banner"):
