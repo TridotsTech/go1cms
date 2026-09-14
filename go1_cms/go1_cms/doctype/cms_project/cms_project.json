@@ -10,7 +10,27 @@
   "project_name",
   "project_slug",
   "status",
-  "description"
+  "col_break",
+  "estimated_costing",
+  "favicon",
+  "use_theme_studio",
+  "web_theme",
+  "server_render",
+  "fallback_image",
+  "brand_section",
+  "brand_logo",
+  "brand_logo_dark",
+  "brand_heading_font",
+  "brand_body_font",
+  "brand_col",
+  "brand_primary",
+  "brand_secondary",
+  "brand_dark",
+  "brand_light",
+  "description_section",
+  "description",
+  "global_js_section",
+  "global_js"
  ],
  "fields": [
   {
@@ -35,18 +55,132 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nPublished",
-   "reqd": 1
+   "options": "Draft\nIn Progress\nPublished\nArchived"
+  },
+  {
+   "fieldname": "col_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_costing",
+   "fieldtype": "Currency",
+   "label": "Estimated Costing"
+  },
+  {
+   "description": "Browser-tab / home-screen icon for every page of this project (square PNG, 512×512 works best). Leave empty to use the CMS default.",
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
+  },
+  {
+   "default": "1",
+   "description": "When enabled, Theme Studio styles will be applied to your website pages. Off, pages keep their own page-specific design.",
+   "fieldname": "use_theme_studio",
+   "fieldtype": "Check",
+   "label": "Use Theme Studio on Website"
+  },
+  {
+   "description": "This project's own theme. Empty means the project uses the site theme. Theme Studio creates it the first time a theme is saved or applied for this project.",
+   "fieldname": "web_theme",
+   "fieldtype": "Link",
+   "label": "Theme",
+   "options": "Web Theme"
+  },
+  {
+   "default": "0",
+   "description": "Published pages of this project are rendered to HTML on the server (sections, menus, first page of every list), so visitors see the finished page at first paint and the app takes over without a loader.",
+   "fieldname": "server_render",
+   "fieldtype": "Check",
+   "label": "Server-render published pages"
+  },
+  {
+   "description": "Shown wherever an image on this project's pages is missing or fails to load (a product without a photo, for one). Leave empty for the CMS default.",
+   "fieldname": "fallback_image",
+   "fieldtype": "Attach Image",
+   "label": "No-image fallback"
+  },
+  {
+   "fieldname": "brand_section",
+   "fieldtype": "Section Break",
+   "label": "Brand kit",
+   "description": "This client's brand in one place: edited in Theme Studio > Brand. Images set to \"Brand logo\" in the builder show the logo from here."
+  },
+  {
+   "fieldname": "brand_logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "brand_logo_dark",
+   "fieldtype": "Attach Image",
+   "label": "Logo for dark backgrounds",
+   "description": "Optional. Shown where a logo sits on a dark section; the main logo is used when this is empty."
+  },
+  {
+   "fieldname": "brand_heading_font",
+   "fieldtype": "Data",
+   "label": "Heading font"
+  },
+  {
+   "fieldname": "brand_body_font",
+   "fieldtype": "Data",
+   "label": "Body font"
+  },
+  {
+   "fieldname": "brand_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "brand_primary",
+   "fieldtype": "Color",
+   "label": "Primary colour",
+   "description": "Buttons, links and highlights."
+  },
+  {
+   "fieldname": "brand_secondary",
+   "fieldtype": "Color",
+   "label": "Secondary colour",
+   "description": "Supporting accents."
+  },
+  {
+   "fieldname": "brand_dark",
+   "fieldtype": "Color",
+   "label": "Dark colour",
+   "description": "Text and dark sections."
+  },
+  {
+   "fieldname": "brand_light",
+   "fieldtype": "Color",
+   "label": "Light colour",
+   "description": "Page and card backgrounds."
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Description"
   },
   {
    "fieldname": "description",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text",
    "label": "Description"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "global_js_section",
+   "fieldtype": "Section Break",
+   "label": "Global JavaScript"
+  },
+  {
+   "description": "Runs once on every published page of this project (the storefront runtime, analytics hooks, shared helpers). Editable from the page builder under Settings › Global JS. Never runs inside the builder.",
+   "fieldname": "global_js",
+   "fieldtype": "Code",
+   "label": "Global JS",
+   "options": "JS"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-26 15:20:00.000000",
+ "modified": "2026-09-11 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Project",

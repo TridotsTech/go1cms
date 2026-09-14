@@ -7,7 +7,7 @@ from frappe import _
 import os, re, json, mimetypes
 from frappe.utils import getdate, nowdate, now, get_url, cint
 from datetime import datetime, timezone
-from go1_cms.go1_cms.doctype.web_theme.web_theme import theme_studio_enabled_for
+from go1_cms.go1_cms.doctype.web_theme.web_theme import theme_studio_enabled_for, theme_name_for
 import six
 
 @frappe.whitelist(allow_guest=True)
@@ -426,8 +426,11 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 	footer_content = None
 	page_builder_dt = None
 	if check_builder:
-		theme_settings = frappe.db.get_all("Web Theme",filters={"is_active":1},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width'])
-		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design','project'])
+		# The theme this page's project reads — its own if it has one, else the
+		# site theme, which is what every page read before per-project themes.
+		_page_theme = theme_name_for(frappe.db.get_value('Web Page Builder', check_builder[0].name, 'project'))
+		theme_settings = frappe.db.get_all("Web Theme",filters={"name": _page_theme},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width']) if _page_theme else []
+		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['name','modified','text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design','project','lock_design','frozen_theme'])
 		if page_builder_dt:
 			if page_builder_dt[0].footer_component:
 				footer_content = get_footer_info(page_builder_dt[0].footer_component)
@@ -512,6 +515,22 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# Off, and Home.vue leaves the page to its own custom_css/inline styles
 		# exactly as an owns_design page is left. Missing/unknown resolves to on.
 		"theme_studio_enabled": theme_studio_enabled_for(page_builder_dt[0].get("project")) if page_builder_dt else 1,
+		# The @font-face rules for the fonts this page's project uploaded (THM-06).
+		# Home.vue swaps them in with the page, since a link can cross projects.
+		"project_font_css": _project_font_css(page_builder_dt[0].get("project") if page_builder_dt else None),
+		# The page's Google fonts as this site serves them (THM-07): @font-face rules
+		# for faces copied here, Google links for the rest, and the families Home.vue's
+		# loaders leave alone. None in the builder's preview, which keeps loading its
+		# fonts from Google like every admin screen.
+		"page_fonts": _page_fonts(page_builder_dt[0]) if page_builder_dt and not cint(is_builder) else None,
+		# The project's brand kit logos (THM-11), for images set to "Brand logo".
+		"brand_logos": _brand_logos(page_builder_dt[0].get("project") if page_builder_dt else None),
+		# A page whose design is locked keeps the theme it showed when it was
+		# locked (stylesheet, colours, typography); Home.vue shows this snapshot
+		# instead of the project's current theme. None for every other page.
+		"frozen_theme": (frappe.parse_json(page_builder_dt[0].frozen_theme)
+		                 if page_builder_dt and page_builder_dt[0].get("lock_design") and page_builder_dt[0].get("frozen_theme")
+		                 else None),
 		# The project's own "no image" picture (CMS Project.fallback_image): what
 		# an image node shows when its file is missing or fails to load. Empty
 		# means the renderer's default stand-in.
@@ -731,6 +750,9 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 		fields=[
 			'name', 'page_title', 'route', 'published', 'modified', 'owner',
 			'draft_layout_json', 'layout_json', 'project', 'image',
+			# Theme Studio's pre-apply checklist labels each page by these: a locked
+			# page cannot be ticked, a classic one follows the project theme.
+			'owns_design', 'lock_design',
 			# SEO metadata — the SEO Manager scores pages on these, so they have to
 			# come back with the list rather than being fetched per page.
 			'meta_title', 'meta_description', 'meta_keywords',
@@ -974,8 +996,54 @@ def get_web_pages_count(doctype='Web Page Builder', search=None, status=None, pr
 	return {'count': int(rows[0].get('count') or 0) if rows else 0}
 
 
+# Python's default separators put a space after every comma and colon, so a
+# layout written back through here grew by ~8% each time even when nothing in it
+# had changed. The builder writes compact JSON; match it.
+_COMPACT = (",", ":")
+
+
+def _sitemap_new_section(s):
+	"""A section this page has no stored counterpart for.
+
+	Either the site map just created it, or it was dragged in from another page —
+	in which case it arrives whole, and every field it brought (children,
+	responsiveStyles, surface, animation…) is kept. A section created here brings
+	nothing but a name and a box style, and that is all it gets.
+	"""
+	sec_type = s.get('type') or 'freebuilder'
+	out = {k: v for k, v in s.items() if k != 'props'}
+	out['id'] = s.get('id') or 'sec-%s' % frappe.generate_hash(length=8)
+	out['name'] = s.get('name') or sec_type or 'Section'
+	out['type'] = sec_type
+	out['styles'] = {**(s.get('styles') or {}), **(s.get('props') or {})}
+	out.setdefault('children', [])
+	return out
+
+
+def _sitemap_summary(sections):
+	"""What the site map needs back: identity only, never a whole layout.
+
+	It used to get the payload it had just sent, which the screen then adopted as
+	its model — dropping every section's children and using each section's NAME
+	as its id. The next save from that screen wrote those empty shells over the
+	page.
+	"""
+	return [{'id': s.get('id'), 'name': s.get('name'), 'type': s.get('type')} for s in sections]
+
+
 @frappe.whitelist(allow_guest=False)
 def save_page_sections(page, sections):
+	"""Reorder, rename, add or remove a page's sections from the site map.
+
+	The site map holds a summary of each section — id, name, outer styles — and
+	knows nothing of what is inside it. So the summary is MERGED into the stored
+	layout: a section the site map already knew keeps its own stored object, and
+	only the name and outer styles it is allowed to change are applied.
+
+	Writing the summary out as the layout, which is what this used to do, deleted
+	every element, every breakpoint override and every page-level setting on the
+	page.
+	"""
 	sections_data = json.loads(sections) if isinstance(sections, str) else sections
 	
 	if frappe.db.exists('Web Page Builder', page):
@@ -1024,7 +1092,7 @@ def save_page_sections(page, sections):
 						new_children.append(new_child)
 				
 				body_node['children'] = new_children
-				layout_str = json.dumps(draft_layout)
+				layout_str = json.dumps(draft_layout, separators=_COMPACT)
 				
 				frappe.db.set_value('Web Page Builder', page, {
 					'draft_layout_json': layout_str
@@ -1036,27 +1104,76 @@ def save_page_sections(page, sections):
 					"sections": sections_data
 				}
 
-	layout = {"sections": sections_data}
-	layout_str = json.dumps(layout)
-	
-	if frappe.db.exists('Web Page Builder', page):
-		frappe.db.set_value('Web Page Builder', page, {
-			'draft_layout_json': layout_str
-		})
-		frappe.db.commit()
-	else:
+	incoming = [s for s in sections_data if isinstance(s, dict)]
+
+	# A page the site map is building from nothing: there is no layout to protect.
+	if not frappe.db.exists('Web Page Builder', page):
+		fresh = [_sitemap_new_section(s) for s in incoming]
 		doc = frappe.new_doc('Web Page Builder')
 		doc.page_title = page
 		doc.route = '/' + page.lower().replace(' ', '-')
 		doc.published = 0
-		doc.draft_layout_json = layout_str
+		doc.draft_layout_json = json.dumps({"sections": fresh}, separators=_COMPACT)
 		doc.insert(ignore_permissions=True)
 		frappe.db.commit()
-	
-	return {
-		"status": "Success",
-		"sections": sections_data
-	}
+		return {"status": "Success", "sections": _sitemap_summary(fresh)}
+
+	# `doc` was loaded at the top of this function under the same condition.
+	stored = {}
+	raw = doc.draft_layout_json or doc.layout_json
+	if raw:
+		try:
+			parsed = json.loads(raw)
+			if isinstance(parsed, dict):
+				stored = parsed
+		except Exception:
+			stored = {}
+
+	existing = {s.get('id'): s for s in (stored.get('sections') or [])
+	            if isinstance(s, dict) and s.get('id')}
+
+	# Two ways the site map can be out of date, and both used to flatten the page:
+	# it recognises none of the stored sections (its ids are stale or were
+	# invented on the screen), or it is carrying a section with no id at all,
+	# which can never be matched and would come back as an empty shell. A section
+	# genuinely added on the site map is neither — it has an id of its own while
+	# its siblings still match. Only guarded on a page that has something to lose.
+	page_has_content = any((s.get('children') or []) for s in existing.values())
+	if page_has_content and (
+		not any(s.get('id') in existing for s in incoming)
+		or any(not s.get('id') for s in incoming)
+	):
+		frappe.throw(
+			"This page has changed since the site map was opened. "
+			"Reload the site map, then try again.",
+			title="Site map out of date",
+		)
+
+	merged = []
+	for s in incoming:
+		kept = existing.get(s.get('id'))
+		if kept is None:
+			merged.append(_sitemap_new_section(s))
+			continue
+		if s.get('name'):
+			kept['name'] = s.get('name')
+		# Merged, never replaced — and only where `styles` is the section's own
+		# style key. A legacy template section keeps its content in `props`/`style`
+		# and must not grow a second one from the site map's flattened copy.
+		props = s.get('props')
+		if isinstance(props, dict) and props and (kept.get('type') == 'freebuilder' or 'styles' in kept):
+			kept['styles'] = {**(kept.get('styles') or {}), **props}
+		merged.append(kept)
+
+	# Only `sections` is replaced. pageAnimation, variables and resources live
+	# beside it in the same object and the site map has no business touching them
+	# — the old code dropped all three every time it saved.
+	stored['sections'] = merged
+	frappe.db.set_value('Web Page Builder', page,
+	                    {'draft_layout_json': json.dumps(stored, separators=_COMPACT)})
+	frappe.db.commit()
+
+	return {"status": "Success", "sections": _sitemap_summary(merged)}
 
 
 @frappe.whitelist(allow_guest=False)
@@ -1091,25 +1208,284 @@ def publish_builder_page(page_name):
 	return {"status": "Success", "message": "Page published successfully"}
 
 
+# A page's title IS its name, so a copy needs a title nobody else holds. Both
+# patterns are stripped before counting, so copying a copy gives "(copy 2)"
+# rather than "(copy) (copy)".
+_COPY_TITLE_SUFFIX = re.compile(r"\s*\(copy(?:\s+\d+)?\)\s*$", re.I)
+_COPY_ROUTE_SUFFIX = re.compile(r"-copy(?:-\d+)?$", re.I)
+_COPY_LIMIT = 200
+
+
+def _strip_all(pattern, value):
+	"""Peel every trailing copy marker, not just the last one — otherwise the copy
+	of a copy is called "X (copy) (copy)"."""
+	out = (value or "").strip()
+	while True:
+		stripped = pattern.sub("", out).strip()
+		if stripped == out:
+			return out
+		out = stripped
+
+
+def _free_copy_title(source_title):
+	base = _strip_all(_COPY_TITLE_SUFFIX, source_title) or "Page"
+	for n in range(1, _COPY_LIMIT):
+		title = "%s (copy)" % base if n == 1 else "%s (copy %d)" % (base, n)
+		if not frappe.db.exists("Web Page Builder", title):
+			return title
+	frappe.throw(_("Too many copies of \"{0}\" already exist.").format(base))
+
+
+def _free_copy_route(source_route, title):
+	base = _strip_all(_COPY_ROUTE_SUFFIX, (source_route or "").strip().strip("/"))
+	if not base:
+		base = re.sub(r"[^a-z0-9]+", "-", (title or "page").lower()).strip("-") or "page"
+	for n in range(1, _COPY_LIMIT):
+		route = "%s-copy" % base if n == 1 else "%s-copy-%d" % (base, n)
+		if not frappe.db.exists("Web Page Builder", {"route": route}):
+			return route
+	frappe.throw(_("Too many copies of \"{0}\" already exist.").format(base))
+
+
 @frappe.whitelist(allow_guest=False)
-def duplicate_page(source_page_id, target_title, target_route):
+def duplicate_page(source_page_id, target_title=None, target_route=None):
+	"""Copy a page, and say what the copy is actually called.
+
+	The requested title and route are used when they are free. When they are not
+	— which is every second copy of the same page, because callers ask for
+	"X (copy)" and "/x-copy" each time — the next free "(copy 2)", "(copy 3)"… is
+	used instead, and returned, so the caller can name it correctly on screen.
+	"""
 	if not frappe.db.exists('Web Page Builder', source_page_id):
 		frappe.throw(f"Source page {source_page_id} not found")
-		
+
 	source_doc = frappe.get_doc('Web Page Builder', source_page_id)
+
+	# A title that already reads like a copy is re-numbered from its base, even
+	# when it happens to be free: callers build it by appending "(copy)" to
+	# whatever they are looking at, so copying a copy would otherwise stack the
+	# word up forever.
+	title = (target_title or "").strip()
+	if not title or _COPY_TITLE_SUFFIX.search(title) or frappe.db.exists("Web Page Builder", title):
+		title = _free_copy_title(title or source_doc.page_title or source_page_id)
+
+	route = (target_route or "").strip().strip("/")
+	if not route or _COPY_ROUTE_SUFFIX.search(route) or frappe.db.exists("Web Page Builder", {"route": route}):
+		route = _free_copy_route(route or source_doc.route, title)
+
 	new_doc = frappe.copy_doc(source_doc)
-	new_doc.page_title = target_title
-	new_doc.route = target_route
+	new_doc.page_title = title
+	new_doc.route = route
 	new_doc.published = 0
 	new_doc.layout_json = None
 	new_doc.save(ignore_permissions=True)
 	frappe.db.commit()
-	
+
 	return {
 		"status": "success",
 		"message": "Page duplicated successfully",
-		"new_page_id": new_doc.name
+		"new_page_id": new_doc.name,
+		"page_title": new_doc.page_title,
+		"route": new_doc.route,
 	}
+
+
+# ── Google font weights ──────────────────────────────────────────────────────
+#
+# A family used to be registered as "wght@400;700" unless it was one of six
+# hand-written entries. Every other weight in the design — 600 headings, 300
+# small print — was then drawn by the browser faking one, which is why headings
+# looked soft and captions looked wrong.
+#
+# fonts.googleapis.com/css2 CLAMPS a weight list to what the family actually
+# publishes and answers 200: asking Archivo Black (which ships 400 alone) for
+# 100..900 returns exactly its 400, and Syne returns its five. It answers 400
+# only for a family it does not have, or a malformed weight. So one request both
+# picks the richest set the family can serve AND checks the name is real.
+#
+# Written as an explicit list rather than the "100..900" range syntax, which is
+# only valid for variable fonts.
+_FONT_WEIGHTS = "wght@100;200;300;400;500;600;700;800;900"
+
+# The status code does not depend on it, but asking as a browser asks keeps the
+# probe honest about what will actually be served.
+_FONT_PROBE_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
+
+
+def google_font_url(family):
+	"""A css2 URL for every weight `family` publishes.
+
+	Falls back to the same URL unverified when there is no outbound network, and
+	logs (without failing) when Google does not recognise the family — a theme
+	should not break because one name is misspelt.
+	"""
+	from urllib.parse import quote
+	import requests
+
+	base = "https://fonts.googleapis.com/css2?family=%s" % quote((family or "").strip()).replace("%20", "+")
+	url = "%s:%s&display=swap" % (base, _FONT_WEIGHTS)
+	try:
+		r = requests.get(url, timeout=6, headers={"User-Agent": _FONT_PROBE_UA})
+	except Exception:
+		return url
+	if r.status_code != 200:
+		frappe.logger().warning("google_font_url: %s not served by Google (%s)" % (family, r.status_code))
+	return url
+
+
+@frappe.whitelist(allow_guest=False)
+def ensure_css_font(font_name, font_family=None, category=None):
+	"""Register a Google family as a CSS Font, with every weight it publishes.
+
+	Returns the record name. Existing records are left alone — repairing one is
+	`repair_css_font_weights`.
+	"""
+	font_name = (font_name or "").strip()
+	if not font_name:
+		frappe.throw(_("A font needs a name."))
+	existing = frappe.db.get_value("CSS Font", {"font_name": font_name}, "name")
+	if existing:
+		return existing
+	# An uploaded project font is not a Google family: registering it here would
+	# point the site stylesheet at a Google URL that answers 400.
+	custom = frappe.db.get_value("CSS Font", {"font_type": "Custom",
+	                                          "font_family": ["like", "'" + font_name.replace("'", "") + "',%"]}, "name")
+	if custom:
+		return custom
+
+	doc = frappe.get_doc({
+		"doctype": "CSS Font",
+		"font_name": font_name,
+		"font_type": "Google",
+		"font_url": google_font_url(font_name),
+		"font_family": font_family or ("'%s', sans-serif" % font_name),
+		"font_family_category": category or "Sans-serif",
+	})
+	doc.insert(ignore_permissions=True)
+	frappe.db.commit()
+	return doc.name
+
+
+@frappe.whitelist(allow_guest=False)
+def repair_css_font_weights(font_name=None):
+	"""Widen the weight list on stored Google font URLs, changing nothing else.
+
+	It rebuilds the URL from the families the record ALREADY loads, never from
+	`font_name`: one record is named "Playfair" while its CSS declares
+	'Playfair Display', and another deliberately loads two families in one
+	request. Rewriting either from the record's name would swap the typeface out
+	from under every page using it.
+
+	Also strips the stray markup several records picked up ('…swap" rel="stylesheet"'),
+	which made their stylesheet link unusable.
+	"""
+	filters = {"font_type": "Google"}
+	if font_name:
+		filters["font_name"] = font_name
+	changed = []
+	for row in frappe.get_all("CSS Font", filters=filters, fields=["name", "font_name", "font_url"]):
+		url = (row.font_url or "").strip()
+		if not url:
+			continue
+		dirty = '"' in url or "<" in url
+		thin = re.search(r"wght@[0-9;.]*", url)
+		# Fewer than five weights is a list somebody trimmed, or the old default.
+		thin = bool(thin and len(thin.group(0).split(";")) < 5) or "wght@" not in url
+		if not dirty and not thin:
+			continue
+
+		families = re.findall(r"family=([^:&\"<]+)", url)
+		if not families:
+			families = [(row.font_name or "").replace(" ", "+")]
+		fresh = "https://fonts.googleapis.com/css2?" + "&".join(
+			"family=%s:%s" % (f.strip(), _FONT_WEIGHTS) for f in families) + "&display=swap"
+		if fresh != url:
+			frappe.db.set_value("CSS Font", row.name, "font_url", fresh)
+			changed.append({"font": row.font_name, "was": url, "now": fresh})
+	frappe.db.commit()
+	return changed
+
+
+@frappe.whitelist(allow_guest=False)
+def set_page_design_lock(page, locked):
+	"""Lock or unlock a page's design.
+
+	A locked page keeps exactly the look it had when it was locked. It is skipped
+	by every restyle path — Theme Studio's Apply, the AI builder and design
+	switches (cms_frontend.reskin._split_locked) — cannot be ticked in Theme
+	Studio's pre-apply list, and is served the theme it showed at the moment of
+	locking instead of its project's current theme. Editing the page by hand is
+	unaffected.
+
+	Its own endpoint rather than a plain field write: it is a rule the server
+	enforces, and the right place for anything that has to happen at the moment
+	a page is locked.
+	"""
+	if not page or not frappe.db.exists("Web Page Builder", page):
+		frappe.throw(_("Page {0} not found").format(page))
+	if not frappe.has_permission("Web Page Builder", ptype="write", doc=page):
+		frappe.throw(_("You don't have permission to edit this page."), frappe.PermissionError)
+	value = 1 if cint(locked) else 0
+	frozen = ""
+	if value:
+		# Freeze the look. A classic page is painted by its project theme's
+		# stylesheet, so skipping restyles alone would not keep it the same — the
+		# next theme change would still reach it. Record the theme exactly as this
+		# page's visitors receive it now; the page is served this until unlocked.
+		from go1_cms.go1_cms.doctype.web_theme.web_theme import (
+			get_theme_colors, get_theme_css, get_theme_typography, theme_name_for)
+		project = frappe.db.get_value("Web Page Builder", page, "project") or None
+		frozen = json.dumps({
+			"theme": theme_name_for(project) or "",
+			"css": get_theme_css(project) or "",
+			"colors": get_theme_colors(project) or {},
+			"typography": get_theme_typography(project) or {},
+			"frozen_at": str(now()),
+		})
+	# update_modified=False: the builder's save compares `modified` to detect a
+	# second editor, and a settings toggle is not an edit to the page itself —
+	# bumping it would make the open builder report a conflict on its next save.
+	frappe.db.set_value("Web Page Builder", page, {"lock_design": value, "frozen_theme": frozen},
+	                    update_modified=False)
+	frappe.db.commit()
+	return {"page": page, "locked": value, "frozen": bool(frozen)}
+
+
+@frappe.whitelist(allow_guest=False)
+def rename_page(page, new_title):
+	"""Rename a page.
+
+	A page's title IS its name here (`autoname: field:page_title`), so this is a
+	document rename: Frappe repoints the Link fields aimed at it and rewrites
+	`page_title` to match. The `route` is deliberately left alone — a live URL
+	should not move because somebody corrected a title.
+
+	Two places store the page's name in a plain Data field, which a rename cannot
+	follow, so they are repointed here: the undo/version stack and the AI editor's
+	transaction log. Analytics rows hold the visited path, not the name, and are
+	untouched for the same reason the route is.
+	"""
+	new_title = (new_title or "").strip()
+	if not new_title:
+		frappe.throw(_("A page needs a name."))
+	if not frappe.db.exists("Web Page Builder", page):
+		frappe.throw(_("Page {0} not found").format(page))
+	if new_title == page:
+		return {"status": "success", "name": page, "renamed": False}
+	if frappe.db.exists("Web Page Builder", new_title):
+		frappe.throw(_('A page called "{0}" already exists.').format(new_title))
+
+	# frappe.rename_doc() takes no ignore_permissions; the permission check that
+	# matters already happened — this method is whitelisted and not guest-callable.
+	new_name = frappe.rename_doc("Web Page Builder", page, new_title, show_alert=False)
+
+	for doctype in ("Web Page Revision", "CMS AI Transaction"):
+		if frappe.db.exists("DocType", doctype):
+			frappe.db.set_value(doctype, {"page": page}, "page", new_name, update_modified=False)
+	frappe.db.commit()
+
+	return {"status": "success", "name": new_name, "renamed": True}
 
 
 @frappe.whitelist(allow_guest=False)
@@ -1991,7 +2367,9 @@ def update_website_themes(doc):
 	# if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
 	# 	update_themes = 0
 	if update_themes == 1:
-		themes = frappe.db.get_all("Web Theme")
+		# Only the active theme is served as a generated file; a project's own
+		# theme skips that step, so re-saving one here would be wasted work.
+		themes = frappe.db.get_all("Web Theme", filters={"is_active": 1})
 		for x in themes:
 			theme = frappe.get_doc("Web Theme",x.name)
 			theme.save(ignore_permissions=True)
@@ -2195,8 +2573,14 @@ def update_page(builder_name, page_name, **kwargs):
 		frappe.throw(f"Error updating page: {str(e)}")
 
 @frappe.whitelist()
-def duplicate_page(builder_name, page_name, new_page_name):
-	"""Duplicate a page within the same builder"""
+def duplicate_cms_builder_page(builder_name, page_name, new_page_name):
+	"""Duplicate a row inside a CMS Page Builder.
+
+	Renamed out of the way: this was a second `duplicate_page` in this file, so it
+	shadowed the Web Page Builder one above and answered every call the Pages
+	screen made — with the wrong doctype and the wrong arguments, which is why
+	copying a page failed every time.
+	"""
 	try:
 		doc = frappe.get_doc("CMS Page Builder", builder_name)
 
@@ -2905,3 +3289,45 @@ def get_shared_page_preview(token):
 		'layout': layout,
 		'view_only': True,
 	}
+
+
+def _project_font_css(project):
+	"""@font-face rules for a project's uploaded fonts; '' without cms_frontend."""
+	if not project:
+		return ""
+	try:
+		from cms_frontend.project_fonts import font_face_css
+	except ImportError:
+		return ""
+	try:
+		return font_face_css(project)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Project font CSS failed")
+		return ""
+
+
+def _page_fonts(row):
+	"""The page's font delivery {css, links, families} (cms_frontend/font_mirror.py);
+	None without cms_frontend, and when it fails — the app then loads from Google."""
+	try:
+		from cms_frontend.font_mirror import page_font_delivery
+	except ImportError:
+		return None
+	try:
+		return page_font_delivery(row)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Page font delivery failed")
+		return None
+
+
+def _brand_logos(project):
+	"""{light, dark} brand kit logo URLs (cms_frontend/brand_kit.py); empty without cms_frontend."""
+	try:
+		from cms_frontend.brand_kit import brand_logos
+	except ImportError:
+		return {"light": "", "dark": ""}
+	try:
+		return brand_logos(project)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Brand logos failed")
+		return {"light": "", "dark": ""}

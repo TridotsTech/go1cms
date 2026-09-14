@@ -27,6 +27,12 @@ class WebTheme(Document):
 			frappe.log_error(frappe.get_traceback(),"validate web theme")
 
 	def on_update(self):
+		# A project's own theme is read by the app (get_theme_css / colours /
+		# typography) and never served as a generated file — the Jinja context
+		# only ever loads the active theme's. Regenerating one walks every
+		# published page, so skipping it keeps a project-theme save cheap.
+		if not self.is_active:
+			return
 		try:
 			path, sitename = get_path_name()
 			if path:
@@ -426,10 +432,86 @@ def get_style_guide_data():
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.get_style_guide_data")
 		return {}
 
-@frappe.whitelist(allow_guest=True)
-def get_theme_colors():
+# ── Per-project themes ───────────────────────────────────────────────────────
+#
+# There used to be one Web Theme for the whole installation, so every client
+# project hosted here shared a single look, and applying a theme to one project
+# rewrote the stylesheet every other project's classic pages read.
+#
+# A project may now own a theme: CMS Project.web_theme. A project without one
+# keeps reading the active site theme exactly as before, so nothing changes
+# until somebody saves or applies a theme FOR a project — that is when its own
+# copy is made, from the site theme, so it starts out looking identical.
+#
+# A project theme always has is_active = 0. WebTheme.validate deactivates every
+# other theme when one is marked active, so a project copy must never be.
+
+def _project_theme_field():
 	try:
-		theme_name = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+		return bool(frappe.db.exists("DocType", "CMS Project")
+		            and frappe.get_meta("CMS Project").has_field("web_theme"))
+	except Exception:
+		return False
+
+
+def theme_name_for(project=None):
+	"""The Web Theme a project's pages read: its own if it has one, else the
+	active site theme. Unassigned pages and projects without a theme get the
+	site theme — which is what every page read before per-project themes."""
+	if project and _project_theme_field():
+		own = frappe.db.get_value("CMS Project", project, "web_theme")
+		if own and frappe.db.exists("Web Theme", own):
+			return own
+	return frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+
+
+@frappe.whitelist()
+def get_project_theme(project=None):
+	"""Which theme Theme Studio is editing for `project`, and whether it is the
+	project's own or the shared site theme."""
+	default = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+	name = theme_name_for(project)
+	return {"name": name, "own": bool(project) and bool(name) and name != default, "default": default}
+
+
+@frappe.whitelist()
+def ensure_project_theme(project):
+	"""The project's own Web Theme, copied from the site theme the first time.
+
+	The copy is identical, so a project's pages look exactly the same the moment
+	after it is made; only later edits make it differ.
+	"""
+	project = (project or "").strip()
+	if not project or not frappe.db.exists("CMS Project", project):
+		frappe.throw("Pick a project first.")
+	if not _project_theme_field():
+		frappe.throw("Per-project themes are not set up on this site yet. Run bench migrate.")
+
+	own = frappe.db.get_value("CMS Project", project, "web_theme")
+	if own and frappe.db.exists("Web Theme", own):
+		return own
+
+	default = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+	if not default:
+		frappe.throw("There is no site theme to start a project theme from.")
+
+	doc = frappe.copy_doc(frappe.get_doc("Web Theme", default))
+	doc.is_active = 0
+	label = frappe.db.get_value("CMS Project", project, "project_name") or project
+	name, n = "%s Theme" % label, 2
+	while frappe.db.exists("Web Theme", name):
+		name, n = "%s Theme %d" % (label, n), n + 1
+	doc.insert(ignore_permissions=True, set_name=name)
+
+	frappe.db.set_value("CMS Project", project, "web_theme", doc.name, update_modified=False)
+	frappe.db.commit()
+	return doc.name
+
+
+@frappe.whitelist(allow_guest=True)
+def get_theme_colors(project=None):
+	try:
+		theme_name = theme_name_for(project)
 		if not theme_name:
 			return {}
 		doc = frappe.get_doc("Web Theme", theme_name)
@@ -449,9 +531,9 @@ def get_theme_colors():
 		return {}
 
 @frappe.whitelist(allow_guest=True)
-def get_theme_typography():
+def get_theme_typography(project=None):
 	try:
-		theme_name = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+		theme_name = theme_name_for(project)
 		if not theme_name:
 			return {}
 		doc = frappe.get_doc("Web Theme", theme_name)
@@ -487,9 +569,9 @@ def get_theme_typography():
 		return {}
 
 @frappe.whitelist(allow_guest=True)
-def get_theme_css():
+def get_theme_css(project=None):
 	try:
-		theme_name = frappe.db.get_value("Web Theme", {"is_active": 1}, "name")
+		theme_name = theme_name_for(project)
 		if not theme_name:
 			return ""
 		return frappe.db.get_value("Web Theme", theme_name, "page_css") or ""

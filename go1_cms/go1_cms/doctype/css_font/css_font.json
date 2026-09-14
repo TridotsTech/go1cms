@@ -13,6 +13,8 @@
   "font_family",
   "column_break_5",
   "font_family_category",
+  "project",
+  "licence_confirmed",
   "font_files_section",
   "font_files"
  ],
@@ -62,12 +64,28 @@
    "fieldname": "font_family_category",
    "fieldtype": "Select",
    "label": "Font Family Category",
-   "options": "\nSans-serif\nSerif"
+   "options": "\nSans-serif\nSerif\nDisplay\nHandwriting\nMonospace"
+  },
+  {
+   "depends_on": "eval:doc.font_type == \"Custom\"",
+   "description": "An uploaded font belongs to this project only: its licence covers that client, so no other project's pages or pickers are given it.",
+   "fieldname": "project",
+   "fieldtype": "Data",
+   "label": "Project",
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.font_type == \"Custom\"",
+   "fieldname": "licence_confirmed",
+   "fieldtype": "Check",
+   "label": "Licence Confirmed By Uploader",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-02 12:41:06.575343",
+ "modified": "2026-09-11 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CSS Font",

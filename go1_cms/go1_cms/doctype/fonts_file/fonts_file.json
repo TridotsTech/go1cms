@@ -7,7 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "format",
-  "upload_file"
+  "upload_file",
+  "font_weight",
+  "font_style"
  ],
  "fields": [
   {
@@ -23,12 +25,28 @@
    "in_list_view": 1,
    "label": "Upload File",
    "reqd": 1
+  },
+  {
+   "default": "400",
+   "fieldname": "font_weight",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Weight",
+   "options": "100\n200\n300\n400\n500\n600\n700\n800\n900"
+  },
+  {
+   "default": "normal",
+   "fieldname": "font_style",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Style",
+   "options": "normal\nitalic"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-08-08 21:11:48.164572",
+ "modified": "2026-09-11 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Fonts File",

@@ -116,7 +116,9 @@
   "draft_layout_json",
   "prev_layout_json",
   "prev_custom_css",
-  "owns_design"
+  "owns_design",
+  "lock_design",
+  "frozen_theme"
  ],
  "fields": [
   {
@@ -557,6 +559,21 @@
    "label": "Page carries its own design (ignore site theme)"
   },
   {
+   "default": "0",
+   "description": "Theme Studio restyles and design switches skip this page, so a hand-designed page keeps its look. Editing it by hand is unaffected.",
+   "fieldname": "lock_design",
+   "fieldtype": "Check",
+   "label": "Lock design from restyles"
+  },
+  {
+   "description": "The theme this page showed at the moment its design was locked: stylesheet, colours and typography. A locked page is served this instead of its project's current theme, so later theme changes leave it looking as it did. Cleared on unlock.",
+   "fieldname": "frozen_theme",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Frozen Theme",
+   "read_only": 1
+  },
+  {
    "fieldname": "edit_with_go1_builder",
    "fieldtype": "Button",
    "hidden": 1,
@@ -760,7 +777,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2026-08-01 10:00:00.000000",
+ "modified": "2026-09-11 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
