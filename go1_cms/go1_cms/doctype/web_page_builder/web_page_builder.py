@@ -330,9 +330,21 @@ class WebPageBuilder(WebsiteGenerator):
             self.route = '/'
         elif self.project:
             project_slug = frappe.db.get_value('CMS Project', self.project, 'project_slug')
+            # CMS Project.root_routes: the project's pages live at the site root
+            # (/products, /account ...) and the slug is an identifier only. The
+            # route is kept exactly as given, apart from shedding the project's
+            # own slug if an older save had prefixed it. Every other project
+            # keeps the slug-prefixed layout below.
+            root_routes = bool(frappe.get_meta('CMS Project').has_field('root_routes')
+                               and frappe.db.get_value('CMS Project', self.project, 'root_routes'))
             if project_slug:
                 project_slug = project_slug.strip('/')
-                if project_slug:
+                if project_slug and root_routes:
+                    parts = [p for p in self.route.split('/') if p]
+                    if len(parts) > 1 and parts[0] == project_slug:
+                        parts.pop(0)
+                    self.route = '/'.join(parts)
+                elif project_slug:
                     parts = [p for p in self.route.split('/') if p]
                     all_project_slugs = [p.project_slug for p in frappe.db.get_all('CMS Project', fields=['project_slug']) if p.project_slug]
                     if parts and parts[0] in all_project_slugs:
