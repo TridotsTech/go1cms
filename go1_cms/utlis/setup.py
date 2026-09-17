@@ -264,7 +264,7 @@ def save_file(doc, folder=None):
 
 	return get_files_path(doc.file_name, is_private=doc.is_private)
 
-@frappe.whitelist(allow_guest=True)
+# SEC-04: internal helper, not a public address (it builds SQL from its arguments).
 def get_favicon_for_domain(dt, domain=None, business=None):
 	if not business:
 		if not domain:

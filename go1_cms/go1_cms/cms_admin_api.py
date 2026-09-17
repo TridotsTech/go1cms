@@ -297,115 +297,7 @@ def get_section_history(section_id, limit=10):
 		}
 
 
-def seed_web_page_views():
-	try:
-		from datetime import datetime, timedelta
-		import random
 
-		# Get active page routes
-		pages = frappe.db.get_all("Web Page Builder", fields=["route", "page_title", "name"])
-		routes = [p.route.strip("/") if p.route else "/" for p in pages]
-		if not routes:
-			routes = ["/", "about-us", "contact", "pricing", "blog"]
-		else:
-			# always ensure "/" is in routes
-			if "/" not in routes:
-				routes.append("/")
-
-		referrers = [
-			"https://www.google.com",
-			"https://www.bing.com",
-			"https://t.co",
-			"https://www.facebook.com",
-			"https://www.linkedin.com",
-			"https://tridotstech.com",
-			"https://github.com",
-			"",
-			""
-		]
-		
-		browsers = ["Chrome", "Safari", "Firefox", "Edge"]
-		
-		user_agents = {
-			"Chrome": [
-				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-				"Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
-			],
-			"Safari": [
-				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-				"Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
-				"Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
-			],
-			"Firefox": [
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
-				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0"
-			],
-			"Edge": [
-				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
-			]
-		}
-		
-		# Generate 150 unique visitors
-		visitors = [f"visitor_{i}_{random.randint(1000, 9999)}" for i in range(150)]
-		
-		now = datetime.now()
-		records = []
-		
-		for i in range(800):
-			if i < 8:
-				creation = now - timedelta(seconds=random.randint(5, 120))
-			else:
-				days_ago = int(90 * (random.random() ** 1.8))
-				seconds_ago = random.randint(0, 86400)
-				creation = now - timedelta(days=days_ago, seconds=seconds_ago)
-			
-			visitor_id = random.choice(visitors)
-			route = random.choice(routes) if random.random() > 0.4 else "/"
-			ref_val = random.choice(referrers)
-			br = random.choice(browsers)
-			ua = random.choice(user_agents[br])
-			
-			source = ""
-			medium = ""
-			campaign = ""
-			if random.random() < 0.2:
-				source = random.choice(["newsletter", "google", "linkedin", "twitter"])
-				medium = random.choice(["email", "cpc", "social"])
-				campaign = random.choice(["summer_sale", "launch_v2", "reengagement"])
-				
-			name = frappe.generate_hash(length=10)
-			
-			records.append((
-				name, creation, creation, route, ref_val, br, "120.0" if br != "Safari" else "17.0",
-				0, "UTC", ua, source, campaign, medium, visitor_id
-			))
-			
-		records.sort(key=lambda r: r[1])
-		seen_visitors = set()
-		final_records = []
-		
-		for r in records:
-			visitor_id = r[13]
-			is_unique = 0
-			if visitor_id not in seen_visitors:
-				is_unique = 1
-				seen_visitors.add(visitor_id)
-			
-			r_list = list(r)
-			r_list[7] = is_unique
-			final_records.append(tuple(r_list))
-			
-		for row in final_records:
-			frappe.db.sql("""
-				INSERT INTO `tabWeb Page View` 
-				(name, creation, modified, path, referrer, browser, browser_version, is_unique, time_zone, user_agent, source, campaign, medium, visitor_id)
-				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-			""", row)
-			
-		frappe.db.commit()
-	except Exception as e:
-		frappe.log_error(frappe.get_traceback(), "CMS Analytics Seeding Error")
 
 @frappe.whitelist(allow_guest=False)
 def get_analytics_summary(period="30d", page_route="All"):
@@ -415,9 +307,6 @@ def get_analytics_summary(period="30d", page_route="All"):
 	try:
 		from datetime import datetime, timedelta
 
-		# Check and seed if database is empty
-		if frappe.db.count("Web Page View") == 0:
-			seed_web_page_views()
 
 		now = datetime.now()
 		

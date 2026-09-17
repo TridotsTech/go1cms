@@ -525,6 +525,9 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		"page_fonts": _page_fonts(page_builder_dt[0]) if page_builder_dt and not cint(is_builder) else None,
 		# The project's brand kit logos (THM-11), for images set to "Brand logo".
 		"brand_logos": _brand_logos(page_builder_dt[0].get("project") if page_builder_dt else None),
+		# Alt text and captions saved with the library images this page uses (MED-06),
+		# so an image with no alt text of its own can use the library's.
+		"media_meta": _media_meta(page_content, elements),
 		# A page whose design is locked keeps the theme it showed when it was
 		# locked (stylesheet, colours, typography); Home.vue shows this snapshot
 		# instead of the project's current theme. None for every other page.
@@ -705,7 +708,7 @@ def _fb2_find_repeater_settings(layout, node_id):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, is_builder=0):
+def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, is_builder=0, with_media=0):
 	layout = _fb2_load_page_layout(route, is_builder)
 	settings = _fb2_find_repeater_settings(layout, node_id)
 	if settings is None:
@@ -713,9 +716,17 @@ def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, 
 	if (settings.get("source") or "doctype") != "doctype":
 		frappe.throw("This repeater uses an external API and is fetched directly")
 	limit = int(page_length or 0) or int(settings.get("limit") or 5)
-	return _fb2_run_doctype_query(
+	rows = _fb2_run_doctype_query(
 		settings.get("doctype"), ["*"], settings.get("filters"),
 		settings.get("sortBy"), settings.get("sortOrder"), start, limit)
+	# WEB-02: a repeated card's picture comes from the record, not from the page
+	# layout, so the page's own media_meta never covered it — on a page built out
+	# of repeaters that was every image on screen, each one downloading at full
+	# size with no width or height to reserve its space. Asked for explicitly, so
+	# every other caller keeps getting a plain list.
+	if int(with_media or 0):
+		return {"rows": rows, "media_meta": _media_meta(rows)}
+	return rows
 
 
 @frappe.whitelist(allow_guest=False)
@@ -3330,6 +3341,18 @@ def _page_fonts(row):
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Page font delivery failed")
 		return None
+
+
+def _media_meta(*contents):
+	try:
+		from cms_frontend.media_meta import media_meta_for
+	except ImportError:
+		return {}
+	try:
+		return media_meta_for(*[json.dumps(c, default=str) for c in contents if c])
+	except Exception:
+		frappe.log_error(title="Image alt text lookup failed", message=frappe.get_traceback())
+		return {}
 
 
 def _brand_logos(project):

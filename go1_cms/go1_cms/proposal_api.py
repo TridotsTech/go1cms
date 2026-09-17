@@ -354,6 +354,14 @@ def insert_enquiry(name,email,phone,message,subject=None):
 			enquiry.subject=subject
 		enquiry.phone_number=phone
 		enquiry.save(ignore_permissions=True)
+		# FRM-01: tell someone it arrived. The alert lives in cms_frontend's Forms
+		# plugin; on a bench without that app the enquiry is stored as before.
+		try:
+			from cms_frontend.plugins.forms import notify_enquiry
+		except ImportError:
+			notify_enquiry = None
+		if notify_enquiry:
+			notify_enquiry({"full_name": name, "email_id": email, "phone_number": phone, "subject": subject, "message": message})
 
 		return enquiry
 		# return enquiry.__dict__
@@ -364,7 +372,8 @@ def insert_enquiry(name,email,phone,message,subject=None):
 		# report success on a submission that was never stored.
 		frappe.throw(_("Sorry, your enquiry could not be submitted. Please try again."))
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def insert_doc(doc):
 	try:
 		from six import string_types
@@ -374,26 +383,32 @@ def insert_doc(doc):
 			# inserting a child record
 			parent = frappe.get_doc(doc.get("parenttype"), doc.get("parent"))
 			parent.append(doc.get("parentfield"), doc)
-			parent.save(ignore_permissions=True)
+			parent.save()
 			return parent.as_dict()
 		else:
-			doc = frappe.get_doc(doc).insert(ignore_permissions=True)
+			doc = frappe.get_doc(doc).insert()
 			return doc.as_dict()
+	except frappe.PermissionError:
+		raise
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.insert_doc")
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def update_sections_doc_json(docs,ref_doc=None,ref_name=None):
 	try:
 		if docs:
 			update_doc = frappe.get_doc(ref_doc, ref_name)
 			update_doc.template_keys = docs
-			update_doc.save(ignore_permissions=True)
+			update_doc.save()
 			return {"message": "success"}
+	except frappe.PermissionError:
+		raise
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.bulk_update_doc")
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def bulk_update_doc(docs,ref_doc=None,ref_name=None):
 	try:
 		if docs:
@@ -402,12 +417,15 @@ def bulk_update_doc(docs,ref_doc=None,ref_name=None):
 			for doc in docs:
 				update_doc(doc)
 			if ref_doc and ref_name:
-				frappe.get_doc(ref_doc, ref_name).save(ignore_permissions=True)
+				frappe.get_doc(ref_doc, ref_name).save()
 			return {"message": "success"}
+	except frappe.PermissionError:
+		raise
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.bulk_update_doc")
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def update_doc(doc):
 	try:
 		from six import string_types
@@ -426,8 +444,10 @@ def update_doc(doc):
 					update_doc.append(key, row)
 			else:
 				setattr(update_doc, key, doc.get(key))
-		update_doc.save(ignore_permissions=True)
+		update_doc.save()
 		return update_doc.as_dict()
+	except frappe.PermissionError:
+		raise
 	except Exception as e:
 		return e
 
@@ -617,17 +637,19 @@ def get_template_folder(url, temp=0):
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.get_template_folder")
 		
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def save_as_template(template, section, custom_css=None):
 	if not custom_css:
 		custom_css = ""
 	doc = frappe.get_doc("Page Section", section)
 	doc.page_list = template
 	doc.custom_css = custom_css
-	doc.save(ignore_permissions=True)
+	doc.save()
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-04: signed-in callers only, and only rows they may read.
+@frappe.whitelist()
 def get_doc_list(doctype, fields=None, filters=None, order_by=None, limit_start=None, limit_page_length=10, parent=None):
 	'''Returns a list of records by filters, fields, ordering and limit
 
@@ -647,7 +669,7 @@ def get_doc_list(doctype, fields=None, filters=None, order_by=None, limit_start=
 		order_by = json.loads(order_by)
         
 	return frappe.get_list(doctype, fields=fields, filters=filters, order_by=order_by,
-		limit_start=limit_start, limit_page_length=limit_page_length, ignore_permissions=True)
+		limit_start=limit_start, limit_page_length=limit_page_length)
 
 @frappe.whitelist()
 def string_to_json(json_string):
@@ -692,31 +714,43 @@ def get_encryption_key():
 
 @frappe.whitelist(allow_guest=True)
 def update_proposal_status(proposal, status):
+	# SEC-03: the proposal page lets its customer accept or reject a proposal that
+	# is still open. That is the only change a visitor can make here.
+	if status not in ("Accepted", "Rejected"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	if not proposal or not frappe.db.exists("Proposal", proposal):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	if (frappe.db.get_value("Proposal", proposal, "status") or "Pending") != "Pending":
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
 	doc = frappe.get_doc("Proposal", proposal)
 	doc.status = status
 	doc.save(ignore_permissions=True)
-	return doc
+	return {"name": doc.name, "status": doc.status}
 
 @frappe.whitelist(allow_guest=True)
-def update_proposal_data(viewcount, name, customerip=None):
+def update_proposal_data(viewcount=None, name=None, customerip=None):
+	# SEC-03: counts one view of an existing proposal. The count comes from the
+	# database, not from the caller, and a malformed address is not stored.
+	import ipaddress
 
-	doc = frappe.get_doc("Proposal", name)
-	doc.viewcount = viewcount
-	doc.save(ignore_permissions=True)
-	frappe.log_error("customerip", customerip)
-	if customerip:
-		allow = frappe.db.get_value("Viewed Customer Detail", {"parent":name,"customer_ip":customerip})
-		
-		if not allow:
-			total = frappe.db.get_all("Viewed Customer Detail", filters={"parent":name}, fields=["name"])
-			items=frappe.new_doc("Viewed Customer Detail")
-			items.customer_ip=customerip
-			items.parenttype="Proposal"
-			items.parentfield="customer_ip"
-			items.parent=name
-			items.idx=len(total)+1
-			items.flags.ignore_mandatory = True
-			items.save(ignore_permissions=True)
-		
-	return doc
+	if not name or not frappe.db.exists("Proposal", name):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	count = None
+	if frappe.get_meta("Proposal").has_field("viewcount"):
+		count = frappe.utils.cint(frappe.db.get_value("Proposal", name, "viewcount")) + 1
+		frappe.db.set_value("Proposal", name, "viewcount", count, update_modified=False)
+	try:
+		customerip = str(ipaddress.ip_address(str(customerip or "").strip()))
+	except ValueError:
+		customerip = None
+	if customerip and not frappe.db.get_value("Viewed Customer Detail", {"parent": name, "customer_ip": customerip}):
+		items = frappe.new_doc("Viewed Customer Detail")
+		items.customer_ip = customerip
+		items.parenttype = "Proposal"
+		items.parentfield = "customer_ip"
+		items.parent = name
+		items.idx = frappe.db.count("Viewed Customer Detail", {"parent": name}) + 1
+		items.flags.ignore_mandatory = True
+		items.save(ignore_permissions=True)
+	return {"name": name, "viewcount": count}
 

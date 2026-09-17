@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 import json
 import os
 import urllib.parse
@@ -1818,7 +1819,7 @@ def upload_img():
 			}).insert(ignore_permissions=True)
 		return ret
 
-@frappe.whitelist(allow_guest=True)
+# SEC-04: internal helper, not a public address (it builds SQL from its arguments).
 def get_random_images(dt, dn, business=None, ref_doc=None, image_option=None, image_docs=None):
 	if not business:
 		business = get_business_from_login()
@@ -2689,7 +2690,7 @@ def get_today_date(time_zone=None, replace=False):
 # 	except Exception:
 # 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.ecommerce_business_store.api.get_parent_categorie')
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: internal helper, not a public address.
 def get_uploaded_file_content(filedata):
 	try:
 
@@ -2722,7 +2723,8 @@ def get_linked_docs(doctype, txt, searchfield, start, page_len, filters):
 def get_linked_fields(document):
 	linked_docs = frappe.db.sql(""" SELECT options,fieldname FROM `tabDocField` WHERE parent=%(dt)s AND fieldtype='Link' """,{"dt":document},as_dict=1)
 	return linked_docs
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def update_doc(doc):
 	try:
 		from six import string_types
@@ -2741,8 +2743,10 @@ def update_doc(doc):
 			# update_doc.modified = get_today_date(replace=True)
 			# if frappe.session.user != 'Guest':
 			# 	update_doc.modified_by = frappe.session.user
-			update_doc.save(ignore_permissions=True)
+			update_doc.save()
 			return update_doc.as_dict()
+	except frappe.PermissionError:
+		raise
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.mobileapi.update_doc")
 

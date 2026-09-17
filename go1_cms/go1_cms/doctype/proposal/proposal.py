@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 import json
 import os
 import urllib.parse
@@ -1274,7 +1275,7 @@ def upload_img():
 			}).insert(ignore_permissions=True)
 		return ret
 
-@frappe.whitelist(allow_guest=True)
+# SEC-04: internal helper, not a public address (it builds SQL from its arguments).
 def get_random_images(dt, dn, business=None, ref_doc=None, image_option=None, image_docs=None):
 	if not business:
 		business = get_business_from_login()
@@ -1774,7 +1775,7 @@ def get_today_date(time_zone=None, replace=False):
 		return currentdatezone
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-03: internal helper, not a public address.
 def get_uploaded_file_content(filedata):
 	try:
 
@@ -1803,7 +1804,8 @@ def get_linked_docs(doctype, txt, searchfield, start, page_len, filters):
 	dt = filters.get("document")
 	linked_docs = frappe.db.sql(""" SELECT options FROM `tabDocField` WHERE parent=%(dt)s AND fieldtype='Link' """,{"dt":dt})
 	return linked_docs
-@frappe.whitelist(allow_guest=True)
+# SEC-03: signed-in callers only; the record's own permissions decide.
+@frappe.whitelist()
 def update_doc(doc):
 	try:
 		from six import string_types
@@ -1822,8 +1824,10 @@ def update_doc(doc):
 			# update_doc.modified = get_today_date(replace=True)
 			# if frappe.session.user != 'Guest':
 			# 	update_doc.modified_by = frappe.session.user
-			update_doc.save(ignore_permissions=True)
+			update_doc.save()
 			return update_doc.as_dict()
+	except frappe.PermissionError:
+		raise
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.mobileapi.update_doc")
 
@@ -1837,6 +1841,10 @@ def get_global_fonts(parent):
 
 @frappe.whitelist(allow_guest=True)
 def generate_pdf(page, name):
+	# SEC-04: a visitor may download only the quotation of the proposal they opened,
+	# never any quotation by name.
+	if not page or not name or frappe.db.get_value("Proposal", page, "quotation") != name:
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
 	from go1_cms.go1_cms.doctype.page_section.page_section import get_section_data
 	from frappe.utils.pdf import get_pdf
 	options = {}
@@ -2146,7 +2154,7 @@ def add_attachment(fname, fcontent, content_type=None, parent=None, content_id=N
 
 # by gopi on 20/10/22
 
-@frappe.whitelist(allow_guest=True)
+# SEC-04: called by Proposal itself when it emails; not a public address.
 def generate_email_pdf(doc_details):
 	try:
 		page = doc_details.name

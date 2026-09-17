@@ -87,8 +87,8 @@
    "options": "Web Theme"
   },
   {
-   "default": "0",
-   "description": "Published pages of this project are rendered to HTML on the server (sections, menus, first page of every list), so visitors see the finished page at first paint and the app takes over without a loader.",
+   "default": "1",
+   "description": "Published pages of this project are rendered to HTML on the server (sections, menus, first page of every list), so visitors see the finished page at first paint and the app takes over without a loader. On unless you switch it off.",
    "fieldname": "server_render",
    "fieldtype": "Check",
    "label": "Server-render published pages"
