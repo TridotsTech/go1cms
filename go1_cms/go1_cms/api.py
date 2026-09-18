@@ -1258,6 +1258,24 @@ def _free_copy_route(source_route, title):
 	frappe.throw(_("Too many copies of \"{0}\" already exist.").format(base))
 
 
+def _relabel_layout(raw, title, route):
+	"""A builder layout payload with its embedded pageTitle/route set to the
+	page it now belongs to. Anything unreadable is handed back untouched."""
+	if not raw:
+		return raw
+	try:
+		data = json.loads(raw) if isinstance(raw, str) else raw
+	except Exception:
+		return raw
+	if not isinstance(data, dict):
+		return raw
+	if "pageTitle" in data:
+		data["pageTitle"] = title
+	if "route" in data:
+		data["route"] = route
+	return json.dumps(data)
+
+
 @frappe.whitelist(allow_guest=False)
 def duplicate_page(source_page_id, target_title=None, target_route=None):
 	"""Copy a page, and say what the copy is actually called.
@@ -1289,7 +1307,18 @@ def duplicate_page(source_page_id, target_title=None, target_route=None):
 	new_doc.route = route
 	new_doc.published = 0
 	new_doc.layout_json = None
+	# The builder's layout payload repeats the page's title and route, and the
+	# builder reads them back on load. Left as the source's, the copy opened
+	# believing it lived at the source's address, and every save of it was then
+	# refused as a duplicate route — a copy nobody could edit.
+	new_doc.draft_layout_json = _relabel_layout(
+		source_doc.draft_layout_json or source_doc.layout_json, title, route)
 	new_doc.save(ignore_permissions=True)
+	if new_doc.draft_layout_json and new_doc.route != route:
+		# validate() may re-prefix the route with the project slug.
+		new_doc.db_set("draft_layout_json",
+		               _relabel_layout(new_doc.draft_layout_json, title, new_doc.route),
+		               update_modified=False)
 	frappe.db.commit()
 
 	return {
