@@ -110,7 +110,19 @@ doc_events = {
 		"on_update": "go1_cms.go1_cms.api.update_web_themes",
 	},
 	"Web Page Builder": {
-		"on_update": "go1_cms.go1_cms.api.update_web_themes",
+		"on_update": [
+			"go1_cms.go1_cms.api.update_web_themes",
+			# MNU-02: menu links follow a page whose address changes.
+			"go1_cms.go1_cms.menu_api.follow_page_route_change",
+			# MNU-03: menus that list pages automatically go stale.
+			"go1_cms.go1_cms.menu_api.clear_auto_menus",
+		],
+		"on_trash": "go1_cms.go1_cms.menu_api.clear_auto_menus",
+		"after_rename": "go1_cms.go1_cms.menu_api.clear_auto_menus",
+	},
+	"Blog Post": {
+		"on_update": "go1_cms.go1_cms.menu_api.clear_auto_menus",
+		"on_trash": "go1_cms.go1_cms.menu_api.clear_auto_menus",
 	},
 	"Color Palette": {
 		"on_update": "go1_cms.go1_cms.api.update_web_themes",

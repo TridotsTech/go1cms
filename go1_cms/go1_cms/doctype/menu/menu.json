@@ -1,13 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:title",
  "creation": "2022-08-09 13:07:03.834511",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "project",
   "is_static_menu",
   "menus"
  ],
@@ -18,7 +18,17 @@
    "in_list_view": 1,
    "label": "Title",
    "reqd": 1,
-   "unique": 1
+   "description": "Unique within its project. Renaming changes only this label; builder pages keep working because they bind the menu's ID."
+  },
+  {
+   "description": "The project this menu belongs to. Empty = shared: offered to every project.",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "CMS Project",
+   "search_index": 1
   },
   {
    "default": "1",
@@ -36,7 +46,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-25 13:50:09.646957",
+ "modified": "2026-09-23 12:30:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menu",
@@ -58,5 +68,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1
+ "track_changes": 1,
+ "naming_rule": "By script"
 }

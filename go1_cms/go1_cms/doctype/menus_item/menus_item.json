@@ -18,9 +18,13 @@
   "icon",
   "is_visible",
   "badge",
+  "description",
   "css_class",
   "active_paths",
   "hide_on",
+  "auto_source",
+  "auto_path",
+  "auto_limit",
   "item_key",
   "parent_key"
  ],
@@ -96,6 +100,12 @@
    "length": 24
   },
   {
+   "description": "One short line shown under the label when the nav's submenu layout is \"Icon + title + description\".",
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
    "description": "Extra class on this item's rendered link, for site-specific CSS.",
    "fieldname": "css_class",
    "fieldtype": "Data",
@@ -114,6 +124,28 @@
    "fieldtype": "Data",
    "label": "Hide On",
    "length": 60
+  },
+  {
+   "description": "Fill this item's sub-items automatically when the menu is shown: the project's pages, pages under an address, or the latest blog posts. Sub-items you add by hand are not used.",
+   "fieldname": "auto_source",
+   "fieldtype": "Select",
+   "label": "Fill Automatically",
+   "options": "\nproject_pages\npath\nblog_posts"
+  },
+  {
+   "depends_on": "eval:doc.auto_source=='path'",
+   "description": "Pages whose address starts with this, e.g. /services",
+   "fieldname": "auto_path",
+   "fieldtype": "Data",
+   "label": "Under Address",
+   "length": 200
+  },
+  {
+   "depends_on": "eval:doc.auto_source",
+   "description": "How many sub-items at most (1-20, default 8).",
+   "fieldname": "auto_limit",
+   "fieldtype": "Int",
+   "label": "Show At Most"
   },
   {
    "description": "Stable identity for this row, assigned automatically. Hierarchy is stored against this, not the label.",
@@ -137,7 +169,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-25 15:26:35.455337",
+ "modified": "2026-09-23 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Menus Item",
