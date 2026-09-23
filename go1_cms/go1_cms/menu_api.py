@@ -39,6 +39,7 @@ MENU_ITEM_READ_FIELDS = [
 	"link_target",
 	"position",
 	"icon",
+	"icon_svg",
 	"is_mega_menu",
 	"no_of_column",
 	"mega_m_col_index",
@@ -122,6 +123,52 @@ def _legacy_node(node, depth):
 	return out
 
 
+ICON_SVG_MAX = 20000
+
+
+def _clean_icon_svg(svg):
+	"""A picked icon's SVG, sanitised like ssr.py does for page icons; None if unusable."""
+	if isinstance(svg, str):
+		try:
+			svg = json.loads(svg)
+		except Exception:
+			return None
+	if not isinstance(svg, dict) or not svg.get("body"):
+		return None
+	try:
+		from cms_frontend.ssr import _safe_svg_body
+	except Exception:
+		return None  # no sanitiser, no markup — never store it raw
+	body = _safe_svg_body(svg.get("body"))
+	if not body or len(body) > ICON_SVG_MAX:
+		return None
+
+	def num(v, d):
+		try:
+			return float(v)
+		except (TypeError, ValueError):
+			return d
+
+	return {
+		"lib": str(svg.get("lib") or "")[:40],
+		"name": str(svg.get("name") or "")[:80],
+		"body": body,
+		"width": num(svg.get("width"), 24),
+		"height": num(svg.get("height"), 24),
+		"left": num(svg.get("left"), 0),
+		"top": num(svg.get("top"), 0),
+	}
+
+
+def _icon_svg_of(row):
+	raw = row.get("icon_svg")
+	if not raw:
+		return None
+	svg = _clean_icon_svg(raw)
+	# Only while it still describes the item's icon (same rule as FB2 nodes).
+	return svg if svg and svg["name"] == (row.get("icon") or "") else None
+
+
 def _auto_of(row):
 	source = (row.get("auto_source") or "").strip()
 	if source not in AUTO_SOURCES:
@@ -202,7 +249,7 @@ def _expand_auto(nodes, project, max_depth):
 			node["children"] = [
 				{
 					"id": "", "row": "", "label": it["label"], "url": it["url"], "target": "",
-					"icon": "", "position": "", "is_mega_menu": 0, "no_of_column": 0, "mega_col": 0,
+					"icon": "", "iconSvg": None, "position": "", "is_mega_menu": 0, "no_of_column": 0, "mega_col": 0,
 					"visible": 1, "badge": "", "description": "", "cssClass": "", "activePaths": [],
 					"hideOn": list(node.get("hideOn") or []), "auto": None,
 					"depth": node["depth"] + 1, "children": [], "generated": 1,
@@ -287,6 +334,7 @@ def build_menu_tree(
 			"url": row.get("redirect_url") or "",
 			"target": row.get("link_target") or "",
 			"icon": row.get("icon") or "",
+			"iconSvg": _icon_svg_of(row),
 			"position": row.get("position") or "",
 			"is_mega_menu": int(row.get("is_mega_menu") or 0),
 			"no_of_column": int(row.get("no_of_column") or 0),
@@ -1009,6 +1057,14 @@ def _keep_if_absent(node, key, existing_row, fieldname, computed):
 	return existing_row.get(fieldname) or computed
 
 
+def _icon_svg_field(node, existing_row):
+	"""JSON for Menus Item.icon_svg. A client that never sent `iconSvg` keeps what is stored."""
+	if "iconSvg" not in node:
+		return (existing_row.get("icon_svg") if existing_row is not None else "") or ""
+	svg = _clean_icon_svg(node.get("iconSvg"))
+	return json.dumps(svg) if svg else ""
+
+
 def _auto_fields(node, existing_row, depth):
 	"""An absent `auto` key (a client from before MNU-03) keeps the stored rule."""
 	if "auto" not in node and existing_row is not None:
@@ -1045,7 +1101,8 @@ def _flatten(tree, rows, known_rows, parent_label="", parent_key="", depth=0):
 			"item_key": item_key,
 			"redirect_url": _clean_url(node.get("url")) or "",
 			"link_target": node.get("target") or "",
-			"icon": node.get("icon") or "",
+			"icon": (node.get("icon") or "").strip()[:140],
+			"icon_svg": _icon_svg_field(node, known_rows.get(node.get("row"))),
 			"position": (node.get("position") or "Left") if depth == 0 else "",
 			"is_mega_menu": is_mega,
 			"no_of_column": frappe.utils.cint(node.get("no_of_column")) if is_mega else 0,
