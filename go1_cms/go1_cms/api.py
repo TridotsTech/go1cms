@@ -636,7 +636,78 @@ def _fb2_order_by(sort_field, sort_order):
 	return f"`{sort_field}` {order}"
 
 
-def _fb2_run_doctype_query(doctype, fields, filters, sort_field, sort_order, start, page_length):
+FB2_FILTER_OPERATORS = {"=", "!=", ">", "<", ">=", "<=", "like", "not like", "in", "not in", "is"}
+
+
+def _fb2_sanitize_filters(filters):
+	"""Page-stored repeater filters, kept to plain [field, operator, value] rows
+	(or a {field: value} dict) on real column names with a known operator.
+	Anything else is dropped rather than passed to the query."""
+	if not filters:
+		return {}
+	if isinstance(filters, str):
+		try:
+			filters = json.loads(filters)
+		except ValueError:
+			return {}
+	name_ok = lambda f: isinstance(f, str) and re.match(r"^[a-zA-Z0-9_]+$", f)
+	if isinstance(filters, dict):
+		return {k: v for k, v in filters.items() if name_ok(k) and not isinstance(v, (dict, list))}
+	out = []
+	for row in filters if isinstance(filters, list) else []:
+		if not isinstance(row, (list, tuple)) or len(row) not in (3, 4):
+			continue
+		field, op, value = row[-3], str(row[-2]).lower(), row[-1]
+		if not name_ok(field) or op not in FB2_FILTER_OPERATORS:
+			continue
+		if op in ("in", "not in"):
+			value = value if isinstance(value, list) else [v.strip() for v in str(value).split(",") if v.strip()]
+		elif op == "is":
+			value = "set" if str(value).lower() == "set" else "not set"
+		elif isinstance(value, (dict, list)):
+			continue
+		out.append([field, op, value])
+	return out
+
+
+def _fb2_search_filters(doctype, search_fields, term):
+	"""A search box's or-filters: `term` in any of the page's own text columns.
+	Only real text-ish columns of the DocType count; the term is a value, never SQL."""
+	term = str(term or "").strip()[:80]
+	if not term or not isinstance(search_fields, list):
+		return None
+	meta = frappe.get_meta(doctype)
+	textual = {"Data", "Small Text", "Text", "Long Text", "Text Editor", "Link", "Select", "Dynamic Link", "Read Only"}
+	cols = []
+	for f in search_fields[:8]:
+		if not isinstance(f, str) or not re.match(r"^[a-zA-Z0-9_]+$", f):
+			continue
+		if f == "name" or (meta.get_field(f) and meta.get_field(f).fieldtype in textual):
+			cols.append(f)
+	if not cols:
+		return None
+	like = "%" + term.replace("%", "").replace("_", "\\_") + "%"
+	return [[c, "like", like] for c in cols]
+
+
+def _fb2_with_url_filter(settings, value):
+	"""The repeater's own filters plus a Filter element's choice: `filterField`
+	(from the saved page) equal to `value` (from the URL), or in it when the
+	value lists several. Nothing is added unless the page names both a field and
+	a param."""
+	filters = _fb2_sanitize_filters(settings.get("filters"))
+	if isinstance(filters, dict):
+		filters = [[k, "=", v] for k, v in filters.items()]
+	field = str(settings.get("filterField") or "").strip()
+	value = str(value or "").strip()[:140]
+	if not value or not settings.get("filterParam") or not re.match(r"^[a-zA-Z0-9_]+$", field):
+		return filters
+	if "," in value:
+		return filters + [[field, "in", [v.strip() for v in value.split(",") if v.strip()]]]
+	return filters + [[field, "=", value]]
+
+
+def _fb2_run_doctype_query(doctype, fields, filters, sort_field, sort_order, start, page_length, or_filters=None):
 	if not doctype or doctype in FB2_BLOCKED_DOCTYPES or not frappe.db.exists("DocType", doctype):
 		frappe.throw("This data source is not available", frappe.PermissionError)
 	if frappe.get_meta(doctype).issingle:
@@ -645,16 +716,30 @@ def _fb2_run_doctype_query(doctype, fields, filters, sort_field, sort_order, sta
 	page_length = int(page_length or 0) or 20
 	page_length = min(max(page_length, 1), 100)
 	safe_fields = _fb2_sanitize_fields(fields)
-	if safe_fields == ["*"] and doctype in FB2_DOCTYPE_SAFE_FIELDS:
-		safe_fields = FB2_DOCTYPE_SAFE_FIELDS[doctype]
+	if doctype in FB2_DOCTYPE_SAFE_FIELDS:
+		allowed = FB2_DOCTYPE_SAFE_FIELDS[doctype]
+		safe_fields = allowed if safe_fields == ["*"] else ([f for f in safe_fields if f in allowed] or ["name"])
+	elif safe_fields != ["*"]:
+		# Only real columns: a stale column name would otherwise fail the whole query.
+		meta = frappe.get_meta(doctype)
+		standard = {"name", "creation", "modified", "owner", "modified_by", "idx", "docstatus"}
+		safe_fields = [f for f in safe_fields if f in standard or (meta.get_field(f) and meta.get_field(f).fieldtype != "Password")] or ["name"]
 	return frappe.get_all(
 		doctype,
 		fields=safe_fields,
-		filters=filters or {},
+		filters=_fb2_sanitize_filters(filters),
+		or_filters=or_filters or None,
 		order_by=_fb2_order_by(sort_field, sort_order),
 		limit_start=start,
 		limit_page_length=page_length,
 	)
+
+
+def _fb2_repeater_fields(settings):
+	fields = settings.get("fields")
+	if isinstance(fields, list) and fields:
+		return list(dict.fromkeys(["name"] + [f for f in fields if isinstance(f, str)]))
+	return ["*"]
 
 
 @frappe.whitelist(allow_guest=True)
@@ -708,7 +793,7 @@ def _fb2_find_repeater_settings(layout, node_id):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, is_builder=0, with_media=0):
+def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, is_builder=0, with_media=0, search=None, filter_value=None):
 	layout = _fb2_load_page_layout(route, is_builder)
 	settings = _fb2_find_repeater_settings(layout, node_id)
 	if settings is None:
@@ -716,9 +801,13 @@ def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, 
 	if (settings.get("source") or "doctype") != "doctype":
 		frappe.throw("This repeater uses an external API and is fetched directly")
 	limit = int(page_length or 0) or int(settings.get("limit") or 5)
+	# A connected data element stores the columns it shows; only those (and the
+	# record name) leave the server. Older repeaters bind freely and keep '*'.
 	rows = _fb2_run_doctype_query(
-		settings.get("doctype"), ["*"], settings.get("filters"),
-		settings.get("sortBy"), settings.get("sortOrder"), start, limit)
+		settings.get("doctype"), _fb2_repeater_fields(settings),
+		_fb2_with_url_filter(settings, filter_value),
+		settings.get("sortBy"), settings.get("sortOrder"), start, limit,
+		or_filters=_fb2_search_filters(settings.get("doctype"), settings.get("searchFields"), search) if search else None)
 	# WEB-02: a repeated card's picture comes from the record, not from the page
 	# layout, so the page's own media_meta never covered it — on a page built out
 	# of repeaters that was every image on screen, each one downloading at full
