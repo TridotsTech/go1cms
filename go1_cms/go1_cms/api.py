@@ -435,7 +435,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# site theme, which is what every page read before per-project themes.
 		_page_theme = theme_name_for(frappe.db.get_value('Web Page Builder', check_builder[0].name, 'project'))
 		theme_settings = frappe.db.get_all("Web Theme",filters={"name": _page_theme},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width']) if _page_theme else []
-		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['name','modified','text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design','project','lock_design','frozen_theme'])
+		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['name','modified','text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','custom_js','owns_design','project','lock_design','frozen_theme'])
 		if page_builder_dt:
 			if page_builder_dt[0].footer_component:
 				footer_content = get_footer_info(page_builder_dt[0].footer_component)
@@ -548,6 +548,10 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 		# the first time one of its pages is shown — see cms_frontend/global_js.py.
 		"project": (page_builder_dt[0].get("project") if page_builder_dt else "") or "",
 		"global_js": _project_global_js(page_builder_dt[0].get("project")) if page_builder_dt else "",
+		# The page's own script (Web Page Builder.custom_js). Home.vue runs it after
+		# the sections render, every time this page is shown — the per-page
+		# counterpart of the project's global_js above.
+		"custom_js": (page_builder_dt[0].get("custom_js") if page_builder_dt else "") or "",
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,
