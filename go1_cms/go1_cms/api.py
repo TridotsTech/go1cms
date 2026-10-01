@@ -247,9 +247,14 @@ def find_web_page_builder_by_route(route_str):
 	
 	if r == "demo" or r == "":
 		possible_routes.extend(["/", "", "demo", "p/demo", "/p/demo"])
-		
+
+	# A request on a website's own domain (control-panel agent: one site, several websites)
+	# only ever sees that website's pages; any other project's page is "not found" there.
+	only_project = getattr(frappe.local, "cpanel_project", None)
+	filters = {'project': only_project} if only_project else {}
+
 	for pr in possible_routes:
-		res = frappe.db.get_all('Web Page Builder', filters={'route': pr}, fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'])
+		res = frappe.db.get_all('Web Page Builder', filters={'route': pr, **filters}, fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project'])
 		if res:
 			return res
 
@@ -264,8 +269,8 @@ def find_web_page_builder_by_route(route_str):
 		for pr in (parent, "/" + parent, "p/" + parent, "/p/" + parent):
 			res = frappe.db.get_all(
 				'Web Page Builder',
-				filters={'route': pr},
-				fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'],
+				filters={'route': pr, **filters},
+				fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project'],
 			)
 			if res:
 				return res
