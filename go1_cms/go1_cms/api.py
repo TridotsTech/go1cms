@@ -249,9 +249,14 @@ def find_web_page_builder_by_route(route_str):
 	
 	if r == "demo" or r == "":
 		possible_routes.extend(["/", "", "demo", "p/demo", "/p/demo"])
-		
+
+	# A request on a website's own domain (control-panel agent: one site, several websites)
+	# only ever sees that website's pages; any other project's page is "not found" there.
+	only_project = getattr(frappe.local, "cpanel_project", None)
+	filters = {'project': only_project} if only_project else {}
+
 	for pr in possible_routes:
-		res = frappe.db.get_all('Web Page Builder', filters={'route': pr}, fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'])
+		res = frappe.db.get_all('Web Page Builder', filters={'route': pr, **filters}, fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project'])
 		if res:
 			return res
 
@@ -269,8 +274,8 @@ def find_web_page_builder_by_route(route_str):
 		for pr in (parent + "/*", "/" + parent + "/*", parent, "/" + parent, "p/" + parent, "/p/" + parent):
 			res = frappe.db.get_all(
 				'Web Page Builder',
-				filters={'route': pr},
-				fields=['name', 'page_type', 'w_page_type', 'route', 'page_title'],
+				filters={'route': pr, **filters},
+				fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project'],
 			)
 			if res:
 				return res
@@ -513,7 +518,7 @@ def _page_content(route=None, user=None, customer=None, domain=None, business=No
 		# site theme, which is what every page read before per-project themes.
 		_page_theme = theme_name_for(frappe.db.get_value('Web Page Builder', check_builder[0].name, 'project'))
 		theme_settings = frappe.db.get_all("Web Theme",filters={"name": _page_theme},fields=['default_header','default_footer','enable_page_title','page_title_bg','page_title_tag','title_text_align','page_title_overlay','page_title_color','container_max_width']) if _page_theme else []
-		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['name','modified','text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','owns_design','project','lock_design','frozen_theme'])
+		page_builder_dt = frappe.db.get_all('Web Page Builder', filters={'name': check_builder[0].name}, fields=['name','modified','text_color','is_transparent_sub_header','sub_header_title','sub_header_bg_color','sub_header_bg_img','footer_component', 'header_component','enable_sub_header','edit_header_style','is_transparent_header','custom_css','custom_js','owns_design','project','lock_design','frozen_theme'])
 		if page_builder_dt:
 			if page_builder_dt[0].footer_component:
 				footer_content = get_footer_info(page_builder_dt[0].footer_component)
@@ -626,6 +631,10 @@ def _page_content(route=None, user=None, customer=None, domain=None, business=No
 		# the first time one of its pages is shown — see cms_frontend/global_js.py.
 		"project": (page_builder_dt[0].get("project") if page_builder_dt else "") or "",
 		"global_js": _project_global_js(page_builder_dt[0].get("project")) if page_builder_dt else "",
+		# The page's own script (Web Page Builder.custom_js). Home.vue runs it after
+		# the sections render, every time this page is shown — the per-page
+		# counterpart of the project's global_js above.
+		"custom_js": (page_builder_dt[0].get("custom_js") if page_builder_dt else "") or "",
 		"builder_type": "Web Page Builder",
 		"elements": elements,
 		"resources": page_resources,
