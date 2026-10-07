@@ -5,6 +5,7 @@ from __future__ import unicode_literals,print_function
 
 import json
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 import frappe.client
 from frappe.utils.response import build_response
 from frappe import _
@@ -160,7 +161,7 @@ def groupby_condition(groupby_fields):
         groupby_con += groupby_list
         return groupby_con
 
-@frappe.whitelist(allow_guest = True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def update_context(context):
 	#web settings
 	web_settings=frappe.get_single('Website Settings')
@@ -590,7 +591,7 @@ def unescape(s):
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "api.unescape")
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_template_details(template):
 	try:
 		if template:
@@ -619,7 +620,7 @@ def get_site_template_folder(url):
 		temp_path = os.path.join(url,'templates/pages')
 	return temp_path
 
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_template_folder(url, temp=0):
 	try:
 		import frappe, os, re, json
@@ -640,6 +641,7 @@ def get_template_folder(url, temp=0):
 # SEC-03: signed-in callers only; the record's own permissions decide.
 @frappe.whitelist()
 def save_as_template(template, section, custom_css=None):
+	require_editor()
 	if not custom_css:
 		custom_css = ""
 	doc = frappe.get_doc("Page Section", section)
@@ -649,7 +651,7 @@ def save_as_template(template, section, custom_css=None):
 
 
 # SEC-04: signed-in callers only, and only rows they may read.
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_doc_list(doctype, fields=None, filters=None, order_by=None, limit_start=None, limit_page_length=10, parent=None):
 	'''Returns a list of records by filters, fields, ordering and limit
 
@@ -682,7 +684,7 @@ def generate_token():
 	key = random_string(32)
 	return key
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def encrypt(url):
 	# if len(url) > 100:
 		# encrypting > 100 chars will lead to truncation
@@ -692,7 +694,7 @@ def encrypt(url):
 	cipher_text = cstr(cipher_suite.encrypt(encode(url)))
 	return cipher_text
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def decrypt(url):
 	try:
 		cipher_suite = Fernet(encode(get_encryption_key()))

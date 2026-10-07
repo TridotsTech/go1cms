@@ -2,13 +2,19 @@
  "actions": [],
  "allow_guest_to_view": 1,
  "allow_rename": 1,
- "autoname": "field:page_title",
+ "autoname": "",
  "creation": "2022-08-09 19:27:35.885794",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "project",
+  "page_folder",
+  "parent_page",
+  "password_protected",
+  "page_password",
+  "protect_children",
+  "cms_tags",
   "business",
   "page_title",
   "page_type",
@@ -118,7 +124,10 @@
   "prev_custom_css",
   "owns_design",
   "lock_design",
-  "frozen_theme"
+  "frozen_theme",
+  "portal_access_section",
+  "portal_access",
+  "portal_access_roles"
  ],
  "fields": [
   {
@@ -129,12 +138,50 @@
    "options": "CMS Project"
   },
   {
+   "fieldname": "page_folder",
+   "fieldtype": "Data",
+   "label": "Page Folder",
+   "description": "Folder this page is filed under in the builder's Pages tab (BLD-23). Shared by everyone.",
+   "in_standard_filter": 0
+  },
+  {
+   "fieldname": "parent_page",
+   "fieldtype": "Link",
+   "options": "Web Page Builder",
+   "label": "Parent Page",
+   "description": "PAG-12: this page sits under another one; its address nests under the parent's."
+  },
+  {
+   "fieldname": "password_protected",
+   "fieldtype": "Check",
+   "label": "Password Protected",
+   "description": "PAG-10: visitors must enter the password to see this page."
+  },
+  {
+   "fieldname": "page_password",
+   "fieldtype": "Password",
+   "label": "Page Password",
+   "depends_on": "password_protected"
+  },
+  {
+   "fieldname": "protect_children",
+   "fieldtype": "Check",
+   "label": "Protect Child Pages Too",
+   "depends_on": "password_protected"
+  },
+  {
+   "fieldname": "cms_tags",
+   "fieldtype": "Small Text",
+   "label": "Tags",
+   "description": "TAX-03: comma-separated"
+  },
+  {
    "fieldname": "page_title",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Page Title",
    "reqd": 1,
-   "unique": 1
+   "description": "PAG-09: unique per website (checked in validate), not site-wide."
   },
   {
    "default": "Responsive",
@@ -771,13 +818,32 @@
    "fieldname": "sticky_header_text_hover_color",
    "fieldtype": "Color",
    "label": "Sticky Header Text Hover Color"
+  },
+  {
+   "fieldname": "portal_access_section",
+   "fieldtype": "Section Break",
+   "label": "Who can see this page",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "portal_access",
+   "fieldtype": "Select",
+   "label": "Visible to",
+   "options": "Everyone\nSigned-in members\nChosen roles",
+   "default": "Everyone"
+  },
+  {
+   "fieldname": "portal_access_roles",
+   "fieldtype": "Small Text",
+   "label": "Roles",
+   "depends_on": "eval:doc.portal_access=='Chosen roles'"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2026-09-11 15:00:00.000000",
+ "modified": "2026-10-01 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",
@@ -800,5 +866,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 1
+ "track_changes": 1,
+ "naming_rule": "By script"
 }

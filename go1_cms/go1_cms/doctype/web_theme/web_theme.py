@@ -1,6 +1,7 @@
 # Copyright (c) 2022, Tridotstech and contributors
 # For license information, please see license.txt
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 import json
 import os
 import re
@@ -386,8 +387,7 @@ def get_color_palette_datas():
 @frappe.whitelist()
 def get_color_palette_default_datas(palette_id):
 	try:
-		query_1 = ''' SELECT dc.type,dc.css_design,dc.style_json FROM `tabColor Palette` cp INNER JOIN `tabTypography Default Color` dc ON dc.parent=cp.name WHERE cp.name="%s"'''%palette_id
-		return frappe.db.sql(query_1,as_dict=1)
+		return frappe.db.sql(''' SELECT dc.type,dc.css_design,dc.style_json FROM `tabColor Palette` cp INNER JOIN `tabTypography Default Color` dc ON dc.parent=cp.name WHERE cp.name=%s''', (palette_id,), as_dict=1)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_theme.web_theme.get_color_palette_default_datas")
 # end
@@ -481,6 +481,7 @@ def ensure_project_theme(project):
 	The copy is identical, so a project's pages look exactly the same the moment
 	after it is made; only later edits make it differ.
 	"""
+	require_project(project)
 	project = (project or "").strip()
 	if not project or not frappe.db.exists("CMS Project", project):
 		frappe.throw("Pick a project first.")
@@ -609,6 +610,7 @@ def theme_studio_enabled_for(project=None):
 @frappe.whitelist()
 def save_color_palette(name, name1, primary_color, secondary_color, accent_color,
                        heading_text_color, body_text_color, dark_color, light_color):
+	require_system_manager()
 	try:
 		if name:
 			doc = frappe.get_doc("Color Palette", name)
@@ -654,6 +656,7 @@ def get_all_color_palettes():
 
 @frappe.whitelist()
 def delete_color_palette(name):
+	require_system_manager()
 	try:
 		is_active = frappe.db.get_value("Color Palette", name, "is_active")
 		if is_active == 1:
@@ -667,6 +670,7 @@ def delete_color_palette(name):
 
 @frappe.whitelist()
 def set_active_palette(name):
+	require_system_manager()
 	try:
 		frappe.db.sql("UPDATE `tabColor Palette` SET is_active=0 WHERE name != %s", name)
 		frappe.db.set_value("Color Palette", name, "is_active", 1)
@@ -710,6 +714,7 @@ def get_css_fonts_list():
 
 @frappe.whitelist()
 def save_typography_row(theme, row_name, parent_field, style_json, css_design):
+	require_system_manager()
 	try:
 		if parent_field not in ("heading", "text"):
 			return {"status": "error", "message": "Invalid parent_field"}

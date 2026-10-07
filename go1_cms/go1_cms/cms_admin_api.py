@@ -5,6 +5,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 import json
 from frappe.utils import cstr
 
@@ -21,6 +22,7 @@ def get_admin_section_info(section_id, page_builder_id):
 	Returns:
 		dict with section info, content, properties
 	"""
+	require_page(page_builder_id)
 	try:
 		# Check user permissions
 		user = frappe.session.user
@@ -132,6 +134,7 @@ def update_admin_section_content(section_id, page_builder_id, content_updates, c
 	Returns:
 		dict with update status
 	"""
+	require_page(page_builder_id)
 	try:
 		# Check user permissions
 		user = frappe.session.user
@@ -258,7 +261,7 @@ def upload_section_asset(file_content, section_id, field_name):
 		}
 
 
-@frappe.whitelist(allow_guest=False)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_section_history(section_id, limit=10):
 	"""
 	Get update history for a section
@@ -669,6 +672,7 @@ def duplicate_page_builder(source_page_id, target_title, target_route):
 	"""
 	Duplicate a Web Page Builder document and recursively clone all its linked Page Sections
 	"""
+	require_page(source_page_id)
 	try:
 		user = frappe.session.user
 		if user == 'Guest':
@@ -1080,6 +1084,7 @@ def get_doctype_fields(dt):
 @frappe.whitelist()
 def add_custom_field(dt, label, fieldtype):
 	# Generates a lowercase snake_case fieldname from label
+	require_system_manager()
 	import re
 	fieldname = re.sub(r'[^a-zA-Z0-9_]', '', label.lower().replace(' ', '_'))
 	

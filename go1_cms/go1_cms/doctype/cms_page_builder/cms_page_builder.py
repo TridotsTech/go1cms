@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 from frappe.model.document import Document
 
 class CMSPageBuilder(Document):
@@ -42,6 +43,7 @@ def get_pages(builder_name):
 @frappe.whitelist()
 def reorder_pages(builder_name, page_order):
 	"""Reorder pages within a builder"""
+	require_system_manager()
 	doc = frappe.get_doc("CMS Page Builder", builder_name)
 
 	# Create a map of page names to their new order
@@ -59,6 +61,7 @@ def reorder_pages(builder_name, page_order):
 @frappe.whitelist()
 def add_page(builder_name, page_data):
 	"""Add a new page to builder"""
+	require_system_manager()
 	import json
 	if isinstance(page_data, str):
 		page_data = json.loads(page_data)
@@ -71,6 +74,7 @@ def add_page(builder_name, page_data):
 @frappe.whitelist()
 def delete_page(builder_name, page_idx):
 	"""Delete a page from builder"""
+	require_system_manager()
 	doc = frappe.get_doc("CMS Page Builder", builder_name)
 
 	# Remove page by index
@@ -96,6 +100,7 @@ def get_page_sections(builder_name, page_name):
 @frappe.whitelist()
 def save_builder_state(builder_name, state):
 	"""Save complete builder state"""
+	require_system_manager()
 	import json
 	if isinstance(state, str):
 		state = json.loads(state)

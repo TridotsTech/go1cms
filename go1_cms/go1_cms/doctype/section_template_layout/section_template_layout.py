@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 from frappe.model.document import Document
 import json
 
@@ -85,11 +86,11 @@ def get_page_section():
 
 @frappe.whitelist()
 def get_each_layout_data(layout_id,page_route):
+	require_system_manager()
 	try:
 		final_data =[]
 		import json
-		query_1 = ''' SELECT name,layout_json,preview,title FROM `tabSection Template Layout` WHERE name="%s"'''%layout_id
-		data = frappe.db.sql(query_1,as_dict=1)
+		data = frappe.db.sql(''' SELECT name,layout_json,preview,title FROM `tabSection Template Layout` WHERE name=%s''', (layout_id,), as_dict=1)
 		for k in data:
 			page_section = frappe.new_doc("Page Section")
 			page_section.section_title = k.title
@@ -119,6 +120,7 @@ def get_each_layout_data(layout_id,page_route):
 
 @frappe.whitelist()
 def save_predefined_section(layout_id,page_route):
+	require_system_manager()
 	try:
 		final_data =[]
 		import json

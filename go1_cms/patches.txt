@@ -4,3 +4,4 @@
 go1_cms.patches.v1_0.backfill_menus_item_keys
 go1_cms.patches.v1_0.default_menus_item_visible
 go1_cms.patches.v1_0.menu_project_scope
+go1_cms.patches.v1_0.cms_project_members_backfill

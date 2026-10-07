@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 from frappe import _
 import json
 import os
@@ -16,6 +17,25 @@ from frappe.model.naming import make_autoname
 from go1_cms.go1_cms.api import get_template_folder, unescape
 from urllib.parse import urljoin, unquote, urlencode
 
+def unique_page_name(title, project=None):
+    """PAG-09: a page's id (docname) used to be its title, so two websites could
+    not both have a "Home". The id still starts as the title; when another website
+    already uses it, the id becomes "Home (Website)" (then "… 2") while the title
+    people see stays "Home"."""
+    title = (title or "").strip()
+    if not title or not frappe.db.exists("Web Page Builder", title):
+        return title
+    label = ""
+    if project:
+        label = frappe.db.get_value("CMS Project", project, "project_name") or project
+    base = "{0} ({1})".format(title, label) if label else title
+    name, n = base, 2
+    while frappe.db.exists("Web Page Builder", name):
+        name = "{0} {1}".format(base, n)
+        n += 1
+    return name
+
+
 class WebPageBuilder(WebsiteGenerator):
     def autoname(self):
         if check_domain('saas'):
@@ -26,7 +46,50 @@ class WebPageBuilder(WebsiteGenerator):
                 naming_series = '{0}{1}-'.format(naming_series, frappe.db.get_value('Business', self.business, 'abbr'))
             self.name = make_autoname(naming_series + '.#####', doc=self)
         else:
-            self.name = self.page_title
+            self.name = unique_page_name(self.page_title, self.project)
+
+    def nest_under_parent(self):
+        """PAG-12: same website, no loops, address = parent's address + own part."""
+        if self.parent_page == self.name:
+            frappe.throw(_("A page cannot be its own parent."))
+        parent = frappe.db.get_value(self.doctype, self.parent_page, ['route', 'project', 'parent_page'], as_dict=True)
+        if not parent:
+            frappe.throw(_("The parent page no longer exists."))
+        if (parent.project or '') != (self.project or ''):
+            frappe.throw(_("A parent page has to be in the same website."))
+        seen, up = {self.name}, parent
+        while up and up.parent_page:
+            if up.parent_page in seen:
+                frappe.throw(_("That would put the page under itself."))
+            seen.add(up.parent_page)
+            up = frappe.db.get_value(self.doctype, up.parent_page, ['parent_page'], as_dict=True)
+        base = (parent.route or '').strip('/')
+        if not base:
+            return  # the parent is the site root: its children keep their own addresses
+        own = (self.route or '').strip('/')
+        old_parent = self.get_doc_before_save().parent_page if not self.is_new() and self.get_doc_before_save() else None
+        old_base = (frappe.db.get_value(self.doctype, old_parent, 'route') or '').strip('/') if old_parent else ''
+        if old_base and own.startswith(old_base + '/'):
+            own = own[len(old_base) + 1:]
+        elif own.startswith(base + '/'):
+            own = own[len(base) + 1:]
+        else:
+            own = own.split('/')[-1]
+        self.route = base + '/' + (own or self.safe_slug(self.page_title))
+
+    def check_title_free_in_website(self):
+        """PAG-09: a title only has to be unique inside its own website."""
+        if not self.page_title:
+            return
+        clash = frappe.db.get_value(self.doctype, {
+            "page_title": self.page_title,
+            "project": self.project or ("", None),
+            "name": ["!=", self.name or ""],
+        }, "name") if self.project else frappe.db.sql(
+            "select name from `tabWeb Page Builder` where page_title=%s and ifnull(project,'')='' and name!=%s limit 1",
+            (self.page_title, self.name or ""))
+        if clash:
+            frappe.throw(_('This website already has a page called "{0}".').format(self.page_title), frappe.DuplicateEntryError)
 
     def sync_sections(self):
         if getattr(frappe.flags, "in_builder_sync", False):
@@ -286,7 +349,43 @@ class WebPageBuilder(WebsiteGenerator):
                         frappe.throw(f"{fieldname}: duplicate variable name '{var['variable_name']}'")
                     seen.add(var["variable_name"])
 
+    def safe_slug(self, title):
+        """PAG-03: an address from a title in any script. Tamil, Hindi and other
+        scripts are romanised; symbols only, or nothing left, get page-xxxxxx —
+        never an empty address, which is the home page."""
+        import re as _re
+        text = title or ''
+        try:
+            from unidecode import unidecode
+            text = unidecode(text)
+        except Exception:
+            pass
+        slug = _re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')[:80]
+        if not slug:
+            slug = 'page-' + frappe.generate_hash(length=6)
+        base, n = slug, 2
+        while frappe.db.exists('Web Page Builder', {'route': ['like', '%' + slug], 'name': ['!=', self.name or '']}) and \
+                frappe.db.exists('Web Page Builder', {'route': ['in', self._candidate_routes(slug)], 'name': ['!=', self.name or '']}):
+            slug = f'{base}-{n}'
+            n += 1
+        return slug
+
+    def _candidate_routes(self, slug):
+        out = [slug]
+        if self.project:
+            ps = (frappe.db.get_value('CMS Project', self.project, 'project_slug') or '').strip('/')
+            if ps:
+                out.append(ps + '/' + slug)
+        return out
+
+    def _root_taken(self):
+        """Another page already serves the front page ("/" or empty)."""
+        return bool(frappe.db.exists('Web Page Builder', {'route': ['in', ['/', '']], 'name': ['!=', self.name or '']}))
+
     def validate(self):
+        # PAG-09: the same title may exist in other websites, never twice in one.
+        if self.is_new() or self.has_value_changed("page_title") or self.has_value_changed("project"):
+            self.check_title_free_in_website()
         # frappe.log_error(frappe.local.session.data.csrf_token,'token')
         if self.is_new():
             self.file_path=""
@@ -313,6 +412,12 @@ class WebPageBuilder(WebsiteGenerator):
         # the title ("p/my-home-page"), so the home page lost its URL on every
         # save and the site root went blank. Detect it before stripping.
         is_root_route = (self.route or '').strip() == '/'
+        # PAG-03: a NEW page may not take the site's front page by accident — the
+        # New page dialog turned a Tamil (or symbols-only) title into "/". A home
+        # page already there keeps it; this one gets an address from its title.
+        if is_root_route and self.is_new() and self._root_taken():
+            is_root_route = False
+            self.route = ''
 
         if self.route:
             self.route = self.route.strip('/')
@@ -322,7 +427,7 @@ class WebPageBuilder(WebsiteGenerator):
             r_prefix  = frappe.db.get_all("CMS Route",filters={"page_type":self.w_page_type,"parent":"CMS Settings"},fields=['page_prefix'])
             if r_prefix:
                 route_prefix = r_prefix[0].page_prefix+"/"
-            self.route = route_prefix+self.scrub(self.page_title)
+            self.route = route_prefix+self.safe_slug(self.page_title)
             self.route = self.route.strip('/')
 
         if is_root_route:
@@ -359,6 +464,18 @@ class WebPageBuilder(WebsiteGenerator):
                 parts.pop(0)
                 self.route = '/'.join(parts)
 
+        # PAG-03: a new page whose address came out as the project's own front page
+        # (its title gave no letters to make an address from) gets its own.
+        if self.is_new() and self.project and not is_root_route:
+            slug = (frappe.db.get_value('CMS Project', self.project, 'project_slug') or '').strip('/')
+            if slug and self.route == slug and frappe.db.exists('Web Page Builder', {'route': ['in', [slug, '/' + slug]], 'name': ['!=', self.name or '']}):
+                self.route = slug + '/' + self.safe_slug(self.page_title)
+
+        # PAG-12: a child page's address nests under its parent's
+        # (/services/web-design under /services).
+        if self.get('parent_page') and not is_root_route:
+            self.nest_under_parent()
+
         if not self.meta_title:
             self.meta_title = self.page_title
         if not self.meta_keywords:
@@ -367,6 +484,11 @@ class WebPageBuilder(WebsiteGenerator):
             self.meta_description="About: "+self.page_title
 
     def on_update(self):
+        # PAG-12: children follow when a parent's address changes.
+        # (Grandchildren follow through each child's own save; validate forbids loops.)
+        if not self.is_new() and self.has_value_changed('route'):
+            for child in frappe.get_all(self.doctype, filters={'parent_page': self.name}, pluck='name'):
+                frappe.get_doc(self.doctype, child).save()
         #by siva
         enable_generate_html=frappe.db.get_single_value("CMS Settings", "generate_html")
         if enable_generate_html:
@@ -963,6 +1085,7 @@ def get_section_columns(section,dt):
 
 @frappe.whitelist()
 def convert_template_to_section(template, business=None, section_name=None):
+	require_editor()
 	doc = get_mapped_doc("Section Template", template, {
 		"Section Template": {
 			"doctype": "Page Section"
@@ -987,6 +1110,7 @@ def convert_template_to_section(template, business=None, section_name=None):
 	return doc
 @frappe.whitelist()
 def convert_component_to_section(template):
+	require_system_manager()
 	doc = get_mapped_doc("Section Component", template, {
 		"Section Component": {
 			"doctype": "Page Component"
@@ -1001,6 +1125,7 @@ def convert_component_to_section(template):
 
 @frappe.whitelist()
 def update_component_page_section(page_section,comp_id,comp_uuid,cid):
+	require_system_manager()
 	page_section = frappe.get_doc("Page Section",page_section)
 	if page_section:
 		component_fields = frappe.db.get_all("Section Content",filters={"parent":comp_uuid},fields=['*'])
@@ -1029,6 +1154,7 @@ def update_component_page_section(page_section,comp_id,comp_uuid,cid):
 
 @frappe.whitelist()
 def delete_section(name, parentfield):
+	require_system_manager()
 	page_section = frappe.db.get_all("Mobile Page Section",filters={"name":name},fields=['section'])
 	frappe.db.sql('''delete from `tabMobile Page Section` where name = %(name)s and parentfield = %(parentfield)s''',{'name': name,'parentfield': parentfield})
 	if page_section:
@@ -1059,7 +1185,7 @@ def get_section_content(section, content_type):
 
 	return None
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_component_content(section, content_type):
 	section = frappe.db.get_all('Page Component', filters={'name': section}, fields=['name','allow_update_to_style','css_field_list','title','css_field_list'])
 	if section:
@@ -1088,7 +1214,7 @@ def get_component_properties(page_section,comp_ref,cid):
 		comp_info = frappe.get_doc("Section Component",comps[0].component_id)
 		if comp_info.allow_update_to_style:
 			if comp_info.css_field_list:
-				return {"status":"success","css_field_list":css_field_list}
+				return {"status":"success","css_field_list":comp_info.css_field_list}
 	return {"status":"Failed","message":"No styles to update"}
 
 @frappe.whitelist()
@@ -1160,6 +1286,7 @@ def get_column_properties(section_name,column):
 
 @frappe.whitelist()
 def update_section_properties(section_name,css_design,style_json,is_full_width):
+	require_system_manager()
 	content_type = 'Data'
 	p_sections = frappe.db.get_all("Mobile Page Section",filters={"name":section_name},fields=['section'])
 	if p_sections:
@@ -1173,6 +1300,7 @@ def update_section_properties(section_name,css_design,style_json,is_full_width):
 
 @frappe.whitelist()
 def remove_page_section(page_route,page_section):
+	require_system_manager()
 	pages = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 	if pages:
 		m_section = frappe.db.get_all("Mobile Page Section",filters={"parent":pages[0].name,"section":page_section})
@@ -1240,6 +1368,7 @@ def get_builder_data(page_route):
 
 @frappe.whitelist()
 def update_layout_json(page_route,layout_json):
+	require_system_manager()
 	page_builder = frappe.db.get_all("Web Page Builder",filters={"route":page_route})
 	if page_builder:
 		p_builder = frappe.get_doc("Web Page Builder",page_builder[0].name)
@@ -1247,6 +1376,7 @@ def update_layout_json(page_route,layout_json):
 		p_builder.save(ignore_permissions=True)
 @frappe.whitelist()
 def update_page_section_layout_json(page_section,layout_json):
+	require_system_manager()
 	page_section = frappe.db.get_all("Page Section",filters={"name":page_section})
 	if page_section:
 		p_builder = frappe.get_doc("Page Section",page_section[0].name)
@@ -1254,6 +1384,7 @@ def update_page_section_layout_json(page_section,layout_json):
 		p_builder.save(ignore_permissions=True)
 @frappe.whitelist()
 def update_page_section_properties(section_name,css_design,style_json,is_full_width):
+	require_system_manager()
 	content_type = 'Data'
 	page_section = frappe.get_doc("Page Section",section_name)
 	page_section.css_text = css_design
@@ -1264,6 +1395,7 @@ def update_page_section_properties(section_name,css_design,style_json,is_full_wi
 
 @frappe.whitelist()
 def update_page_section_column_properties(section_name,css_design,style_json,column):
+	require_system_manager()
 	content_type = 'Data'
 	check_already = frappe.db.get_all("Section Column CSS",filters={"parent":section_name,"column_class":column})
 	if check_already:
@@ -1337,6 +1469,7 @@ def generate_css_file():
 
 @frappe.whitelist()
 def update_section_content(docs, section, lists_data='[]', business=None):
+	require_system_manager()
 	allowed_roles = {'System Manager', 'Administrator', 'CMS Admin'}
 	user_roles = set(frappe.get_roles(frappe.session.user))
 	if not (user_roles & allowed_roles):
@@ -1536,7 +1669,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 
 	return {'status':'Success','data':return_data,'layout_json':ps_layout_json}
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_random_records(dt, records, business=None):
 	fields = condition = ''
 	if not business:
@@ -1579,7 +1712,7 @@ def get_predefined_records(dt,records,name,page_no=0,business=None):
 		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_predefined_records")
 		return []
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_image_album(dt, dn, business=None):
 	if not business:
 		business = get_business_from_login()
@@ -1599,12 +1732,13 @@ def get_image_album(dt, dn, business=None):
 
 	return []
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_patterns_list():
 	return frappe.db.sql('''select name, background_color, background_image, heading_text_color, view_all_bg_color, view_all_text_color from `tabPage Pattern`''', as_dict=1)
 
 @frappe.whitelist()
 def update_patterns(**kwargs):
+	require_system_manager()
 	keys = kwargs.keys()
 	keys = list(keys)
 	if keys and 'cmd' in keys:
@@ -1737,7 +1871,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 	return html_list, js_list
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Web Page Builder', page)
 	source_doc, sections, html = get_source_doc(doc, "Mobile")
@@ -1792,6 +1926,7 @@ def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 
 @frappe.whitelist()
 def upload_img():
+	require_system_manager()
 	import base64
 	#hide it boopathy on 10/08/22
 	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
@@ -1880,6 +2015,7 @@ def update_page_data(doc, method):
 
 @frappe.whitelist()
 def update_json():
+	require_system_manager()
 	pages = frappe.db.sql_list('''select name from `tabWeb Page Builder` where published = 1''')
 	if pages:
 		for item in pages:
@@ -1888,21 +2024,22 @@ def update_json():
 
 @frappe.whitelist()
 def update_featured_item(name,checked, doctype="Product",  conditionfield="display_home_page"):
-	if int(checked)==1:
-		frappe.db.set_value(doctype,name,conditionfield, 1)
-		# 	eval(exec("doc.display_on_home_page = 1"))
-	else:
-		frappe.db.set_value(doctype,name,conditionfield, 0)
-		# 	eval(exec("doc.display_on_home_page = 0"))
-	doc = frappe.get_doc(doctype,name)
-	# doc.save(ignore_permissions=True)
-	return doc
+	# Only a tick-box field the caller may already write on this record.
+	meta = frappe.get_meta(doctype)
+	field = meta.get_field(conditionfield)
+	if not field or field.fieldtype != "Check":
+		frappe.throw(frappe._("Not allowed"), frappe.PermissionError)
+	doc = frappe.get_doc(doctype, name)
+	doc.check_permission("write")
+	doc.set(conditionfield, 1 if int(checked) == 1 else 0)
+	doc.save()
+	return {"name": doc.name, conditionfield: doc.get(conditionfield)}
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_featured_products():
 	return frappe.db.get_all('Product',filters={'is_active':1,'display_home_page':0},fields=['*'])
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_collection_records(collections):
 	try:
 		if collections:
@@ -1977,12 +2114,14 @@ def get_page_content(page, device_type, page_no=0, page_len=3):
 
 @frappe.whitelist()
 def get_element_properties(id):
+	require_system_manager()
 	fields =  frappe.db.get_all("Section Content",filters={"name":id},fields=["css_json","field_type","parent","field_key"])
 	css_properties = frappe.db.get_all("Field Types Property",filters={"field_type":fields[0].field_type},fields=['css_properties_list'])
 	if css_properties:
 		fields[0].css_properties_list=css_properties[0].css_properties_list
 		class_name = frappe.db.get_value("Page Section",fields[0].parent,"class_name")
 		if not class_name:
+			from go1_cms.go1_cms.doctype.page_section.page_section import get_class_name  # SEC-09: was never imported
 			class_name = get_class_name()
 			#modified by boopathy on 10/08/2022
 			# from ecommerce_business_store.cms.doctype.page_section.page_section import get_class_name
@@ -2004,7 +2143,7 @@ def get_section_element_properties(id):
 	fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 	fields[0].fonts_list = fonts_list
 	return fields[0]
-@frappe.whitelist(allow_guest = True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Web Page Builder', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
@@ -2035,7 +2174,7 @@ def get_source_doc_data(doc, device_type):
 def get_query_condition(user):
 	if "Admin" in frappe.get_roles(frappe.session.user) and not "Administrator" in frappe.get_roles(frappe.session.user):
 		return "(`tabWeb Page Builder`.document is NULL)"
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_shuffled_category_products(category,no_of_records):
 	#hided by boopathy-10/08/2022
 	# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
@@ -2082,6 +2221,7 @@ def get_shuffled_category_products(category,no_of_records):
 	return result
 @frappe.whitelist()
 def import_sections_from_template(page_id):
+	require_system_manager()
 	page_template = frappe.get_doc("Page Template",page_id)
 	mobile_sections = frappe.db.get_all("Mobile Page Section",filters={"parent":page_id,"parentfield":"mobile_section"},fields=['section','section_title','section_type','content_type','allow_update_to_style'],order_by="idx")
 	web_sections = frappe.db.get_all("Mobile Page Section",filters={"parent":page_id,"parentfield":"web_section"},fields=['section','section_title','section_type','content_type','allow_update_to_style'],order_by="idx")
@@ -2127,6 +2267,7 @@ def import_sections_from_template(page_id):
 
 @frappe.whitelist()
 def save_as_template(page_id,title):
+	require_system_manager()
 	from frappe.model.mapper import get_mapped_doc
 	web_page = frappe.get_doc("Web Page Builder",page_id)
 	page_template = frappe.new_doc("Page Template")
@@ -2753,13 +2894,13 @@ def update_doc(doc):
 @frappe.whitelist()
 def get_global_fonts(parent):
 	try:
-		query_1 = ''' SELECT title,font_weight,font_family FROM `tabGlobal Fonts` WHERE parent="%s" '''%parent
-		return frappe.db.sql(query_1,as_dict=1)
+		return frappe.db.sql(''' SELECT title,font_weight,font_family FROM `tabGlobal Fonts` WHERE parent=%s ''', (parent,), as_dict=1)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),"go1_cms.go1_cms.doctype.web_page_builder.web_page_builder.get_global_fonts")
 
 @frappe.whitelist()
 def update_page_section_props(section_name, props):
+	require_system_manager()
 	if not props:
 		return
 	try:
@@ -2808,6 +2949,7 @@ def update_page_section_props(section_name, props):
 
 @frappe.whitelist()
 def update_section_order(page, sections):
+	require_system_manager()
 	if isinstance(sections, str):
 		sections = json.loads(sections)
 	

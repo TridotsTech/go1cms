@@ -109,7 +109,9 @@
   "heading",
   "text",
   "social_links_section",
-  "social_links"
+  "social_links",
+  "type_scale_json",
+  "radius_scale_json"
  ],
  "fields": [
   {
@@ -693,6 +695,20 @@
    "fieldname": "bg_overlay_opacity",
    "fieldtype": "Data",
    "label": "Sub Header Background Overlay Opacity"
+  },
+  {
+   "fieldtype": "Code",
+   "hidden": 1,
+   "fieldname": "type_scale_json",
+   "label": "Type Scale (JSON)",
+   "description": "THM-04: every type-scale size (display-xl … micro) and the chosen ratio, as Theme Studio saved them."
+  },
+  {
+   "fieldtype": "Code",
+   "hidden": 1,
+   "fieldname": "radius_scale_json",
+   "label": "Radius Scale (JSON)",
+   "description": "Per-role corner radii from Theme Studio (cards, buttons, …). design_tokens.py wrote this before the field existed, so it was never kept."
   }
  ],
  "links": [],

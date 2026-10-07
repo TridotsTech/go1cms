@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 from __future__ import unicode_literals
 import frappe
+from go1_cms.go1_cms.cms_access import can_see_draft, require_editor, require_page, require_page_route, require_project, require_system_manager
 from frappe import _
 import os, re, json, mimetypes
 from frappe.utils import getdate, nowdate, now, get_url, cint
@@ -54,7 +55,8 @@ def get_published_pages():
 		frappe.log_error(frappe.get_traceback(), 'go1_cms.go1_cms.api.get_published_pages')
 		return {'pages': [], 'error': str(e)}
 
-@frappe.whitelist(allow_guest = True)
+# SEC-09: web access removed — always crashed (get_settings_from_domain was never imported; Catalog Settings,
+# Business Setting and Product Box do not exist), and it was open to guests.
 def get_scroll_content(route, page_no=0, page_len=3, device_type=None):
 	business=None
 	context={}
@@ -130,7 +132,7 @@ def get_website_rules():
 	return _get()
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def shipping_zip_matches(zip):
 	zipcoderanges = []
 	returnValue = False
@@ -198,7 +200,7 @@ def check_domain(domain_name):
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), 'go1_cms.go1_cms.api.check_domain')
 		
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_business_from_login(abbr=None):
 	business = None
 	if 'Vendor' in frappe.get_roles(frappe.session.user) and frappe.session.user != 'Administrator':
@@ -257,11 +259,14 @@ def find_web_page_builder_by_route(route_str):
 	# Drop trailing segments and retry so one saved page can serve every record,
 	# reading the id from the path. Exact matches above always win, so this only
 	# runs for routes that would otherwise 404.
+	# A page stored at "<parent>/*" is a detail template: it serves every
+	# "<parent>/<slug>" and wins over a page stored at "<parent>" itself, so a
+	# website can keep its list at /blog and its post template at /blog/*.
 	parts = r.split("/")
 	while len(parts) > 1:
 		parts = parts[:-1]
 		parent = "/".join(parts)
-		for pr in (parent, "/" + parent, "p/" + parent, "/p/" + parent):
+		for pr in (parent + "/*", "/" + parent + "/*", parent, "/" + parent, "p/" + parent, "/p/" + parent):
 			res = frappe.db.get_all(
 				'Web Page Builder',
 				filters={'route': pr},
@@ -296,6 +301,84 @@ def _project_fallback_image(project):
 
 @frappe.whitelist(allow_guest=True)
 def get_page_content(route=None, user=None, customer=None, domain=None, business=None, application_type="mobile", is_builder=0, start=0, page_length=0):
+	"""The page for `route`, as the visitor may see it.
+
+	Portal rules (cms_frontend.portal.access) apply here, because the app, the
+	server render and the page seed all read pages through this function:
+	a members-only page answers with `portal_access` instead of its content,
+	elements with an audience the visitor is not in are removed before the
+	layout leaves the server, and `member` carries the signed-in member."""
+	portal = None
+	try:
+		from cms_frontend.portal import access as portal
+	except Exception:
+		portal = None
+	hit = find_web_page_builder_by_route(route) if (route and portal) else None
+	project = frappe.db.get_value("Web Page Builder", hit[0].name, "project") if hit else None
+	if portal and hit:
+		state = portal.page_access(hit[0].name, project)
+		if state != "ok":
+			return {"page_content": [], "page_id": None, "portal_access": state,
+			        "login_url": portal.login_redirect(project, "/" + str(route).strip("/")) if state == "login" else None}
+	# PAG-10: a password-protected page (or one under a protecting parent) sends
+	# nothing until this visitor has unlocked it.
+	lock_hit = hit if hit is not None else (find_web_page_builder_by_route(route) if route else None)
+	if lock_hit:
+		try:
+			from cms_frontend.page_lock import gate
+
+			locked = gate(lock_hit[0].name)
+		except ImportError:
+			locked = None
+		if locked:
+			return locked
+	out = _page_content(route, user, customer, domain, business, application_type, is_builder, start, page_length)
+	if portal and project and isinstance(out, dict):
+		is_editor_view = int(is_builder or 0) and can_see_draft(hit[0].name)
+		if not is_editor_view and isinstance(out.get("page_content"), list) and '"audience"' in frappe.as_json(out["page_content"]):
+			import copy as _copy
+
+			out["page_content"] = portal._prune(_copy.deepcopy(out["page_content"]), portal.viewer(project))
+		out["member"] = portal.member_payload(project) if portal.is_portal(project) else None
+		out["project"] = project
+		out["app_layout"] = portal.app_layout(project, hit[0].name) if portal.is_portal(project) else None
+	# PAG-12: the page's parents, nearest last, for page-tree breadcrumbs.
+	if hit and isinstance(out, dict):
+		out["page_ancestors"] = page_ancestors(hit[0].name)
+	# BLD-13: the website's shared style presets (published ones; drafts in the editor's preview).
+	if project and isinstance(out, dict):
+		try:
+			from cms_frontend.style_presets import css_for
+
+			out["style_presets_css"] = css_for(project, live=not (int(is_builder or 0) and can_see_draft(hit[0].name)))
+		except ImportError:
+			pass
+		# THM-06: the website-wide stylesheet (applied before the page's own CSS).
+		try:
+			from cms_frontend.site_css import css_for as site_css_for
+
+			out["site_css"] = site_css_for(project, live=not (int(is_builder or 0) and can_see_draft(hit[0].name)))
+		except ImportError:
+			pass
+	return out
+
+
+def page_ancestors(page):
+	"""PAG-12: [{label, href}] from the top parent down to the page's own parent."""
+	chain, seen = [], {page}
+	parent = frappe.db.get_value("Web Page Builder", page, "parent_page")
+	while parent and parent not in seen and len(chain) < 10:
+		seen.add(parent)
+		row = frappe.db.get_value("Web Page Builder", parent, ["page_title", "route", "parent_page", "published"], as_dict=True)
+		if not row:
+			break
+		if row.published:
+			chain.insert(0, {"label": row.page_title or parent, "href": "/" + (row.route or "").strip("/")})
+		parent = row.parent_page
+	return chain
+
+
+def _page_content(route=None, user=None, customer=None, domain=None, business=None, application_type="mobile", is_builder=0, start=0, page_length=0):
 	page_content = page_type = list_content = list_style = detail_content  = None
 	side_menu = sub_header = None
 	is_builder = int(is_builder) if is_builder else 0
@@ -384,7 +467,7 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			# the draft. This matters more here — the draft's resources/variables
 			# describe data sources, not just design. This block swallows
 			# exceptions, so gate by selecting the layout rather than throwing.
-			if frappe.session.user == "Guest":
+			if not can_see_draft(doc.name):
 				layout_str = doc.layout_json if doc.published else None
 			else:
 				layout_str = doc.draft_layout_json if (is_builder and doc.draft_layout_json) else doc.layout_json
@@ -603,7 +686,7 @@ def _fb2_load_page_layout(route, is_builder=0):
 		["published", "layout_json", "draft_layout_json"])
 	published, layout_json, draft_layout_json = values or (0, None, None)
 	is_builder = int(is_builder) if is_builder else 0
-	if is_builder and frappe.session.user != "Guest" and draft_layout_json:
+	if is_builder and draft_layout_json and can_see_draft(check_builder[0].name):
 		layout_str = draft_layout_json
 	else:
 		if not published:
@@ -617,6 +700,17 @@ def _fb2_load_page_layout(route, is_builder=0):
 		frappe.throw("Invalid page layout")
 	if not isinstance(layout, dict):
 		frappe.throw("Invalid page layout")
+	# Portal rules: the page's own access, and elements whose audience excludes
+	# this visitor are not there to be read (PRT-04/05).
+	if not (is_builder and can_see_draft(check_builder[0].name)):
+		try:
+			from cms_frontend.portal import access as portal
+		except Exception:
+			portal = None
+		if portal:
+			project = frappe.db.get_value("Web Page Builder", check_builder[0].name, "project")
+			portal.require_page(check_builder[0].name, project)
+			layout = portal.filter_layout(layout, project)
 	return layout
 
 
@@ -724,10 +818,21 @@ def _fb2_run_doctype_query(doctype, fields, filters, sort_field, sort_order, sta
 		meta = frappe.get_meta(doctype)
 		standard = {"name", "creation", "modified", "owner", "modified_by", "idx", "docstatus"}
 		safe_fields = [f for f in safe_fields if f in standard or (meta.get_field(f) and meta.get_field(f).fieldtype != "Password")] or ["name"]
+	clean = _fb2_sanitize_filters(filters)
+	if isinstance(clean, dict):
+		clean = [[k, "=", v] for k, v in clean.items()]
+	# COL-01: lists on the website show only what visitors should see — no
+	# drafts, private, disabled or cancelled entries — without anyone having to
+	# remember to add that filter by hand.
+	try:
+		from cms_frontend.collection_public import visitor_filters
+		clean = list(clean) + visitor_filters(doctype)
+	except ImportError:
+		pass
 	return frappe.get_all(
 		doctype,
 		fields=safe_fields,
-		filters=_fb2_sanitize_filters(filters),
+		filters=clean,
 		or_filters=or_filters or None,
 		order_by=_fb2_order_by(sort_field, sort_order),
 		limit_start=start,
@@ -819,7 +924,8 @@ def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, 
 
 
 @frappe.whitelist(allow_guest=False)
-def get_pages_list(start=0, page_length=24, search=None, status=None, project=None):
+def get_pages_list(start=0, page_length=24, search=None, status=None, project=None, tag=None):
+	require_editor()
 	start = int(start)
 	page_length = int(page_length)
 
@@ -843,12 +949,17 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 		or_filters = [
 			['page_title', 'like', f'%{search}%'],
 			['route', 'like', f'%{search}%'],
+			# TAX-03: a page is found by its tags too.
+			['cms_tags', 'like', f'%{search}%'],
 		]
+	if tag:
+		filters.append(['cms_tags', 'like', f'%{tag}%'])
 
 	pages = frappe.get_all(
 		'Web Page Builder',
 		fields=[
 			'name', 'page_title', 'route', 'published', 'modified', 'owner',
+			'parent_page', 'password_protected',  # PAG-12 / PAG-10
 			'draft_layout_json', 'layout_json', 'project', 'image',
 			# Theme Studio's pre-apply checklist labels each page by these: a locked
 			# page cannot be ticked, a classic one follows the project theme.
@@ -857,7 +968,7 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 			# come back with the list rather than being fetched per page.
 			'meta_title', 'meta_description', 'meta_keywords',
 			'og_title', 'og_description', 'og_image', 'canonical_url',
-			'seo_focus_keyphrase',
+			'seo_focus_keyphrase', 'cms_tags',
 		],
 		filters=filters,
 		or_filters=or_filters,
@@ -865,7 +976,22 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 		limit_start=start,
 		limit_page_length=page_length,
 	)
+	if tag:  # whole tags only ("art" must not match "party")
+		pages = [p for p in pages if tag.lower() in [t.strip().lower() for t in (p.get('cms_tags') or '').split(',')]]
+	# PAG-04: real visits (last 30 days) — every card said 0. Page views are
+	# recorded by address ("/about"; "/" for the front page).
+	visits = {}
+	if pages and frappe.db.table_exists('Analytics Page View'):
+		paths = {('/' + (p.get('route') or '').strip('/')) if (p.get('route') or '').strip('/') else '/': p['name'] for p in pages}
+		for route, n in frappe.db.sql(
+			"""select route, count(*) from `tabAnalytics Page View`
+			where route in %(paths)s and creation >= %(since)s group by route""",
+			{'paths': tuple(paths), 'since': frappe.utils.add_days(frappe.utils.nowdate(), -30)}):
+			if route in paths:
+				visits[paths[route]] = visits.get(paths[route], 0) + int(n)
 	for p in pages:
+		p['tags'] = [t.strip() for t in (p.get('cms_tags') or '').split(',') if t.strip()]
+		p['visits'] = visits.get(p['name'], 0)
 		p['preview'] = p.get('image') or p.get('og_image') or ''
 		p['page_slug'] = p.get('route')
 		p['route'] = p.get('route')
@@ -926,6 +1052,7 @@ def _page_project_filter(project):
 def get_pages_stats(project=None):
 	# `project` scopes the counts to one folder of the Pages screen, so the
 	# All / Publish / Draft tabs inside a project count that project alone.
+	require_editor()
 	base = _page_project_filter(project)
 	total = frappe.db.count('Web Page Builder', base)
 	live = frappe.db.count('Web Page Builder', base + [['published', '=', 1]])
@@ -942,6 +1069,7 @@ def get_page_projects():
 	screenshot URLs of its most recently edited pages for the collage. Empty
 	projects are included on purpose: a freshly created project is exactly
 	where the next page goes, so it needs a folder to open."""
+	require_editor()
 	projects = frappe.get_all(
 		'CMS Project',
 		fields=['name', 'project_name', 'project_slug', 'status', 'modified'],
@@ -1024,6 +1152,7 @@ def create_page_project(project_name, description=None):
 	same name or slug rather than failing, mirroring template_builder's
 	_ensure_project, so a typo-free retry never leaves a duplicate behind.
 	Returns {name, project_name, project_slug, created}."""
+	require_editor()
 	project_name = (project_name or '').strip()
 	if not project_name:
 		frappe.throw(_('Project name is required'))
@@ -1035,6 +1164,10 @@ def create_page_project(project_name, description=None):
 	elif slug:
 		existing = frappe.db.get_value('CMS Project', {'project_slug': slug}, 'name')
 	if existing:
+		from go1_cms.go1_cms.cms_access import can_access_project
+
+		if not can_access_project(existing):
+			frappe.throw(_('A website with this name already exists. Pick another name.'))
 		row = frappe.db.get_value('CMS Project', existing, ['name', 'project_name', 'project_slug'], as_dict=True)
 		return {**row, 'created': False}
 
@@ -1045,7 +1178,7 @@ def create_page_project(project_name, description=None):
 		'status': 'Draft',
 		'description': description or '',
 	})
-	doc.insert()
+	doc.insert(ignore_permissions=True)   # any editor may start a website; they become its Owner
 	return {'name': doc.name, 'project_name': doc.project_name, 'project_slug': doc.project_slug, 'created': True}
 
 
@@ -1144,6 +1277,7 @@ def save_page_sections(page, sections):
 	every element, every breakpoint override and every page-level setting on the
 	page.
 	"""
+	require_page(page)
 	sections_data = json.loads(sections) if isinstance(sections, str) else sections
 	
 	if frappe.db.exists('Web Page Builder', page):
@@ -1278,6 +1412,7 @@ def save_page_sections(page, sections):
 
 @frappe.whitelist(allow_guest=False)
 def save_builder_page(page_name, layout_json, page_title=None, page_slug=None):
+	require_page(page_name)
 	if frappe.db.exists('Web Page Builder', page_name):
 		doc = frappe.get_doc('Web Page Builder', page_name)
 	else:
@@ -1293,19 +1428,81 @@ def save_builder_page(page_name, layout_json, page_title=None, page_slug=None):
 	return {"status": "Success", "message": "Page saved successfully"}
 
 
+
+# ── PAG-01: the one way a page goes live or comes down ───────────────────────
+# Every publish and unpublish service below ends here: permission-checked per page,
+# logged, and the live copy it replaces is kept on the publish log so it can be put
+# back. Unpublishing only hides the page; it no longer throws the live copy away.
+
+def _set_live(doc, published, source):
+	from go1_cms.go1_cms.doctype.web_page_publish_log.web_page_publish_log import record_publish
+
+	previous = doc.layout_json or ""
+	if published:
+		if doc.draft_layout_json:
+			doc.layout_json = _apply_pending(doc)
+		elif not doc.layout_json:
+			frappe.throw(_("This page has nothing to publish yet."))
+		doc.published = 1
+		doc.use_page_builder = 1
+	else:
+		doc.published = 0
+	doc.save(ignore_permissions=True)   # permission checked by the caller; validate() still runs
+	record_publish(doc, source=source, previous_layout=previous)
+
+
+def _apply_pending(doc):
+	"""BLD-02: a live page's address, title and custom CSS edits wait in the draft
+	under `pending`; publishing is what applies them. Returns the layout to go live."""
+	try:
+		layout = json.loads(doc.draft_layout_json)
+	except Exception:
+		return doc.draft_layout_json
+	if not isinstance(layout, dict):
+		return doc.draft_layout_json
+	pending = layout.pop("pending", None)
+	if isinstance(pending, dict):
+		if pending.get("page_title"):
+			doc.page_title = pending["page_title"]
+		if isinstance(pending.get("route"), str) and pending["route"].strip():
+			doc.route = pending["route"]
+		if isinstance(pending.get("custom_css"), str):
+			doc.custom_css = pending["custom_css"]
+	return json.dumps(layout)
+
+
+def publish_page(page_name, source="Page"):
+	require_page(page_name)
+	if not frappe.db.exists("Web Page Builder", page_name):
+		frappe.throw(_("Page {0} not found").format(page_name), frappe.DoesNotExistError)
+	doc = frappe.get_doc("Web Page Builder", page_name)
+	_set_live(doc, 1, source)
+	# MNU-03 / BLD-13: the website's shared header/footer and style presets go live
+	# with any of its pages — on every publish path, the page cards' included
+	# (that one used to skip it, so a card publish left them on the old version).
+	try:
+		from cms_frontend.site_chrome import publish as _publish_chrome
+		_publish_chrome(doc.project)
+	except ImportError:
+		pass
+	return doc
+
+
+def unpublish_page(page_name):
+	require_page(page_name)
+	if not frappe.db.exists("Web Page Builder", page_name):
+		frappe.throw(_("Page {0} not found").format(page_name), frappe.DoesNotExistError)
+	doc = frappe.get_doc("Web Page Builder", page_name)
+	if doc.published:
+		_set_live(doc, 0, "Unpublish")
+	return doc
+
+
 @frappe.whitelist(allow_guest=False)
 def publish_builder_page(page_name):
-	if not frappe.db.exists('Web Page Builder', page_name):
-		frappe.throw(f"Web Page Builder {page_name} not found")
-		
-	doc = frappe.get_doc('Web Page Builder', page_name)
-	draft_data = doc.draft_layout_json or '{"sections": []}'
-	
-	doc.layout_json = draft_data
-	doc.published = 1
-	doc.save(ignore_permissions=True)
+	doc = publish_page(page_name)
 	frappe.db.commit()
-	return {"status": "Success", "message": "Page published successfully"}
+	return {"status": "Success", "message": "Page published successfully", "route": doc.route}
 
 
 # A page's title IS its name, so a copy needs a title nobody else holds. Both
@@ -1362,6 +1559,8 @@ def _relabel_layout(raw, title, route):
 		data["pageTitle"] = title
 	if "route" in data:
 		data["route"] = route
+	# The source's held-back address/title edits (BLD-02) must not follow the copy.
+	data.pop("pending", None)
 	return json.dumps(data)
 
 
@@ -1374,6 +1573,7 @@ def duplicate_page(source_page_id, target_title=None, target_route=None):
 	"X (copy)" and "/x-copy" each time — the next free "(copy 2)", "(copy 3)"… is
 	used instead, and returned, so the caller can name it correctly on screen.
 	"""
+	require_page(source_page_id)
 	if not frappe.db.exists('Web Page Builder', source_page_id):
 		frappe.throw(f"Source page {source_page_id} not found")
 
@@ -1470,6 +1670,7 @@ def ensure_css_font(font_name, font_family=None, category=None):
 	Returns the record name. Existing records are left alone — repairing one is
 	`repair_css_font_weights`.
 	"""
+	require_editor()
 	font_name = (font_name or "").strip()
 	if not font_name:
 		frappe.throw(_("A font needs a name."))
@@ -1509,6 +1710,7 @@ def repair_css_font_weights(font_name=None):
 	Also strips the stray markup several records picked up ('…swap" rel="stylesheet"'),
 	which made their stylesheet link unusable.
 	"""
+	require_system_manager()
 	filters = {"font_type": "Google"}
 	if font_name:
 		filters["font_name"] = font_name
@@ -1551,6 +1753,7 @@ def set_page_design_lock(page, locked):
 	enforces, and the right place for anything that has to happen at the moment
 	a page is locked.
 	"""
+	require_page(page)
 	if not page or not frappe.db.exists("Web Page Builder", page):
 		frappe.throw(_("Page {0} not found").format(page))
 	if not frappe.has_permission("Web Page Builder", ptype="write", doc=page):
@@ -1595,19 +1798,31 @@ def rename_page(page, new_title):
 	transaction log. Analytics rows hold the visited path, not the name, and are
 	untouched for the same reason the route is.
 	"""
+	require_page(page)
 	new_title = (new_title or "").strip()
 	if not new_title:
 		frappe.throw(_("A page needs a name."))
 	if not frappe.db.exists("Web Page Builder", page):
 		frappe.throw(_("Page {0} not found").format(page))
-	if new_title == page:
+	current_title, project = frappe.db.get_value("Web Page Builder", page, ["page_title", "project"])
+	if new_title == (current_title or page):
 		return {"status": "success", "name": page, "renamed": False}
-	if frappe.db.exists("Web Page Builder", new_title):
-		frappe.throw(_('A page called "{0}" already exists.').format(new_title))
+	# PAG-09: titles are unique per website, not across all of them. The id
+	# follows the title where it is free, else "Title (Website)".
+	clash = frappe.db.sql(
+		"select name from `tabWeb Page Builder` where page_title=%s and ifnull(project,'')=%s and name!=%s limit 1",
+		(new_title, project or "", page))
+	if clash:
+		frappe.throw(_('This website already has a page called "{0}".').format(new_title))
+	from go1_cms.go1_cms.doctype.web_page_builder.web_page_builder import unique_page_name
+	target = new_title if not frappe.db.exists("Web Page Builder", new_title) else unique_page_name(new_title, project)
 
 	# frappe.rename_doc() takes no ignore_permissions; the permission check that
 	# matters already happened — this method is whitelisted and not guest-callable.
-	new_name = frappe.rename_doc("Web Page Builder", page, new_title, show_alert=False)
+	new_name = frappe.rename_doc("Web Page Builder", page, target, show_alert=False) if target != page else page
+	# rename_doc copies the id into page_title (autoname field:page_title); the
+	# title people see is what they typed.
+	frappe.db.set_value("Web Page Builder", new_name, "page_title", new_title, update_modified=False)
 
 	for doctype in ("Web Page Revision", "CMS AI Transaction"):
 		if frappe.db.exists("DocType", doctype):
@@ -1619,17 +1834,11 @@ def rename_page(page, new_title):
 
 @frappe.whitelist(allow_guest=False)
 def update_page_status(page_name, published):
-	published = int(published) if published else 0
-	if published:
+	if int(published or 0):
 		return publish_builder_page(page_name)
-	else:
-		if frappe.db.exists('Web Page Builder', page_name):
-			frappe.db.set_value('Web Page Builder', page_name, {
-				'published': 0,
-				'layout_json': None
-			})
-			frappe.db.commit()
-		return {"status": "Success", "message": "Page unpublished successfully"}
+	unpublish_page(page_name)
+	frappe.db.commit()
+	return {"status": "Success", "message": "Page unpublished successfully"}
 
 @frappe.whitelist(allow_guest=True)
 def get_detail_page_content(route):
@@ -1645,10 +1854,12 @@ def get_page_side_menu_data(page_route,linked_doc,page_no=1,page_size=10):
 			link_fields = frappe.db.sql(""" SELECT fieldname FROM `tabDocField` WHERE parent=%(dt)s AND options=%(linked_doc)s """,{"dt":page_doc[0].document,"linked_doc":page_doc[0].data_fetch_from},as_dict=1)
 			if link_fields:
 				columns = ''
-				condition = ' WHERE doc.{link_field} = "{linked_doc}"'.format(link_field=link_fields[0].fieldname,linked_doc=linked_doc)
+				# SEC-09: the visitor's value travels as a query parameter, never as text in the SQL.
+				condition = ' WHERE doc.`{link_field}` = %(linked_doc)s'.format(link_field=link_fields[0].fieldname)
 				order_by = " ORDER BY creation DESC "
 				if page_doc[0].condition:
-					condition = " AND "+page_doc[0].condition
+					# adds to the filter above (it used to replace it, leaving "AND …" with no WHERE)
+					condition += " AND "+page_doc[0].condition
 				if page_doc[0].sort_field:
 					order_by = " ORDER BY "+page_doc[0].sort_field+" "+ page_doc[0].sort_by
 				cols_json = json.loads(page_doc[0].columns_mapping)
@@ -1659,7 +1870,8 @@ def get_page_side_menu_data(page_route,linked_doc,page_no=1,page_size=10):
 				columns = columns[:-1]
 				# frappe.log_error(columns,'columns')
 				# frappe.log_error(condition,'condition')
-				list_content = frappe.db.sql(""" SELECT {columns} FROM `tab{document}` doc {condition} {order_by} limit {page_no},{page_len} """.format(condition=condition,order_by=order_by,columns=columns,document=page_doc[0].document,page_no = (int(page_no) - 1) * int(page_size),page_len = page_size),as_dict=1)
+				page_no, page_size = max(1, cint(page_no)), min(max(1, cint(page_size)), 100)
+				list_content = frappe.db.sql(""" SELECT {columns} FROM `tab{document}` doc {condition} {order_by} limit {page_no},{page_len} """.format(condition=condition,order_by=order_by,columns=columns,document=page_doc[0].document,page_no = (page_no - 1) * page_size,page_len = page_size),{"linked_doc": linked_doc},as_dict=1)
 				return list_content
 	return []
 
@@ -1832,7 +2044,7 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 		# route to unpublished content (see get_shared_page_preview); everyone
 		# else gets exactly what has been published. Mirrors the guard in
 		# _fb2_load_page_layout.
-		if frappe.session.user == "Guest":
+		if not can_see_draft(doc.name):
 			if not doc.published:
 				frappe.throw("Page not published", frappe.PermissionError)
 			layout_str = doc.layout_json
@@ -1842,6 +2054,13 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 			try:
 				layout = json.loads(layout_str)
 				sections_list = [s for s in layout.get('sections', []) if s]
+				# MNU-03: the website's shared header/footer in place of their placeholders.
+				try:
+					from cms_frontend.site_chrome import expand as _expand_chrome
+					sections_list = _expand_chrome(sections_list, doc.project,
+						draft=bool(is_builder and doc.draft_layout_json and layout_str == doc.draft_layout_json))
+				except ImportError:
+					pass
 				page_animation = layout.get('pageAnimation')
 				# Paginate sections BEFORE resolving them (templates/dynamic data are
 				# expensive), so the published page can lazy-load sections on scroll.
@@ -2277,7 +2496,7 @@ def get_all_website_settings():
 		return {"header_template":default_header,"footer_template":default_footer,"theme_settings":theme}
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_testing_footer_template():
 	theme = frappe.get_doc("Theme Settings")
 	data = get_footer_template(theme.default_footer)
@@ -2433,55 +2652,6 @@ def get_source_doc(doc, device_type):
 	return source_doc, sections, html
 
 
-@frappe.whitelist(allow_guest=True)
-def get_blog_list(category=None,page_no=1,page_size=12):
-	condition = ""
-	if category:
-		condition = " AND blog_category = '%s' "%(category)
-	bloglist_query = "SELECT name,title,thumbnail_image,blog_intro,published_on,route FROM `tabBlog Post` WHERE published = 1 %s ORDER BY published_on DESC  limit %s,%s"%(condition,(int(page_no) - 1) * int(page_size),page_size)
-	return frappe.db.sql(bloglist_query,as_dict=1)
-
-
-@frappe.whitelist(allow_guest=True)
-def get_blog_categories():
-	bloglist_query = "SELECT name,title,route FROM `tabBlog Category` WHERE published = 1 ORDER BY creation DESC "
-	return frappe.db.sql(bloglist_query,as_dict=1)
-
-@frappe.whitelist(allow_guest=True)
-def get_blog_details(route):
-	blog_details = frappe.db.get_all("Blog Post",filters={"route":route},fields=["*"])
-	if blog_details:
-		condition = " AND blog_category = '%s' "%(blog_details[0].blog_category)
-		related_bloglist_query = "SELECT name,title,thumbnail_image,blog_intro,published_on,route FROM `tabBlog Post` WHERE published = 1 AND route<>'%s' %s ORDER BY published_on DESC  limit %s,%s"%(route,condition,0,6)
-		related_bloglist = frappe.db.sql(related_bloglist_query,as_dict=1)
-		comments = frappe.db.get_all("Blog Comments",filters={"blog_name":blog_details[0].name},fields=["name1","email","comments","creation"],order_by="creation desc")
-		return {"status":"success","blog_details":blog_details[0],"related_bloglist":related_bloglist,"comments":comments}
-	else:
-		return {"status":"failed","Message":"Not Found"}
-
-
-@frappe.whitelist(allow_guest=True)
-def insert_blog_comments(data):
-	doc = data
-	if isinstance(doc, six.string_types):
-			doc = json.loads(doc)
-	response=doc
-	blog=frappe.new_doc('Blog Comments')
-	blog.blog_name=response.get('blog')
-	blog.name1=response.get('user_name')
-	blog.email=response.get('email')
-	blog.comments=response.get('message')
-	blog.save(ignore_permissions=True)
-	return blog.__dict__
-
-@frappe.whitelist()
-def get_blogger_bloglist(customer_email):
-	check_blogger = frappe.db.get_all("Blogger",filters={"user":customer_email})
-	blogger_id = None
-	if check_blogger:
-		blogger_id = check_blogger[0].name
-	return frappe.db.get_all("Blog Post",filters={"blogger":blogger_id},fields=['name','title','blog_category','published_on','route','published','thumbnail_image'])
-
 @frappe.whitelist()
 def generate_sections_json():
 	sections = []
@@ -2499,6 +2669,12 @@ def update_web_themes(doc,method):
 	# One rebuild per burst: a publish saves the page more than once, and every
 	# save landed here — three full theme rebuilds queued for one change. A
 	# queued/running job with this id absorbs the later requests.
+	# OPS-03: ask first. Frappe logs every refused duplicate as an ERROR, which
+	# filled frappe.log (262 lines, 21 rotations) for an outcome that is fine.
+	from frappe.utils.background_jobs import is_job_enqueued
+
+	if is_job_enqueued("go1_cms:update_website_themes"):
+		return
 	frappe.enqueue(
 		update_website_themes, queue='default', doc=doc,
 		job_id="go1_cms:update_website_themes", deduplicate=True,
@@ -2555,6 +2731,7 @@ def list_builders():
 @frappe.whitelist()
 def create_builder(builder_name, builder_title, pages=None):
 	"""Create a new CMS Page Builder"""
+	require_editor()
 	try:
 		doc = frappe.new_doc("CMS Page Builder")
 		doc.builder_name = builder_name
@@ -2591,6 +2768,7 @@ def create_builder(builder_name, builder_title, pages=None):
 @frappe.whitelist()
 def update_builder(builder_name, **kwargs):
 	"""Update builder properties"""
+	require_editor()
 	try:
 		doc = frappe.get_doc("CMS Page Builder", builder_name)
 
@@ -2609,6 +2787,7 @@ def update_builder(builder_name, **kwargs):
 @frappe.whitelist()
 def add_page(builder_name, page_data):
 	"""Add a new page to builder"""
+	require_editor()
 	try:
 		if isinstance(page_data, str):
 			page_data = json.loads(page_data)
@@ -2635,6 +2814,7 @@ def add_page(builder_name, page_data):
 @frappe.whitelist()
 def delete_page(builder_name, page_name):
 	"""Delete a page from builder"""
+	require_editor()
 	try:
 		doc = frappe.get_doc("CMS Page Builder", builder_name)
 
@@ -2656,6 +2836,7 @@ def delete_page(builder_name, page_name):
 @frappe.whitelist()
 def reorder_pages(builder_name, page_order):
 	"""Reorder pages (page_order is list of page names in new order)"""
+	require_editor()
 	try:
 		if isinstance(page_order, str):
 			page_order = json.loads(page_order)
@@ -2688,6 +2869,7 @@ def reorder_pages(builder_name, page_order):
 @frappe.whitelist()
 def update_page(builder_name, page_name, **kwargs):
 	"""Update page properties"""
+	require_editor()
 	try:
 		doc = frappe.get_doc("CMS Page Builder", builder_name)
 
@@ -2722,6 +2904,7 @@ def duplicate_cms_builder_page(builder_name, page_name, new_page_name):
 	screen made — with the wrong doctype and the wrong arguments, which is why
 	copying a page failed every time.
 	"""
+	require_editor()
 	try:
 		doc = frappe.get_doc("CMS Page Builder", builder_name)
 
@@ -2777,6 +2960,7 @@ def export_builder(builder_name):
 @frappe.whitelist()
 def import_builder(builder_name, import_data):
 	"""Import builder from JSON"""
+	require_editor()
 	try:
 		if isinstance(import_data, str):
 			import_data = json.loads(import_data)
@@ -2815,28 +2999,17 @@ def publish_page_builder(page_name):
 	"""
 	Promotes the draft layout to the live layout and updates public web assets.
 	"""
-	allowed_roles = {'System Manager', 'Administrator', 'CMS Admin'}
-	user_roles = set(frappe.get_roles(frappe.session.user))
-	if not (user_roles & allowed_roles):
-		frappe.throw('Not permitted to publish pages', frappe.PermissionError)
-
-	doc = frappe.get_doc("Web Page Builder", page_name)
-	
-	if not doc.draft_layout_json:
+	doc = frappe.get_doc("Web Page Builder", page_name) if frappe.db.exists("Web Page Builder", page_name) else None
+	if doc and not doc.draft_layout_json:
+		require_page(page_name)
 		frappe.throw("No draft layout found to publish")
-
-	# Promote draft to live layout. The flags the editor used to write in a
-	# separate save beforehand are set here, so a publish is one save, not two.
-	doc.layout_json = doc.draft_layout_json
-	doc.published = 1
-	doc.use_page_builder = 1
-
-	# Save triggers construct_html() to rewrite data_source/{page_name}_web.json
-	doc.save(ignore_permissions=True)
-
-	from go1_cms.go1_cms.doctype.web_page_publish_log.web_page_publish_log import record_publish
-	record_publish(doc, source="Page")
-
+	doc = publish_page(page_name)
+	# MNU-03: the website's shared header/footer go live with it.
+	try:
+		from cms_frontend.site_chrome import publish as _publish_chrome
+		_publish_chrome(doc.project)
+	except ImportError:
+		pass
 	frappe.db.commit()
 
 	# The route as validate() normalised it (project slug, scrubbing) — the
@@ -2849,40 +3022,34 @@ def publish_project(project_name, page_names=None):
 	Publishes all or selected Web Page Builder pages belonging to the project
 	and updates the Project status to 'Published'.
 	"""
-	allowed_roles = {'System Manager', 'Administrator', 'CMS Admin'}
-	user_roles = set(frappe.get_roles(frappe.session.user))
-	if not (user_roles & allowed_roles):
-		frappe.throw('Not permitted to publish projects', frappe.PermissionError)
-
+	require_project(project_name)
 	project = frappe.get_doc("CMS Project", project_name)
 
 	# Parse page_names if passed as JSON string
 	if isinstance(page_names, str):
-		import json
 		try:
 			page_names = json.loads(page_names)
 		except Exception:
 			pass
 
-	# Build filters
 	filters = {"project": project_name}
 	if page_names:
 		filters["name"] = ["in", page_names]
 
-	pages = frappe.get_all("Web Page Builder", filters=filters, fields=["name"])
-
-	from go1_cms.go1_cms.doctype.web_page_publish_log.web_page_publish_log import record_publish
-
 	published_count = 0
-	for page in pages:
-		pdoc = frappe.get_doc("Web Page Builder", page.name)
-		if pdoc.draft_layout_json:
-			pdoc.layout_json = pdoc.draft_layout_json
-		pdoc.published = 1
-		pdoc.save(ignore_permissions=True)
-		record_publish(pdoc, source="Project")
+	for name in frappe.get_all("Web Page Builder", filters=filters, pluck="name"):
+		pdoc = frappe.get_doc("Web Page Builder", name)
+		if not (pdoc.draft_layout_json or pdoc.layout_json):
+			continue
+		_set_live(pdoc, 1, "Project")
 		published_count += 1
 
+	try:
+		from cms_frontend.site_chrome import publish as _publish_chrome
+		_publish_chrome(project_name)
+	except ImportError:
+		pass
+	project.reload()
 	project.status = "Published"
 	project.save(ignore_permissions=True)
 	frappe.db.commit()
@@ -2898,6 +3065,7 @@ def create_static_section(project_id, section_name, cms_v4_enabled=False, field_
 	"""
 	Create a new static section template with optional cms_v4 support.
 	"""
+	require_editor()
 	try:
 		doc = frappe.get_doc({
 			"doctype": "Section Template",
@@ -2968,6 +3136,7 @@ def update_section_template_cms_v4(section_template_name, cms_v4_enabled=False):
 	"""
 	Update cms_v4 flag for a section template.
 	"""
+	require_editor()
 	try:
 		doc = frappe.get_doc("Section Template", section_template_name)
 		doc.cms_v4_enabled = cms_v4_enabled
@@ -2991,7 +3160,7 @@ def update_section_template_cms_v4(section_template_name, cms_v4_enabled=False):
 # GO1CMS Web Clipper — Chrome Extension API
 # ─────────────────────────────────────────────────────────────────────────────
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def import_section_from_extension(section_name, section_html, category="General",
                                   thumbnail_base64="", source_url=""):
 	"""
@@ -3008,6 +3177,7 @@ def import_section_from_extension(section_name, section_html, category="General"
 	Returns:
 		dict: { status, name, message }
 	"""
+	require_editor()
 	try:
 		if not section_name or not section_html:
 			frappe.throw("section_name and section_html are required.")
@@ -3076,7 +3246,7 @@ def import_section_from_extension(section_name, section_html, category="General"
 		return {"status": "error", "error": str(e), "message": "Import failed."}
 
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_imported_sections(category=None):
 	"""
 	Returns all sections imported via the GO1CMS Web Clipper.
@@ -3128,6 +3298,7 @@ def save_clipped_section_to_page(page_route, section_html, section_name="Clipped
 	Returns:
 		dict: { page_section } — the new section ID for the builder to render.
 	"""
+	require_page_route(page_route)
 	try:
 		import uuid
 
@@ -3287,6 +3458,7 @@ def set_page_share_link(page, enabled=1, regenerate=0, layout=None):
 @frappe.whitelist()
 def invite_to_page_share(page, emails, message=None):
 	"""Email the view-only preview link to one or more people."""
+	require_page(page)
 	_share_guard(page)
 	try:
 		recipients = json.loads(emails) if isinstance(emails, six.string_types) else (emails or [])
@@ -3484,3 +3656,37 @@ def _brand_logos(project):
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Brand logos failed")
 		return {"light": "", "dark": ""}
+
+
+@frappe.whitelist(methods=['POST'])
+def set_page_tags(page, tags):
+	"""TAX-03: tag a page (comma-separated or a JSON list); returns the clean list."""
+	from go1_cms.go1_cms.cms_access import require_page
+
+	require_page(page)
+	items = frappe.parse_json(tags) if isinstance(tags, str) and tags.strip().startswith('[') else str(tags or '').split(',')
+	seen, out = set(), []
+	for t in items:
+		t = frappe.utils.strip_html_tags(str(t)).strip()[:40]
+		if t and t.lower() not in seen:
+			seen.add(t.lower())
+			out.append(t)
+	frappe.db.set_value('Web Page Builder', page, 'cms_tags', ', '.join(out), update_modified=False)
+	frappe.db.commit()
+	return out
+
+
+@frappe.whitelist()
+def page_tags(project=None):
+	"""TAX-03: every tag on the pages of a project (or all pages), most used first."""
+	require_editor()
+	filters = [['cms_tags', 'is', 'set']] + _page_project_filter(project)
+	counts = {}
+	for raw in frappe.get_all('Web Page Builder', filters=filters, pluck='cms_tags'):
+		for t in (raw or '').split(','):
+			t = t.strip()
+			if t:
+				key = t.lower()
+				counts.setdefault(key, [t, 0])[1] += 1
+	return [{'tag': v[0], 'pages': v[1]} for v in sorted(counts.values(), key=lambda v: (-v[1], v[0].lower()))]
+

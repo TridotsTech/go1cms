@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from go1_cms.go1_cms.cms_access import require_editor, require_page, require_page_route, require_project, require_system_manager
 from frappe import _
 import json
 import os
@@ -639,6 +640,7 @@ def get_section_columns(section,dt):
 
 @frappe.whitelist()
 def convert_template_to_section(template, business=None, section_name=None):
+	require_system_manager()
 	doc = get_mapped_doc("Section Template", template, {
 		"Section Template": {
 			"doctype": "Page Section"
@@ -661,6 +663,7 @@ def convert_template_to_section(template, business=None, section_name=None):
 
 @frappe.whitelist()
 def delete_section(name, parentfield):
+	require_system_manager()
 	frappe.db.sql('''delete from `tabMobile Page Section` where name = %(name)s and parentfield = %(parentfield)s''',{'name': name,'parentfield': parentfield})
 	return {'status': 'Success'}
 
@@ -720,6 +723,7 @@ def get_section_properties(section_name):
 
 @frappe.whitelist()
 def update_section_properties(section_name,css_design,style_json,is_full_width):
+	require_system_manager()
 	content_type = 'Data'
 	p_sections = frappe.db.get_all("Mobile Page Section",filters={"name":section_name},fields=['section'])
 	if p_sections:
@@ -812,6 +816,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 	#hided by boopathy
 	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
 	#end
+	require_system_manager()
 	if lists_data:
 		lists = json.loads(lists_data)
 		for li in lists:
@@ -982,7 +987,7 @@ def update_section_content(docs, section, lists_data='[]', business=None):
 
 	return {'status':'Success'}
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_random_records(dt, records, business=None):
 	fields = condition = ''
 	if not business:
@@ -1025,7 +1030,7 @@ def get_predefined_records(dt,records,name,page_no=0,business=None):
 		frappe.log_error(frappe.get_traceback(),"ecommerce_business_store.ecommerce_business_store.doctype.web_page_builder.web_page_builder.get_predefined_records")
 		return []
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_image_album(dt, dn, business=None):
 	if not business:
 		business = get_business_from_login()
@@ -1045,12 +1050,13 @@ def get_image_album(dt, dn, business=None):
 
 	return []
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_patterns_list():
 	return frappe.db.sql('''select name, background_color, background_image, heading_text_color, view_all_bg_color, view_all_text_color from `tabPage Pattern`''', as_dict=1)
 
 @frappe.whitelist()
 def update_patterns(**kwargs):
+	require_system_manager()
 	keys = kwargs.keys()
 	keys = list(keys)
 	if keys and 'cmd' in keys:
@@ -1197,7 +1203,7 @@ def get_page_html(doc, sections, html, source_doc, device_type, add_info=None, p
 	return html_list, js_list
 
 
-@frappe.whitelist(allow_guest=True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_scroll_content_mobile_app(page, add_info=None, page_no=0, page_len=3):
 	doc = frappe.get_doc('Proposal', page)
 	source_doc, sections, html = get_source_doc(doc, "Mobile")
@@ -1248,6 +1254,7 @@ def get_scroll_content(page, device_type, add_info=None, page_no=0, page_len=3):
 
 @frappe.whitelist()
 def upload_img():
+	require_system_manager()
 	import base64
 	#hide it boopathy on 10/08/22
 	# from ecommerce_business_store.ecommerce_business_store.mobileapi import get_uploaded_file_content, update_doc
@@ -1334,6 +1341,7 @@ def update_page_data(doc, method):
 
 @frappe.whitelist()
 def update_json():
+	require_system_manager()
 	pages = frappe.db.sql_list('''select name from `tabProposal` where published = 1''')
 	if pages:
 		for item in pages:
@@ -1342,21 +1350,22 @@ def update_json():
 
 @frappe.whitelist()
 def update_featured_item(name,checked, doctype="Product",  conditionfield="display_home_page"):
-	if int(checked)==1:
-		frappe.db.set_value(doctype,name,conditionfield, 1)
-		# 	eval(exec("doc.display_on_home_page = 1"))
-	else:
-		frappe.db.set_value(doctype,name,conditionfield, 0)
-		# 	eval(exec("doc.display_on_home_page = 0"))
-	doc = frappe.get_doc(doctype,name)
-	# doc.save(ignore_permissions=True)
-	return doc
+	# Only a tick-box field the caller may already write on this record.
+	meta = frappe.get_meta(doctype)
+	field = meta.get_field(conditionfield)
+	if not field or field.fieldtype != "Check":
+		frappe.throw(frappe._("Not allowed"), frappe.PermissionError)
+	doc = frappe.get_doc(doctype, name)
+	doc.check_permission("write")
+	doc.set(conditionfield, 1 if int(checked) == 1 else 0)
+	doc.save()
+	return {"name": doc.name, conditionfield: doc.get(conditionfield)}
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_featured_products():
 	return frappe.db.get_all('Product',filters={'is_active':1,'display_home_page':0},fields=['*'])
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_collection_records(collections):
 	try:
 		if collections:
@@ -1431,12 +1440,14 @@ def get_page_content(page, device_type, page_no=0, page_len=3):
 
 @frappe.whitelist()
 def get_element_properties(id):
+	require_system_manager()
 	fields =  frappe.db.get_all("Section Content",filters={"name":id},fields=["css_json","field_type","parent","field_key"])
 	css_properties = frappe.db.get_all("Field Types Property",filters={"field_type":fields[0].field_type},fields=['css_properties_list'])
 	if css_properties:
 		fields[0].css_properties_list=css_properties[0].css_properties_list
 		class_name = frappe.db.get_value("Page Section",fields[0].parent,"class_name")
 		if not class_name:
+			from go1_cms.go1_cms.doctype.page_section.page_section import get_class_name  # SEC-09: was never imported
 			class_name = get_class_name()
 			#modified by boopathy on 10/08/2022
 			# from ecommerce_business_store.cms.doctype.page_section.page_section import get_class_name
@@ -1458,7 +1469,7 @@ def get_section_element_properties(id):
 	fonts_list = frappe.db.get_all("CSS Font",fields=['name','font_family'])
 	fields[0].fonts_list = fonts_list
 	return fields[0]
-@frappe.whitelist(allow_guest = True)
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_context_content(route, context=None, page_no=0, page_len=3):
 	page_builder = frappe.get_doc('Proposal', {"route":route})
 	page_section = frappe.get_all("Mobile Page Section", fields=["name", "section", "parent"], filters= {"parent":page_builder.name, 'parentfield':'web_section'}, order_by='idx')
@@ -1489,7 +1500,7 @@ def get_source_doc_data(doc, device_type):
 def get_query_condition(user):
 	if "Admin" in frappe.get_roles(frappe.session.user) and not "Administrator" in frappe.get_roles(frappe.session.user):
 		return "(`tabProposal`.document is NULL)"
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_shuffled_category_products(category,no_of_records):
 	#hided by boopathy-10/08/2022
 	# from ecommerce_business_store.ecommerce_business_store.api import get_child_categories
@@ -1527,6 +1538,7 @@ def get_shuffled_category_products(category,no_of_records):
 	return result
 @frappe.whitelist()
 def import_sections_from_template(page_id):
+	require_system_manager()
 	page_template = frappe.get_doc("Page Template",page_id)
 	mobile_sections = frappe.db.get_all("Mobile Page Section",filters={"parent":page_id,"parentfield":"mobile_section"},fields=['section','section_title','section_type','content_type','allow_update_to_style'],order_by="idx")
 	web_sections = frappe.db.get_all("Mobile Page Section",filters={"parent":page_id,"parentfield":"web_section"},fields=['section','section_title','section_type','content_type','allow_update_to_style'],order_by="idx")
@@ -1572,6 +1584,7 @@ def import_sections_from_template(page_id):
 
 @frappe.whitelist()
 def save_as_template(page_id,title):
+	require_system_manager()
 	from frappe.model.mapper import get_mapped_doc
 	web_page = frappe.get_doc("Proposal",page_id)
 	page_template = frappe.new_doc("Page Template")
@@ -2310,6 +2323,7 @@ def get_attachement_email_id(file_url,quotation_id):
 
 @frappe.whitelist()
 def update_section_order(page, sections):
+	require_system_manager()
 	if isinstance(sections, str):
 		sections = json.loads(sections)
 	

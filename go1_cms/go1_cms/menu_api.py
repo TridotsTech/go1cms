@@ -30,6 +30,8 @@ MAX_MEGA_COLUMNS = 4
 
 MENU_ITEM_READ_FIELDS = [
 	"name",
+	"visible_to",
+	"visible_roles",
 	"idx",
 	"item_key",
 	"parent_key",
@@ -169,6 +171,46 @@ def _icon_svg_of(row):
 	return svg if svg and svg["name"] == (row.get("icon") or "") else None
 
 
+_AUDIENCE = {"Everyone": "everyone", "Guests only": "guests", "Signed-in members": "members", "Chosen roles": "roles"}
+_AUDIENCE_BACK = {v: k for k, v in _AUDIENCE.items()}
+
+
+def _audience_of(row):
+	show = _AUDIENCE.get(row.get("visible_to") or "Everyone", "everyone")
+	if show == "everyone":
+		return None
+	roles = [r.strip() for r in re.split(r"[,\n]", str(row.get("visible_roles") or "")) if r.strip()]
+	return {"show": show, "roles": roles}
+
+
+def _audience_fields(node, existing_row):
+	"""Carry-forward like active_paths: a client that never sends `audience` keeps it."""
+	if "audience" not in node:
+		if existing_row:
+			return {"visible_to": existing_row.get("visible_to") or "Everyone", "visible_roles": existing_row.get("visible_roles") or ""}
+		return {"visible_to": "Everyone", "visible_roles": ""}
+	aud = node.get("audience") or {}
+	show = aud.get("show") if isinstance(aud, dict) else None
+	roles = aud.get("roles") if isinstance(aud, dict) else []
+	return {"visible_to": _AUDIENCE_BACK.get(show, "Everyone"),
+	        "visible_roles": ", ".join(str(r).strip()[:60] for r in (roles or []) if str(r).strip())[:500]}
+
+
+def filter_for_viewer(items, menu):
+	"""The tree this visitor may see (PRT-06). Editors asking for hidden rows get everything."""
+	if not items or '"audience": {' not in frappe.as_json(items):
+		return items
+	try:
+		from cms_frontend.portal import access
+	except Exception:
+		return items
+	project = frappe.db.get_value("Menu", menu, "project")
+	ctx = access.viewer(project)
+	import copy as _copy
+
+	return access._prune(_copy.deepcopy(items), ctx)
+
+
 def _auto_of(row):
 	source = (row.get("auto_source") or "").strip()
 	if source not in AUTO_SOURCES:
@@ -260,7 +302,7 @@ def _expand_auto(nodes, project, max_depth):
 			_expand_auto(node["children"], project, max_depth)
 
 
-def clear_auto_menus(doc=None, method=None):
+def clear_auto_menus(doc=None, method=None, *args, **kwargs):
 	"""Pages or blog posts changed: menus with automatic items are stale.
 
 	Only when such an item exists — most sites have none, and the public tree
@@ -350,6 +392,9 @@ def build_menu_tree(
 				p.strip() for p in re.split(r"[,\n]", str(row.get("active_paths") or "")) if p.strip()
 			],
 			"hideOn": [p.strip() for p in str(row.get("hide_on") or "").split(",") if p.strip()],
+			# PRT-06: who the item is for. Filtered per visitor by filter_for_viewer,
+			# after the shared cache, so one cached tree serves every audience.
+			"audience": _audience_of(row),
 			"auto": _auto_of(row),
 			"depth": 0,
 			"children": [],
@@ -456,6 +501,7 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 			"items": tree["items"],
 			"warnings": tree["warnings"],
 			"version": str(frappe.db.get_value("Menu", menu, "modified") or ""),
+			"tree_hash": _tree_hash(tree["items"]),
 		}
 
 	cached = None
@@ -464,7 +510,7 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 	except Exception:
 		cached = None
 	if cached:
-		return cached
+		return dict(cached, items=filter_for_viewer(cached.get("items"), menu))
 
 	if not frappe.db.exists("Menu", menu):
 		frappe.throw(_("Menu {0} not found").format(menu), frappe.DoesNotExistError)
@@ -483,7 +529,7 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 	except Exception:
 		pass
 
-	return payload
+	return dict(payload, items=filter_for_viewer(payload.get("items"), menu))
 
 
 @frappe.whitelist()
@@ -671,21 +717,155 @@ def get_menu_usage(menu):
 		limit_page_length=0,
 	)
 
-	pattern = "%{0}%".format(menu)
-	fb2_pages = frappe.db.sql(
-		"""SELECT name, page_title, route, published FROM `tabWeb Page Builder`
-		   WHERE layout_json LIKE %(pat)s OR draft_layout_json LIKE %(pat)s
-		   ORDER BY page_title ASC LIMIT 200""",
-		{"pat": pattern},
-		as_dict=True,
-	)
+	fb2_pages = _menu_bound_rows("Web Page Builder", menu, ["page_title", "route", "published"])
+	components = _menu_bound_rows("Web Component", menu, ["component_name"])
 
 	return {
 		"page_sections": page_sections,
 		"header_components": header_components,
 		"fb2_pages": fb2_pages,
-		"total": len(page_sections) + len(header_components) + len(fb2_pages),
+		"web_components": components,
+		"total": len(page_sections) + len(header_components) + len(fb2_pages) + len(components),
 	}
+
+
+def _binds_menu(node, menu):
+	"""True when any node in this layout tree is bound to `menu` (menuSource.menu)."""
+	if isinstance(node, dict):
+		src = node.get("menuSource")
+		if isinstance(src, dict) and src.get("menu") == menu:
+			return True
+		bc = node.get("breadcrumbs")  # MNU-09 breadcrumbs follow a menu too
+		if isinstance(bc, dict) and bc.get("menu") == menu:
+			return True
+		return any(_binds_menu(v, menu) for v in node.values() if isinstance(v, (dict, list)))
+	if isinstance(node, list):
+		return any(_binds_menu(v, menu) for v in node)
+	return False
+
+
+def _menu_bound_rows(doctype, menu, fields):
+	"""MNU-01: rows whose layout binds this menu — read from the layout itself.
+
+	The old check was `LIKE %name%` over the whole layout JSON, so a menu called
+	"Pages" matched every page with the word in its text (117 instead of 4).
+	SQL only narrows the candidates; the layout is parsed and only a nav node's
+	`menuSource.menu` counts. Draft and published layouts are both checked."""
+	meta = frappe.get_meta(doctype)
+	cols = [c for c in ("layout_json", "draft_layout_json") if meta.has_field(c)]
+	if not cols:
+		return []
+	esc = menu.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+	cond = " OR ".join(f"((`{c}` LIKE %(src)s OR `{c}` LIKE %(bc)s) AND `{c}` LIKE %(name)s)" for c in cols)
+	rows = frappe.db.sql(
+		f"SELECT name, {', '.join('`' + f + '`' for f in fields)}, {', '.join('`' + c + '`' for c in cols)} "
+		f"FROM `tab{doctype}` WHERE {cond}",
+		{"src": "%menuSource%", "bc": "%breadcrumbs%", "name": f"%{esc}%"}, as_dict=True,
+	)
+	out = []
+	for r in rows:
+		where = []
+		for c in cols:
+			try:
+				tree = json.loads(r.get(c) or "null")
+			except ValueError:
+				continue
+			if _binds_menu(tree, menu):
+				where.append("draft" if c.startswith("draft") else "live")
+		if where:
+			row = {f: r.get(f) for f in ["name"] + fields}
+			row["in"] = where
+			out.append(row)
+	key = fields[0]
+	return sorted(out, key=lambda x: str(x.get(key) or x["name"]).lower())
+
+
+def _forget_renders():
+	"""Visitors are served cached page renders; a menu change must reach them now,
+	not when the cache expires (an hour)."""
+	try:
+		from cms_frontend.ssr import forget
+
+		forget()
+	except Exception:
+		pass
+
+
+def _rebind(node, old, new):
+	"""Point every nav bound to `old` at `new`; True when something changed."""
+	changed = False
+	if isinstance(node, dict):
+		for key in ("menuSource", "breadcrumbs"):
+			src = node.get(key)
+			if isinstance(src, dict) and src.get("menu") == old:
+				src["menu"] = new
+				changed = True
+		for v in node.values():
+			if isinstance(v, (dict, list)) and _rebind(v, old, new):
+				changed = True
+	elif isinstance(node, list):
+		for v in node:
+			if _rebind(v, old, new):
+				changed = True
+	return changed
+
+
+@frappe.whitelist(methods=["POST"])
+def replace_menu_usage(menu, replacement, pages=None):
+	"""MNU-06: swap `menu` for `replacement` wherever it is used — every page and
+	saved section (draft and live layout), classic page sections and headers.
+	`pages` (JSON list of page names) limits the swap to those pages."""
+	if not frappe.db.exists("Menu", menu) or not frappe.db.exists("Menu", replacement):
+		frappe.throw(_("Choose two existing menus."))
+	if menu == replacement:
+		frappe.throw(_("Choose a different menu to use instead."))
+	only = set(frappe.parse_json(pages) if isinstance(pages, str) and pages.strip().startswith("[") else (pages or []))
+	changed = {"pages": [], "sections": 0, "classic": 0}
+	for doctype, key in (("Web Page Builder", "pages"), ("Web Component", "sections")):
+		label = "page_title" if doctype == "Web Page Builder" else "component_name"
+		for row in _menu_bound_rows(doctype, menu, [label]):
+			if doctype == "Web Page Builder" and only and row["name"] not in only:
+				continue
+			if not frappe.has_permission(doctype, "write", doc=row["name"]):
+				continue
+			updates = {}
+			for col in ("layout_json", "draft_layout_json"):
+				raw = frappe.db.get_value(doctype, row["name"], col)
+				try:
+					tree = json.loads(raw or "null")
+				except ValueError:
+					continue
+				if _rebind(tree, menu, replacement):
+					updates[col] = json.dumps(tree)
+			if updates:
+				frappe.db.set_value(doctype, row["name"], updates, update_modified=False)
+				if key == "pages":
+					changed["pages"].append(row.get(label) or row["name"])
+				else:
+					changed["sections"] += 1
+	if not only:
+		for dt in ("Page Section", "Header Component"):
+			for n in frappe.get_all(dt, filters={"menu": menu}, pluck="name"):
+				if frappe.has_permission(dt, "write", doc=n):
+					frappe.db.set_value(dt, n, "menu", replacement)
+					changed["classic"] += 1
+	frappe.db.commit()
+	_forget_renders()
+	return changed
+
+
+@frappe.whitelist(methods=["POST"])
+def delete_menu(menu):
+	"""MNU-01: delete only when nothing uses the menu. The check runs here, on
+	the server, so a failed check can never turn into a delete."""
+	frappe.get_doc("Menu", menu).check_permission("delete")
+	usage = get_menu_usage(menu)
+	if usage["total"]:
+		frappe.throw(_("This menu is still used in {0} place(s). Unbind it first.").format(usage["total"]),
+		             title=_("Menu in use"))
+	frappe.delete_doc("Menu", menu)
+	frappe.db.commit()
+	return {"deleted": menu}
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1138,6 +1318,7 @@ def _flatten(tree, rows, known_rows, parent_label="", parent_key="", depth=0):
 				d for d in ("desktop", "tablet", "mobile")
 				if d in {str(x).strip().lower() for x in (node.get("hideOn") or [])}
 			),
+			**_audience_fields(node, known_rows.get(node.get("row"))),
 			"idx": len(rows) + 1,
 		}
 
@@ -1152,9 +1333,22 @@ def _flatten(tree, rows, known_rows, parent_label="", parent_key="", depth=0):
 		_flatten(node.get("children") or [], rows, known_rows, label, item_key, depth + 1)
 
 
+def _tree_hash(items):
+	"""MNU-07: a fingerprint of a menu's items as the editor sees them. A rename
+	or a project move changes `modified` but not this, so only a real change to
+	the items by someone else counts as a conflict."""
+	import hashlib
+
+	return hashlib.sha256(json.dumps(items or [], sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
 @frappe.whitelist()
-def save_menu_tree(menu=None, tree=None):
-	"""Replace a menu's items with the submitted nested tree."""
+def save_menu_tree(menu=None, tree=None, base_hash=None, force=0):
+	"""Replace a menu's items with the submitted nested tree.
+
+	MNU-07: `base_hash` is the fingerprint the editor loaded. When the stored
+	items have changed since (a teammate saved), nothing is written and the
+	answer says who changed it and when — unless `force` (Save mine anyway)."""
 	if not menu:
 		frappe.throw(_("menu is required"))
 	if not frappe.db.exists("Menu", menu):
@@ -1185,6 +1379,16 @@ def save_menu_tree(menu=None, tree=None):
 				  "The classic theme's header nests by label and will attach sub-items to both.").format(label)
 			)
 
+	if base_hash and not frappe.utils.cint(force):
+		current = _tree_hash(build_menu_tree(menu, include_hidden=True)["items"])
+		if current != base_hash:
+			by = frappe.db.get_value("Menu", menu, "modified_by")
+			return {
+				"conflict": True,
+				"by": frappe.utils.get_fullname(by) if by else "",
+				"at": str(frappe.db.get_value("Menu", menu, "modified") or ""),
+			}
+
 	doc = frappe.get_doc("Menu", menu)
 	# name -> the row as it stands, so a save can both reject foreign row names
 	# and carry forward fields the submitting client never knew about.
@@ -1198,11 +1402,13 @@ def save_menu_tree(menu=None, tree=None):
 		doc.append("menus", row)
 	doc.save()
 	frappe.db.commit()
+	_forget_renders()
 
 	fresh = build_menu_tree(menu, include_hidden=True)
 	return {
 		"menu": menu,
 		"items": fresh["items"],
 		"version": str(frappe.db.get_value("Menu", menu, "modified") or ""),
+		"tree_hash": _tree_hash(fresh["items"]),
 		"warnings": warnings + fresh["warnings"],
 	}

@@ -6,7 +6,7 @@ from frappe.utils import get_files_path
 from datetime import datetime
 from ecommerce_business_store.utils.google_maps import get_geolocation
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_settings_from_domain(dt, domain=None, business=None):
 	if not business:
 		if not domain:
@@ -52,7 +52,7 @@ def get_settings(dt, dn):
 
 	return frappe.get_doc(dt, dn)
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_settings_value_from_domain(dt, field, domain=None, business=None):
 	if not business:
 		if not domain:
@@ -75,7 +75,7 @@ def get_settings_value_from_domain(dt, field, domain=None, business=None):
 	if settings:
 		return settings[0][field]
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_business_from_web_domain(domain, raise_exception=False):
 	domain = get_subdomain(domain)
 	check_website = frappe.db.get_all('Website', filters={'domain_name': domain}, fields=['business'])
@@ -375,7 +375,7 @@ def clear_api_log():
 def clear_executed_command_log():
 	frappe.enqueue('ecommerce_business_store.utils.setup.delete_executed_command_logs')
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def delete_api_logs():
 	try:
 		enable_api_log = frappe.db.get_single_value('Common Settings', 'enable_api_logs')
@@ -387,7 +387,7 @@ def delete_api_logs():
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.utils.setup.delete_api_logs')
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def delete_executed_command_logs():
 	try:
 		logs = frappe.db.sql('''select group_concat(concat('"', name, '"')) from `tabExecuted Command` where creation < date_sub(curdate(), interval 30 day) order by creation limit 100''')
@@ -396,7 +396,7 @@ def delete_executed_command_logs():
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), 'ecommerce_business_store.utils.setup.delete_executed_command_logs')
 
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def get_theme_settings(domain=None, business=None):
 	active_theme = None
 	filters = {}
@@ -455,7 +455,7 @@ def before_insert_all(doc, method):
 		if int(limit)>0 and int(count)>int(limit):
 			frappe.throw("Can't create new {0}. Maximum {1} count is {3}.".format(doc.doctype, doc.doctype, limit))
 		
-@frappe.whitelist()
+# SEC-09: web access removed — legacy code that crashes (missing record types or names) and builds SQL from its arguments.
 def read_file_from_url(url):
 	import urllib
 

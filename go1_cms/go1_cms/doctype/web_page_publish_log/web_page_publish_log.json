@@ -12,7 +12,8 @@
   "project",
   "published_on",
   "published_by",
-  "source"
+  "source",
+  "previous_layout_json"
  ],
  "fields": [
   {
@@ -65,14 +66,21 @@
    "fieldname": "source",
    "fieldtype": "Select",
    "label": "Source",
-   "options": "Page\nProject",
+   "options": "Page\nProject\nUnpublish",
+   "read_only": 1
+  },
+  {
+   "description": "The live version this publish or unpublish replaced, kept so it can be put back.",
+   "fieldname": "previous_layout_json",
+   "fieldtype": "Long Text",
+   "label": "Previous Live Layout",
    "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-08-07 09:00:00.000000",
+ "modified": "2026-09-30 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Publish Log",

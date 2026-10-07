@@ -16,6 +16,7 @@
   "use_theme_studio",
   "web_theme",
   "server_render",
+  "root_routes",
   "fallback_image",
   "brand_section",
   "brand_logo",
@@ -30,7 +31,39 @@
   "description_section",
   "description",
   "global_js_section",
-  "global_js"
+  "global_js",
+  "portal_section",
+  "site_type",
+  "portal_signup",
+  "portal_home",
+  "portal_col",
+  "portal_party_type",
+  "portal_layout",
+  "portal_menu",
+  "portal_roles",
+  "portal_pay_section",
+  "portal_currency",
+  "razorpay_key_id",
+  "razorpay_key_secret",
+  "razorpay_webhook_secret",
+  "portal_pay_col",
+  "pwa_enabled",
+  "pwa_name",
+  "pwa_color",
+  "pwa_icon",
+  "members_section",
+  "members",
+  "page_folders",
+  "style_presets_draft",
+  "style_presets_live",
+  "site_css_draft",
+  "site_css_live",
+  "brand_voice_section",
+  "brand_voice_tone",
+  "brand_voice_audience",
+  "brand_voice_use",
+  "brand_voice_avoid",
+  "brand_voice_notes"
  ],
  "fields": [
   {
@@ -92,6 +125,13 @@
    "fieldname": "server_render",
    "fieldtype": "Check",
    "label": "Server-render published pages"
+  },
+  {
+   "default": "0",
+   "description": "Publish this project's pages at the site root, without the project slug in front: /products instead of /<slug>/products. Only this project's pages are affected; a page's route is stored exactly as typed.",
+   "fieldname": "root_routes",
+   "fieldtype": "Check",
+   "label": "Pages at site root (no slug prefix)"
   },
   {
    "description": "Shown wherever an image on this project's pages is missing or fails to load (a product without a photo, for one). Leave empty for the CMS default.",
@@ -176,11 +216,206 @@
    "fieldtype": "Code",
    "label": "Global JS",
    "options": "JS"
+  },
+  {
+   "fieldname": "portal_section",
+   "fieldtype": "Section Break",
+   "label": "Portal",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "site_type",
+   "fieldtype": "Select",
+   "label": "Kind of website",
+   "options": "Website\nPortal\nWeb App",
+   "default": "Website",
+   "description": "Portals and web apps have signed-in members, roles and private pages."
+  },
+  {
+   "fieldname": "portal_signup",
+   "fieldtype": "Select",
+   "label": "New members",
+   "options": "Invite only\nApproval\nOpen",
+   "default": "Invite only",
+   "description": "Open: anyone can join. Approval: sign-ups wait for an owner. Invite only: members are added by an owner."
+  },
+  {
+   "fieldname": "portal_home",
+   "fieldtype": "Data",
+   "label": "After sign-in go to",
+   "description": "An address on this website, e.g. /acme/account."
+  },
+  {
+   "fieldname": "portal_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "portal_party_type",
+   "fieldtype": "Link",
+   "label": "Members are",
+   "options": "DocType",
+   "description": "Link each member to one of these records, e.g. Customer."
+  },
+  {
+   "fieldname": "portal_layout",
+   "fieldtype": "Select",
+   "label": "Members' pages look like",
+   "options": "Website pages\nApp layout",
+   "default": "App layout",
+   "description": "App layout: a sidebar menu, a top bar with notifications and the account menu, and tabs on phones."
+  },
+  {
+   "fieldname": "portal_menu",
+   "fieldtype": "Link",
+   "label": "App menu",
+   "options": "Menu",
+   "depends_on": "eval:doc.portal_layout=='App layout'"
+  },
+  {
+   "fieldname": "portal_roles",
+   "fieldtype": "Table",
+   "label": "Portal roles",
+   "options": "CMS Portal Role"
+  },
+  {
+   "fieldname": "portal_pay_section",
+   "fieldtype": "Section Break",
+   "label": "Portal payments and app",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "portal_currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "razorpay_key_id",
+   "fieldtype": "Data",
+   "label": "Razorpay key id"
+  },
+  {
+   "fieldname": "razorpay_key_secret",
+   "fieldtype": "Password",
+   "label": "Razorpay key secret"
+  },
+  {
+   "fieldname": "razorpay_webhook_secret",
+   "fieldtype": "Password",
+   "label": "Razorpay webhook secret"
+  },
+  {
+   "fieldname": "portal_pay_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pwa_enabled",
+   "fieldtype": "Check",
+   "label": "Installable app",
+   "default": "0",
+   "description": "Members can add the portal to their phone's home screen."
+  },
+  {
+   "fieldname": "pwa_name",
+   "fieldtype": "Data",
+   "label": "App name"
+  },
+  {
+   "fieldname": "pwa_color",
+   "fieldtype": "Data",
+   "label": "App colour",
+   "description": "e.g. #2490ef"
+  },
+  {
+   "fieldname": "pwa_icon",
+   "fieldtype": "Attach Image",
+   "label": "App icon",
+   "description": "Square, at least 512 × 512."
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "members_section",
+   "fieldtype": "Section Break",
+   "label": "Members"
+  },
+  {
+   "description": "People who may open and edit this website. System Managers always can.",
+   "fieldname": "members",
+   "fieldtype": "Table",
+   "label": "Members",
+   "options": "CMS Project Member"
+  },
+  {
+   "fieldname": "page_folders",
+   "fieldtype": "Long Text",
+   "label": "Page Folders",
+   "hidden": 1,
+   "description": "JSON list of the website's page folders, kept even while empty (BLD-23)."
+  },
+  {
+   "fieldname": "style_presets_draft",
+   "fieldtype": "Long Text",
+   "label": "Style Presets (draft)",
+   "hidden": 1,
+   "description": "BLD-13: shared style presets (JSON)."
+  },
+  {
+   "fieldname": "style_presets_live",
+   "fieldtype": "Long Text",
+   "label": "Style Presets (live)",
+   "hidden": 1,
+   "description": "BLD-13: shared style presets (JSON)."
+  },
+  {
+   "fieldname": "site_css_draft",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Website CSS (draft)",
+   "description": "THM-06: one stylesheet for every page of this website — the builder's copy."
+  },
+  {
+   "fieldname": "site_css_live",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Website CSS (live)",
+   "description": "THM-06: what visitors get; the draft goes live when any page of the website is published."
+  },
+  {
+   "fieldname": "brand_voice_section",
+   "fieldtype": "Section Break",
+   "label": "Brand Voice",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "brand_voice_tone",
+   "fieldtype": "Data",
+   "label": "Voice / Tone",
+   "description": "GEN-11: e.g. Warm and plain-spoken; Confident and expert."
+  },
+  {
+   "fieldname": "brand_voice_audience",
+   "fieldtype": "Data",
+   "label": "Who we talk to"
+  },
+  {
+   "fieldname": "brand_voice_use",
+   "fieldtype": "Small Text",
+   "label": "Words and phrases to use"
+  },
+  {
+   "fieldname": "brand_voice_avoid",
+   "fieldtype": "Small Text",
+   "label": "Words and phrases to avoid"
+  },
+  {
+   "fieldname": "brand_voice_notes",
+   "fieldtype": "Small Text",
+   "label": "Other notes on how we write"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-11 22:00:00.000000",
+ "modified": "2026-09-30 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Project",

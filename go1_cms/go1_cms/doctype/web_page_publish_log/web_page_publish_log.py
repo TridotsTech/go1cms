@@ -16,7 +16,7 @@ class WebPagePublishLog(Document):
 	pass
 
 
-def record_publish(page_doc, source="Page"):
+def record_publish(page_doc, source="Page", previous_layout=None):
 	"""Record that `page_doc` was just published. Never raises: a logging failure
 	must not roll back or mask a publish that already succeeded."""
 	try:
@@ -28,6 +28,7 @@ def record_publish(page_doc, source="Page"):
 			"published_on": now(),
 			"published_by": frappe.session.user,
 			"source": source,
+			"previous_layout_json": previous_layout or "",
 		}).insert(ignore_permissions=True)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Web Page Publish Log Error")
