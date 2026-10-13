@@ -1,0 +1,214 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "slug",
+  "tagline",
+  "column_break_1",
+  "category",
+  "status",
+  "sort_order",
+  "is_highlight",
+  "section_body",
+  "description",
+  "icon",
+  "screenshot",
+  "video_url",
+  "doc_article",
+  "section_plans",
+  "starter",
+  "starter_note",
+  "column_break_2",
+  "medium",
+  "medium_note",
+  "column_break_3",
+  "premium",
+  "premium_note"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "label": "Slug",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "tagline",
+   "fieldtype": "Data",
+   "label": "Tagline",
+   "description": "One line under the title on cards."
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Builder\nPanel\nHosting\nBilling\nTeam\nIntegrations",
+   "default": "Builder",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Live\nBeta\nPlanned",
+   "default": "Live",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Order",
+   "default": "0"
+  },
+  {
+   "fieldname": "is_highlight",
+   "fieldtype": "Check",
+   "label": "Highlight",
+   "default": "0",
+   "description": "One of the few features the home page and the docs landing lead with."
+  },
+  {
+   "fieldname": "section_body",
+   "fieldtype": "Section Break",
+   "label": "Showcase"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon",
+   "description": "Icon name from the admin icon set."
+  },
+  {
+   "fieldname": "screenshot",
+   "fieldtype": "Attach Image",
+   "label": "Screenshot",
+   "description": "16:9."
+  },
+  {
+   "fieldname": "video_url",
+   "fieldtype": "Data",
+   "label": "Video URL"
+  },
+  {
+   "fieldname": "doc_article",
+   "fieldtype": "Link",
+   "label": "Learn more article",
+   "options": "Doc Article"
+  },
+  {
+   "fieldname": "section_plans",
+   "fieldtype": "Section Break",
+   "label": "Plans"
+  },
+  {
+   "fieldname": "starter",
+   "fieldtype": "Check",
+   "label": "Starter",
+   "default": "0"
+  },
+  {
+   "fieldname": "starter_note",
+   "fieldtype": "Data",
+   "label": "Starter note",
+   "depends_on": "starter",
+   "description": "Shown beside the check, such as \"1 site\"."
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "medium",
+   "fieldtype": "Check",
+   "label": "Medium",
+   "default": "0"
+  },
+  {
+   "fieldname": "medium_note",
+   "fieldtype": "Data",
+   "label": "Medium note",
+   "depends_on": "medium"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "premium",
+   "fieldtype": "Check",
+   "label": "Premium",
+   "default": "0"
+  },
+  {
+   "fieldname": "premium_note",
+   "fieldtype": "Data",
+   "label": "Premium note",
+   "depends_on": "premium"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-08 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Docs",
+ "name": "Product Feature",
+ "owner": "Administrator",
+ "row_format": "Dynamic",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:slug",
+ "title_field": "title",
+ "search_fields": "title,category",
+ "description": "One row of the product feature catalogue: feeds the features page, the pricing grid and the docs.",
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Docs Editor",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "show_title_field_in_link": 0
+}

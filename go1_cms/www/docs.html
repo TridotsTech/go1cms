@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ meta_title | e }}</title>
+{% if meta_description %}<meta name="description" content="{{ meta_description | e }}">{% endif %}
+<meta name="robots" content="{{ robots }}">
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:title" content="{{ meta_title | e }}">
+{% if meta_description %}<meta property="og:description" content="{{ meta_description | e }}">{% endif %}
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="{{ logo_url }}">
+<link rel="alternate" type="application/rss+xml" title="{{ site_name }} Docs" href="/docs/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% if json_ld %}<script type="application/ld+json">{{ json_ld }}</script>{% endif %}
+<style>
+/* The product website's own look (go1_cms project, go1_cpanel/cms_site): the
+   floating header bar, the three-column docs layout and its type, measured from
+   the builder pages these docs replaced. */
+:root{--font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+--ink:#111;--ink-warm:#1c1a19;--ink2:#525252;--nav:#5b5754;--muted:#666;--faint:#a1a1aa;--line:#e5e5e5;--line2:#f1f1f1;
+--bg:#fff;--bg2:#fafafa;--chip:#ecebea;--code:#f4f4f4;--brand:#2490ef;--brand-soft:rgba(36,144,239,.07)}
+*{box-sizing:border-box}
+html{scroll-padding-top:96px}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);font-size:14.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;box-sizing:content-box}
+
+/* header: the floating bar */
+.hd{position:sticky;top:0;z-index:40;padding:16px 16px 8px;pointer-events:none}
+.bar{pointer-events:auto;max-width:920px;margin:0 auto;height:56px;display:flex;align-items:center;gap:20px;padding:0 8px 0 16px;
+  background:rgba(248,248,247,.9);-webkit-backdrop-filter:saturate(160%) blur(14px);backdrop-filter:saturate(160%) blur(14px);border-radius:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px rgba(0,0,0,.04),0 10px 30px -12px rgba(0,0,0,.22)}
+.brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.brand img{width:26px;height:26px;object-fit:contain;display:block}
+.brand span{font-size:16.5px;font-weight:700;letter-spacing:-.02em;color:var(--ink-warm);white-space:nowrap}
+.nav{display:flex;align-items:center;gap:30px;margin-left:auto}
+.nav a{font-size:14px;font-weight:500;color:var(--nav);padding:4px 0;white-space:nowrap;transition:color .15s ease}
+.nav a:hover,.nav a.on{color:var(--ink-warm)}
+.nav svg{width:15px;height:15px;vertical-align:-2px;margin-right:6px}
+.acct{display:flex;align-items:center;gap:8px;margin-left:auto}
+.b{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:10px;font-size:13.5px;font-weight:600;line-height:1.4;white-space:nowrap;border:1px solid transparent;cursor:pointer;transition:background-color .15s ease,transform .1s ease}
+.b:active{transform:translateY(1px)}
+.b-ghost{background:var(--chip);color:var(--ink-warm)}.b-ghost:hover{background:#e2e1df}
+.b-dark{background:var(--ink-warm);color:#fff}.b-dark:hover{background:#000}
+.tog{display:none;width:38px;height:38px;margin-left:auto;align-items:center;justify-content:center;border:0;border-radius:10px;background:var(--chip);cursor:pointer;color:#0f0f0f}
+.drawer{display:none;pointer-events:auto;max-width:920px;margin:8px auto 0;padding:10px 16px 16px;background:rgba(248,248,247,.97);border-radius:16px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.04),0 10px 30px -12px rgba(0,0,0,.22)}
+.drawer a{display:block;font-size:14px;font-weight:500;color:#0f0f0f;padding:8px 0}
+.drawer .b{display:flex;width:100%;margin-top:10px}
+body.menu-open .drawer{display:block}
+
+/* docs layout */
+.doc{display:grid;grid-template-columns:240px 560px 200px;gap:40px;padding:32px 0 72px}
+.side{position:sticky;top:96px;align-self:start;max-height:calc(100vh - 112px);overflow:auto;padding-bottom:16px}
+.find{position:relative;margin-bottom:20px}
+.find input{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px 0 30px;font:inherit;font-size:13px;background:#fff;color:var(--ink);outline:none}
+.find input:focus{border-color:var(--brand)}
+.find svg{position:absolute;left:10px;top:10px;color:var(--faint)}
+.space-pick{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 8px;font:inherit;font-size:13px;margin-bottom:16px;background:#fff}
+.grp{margin-bottom:18px}
+.grp-h{all:unset;cursor:pointer;display:block;width:100%;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.grp.closed ul{display:none}
+.side ul{list-style:none;margin:0;padding:0}
+.side li a{display:block;font-size:13.5px;line-height:1.45;color:var(--ink2);padding:5px 10px 5px 12px;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+.side li a:hover{color:var(--ink)}
+.side li a.on{color:var(--brand);font-weight:600;background:var(--brand-soft);border-left-color:var(--brand)}
+.side li ul{margin-left:12px}
+.side .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#d97706;margin-left:6px;vertical-align:middle}
+.draft{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-bottom:16px}
+.crumbs{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.crumbs a:hover{color:var(--ink)}.crumbs b{color:var(--brand);font-weight:600}.crumbs i{font-style:normal;margin:0 6px;color:var(--faint)}
+h1.title{font-size:28px;line-height:1.15;font-weight:700;letter-spacing:-.03em;color:var(--ink);margin:0 0 8px}
+.lead{font-size:15.5px;line-height:1.65;color:var(--muted);margin:0 0 40px}
+
+/* article body */
+.prose{color:var(--ink2);font-size:14.5px;line-height:1.65}
+.prose h2{font-size:19px;line-height:1.3;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:48px 0 14px}
+.prose h3{font-size:15.5px;line-height:1.4;font-weight:600;color:var(--ink);margin:30px 0 8px}
+.prose>:first-child{margin-top:0}
+.prose p{margin:0 0 14px}
+.prose ul,.prose ol{margin:0 0 16px;padding-left:26px}
+.prose li{margin:0 0 14px}.prose li::marker{color:var(--ink)}
+.prose strong{color:var(--ink);font-weight:600}
+.prose a{color:var(--brand);text-decoration:underline;text-decoration-color:rgba(36,144,239,.35);text-underline-offset:3px}
+.prose a:hover{text-decoration-color:var(--brand)}
+.prose code{font-family:var(--mono);font-size:13px;background:var(--code);color:var(--ink2);border-radius:5px;padding:2px 6px}
+.prose pre{position:relative;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;margin:0 0 18px;font-size:13px;line-height:1.6}
+.prose pre code{background:none;padding:0;color:var(--ink)}
+.prose .codehilite{background:none}
+.copy{position:absolute;top:8px;right:8px;font:500 11.5px var(--font);border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:6px;padding:2px 8px;cursor:pointer;opacity:0;transition:opacity .15s}
+.prose pre:hover .copy,.copy:focus{opacity:1}
+.prose table{width:100%;border-collapse:collapse;margin:4px 0 18px;font-size:14px;display:block;overflow-x:auto}
+.prose th{text-align:left;font-weight:600;color:var(--ink);padding:10px;border-bottom:1px solid var(--line)}
+.prose td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.prose .ta-right{text-align:right}.prose .ta-center{text-align:center}
+.prose blockquote{margin:0 0 16px;padding:0 0 0 14px;border-left:2px solid var(--line);color:var(--muted)}
+.prose img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:32px 0}
+.prose .callout{border-left:2px solid var(--brand);background:var(--bg2);border-radius:0 8px 8px 0;padding:10px 14px;margin:0 0 18px}
+.prose .callout p:last-child{margin-bottom:0}
+.prose .callout-title{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin:0 0 2px}
+.prose .callout-warning,.prose .callout-caution{border-left-color:#d97706}
+.prose .callout-tip{border-left-color:#16a34a}
+.prose input[type=checkbox]{margin-right:6px}
+.prose iframe,.prose video{max-width:100%;border-radius:10px;border:0}
+.prose h2 .anchor,.prose h3 .anchor{margin-left:6px;color:var(--faint);opacity:0;text-decoration:none;font-weight:400}
+.prose h2:hover .anchor,.prose h3:hover .anchor{opacity:1}
+
+.meta{margin-top:36px;font-size:13px;color:var(--muted)}
+.meta a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.meta a:hover{color:var(--ink)}
+.vote{display:flex;gap:10px;align-items:center;margin-top:10px}
+.vote button{all:unset;cursor:pointer;color:var(--ink2);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.vote button:hover{color:var(--ink)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line)}
+.pn a{display:block;border:1px solid var(--line);border-radius:8px;padding:10px 14px;transition:border-color .15s ease}
+.pn a:hover{border-color:#cfcfcf}
+.pn small{display:block;font-size:11.5px;color:var(--muted);line-height:1.6}
+.pn span{font-size:13.5px;font-weight:500;color:var(--ink)}
+.pn .nx{grid-column:2;text-align:right}
+
+.toc{position:sticky;top:96px;align-self:start}
+.toc h4{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;line-height:1.4}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc li{margin:0 0 7px}
+.toc li.l3{padding-left:12px}
+.toc a{font-size:12.5px;line-height:1.45;color:var(--muted);transition:color .15s ease}
+.toc a:hover,.toc a.on{color:var(--ink)}
+
+/* simple pages: search, features, plans */
+.page{padding:40px 0 80px;max-width:760px}
+.page.wide{max-width:none}
+.page h1{font-size:28px;font-weight:700;letter-spacing:-.03em;margin:0 0 8px;line-height:1.15}
+.page .lead{margin-bottom:28px}
+.page .lead a,.empty a{color:var(--ink2)}
+.searchform{display:flex;gap:8px;margin-bottom:24px}
+.searchform input,.searchform select{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font:inherit;font-size:14px;outline:none;background:#fff}
+.searchform input{flex:1}.searchform input:focus{border-color:var(--brand)}
+.results{list-style:none;margin:0;padding:0}
+.results li{padding:16px 0;border-bottom:1px solid var(--line)}
+.results a{font-size:15.5px;font-weight:600;color:var(--ink)}.results a:hover{color:var(--brand)}
+.results .where{font-size:12px;color:var(--muted);margin:2px 0 4px}
+.results p{margin:4px 0 0;color:var(--ink2);font-size:14px}
+.empty{color:var(--muted)}
+.flist h2{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:36px 0 4px}
+.flist a.f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 24px;padding:14px 0;border-bottom:1px solid var(--line2)}
+.flist a.f:hover .fname{color:var(--brand)}
+.flist .fname{font-size:14.5px;font-weight:600;color:var(--ink)}
+.flist .fdesc{grid-column:1;font-size:13.5px;color:var(--ink2)}
+.flist .fplan{grid-row:1/3;grid-column:2;align-self:center;font-size:12.5px;color:var(--muted);text-align:right;white-space:nowrap}
+.soon{font-size:12px;font-weight:500;color:#92400e;margin-left:8px;letter-spacing:0}
+.ptable{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.ptable th,.ptable td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
+.ptable th:first-child,.ptable td:first-child{text-align:left}
+.ptable thead th{font-weight:600;color:var(--ink)}
+.ptable .g td{padding-top:28px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ptable td a{font-weight:500;color:var(--ink)}.ptable td a:hover{color:var(--brand)}
+.ptable small{display:block;font-size:12.5px;color:var(--muted);font-weight:400}
+.ptable .y{color:var(--ink)}.ptable .n{color:var(--faint)}
+.feat{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:48px;align-items:start}
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:var(--bg2);margin-bottom:24px}
+.shot img,.shot video{width:100%;height:100%;object-fit:cover;display:block}
+.plans{border-top:1px solid var(--line)}
+.plans div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.plans span:last-child{color:var(--muted)}
+.plans .y{color:var(--ink)!important}
+
+.related{margin-top:36px}
+.related h3{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.related ul{list-style:none;margin:0;padding:0}
+.related li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.related a{color:var(--ink);font-weight:500}.related a:hover{color:var(--brand)}
+.related span{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.tags{margin-top:16px;font-size:13px;color:var(--muted)}
+.updated{margin-top:24px;font-size:12.5px;color:var(--faint)}
+.count{font-size:13.5px;color:var(--muted);margin:0 0 4px}
+.links{font-size:13.5px;color:var(--muted);margin:-12px 0 8px}
+.links a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.links a:hover{color:var(--ink)}
+.flist h2 .all{float:right;text-transform:none;letter-spacing:0;font-weight:500;font-size:13px;color:var(--ink2)}
+.flist h2 .all:hover{color:var(--brand)}
+.page .searchform{margin-bottom:8px}
+
+/* footer */
+.ft{border-top:1px solid var(--line);padding:36px 0}
+.ft .wrap{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.ft .brand img{width:20px;height:20px}.ft .brand span{font-size:14px;color:var(--ink)}
+.ft p{margin:8px 0 0;max-width:320px;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.cols{display:flex;gap:40px;flex-wrap:wrap}
+.cols div{display:flex;flex-direction:column}
+.cols b{font-size:12.5px;font-weight:600;color:var(--ink)}
+.cols a{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.4}
+.cols a:hover{color:var(--brand)}
+
+/* responsive */
+.side-btn{display:none;width:100%;align-items:center;justify-content:space-between;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;margin-bottom:12px}
+@media (max-width:1180px){.doc{grid-template-columns:220px minmax(0,1fr)}.toc{display:none}}
+@media (max-width:860px){
+  .nav,.acct{display:none}.tog{display:inline-flex}
+  .doc{grid-template-columns:minmax(0,1fr);padding-top:20px}
+  .side{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:8px}
+  .side .groups{display:none}body.side-open .side .groups{display:block}
+  .side-btn{display:flex}
+  .feat{grid-template-columns:minmax(0,1fr);gap:24px}
+  .wrap{padding:0 16px}
+  .cols{gap:24px}
+  .ptable th,.ptable td{padding:10px 6px}
+}
+{{ code_css }}
+</style>
+</head>
+<body>
+{% macro gh() %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>{% endmacro %}
+{% macro search_icon() %}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>{% endmacro %}
+{% macro plan_text(f) %}{% set inc = (f.plans | selectattr("included") | map(attribute="label") | list) if f.plans else (["starter", "medium", "premium"] | select("in", f | dictsort | selectattr(1) | map(attribute=0) | list) | map("title") | list) %}{{ "Every plan" if inc | length == 3 else (inc | join(" · ")) }}{% endmacro %}
+
+<header class="hd">
+  <div class="bar">
+    <a class="brand" href="/"><img src="{{ logo_url }}" alt=""><span>{{ site_name }}</span></a>
+    <nav class="nav" aria-label="Site">
+      {% for n in nav %}<a href="{{ n.href }}" class="{{ 'on' if n.key == 'docs' else '' }}">{{ n.label }}</a>{% endfor %}
+      <a href="{{ github }}" target="_blank" rel="noopener">{{ gh() }}GitHub</a>
+    </nav>
+    <div class="acct">
+      {% if signed_in %}
+        {% if is_editor %}<a class="b b-ghost" href="/cms/docs">Edit docs</a>{% endif %}
+        <a class="b b-dark" href="{{ panel_route }}">{{ panel_label }}</a>
+      {% else %}
+        <a class="b b-ghost" href="{{ sign_in_route }}">Sign in</a>
+        {% if signup_route %}<a class="b b-dark" href="{{ signup_route }}">Get started</a>{% endif %}
+      {% endif %}
+    </div>
+    <button class="tog" type="button" aria-label="Menu" onclick="document.body.classList.toggle('menu-open')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div class="drawer">
+    {% for n in nav %}<a href="{{ n.href }}">{{ n.label }}</a>{% endfor %}
+    <a href="{{ github }}" target="_blank" rel="noopener">GitHub</a>
+    {% if signed_in %}<a class="b b-dark" href="{{ panel_route }}">{{ panel_label }}</a>
+    {% else %}<a class="b b-ghost" href="{{ sign_in_route }}">Sign in</a>{% if signup_route %}<a class="b b-dark" href="{{ signup_route }}">Get started</a>{% endif %}{% endif %}
+  </div>
+</header>
+
+{% if view == "article" %}
+<main class="wrap doc">
+  <aside class="side" aria-label="Articles">
+    <button class="side-btn" type="button" onclick="document.body.classList.toggle('side-open')">Browse the docs<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="groups">
+      <form class="find" action="/docs/search" method="get" role="search">{{ search_icon() }}<input name="q" type="search" placeholder="Search the docs" aria-label="Search the docs"></form>
+      {% if spaces | length > 1 or (space and not space.is_published) %}
+      <select class="space-pick" aria-label="Product" onchange="location.href=this.value">
+        {% for s in spaces %}<option value="{{ s.route }}" {{ 'selected' if s.name == space.name else '' }}>{{ s.title | e }}</option>{% endfor %}
+        {% if not space.is_published %}<option selected value="/docs/{{ space.name }}">{{ space.title | e }} (unpublished)</option>{% endif %}
+      </select>
+      {% endif %}
+      {% for g in article.sidebar %}
+      <div class="grp" data-grp="{{ space.name }}:{{ g.group | e }}">
+        {% if g.group %}<button class="grp-h" type="button" aria-expanded="true">{{ g.group | e }}</button>{% endif %}
+        <ul>
+          {% for it in g["items"] %}
+          <li><a href="{{ it.route }}" class="{{ 'on' if it.name == article.name else '' }}">{{ it.title | e }}{% if it.status != 'Published' %}<span class="dot" title="Draft"></span>{% endif %}</a>
+            {% if it.children %}<ul>{% for ch in it.children %}<li><a href="{{ ch.route }}" class="{{ 'on' if ch.name == article.name else '' }}">{{ ch.title | e }}{% if ch.status != 'Published' %}<span class="dot" title="Draft"></span>{% endif %}</a></li>{% endfor %}</ul>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <article>
+    {% if article.status != "Published" %}<div class="draft">Draft: only editors can see this article. Publish it from <a href="/cms/docs?article={{ article.name }}"><u>the docs editor</u></a>.</div>{% endif %}
+    <div class="crumbs"><a href="/docs">Docs</a><i>/</i>{% if article.parent %}<a href="{{ article.parent.route }}">{{ article.parent.title | e }}</a>{% elif article.group_label %}<b>{{ article.group_label | e }}</b>{% else %}<b>{{ space.title | e }}</b>{% endif %}</div>
+    <h1 class="title">{{ article.title | e }}</h1>
+    {% if article.summary %}<p class="lead">{{ article.summary | e }}</p>{% endif %}
+    <div class="prose" id="prose">{{ article.body_html }}</div>
+
+    {% if article.features %}
+    <div class="related">
+      <h3>Related features</h3>
+      <ul>{% for f in article.features %}<li><a href="/docs/features/{{ f.slug }}">{{ f.title | e }}</a><span>{{ plan_text(f) }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if article.tags %}<div class="tags">Tags: {{ article.tags | join(", ") | e }}</div>{% endif %}
+
+    {% if article.status == "Published" %}
+    <div class="meta vote" id="vote" data-space="{{ space.name }}" data-slug="{{ article.slug }}">
+      <span>Was this page helpful?</span><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button><span class="done" hidden>Thanks for telling us.</span>
+    </div>
+    {% endif %}
+
+    {% if article.prev or article.next %}
+    <nav class="pn" aria-label="Previous and next">
+      {% if article.prev %}<a href="{{ article.prev.route }}"><small>← Previous</small><span>{{ article.prev.title | e }}</span></a>{% endif %}
+      {% if article.next %}<a class="nx" href="{{ article.next.route }}"><small>Next →</small><span>{{ article.next.title | e }}</span></a>{% endif %}
+    </nav>
+    {% endif %}
+    <div class="updated">Last updated {{ frappe.utils.format_date(article.modified[:10], "d MMMM yyyy") }}{% if article.version_tag %} · version {{ article.version_tag | e }}{% endif %}</div>
+  </article>
+
+  <aside class="toc" aria-label="On this page">
+    {% if article.outline %}
+    <h4>On this page</h4>
+    <ul>{% for h in article.outline %}<li class="l{{ h.level }}"><a href="#{{ h.id }}" data-id="{{ h.id }}">{{ h.text | e }}</a></li>{% endfor %}</ul>
+    {% endif %}
+  </aside>
+</main>
+
+{% elif view == "landing" %}
+<main class="wrap"><div class="page">
+  <h1>{{ site_name }} documentation</h1>
+  <p class="lead">Guides and reference for building pages, binding them to data and publishing your site.</p>
+  <form class="searchform" action="/docs/search" method="get" role="search">
+    <input name="q" type="search" placeholder="Search the docs, for example “custom domain”" aria-label="Search the docs" autofocus>
+    <button class="b b-dark" type="submit">Search</button>
+  </form>
+  <div class="flist">
+    <h2>Browse by product</h2>
+    {% for s in spaces %}
+    <a class="f" href="{{ s.route }}"><span class="fname">{{ s.title | e }}</span><span class="fplan">{{ s.article_count }} article{{ "" if s.article_count == 1 else "s" }}</span><span class="fdesc">{{ (s.description or "") | e }}</span></a>
+    {% else %}<p class="empty">No documentation is published yet.</p>{% endfor %}
+    {% if highlights %}
+    <h2>What you can do <a class="all" href="/docs/features">All features →</a></h2>
+    {% for f in highlights %}
+    <a class="f" href="{{ f.article.route if f.article else f.route }}"><span class="fname">{{ f.title | e }}{% if f.status != "Live" %}<span class="soon">{{ f.status }}</span>{% endif %}</span><span class="fplan">{{ plan_text(f) }}</span><span class="fdesc">{{ (f.tagline or "") | e }}</span></a>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div></main>
+
+{% elif view == "search" %}
+<main class="wrap"><div class="page">
+  <h1>Search</h1>
+  <form class="searchform" action="/docs/search" method="get" role="search">
+    <input name="q" type="search" value="{{ (q or '') | e }}" placeholder="Search the docs" aria-label="Search the docs" autofocus>
+    {% if spaces | length > 1 %}<select name="space" aria-label="Product"><option value="">All products</option>{% for s in spaces %}<option value="{{ s.name }}" {{ 'selected' if s.name == space_filter else '' }}>{{ s.title | e }}</option>{% endfor %}</select>{% endif %}
+    <button class="b b-dark" type="submit">Search</button>
+  </form>
+  {% if q %}
+    {% if results %}
+    <p class="count">{{ results | length }} result{{ "" if results | length == 1 else "s" }} for “{{ q | e }}”</p>
+    <ul class="results">{% for r in results %}<li><a href="{{ r.route }}">{{ r.title | e }}</a><div class="where">{{ r.space_title | e }}</div><p>{{ r.snippet | e }}</p></li>{% endfor %}</ul>
+    {% else %}<p class="empty">Nothing matches “{{ q | e }}”. Try a shorter word, or <a href="/docs"><u>browse the docs</u></a>.</p>{% endif %}
+  {% endif %}
+</div></main>
+
+{% elif view == "features" %}
+<main class="wrap"><div class="page flist">
+  <h1>Features</h1>
+  <p class="lead">Everything {{ site_name }} does, grouped by area, with the plans that include each one.</p>
+  <p class="links"><a href="/docs/features{{ '' if roadmap else '?roadmap=1' }}">{{ "Hide what is planned" if roadmap else "Show what is planned too" }}</a> · <a href="/docs/pricing">Compare plans</a></p>
+  {% for c in categories %}
+    {% set rows = features | selectattr("category", "equalto", c) | list %}
+    {% if rows %}
+    <h2>{{ c }}</h2>
+    {% for f in rows %}
+    <a class="f" href="{{ f.route }}"><span class="fname">{{ f.title | e }}{% if f.status != "Live" %}<span class="soon">{{ f.status }}</span>{% endif %}</span><span class="fplan">{{ plan_text(f) }}</span><span class="fdesc">{{ (f.tagline or "") | e }}</span></a>
+    {% endfor %}
+    {% endif %}
+  {% endfor %}
+</div></main>
+
+{% elif view == "feature" %}
+<main class="wrap"><div class="page wide">
+  <div class="crumbs"><a href="/docs/features">Features</a><i>/</i><b>{{ feature.category }}</b></div>
+  <div class="feat">
+    <div>
+      <h1>{{ feature.title | e }}{% if feature.status != "Live" %}<span class="soon">{{ feature.status }}</span>{% endif %}</h1>
+      {% if feature.tagline %}<p class="lead">{{ feature.tagline | e }}</p>{% endif %}
+      {% if feature.screenshot or feature.video_url %}
+      <div class="shot">{% if feature.video_url %}<video src="{{ feature.video_url | e }}" controls playsinline {% if feature.screenshot %}poster="{{ feature.screenshot | e }}"{% endif %}></video>{% else %}<img src="{{ feature.screenshot | e }}" alt="{{ feature.title | e }}">{% endif %}</div>
+      {% endif %}
+      {% if feature.description %}<div class="prose">{{ frappe.utils.sanitize_html(feature.description) }}</div>{% endif %}
+    </div>
+    <aside>
+      <div class="plans">
+        {% for p in feature.plans %}<div><span>{{ p.label }}</span><span class="{{ 'y' if p.included else '' }}">{{ ((p.note or "Included") if p.included else "Not included") | e }}</span></div>{% endfor %}
+      </div>
+      {% if feature.article %}<p style="margin-top:16px"><a class="b b-dark" href="{{ feature.article.route }}">Learn how: {{ feature.article.title | e }}</a></p>{% endif %}
+      <p class="links"><a href="/docs/pricing">Compare all plans →</a></p>
+    </aside>
+  </div>
+</div></main>
+
+{% elif view == "pricing" %}
+<main class="wrap"><div class="page wide">
+  <h1>Plans compared</h1>
+  <p class="lead">Which features each plan includes. Planned features are left out until they ship.</p>
+  <table class="ptable">
+    <thead><tr><th>Feature</th>{% for p in plans %}<th>{{ p | title }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for c in categories %}
+      {% set rows = features | selectattr("category", "equalto", c) | list %}
+      {% if rows %}
+      <tr class="g"><td colspan="{{ plans | length + 1 }}">{{ c }}</td></tr>
+      {% for f in rows %}
+      <tr><td><a href="{{ f.route }}">{{ f.title | e }}</a>{% if f.status == "Beta" %}<span class="soon">Beta</span>{% endif %}<small>{{ (f.tagline or "") | e }}</small></td>
+        {% for p in f.plans %}<td>{% if p.included %}<span class="y">{{ (p.note or "✓") | e }}</span>{% else %}<span class="n">—</span>{% endif %}</td>{% endfor %}</tr>
+      {% endfor %}
+      {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+</div></main>
+
+{% elif view == "empty_space" %}
+<main class="wrap"><div class="page"><h1>{{ space.title | e }}</h1><p class="lead">{{ (space.description or "") | e }}</p><p class="empty">No articles are published here yet.</p></div></main>
+{% endif %}
+
+<footer class="ft">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="/"><img src="{{ logo_url }}" alt=""><span>{{ site_name }}</span></a>
+      <p>An open-source visual website builder on the Frappe framework, by Tridots Tech.</p>
+      <p>© {{ frappe.utils.nowdate()[:4] }} {{ site_name }}</p>
+    </div>
+    <div class="cols">
+      <div><b>Product</b>{% for n in nav %}<a href="{{ n.href }}">{{ n.label }}</a>{% endfor %}<a href="/docs/features">Features</a><a href="/docs/pricing">Plans</a><a href="/docs/feed.xml">What's new (RSS)</a><a href="/">Website</a></div>
+      <div><b>Account</b><a href="{{ sign_in_route }}">Sign in</a>{% if signup_route %}<a href="{{ signup_route }}">Create account</a>{% endif %}<a href="{{ panel_route }}">{{ "Control panel" if panel_route == "/cms/panel" else "CMS" }}</a></div>
+      <div><b>Developers</b><a href="/docs/cms/self-hosting">Self-hosting</a><a href="/docs/cms/mcp-server">MCP server and API</a><a href="{{ github }}" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var store = { get: function (k) { try { return localStorage.getItem(k) } catch (e) { return null } },
+                set: function (k, v) { try { localStorage.setItem(k, v) } catch (e) {} } };
+
+  // A long sidebar starts with only the current article's group open; each
+  // reader's own open and closed groups are remembered.
+  var many = document.querySelectorAll('.side li').length > 24;
+  document.querySelectorAll('.grp[data-grp]').forEach(function (g) {
+    var key = 'go1docs:closed:' + g.dataset.grp, btn = g.querySelector('.grp-h');
+    if (!btn) return;
+    var saved = store.get(key);
+    if ((saved === '1' || (saved === null && many)) && !g.querySelector('a.on')) { g.classList.add('closed'); btn.setAttribute('aria-expanded', 'false') }
+    btn.addEventListener('click', function () {
+      var closed = g.classList.toggle('closed');
+      btn.setAttribute('aria-expanded', closed ? 'false' : 'true');
+      store.set(key, closed ? '1' : '0');
+    });
+  });
+
+  var prose = document.getElementById('prose');
+  if (prose) {
+    prose.querySelectorAll('h2[id],h3[id]').forEach(function (h) {
+      var a = document.createElement('a'); a.className = 'anchor'; a.href = '#' + h.id; a.textContent = '#'; a.setAttribute('aria-label', 'Link to this section'); h.appendChild(a);
+    });
+    prose.querySelectorAll('pre').forEach(function (pre) {
+      var code = (pre.querySelector('code') || pre).innerText;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'copy'; b.textContent = 'Copy';
+      b.addEventListener('click', function () {
+        if (navigator.clipboard) navigator.clipboard.writeText(code).then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy' }, 1400) });
+      });
+      pre.appendChild(b);
+    });
+  }
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a[data-id]'));
+  if (links.length && 'IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting });
+      var first = links.find(function (a) { return visible[a.dataset.id] });
+      if (first) links.forEach(function (a) { a.classList.toggle('on', a === first) });
+    }, { rootMargin: '-96px 0px -65% 0px' });
+    links.forEach(function (a) { var h = document.getElementById(a.dataset.id); if (h) io.observe(h) });
+  }
+
+  var vote = document.getElementById('vote');
+  if (vote) {
+    var vkey = 'go1docs:vote:' + vote.dataset.space + '/' + vote.dataset.slug;
+    var done = function () { vote.querySelectorAll('button').forEach(function (b) { b.hidden = true }); vote.querySelector('.done').hidden = false };
+    if (store.get(vkey)) done();
+    vote.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var headers = { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' };
+        {% if csrf_token %}headers['X-Frappe-CSRF-Token'] = '{{ csrf_token }}';{% endif %}
+        fetch('/api/method/go1_cms.docs.api.vote', { method: 'POST', headers: headers, credentials: 'same-origin',
+          body: new URLSearchParams({ space: vote.dataset.space, slug: vote.dataset.slug, helpful: b.dataset.v }) }).catch(function () {});
+        store.set(vkey, b.dataset.v); done();
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

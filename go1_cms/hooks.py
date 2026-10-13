@@ -66,6 +66,18 @@ update_website_context = [
 # after_install = "go1_cms.install.after_install"
 after_install = "go1_cms.go1_cms.after_install.after_install"
 
+# Docs (go1_cms/docs): the Docs Editor role exists before the doctypes that name
+# it are synced; a site with no docs yet gets the seeded spaces, articles and
+# feature catalogue on its first migrate.
+before_migrate = ["go1_cms.docs.setup.ensure_role"]
+after_migrate = ["go1_cms.docs.setup.after_migrate"]
+
+# /sitemap.xml (cms_frontend www/sitemap.py): every published docs article and
+# showcase page, which own no Web Page Builder row.
+cms_sitemap_urls = ["go1_cms.docs.api.sitemap_urls"]
+# /docs is the docs site even where an old builder page holds the route "docs".
+page_renderer = ["go1_cms.docs.renderer.DocsPageRenderer"]
+
 # Uninstallation
 # ------------
 

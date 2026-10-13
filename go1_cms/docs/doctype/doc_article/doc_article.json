@@ -1,0 +1,222 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "slug",
+  "space",
+  "column_break_1",
+  "status",
+  "group_label",
+  "parent_article",
+  "sort_order",
+  "section_body",
+  "summary",
+  "body_md",
+  "section_meta",
+  "tags",
+  "features",
+  "version_tag",
+  "column_break_2",
+  "published_on",
+  "helpful_yes",
+  "helpful_no",
+  "section_rendered",
+  "body_html",
+  "body_text",
+  "outline_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 0
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "label": "Slug",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Unique within the space. Lower-case letters, digits and dashes."
+  },
+  {
+   "fieldname": "space",
+   "fieldtype": "Link",
+   "label": "Space",
+   "options": "Doc Space",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPublished",
+   "default": "Draft",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "group_label",
+   "fieldtype": "Data",
+   "label": "Sidebar group",
+   "description": "Heading the article sits under in the sidebar, such as \"Get started\"."
+  },
+  {
+   "fieldname": "parent_article",
+   "fieldtype": "Link",
+   "label": "Parent article",
+   "options": "Doc Article",
+   "description": "One level of nesting under another article of the same space."
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Order",
+   "default": "0"
+  },
+  {
+   "fieldname": "section_body",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "label": "Summary",
+   "description": "Meta description and search snippet."
+  },
+  {
+   "fieldname": "body_md",
+   "fieldtype": "Markdown Editor",
+   "label": "Body"
+  },
+  {
+   "fieldname": "section_meta",
+   "fieldtype": "Section Break",
+   "label": "Related",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Table MultiSelect",
+   "label": "Tags",
+   "options": "Doc Article Tag"
+  },
+  {
+   "fieldname": "features",
+   "fieldtype": "Table",
+   "label": "Related features",
+   "options": "Doc Article Feature"
+  },
+  {
+   "fieldname": "version_tag",
+   "fieldtype": "Data",
+   "label": "Version",
+   "description": "Free text such as 1.0; a filter only."
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "published_on",
+   "fieldtype": "Datetime",
+   "label": "First published",
+   "read_only": 1
+  },
+  {
+   "fieldname": "helpful_yes",
+   "fieldtype": "Int",
+   "label": "Helpful votes",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "helpful_no",
+   "fieldtype": "Int",
+   "label": "Not helpful votes",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_rendered",
+   "fieldtype": "Section Break",
+   "label": "Rendered",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "body_html",
+   "fieldtype": "Long Text",
+   "label": "Body HTML",
+   "read_only": 1
+  },
+  {
+   "fieldname": "body_text",
+   "fieldtype": "Long Text",
+   "label": "Body text (search)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "outline_json",
+   "fieldtype": "Code",
+   "label": "Outline",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-08 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Docs",
+ "name": "Doc Article",
+ "owner": "Administrator",
+ "row_format": "Dynamic",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "hash",
+ "title_field": "title",
+ "search_fields": "title,slug,space",
+ "description": "One documentation article, written in Markdown and rendered to HTML when saved.",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Docs Editor",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "show_title_field_in_link": 0
+}

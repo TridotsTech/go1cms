@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+	<title>{{ title | e }}</title>
+	<link>{{ link }}</link>
+	<description>{{ description | e }}</description>
+	{%- for item in items %}
+	<item>
+		<title>{{ item.title | e }}</title>
+		<link>{{ item.link }}</link>
+		<guid>{{ item.link }}</guid>
+		<description>{{ item.description | e }}</description>
+		<pubDate>{{ item.pub_date }}</pubDate>
+	</item>
+	{%- endfor %}
+</channel>
+</rss>
