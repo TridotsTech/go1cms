@@ -113,6 +113,8 @@
   "twitter_image",
   "canonical_url",
   "robots",
+  "schema_type",
+  "schema_data",
   "section_break_28",
   "web_section",
   "mobile_section",
@@ -127,7 +129,13 @@
   "frozen_theme",
   "portal_access_section",
   "portal_access",
-  "portal_access_roles"
+  "portal_access_roles",
+  "campaign_section",
+  "hide_site_chrome",
+  "ends_on",
+  "on_end",
+  "end_redirect",
+  "ab_variant_of"
  ],
  "fields": [
   {
@@ -373,6 +381,20 @@
    "fieldtype": "Select",
    "label": "Robots",
    "options": "index,follow\nnoindex,follow\nindex,nofollow\nnoindex,nofollow"
+  },
+  {
+   "fieldname": "schema_type",
+   "fieldtype": "Select",
+   "label": "Structured data",
+   "options": "\nArticle\nProduct\nEvent\nFAQ",
+   "description": "SEO-10: what this page is, for Google's rich results."
+  },
+  {
+   "fieldname": "schema_data",
+   "fieldtype": "Code",
+   "label": "Structured data details",
+   "options": "JSON",
+   "depends_on": "eval:doc.schema_type"
   },
   {
    "fieldname": "section_break_28",
@@ -837,13 +859,53 @@
    "fieldtype": "Small Text",
    "label": "Roles",
    "depends_on": "eval:doc.portal_access=='Chosen roles'"
+  },
+  {
+   "fieldname": "campaign_section",
+   "fieldtype": "Section Break",
+   "label": "Campaign",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "hide_site_chrome",
+   "fieldtype": "Check",
+   "label": "Hide site header & footer",
+   "default": "0",
+   "description": "POP-04: a focused landing page shows no menu."
+  },
+  {
+   "fieldname": "ends_on",
+   "fieldtype": "Datetime",
+   "label": "Offer ends on",
+   "description": "POP-07: after this the page forwards or switches off."
+  },
+  {
+   "fieldname": "on_end",
+   "fieldtype": "Select",
+   "label": "When the offer ends",
+   "options": "Forward to home page\nForward to another address\nShow page not found",
+   "default": "Forward to home page"
+  },
+  {
+   "fieldname": "end_redirect",
+   "fieldtype": "Data",
+   "label": "Forward to",
+   "description": "A page address like /offers, or https://…"
+  },
+  {
+   "fieldname": "ab_variant_of",
+   "fieldtype": "Link",
+   "label": "Version B of",
+   "options": "Web Page Builder",
+   "read_only": 1,
+   "description": "POP-06: this page is the B version in an A/B test."
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2026-10-01 12:00:00.000000",
+ "modified": "2026-10-13 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "Web Page Builder",

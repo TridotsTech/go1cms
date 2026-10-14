@@ -337,7 +337,24 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			locked = None
 		if locked:
 			return locked
+	# POP-07: a page whose offer has ended forwards or is gone; POP-06: version B's
+	# own address forwards to the tested page. Editors still open the page itself.
+	campaign = None
+	try:
+		from cms_frontend import campaign
+	except ImportError:
+		campaign = None
+	if campaign and lock_hit and not (int(is_builder or 0) and can_see_draft(lock_hit[0].name)):
+		ended = campaign.end_state(lock_hit[0].name)
+		if ended:
+			return {"page_content": None, "page_id": None, "campaign_end": ended}
+		home = campaign.variant_home(lock_hit[0].name)
+		if home:
+			return {"page_content": None, "page_id": None, "campaign_end": {"redirect": home}}
+	frappe.local.cms_ab = None
 	out = _page_content(route, user, customer, domain, business, application_type, is_builder, start, page_length)
+	if isinstance(out, dict) and getattr(frappe.local, "cms_ab", None):
+		out["ab"] = frappe.local.cms_ab
 	if portal and project and isinstance(out, dict):
 		is_editor_view = int(is_builder or 0) and can_see_draft(hit[0].name)
 		if not is_editor_view and isinstance(out.get("page_content"), list) and '"audience"' in frappe.as_json(out["page_content"]):
@@ -365,6 +382,17 @@ def get_page_content(route=None, user=None, customer=None, domain=None, business
 			out["site_css"] = site_css_for(project, live=not (int(is_builder or 0) and can_see_draft(hit[0].name)))
 		except ImportError:
 			pass
+		# POP-01/03: the website's live popups this page may show (first call only).
+		if not int(start or 0):
+			try:
+				from cms_frontend.popups import for_page as popups_for
+
+				served = (getattr(frappe.local, "cms_ab", None) or {}).get("page") or hit[0].name
+				out["popups"] = popups_for(project, served)
+			except ImportError:
+				pass
+			except Exception:
+				frappe.log_error(frappe.get_traceback(), "get_page_content: popups")
 	return out
 
 
@@ -420,6 +448,20 @@ def _page_content(route=None, user=None, customer=None, domain=None, business=No
 		if check_domain("saas"):
 			business = get_business_from_web_domain(domain)
 		check_builder = find_web_page_builder_by_route(route)
+		# POP-06: a visitor of a page under an A/B test gets their version.
+		if check_builder and not is_builder:
+			try:
+				from cms_frontend.campaign import pick as _ab_pick
+
+				_served, _ab = _ab_pick(check_builder[0].name)
+				if _ab:
+					_ab["page"] = _served
+					frappe.local.cms_ab = _ab
+				if _served != check_builder[0].name:
+					check_builder = frappe.db.get_all('Web Page Builder', filters={'name': _served},
+						fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project']) or check_builder
+			except ImportError:
+				pass
 		if check_builder:
 			page_type = check_builder[0].w_page_type
 			if check_builder[0].page_type !="List" and check_builder[0].page_type != "Detail":
@@ -442,7 +484,8 @@ def _page_content(route=None, user=None, customer=None, domain=None, business=No
 			doc = frappe.get_doc("Web Page Builder", check_builder[0].name)
 			page_title = doc.page_title or doc.name
 			seo = {k: doc.get(k) for k in ("meta_title", "meta_description", "meta_keywords",
-			                                "og_title", "og_description", "og_image", "robots")}
+			                                "og_title", "og_description", "og_image", "robots",
+			                                "canonical_url", "twitter_image")}
 			# Project-level tab icon (CMS Project.favicon) so the SPA can swap
 			# the favicon per project, including on the Vite dev server where
 			# the server-rendered head is not available.
@@ -584,6 +627,10 @@ def _page_content(route=None, user=None, customer=None, domain=None, business=No
 		"og_description": seo.get("og_description"),
 		"og_image": seo.get("og_image"),
 		"robots": seo.get("robots"),
+		# SEO-01/07: the SPA keeps the canonical link and the X card in step on
+		# in-site navigation, as the server head does on a page load.
+		"canonical_url": seo.get("canonical_url"),
+		"twitter_image": seo.get("twitter_image"),
 		"favicon": seo.get("favicon"),
 		# The page's own stylesheet. It carries the `:root { --tok-*: ... }` block
 		# a tokenized page is painted from, so the palette arrives with the page
@@ -977,7 +1024,7 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 			# come back with the list rather than being fetched per page.
 			'meta_title', 'meta_description', 'meta_keywords',
 			'og_title', 'og_description', 'og_image', 'canonical_url',
-			'seo_focus_keyphrase', 'cms_tags',
+			'seo_focus_keyphrase', 'cms_tags', 'robots',
 		],
 		filters=filters,
 		or_filters=or_filters,
@@ -1002,6 +1049,13 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 		p['tags'] = [t.strip() for t in (p.get('cms_tags') or '').split(',') if t.strip()]
 		p['visits'] = visits.get(p['name'], 0)
 		p['preview'] = p.get('image') or p.get('og_image') or ''
+		# SEO-08: the card scores on what the page says, the same as /cms/seo.
+		try:
+			from cms_frontend.seo_tools import cached_content_stats
+
+			p['content'] = {k: v for k, v in cached_content_stats(p['name'], p.get('modified'), p.get('layout_json')).items() if k != 'text_sample'}
+		except Exception:
+			p['content'] = None
 		p['page_slug'] = p.get('route')
 		p['route'] = p.get('route')
 		p['publish_status'] = 'Published' if p.get('published') else 'Draft'
@@ -2070,6 +2124,12 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 						draft=bool(is_builder and doc.draft_layout_json and layout_str == doc.draft_layout_json))
 				except ImportError:
 					pass
+				# POP-04: a landing page set to hide the site header & footer.
+				try:
+					from cms_frontend.campaign import strip_chrome as _strip_chrome
+					sections_list = _strip_chrome(doc.name, sections_list)
+				except ImportError:
+					pass
 				page_animation = layout.get('pageAnimation')
 				# Paginate sections BEFORE resolving them (templates/dynamic data are
 				# expensive), so the published page can lazy-load sections on scroll.
@@ -2682,12 +2742,34 @@ def update_web_themes(doc,method):
 	# filled frappe.log (262 lines, 21 rotations) for an outcome that is fine.
 	from frappe.utils.background_jobs import is_job_enqueued
 
+	# SEO-04: the theme reads only a handful of page fields (WebTheme reads the
+	# published pages' route and header/footer choices). A save that touched none
+	# of them — search settings, content, design — has nothing to rebuild.
+	if getattr(doc, "doctype", None) == "Web Page Builder" and not _page_change_reaches_theme(doc):
+		return
 	if is_job_enqueued("go1_cms:update_website_themes"):
 		return
 	frappe.enqueue(
 		update_website_themes, queue='default', doc=doc,
 		job_id="go1_cms:update_website_themes", deduplicate=True,
 	)
+# The Web Page Builder fields web_theme.py reads when it builds the theme file.
+THEME_PAGE_FIELDS = (
+	"route", "published", "header_component", "footer_component", "edit_header_style",
+	"is_transparent_header", "menu_text_color", "menu_hover_bg", "menu_hover_text_color",
+)
+
+
+def _page_change_reaches_theme(doc):
+	before = doc.get_doc_before_save()
+	if not before:
+		# A new page only shows in the theme once it is published.
+		return bool(doc.get("published"))
+	if not (doc.get("published") or before.get("published")):
+		return False
+	return any((doc.get(f) or "") != (before.get(f) or "") for f in THEME_PAGE_FIELDS)
+
+
 def update_website_themes(doc):
 	update_themes = 1
 	# if (doc.doctype == "Header Component" or doc.doctype == "Footer Component") and doc.get('update_theme') == 0:
