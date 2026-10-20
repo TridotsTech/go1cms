@@ -7,3 +7,4 @@ go1_cms.patches.v1_0.menu_project_scope
 go1_cms.patches.v1_0.cms_project_members_backfill
 # OPS-11/12: drop the unused legacy record types.
 go1_cms.patches.v1_0.remove_unused_legacy_doctypes
+go1_cms.patches.v1_0.business_backfill

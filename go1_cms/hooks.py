@@ -70,7 +70,7 @@ after_install = "go1_cms.go1_cms.after_install.after_install"
 # it are synced; a site with no docs yet gets the seeded spaces, articles and
 # feature catalogue on its first migrate.
 before_migrate = ["go1_cms.docs.setup.ensure_role"]
-after_migrate = ["go1_cms.docs.setup.after_migrate"]
+after_migrate = ["go1_cms.docs.setup.after_migrate", "go1_cms.go1_cms.business.after_migrate"]
 
 # /sitemap.xml (cms_frontend www/sitemap.py): every published docs article and
 # showcase page, which own no Web Page Builder row.
@@ -138,7 +138,17 @@ doc_events = {
 	},
 	"Color Palette": {
 		"on_update": "go1_cms.go1_cms.api.update_web_themes",
-	}	
+	},
+	# Business: every CMS Project has one, and every row that names a project also
+	# names its business (see go1_cms/go1_cms/business.py).
+	"CMS Project": {
+		"after_insert": "go1_cms.go1_cms.business.on_project_save",
+		"on_update": "go1_cms.go1_cms.business.on_project_save",
+		"on_trash": "go1_cms.go1_cms.business.on_project_trash",
+	},
+	"*": {
+		"before_save": "go1_cms.go1_cms.business.stamp",
+	},
 
 }
 
