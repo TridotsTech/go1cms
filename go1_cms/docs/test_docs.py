@@ -123,3 +123,32 @@ class TestDocs(FrappeTestCase):
 		results = api.search("zebra", SPACE)
 		self.assertEqual([r["slug"] for r in results][:2], ["zebra-crossing", "other-thing"])
 		self.assertEqual(api.search("z"), [])  # too short
+
+
+class TestSiteOwnerGuide(FrappeTestCase):
+	"""OPS-08: the guide's files and the seed list agree, and its links stay inside it."""
+
+	def test_every_listed_article_has_a_file_title_and_summary(self):
+		import os
+		from go1_cms.docs import seed
+
+		for _group, items in seed.GUIDE_ARTICLES:
+			for slug, _title in items:
+				self.assertTrue(os.path.exists(os.path.join(seed.CONTENT, "guide", slug + ".md")), slug)
+				body, summary = seed._read_cms_article(slug, "guide")
+				self.assertTrue(summary, slug + " needs a lead paragraph")
+				self.assertTrue(body.strip(), slug)
+
+	def test_relative_links_point_at_guide_articles(self):
+		import os
+		import re
+		from go1_cms.docs import seed
+
+		slugs = {s for _g, items in seed.GUIDE_ARTICLES for s, _t in items}
+		for slug in slugs:
+			body, _ = seed._read_cms_article(slug, "guide")
+			for target in re.findall(r"\]\(\.\./([a-z0-9-]+)\)", body):
+				self.assertIn(target, slugs, "%s links to a missing article %s" % (slug, target))
+		# no stray files that the seed would never load
+		files = {f[:-3] for f in os.listdir(os.path.join(seed.CONTENT, "guide")) if f.endswith(".md")}
+		self.assertEqual(files, slugs)

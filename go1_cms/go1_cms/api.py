@@ -2083,6 +2083,30 @@ def get_template_dynamic_data(tmpl_doc, customer=None, business=None):
 	return None
 
 
+def _clean_page_breakpoints(raw):
+	"""RSP-04: the extra screen steps a page added, {"wide": px, "small": px} (either may be
+	missing), or None. Same ranges as cms_v4/utils/fb2Devices.js."""
+	if not isinstance(raw, dict):
+		return None
+	out = {}
+	for key, (lo, hi) in (("wide", (1200, 3840)), ("small", (240, 600))):
+		try:
+			n = int(float(raw.get(key)))
+		except (TypeError, ValueError):
+			continue
+		out[key] = min(hi, max(lo, n))
+	return out or None
+
+
+def _clean_page_motion(raw):
+	"""RSP-06: page-wide motion switches. `offOn` lists the screens where every
+	animation (entrance, loop, hover, scroll, timeline) is switched off."""
+	if not isinstance(raw, dict):
+		return None
+	off = [d for d in (raw.get("offOn") or []) if d in ("mobile", "tablet")] if isinstance(raw.get("offOn"), list) else []
+	return {"offOn": sorted(set(off))} if off else None
+
+
 def get_page_builder_data(page, customer=None,application_type="mobile",business=None, is_builder=0, start=0, page_length=0):
 	# frappe.log_error(customer, "---customer--page-builder--")
 	path = frappe.utils.get_files_path()
@@ -2131,6 +2155,10 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 				except ImportError:
 					pass
 				page_animation = layout.get('pageAnimation')
+				# RSP-04/06: the page's own screen steps and its motion switches ride on
+				# every freebuilder section, like the page-wide entrance above.
+				page_breakpoints = _clean_page_breakpoints(layout.get('breakpoints'))
+				page_motion = _clean_page_motion(layout.get('pageMotion'))
 				# Paginate sections BEFORE resolving them (templates/dynamic data are
 				# expensive), so the published page can lazy-load sections on scroll.
 				start = int(start) if start else 0
@@ -2195,6 +2223,11 @@ def get_page_builder_data(page, customer=None,application_type="mobile",business
 						item['section_type'] = sec.get('type') or sec.get('section_type') or sec.get('name')
 						if page_animation and sec.get('type') == 'freebuilder':
 							item['_page_animation'] = page_animation
+						if sec.get('type') == 'freebuilder':
+							if page_breakpoints:
+								item['_breakpoints'] = page_breakpoints
+							if page_motion:
+								item['_page_motion'] = page_motion
 						if sec.get('style') and isinstance(sec['style'], dict):
 							item['background_color'] = sec['style'].get('bgColor', '')
 							item['style'] = sec.get('style')
@@ -2784,306 +2817,8 @@ def update_website_themes(doc):
 			theme.reload()
 
 
-"""
-Page Builder API - Handle CMS Page Builder operations
-"""
-
-import frappe
-import json
-from frappe.utils import now
-from frappe.model.document import Document
-
-@frappe.whitelist()
-def get_builder(builder_name):
-	"""Get complete builder document"""
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-		frappe.has_permission("CMS Page Builder", "read", doc.name)
-		return doc.as_dict()
-	except frappe.DoesNotExistError:
-		frappe.throw(f"Builder '{builder_name}' not found", frappe.DoesNotExistError)
-	except frappe.PermissionError:
-		frappe.throw("You don't have permission to access this builder", frappe.PermissionError)
-
-@frappe.whitelist()
-def list_builders():
-	"""List all available page builders"""
-	try:
-		builders = frappe.get_list(
-			"CMS Page Builder",
-			fields=["name", "builder_title", "status", "modified"],
-			order_by="modified desc"
-		)
-		return builders
-	except Exception as e:
-		frappe.logger().error(f"Error listing builders: {str(e)}")
-		frappe.throw("Error fetching builders")
-
-@frappe.whitelist()
-def create_builder(builder_name, builder_title, pages=None):
-	"""Create a new CMS Page Builder"""
-	require_editor()
-	try:
-		doc = frappe.new_doc("CMS Page Builder")
-		doc.builder_name = builder_name
-		doc.builder_title = builder_title
-		doc.status = "Draft"
-
-		# Add initial pages if provided
-		if pages and isinstance(pages, str):
-			pages = json.loads(pages)
-
-		if pages:
-			for page_data in pages:
-				doc.append("pages", page_data)
-
-		# If no pages provided, create default Homepage page
-		if not pages:
-			doc.append("pages", {
-				"page_name": "Homepage",
-				"page_title": "Home",
-				"page_slug": "home",
-				"status": "Draft",
-				"order": 1
-			})
-
-		doc.insert()
-		frappe.msgprint(f"Builder '{builder_name}' created successfully")
-		return doc.as_dict()
-	except frappe.DuplicateEntryError:
-		frappe.throw(f"Builder '{builder_name}' already exists")
-	except Exception as e:
-		frappe.logger().error(f"Error creating builder: {str(e)}")
-		frappe.throw(f"Error creating builder: {str(e)}")
-
-@frappe.whitelist()
-def update_builder(builder_name, **kwargs):
-	"""Update builder properties"""
-	require_editor()
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Update allowed fields
-		allowed_fields = ["builder_title", "status", "project_type", "custom_metadata"]
-		for field in allowed_fields:
-			if field in kwargs and kwargs[field] is not None:
-				doc.set(field, kwargs[field])
-
-		doc.save()
-		return doc.as_dict()
-	except Exception as e:
-		frappe.logger().error(f"Error updating builder: {str(e)}")
-		frappe.throw(f"Error updating builder: {str(e)}")
-
-@frappe.whitelist()
-def add_page(builder_name, page_data):
-	"""Add a new page to builder"""
-	require_editor()
-	try:
-		if isinstance(page_data, str):
-			page_data = json.loads(page_data)
-
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Auto-increment order
-		max_order = max([p.order for p in doc.pages], default=0)
-		if "order" not in page_data or not page_data["order"]:
-			page_data["order"] = max_order + 1
-
-		doc.append("pages", page_data)
-		doc.save()
-
-		return {
-			"success": True,
-			"page": doc.pages[-1].as_dict(),
-			"pages": [p.as_dict() for p in doc.pages]
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error adding page: {str(e)}")
-		frappe.throw(f"Error adding page: {str(e)}")
-
-@frappe.whitelist()
-def delete_page(builder_name, page_name):
-	"""Delete a page from builder"""
-	require_editor()
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Find and remove the page
-		for i, page in enumerate(doc.pages):
-			if page.page_name == page_name:
-				del doc.pages[i]
-				break
-
-		doc.save()
-		return {
-			"success": True,
-			"pages": [p.as_dict() for p in doc.pages]
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error deleting page: {str(e)}")
-		frappe.throw(f"Error deleting page: {str(e)}")
-
-@frappe.whitelist()
-def reorder_pages(builder_name, page_order):
-	"""Reorder pages (page_order is list of page names in new order)"""
-	require_editor()
-	try:
-		if isinstance(page_order, str):
-			page_order = json.loads(page_order)
-
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Create order map
-		order_map = {page_name: order for order, page_name in enumerate(page_order, 1)}
-
-		# Reorder pages
-		ordered_pages = []
-		for page_name in page_order:
-			for page in doc.pages:
-				if page.page_name == page_name:
-					page.order = order_map[page_name]
-					ordered_pages.append(page)
-					break
-
-		doc.pages = ordered_pages
-		doc.save()
-
-		return {
-			"success": True,
-			"pages": [p.as_dict() for p in doc.pages]
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error reordering pages: {str(e)}")
-		frappe.throw(f"Error reordering pages: {str(e)}")
-
-@frappe.whitelist()
-def update_page(builder_name, page_name, **kwargs):
-	"""Update page properties"""
-	require_editor()
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Find page
-		page = None
-		for p in doc.pages:
-			if p.page_name == page_name:
-				page = p
-				break
-
-		if not page:
-			frappe.throw(f"Page '{page_name}' not found")
-
-		# Update allowed fields
-		allowed_fields = ["page_title", "page_slug", "status", "custom_metadata"]
-		for field in allowed_fields:
-			if field in kwargs and kwargs[field] is not None:
-				page.set(field, kwargs[field])
-
-		doc.save()
-		return page.as_dict()
-	except Exception as e:
-		frappe.logger().error(f"Error updating page: {str(e)}")
-		frappe.throw(f"Error updating page: {str(e)}")
-
-@frappe.whitelist()
-def duplicate_cms_builder_page(builder_name, page_name, new_page_name):
-	"""Duplicate a row inside a CMS Page Builder.
-
-	Renamed out of the way: this was a second `duplicate_page` in this file, so it
-	shadowed the Web Page Builder one above and answered every call the Pages
-	screen made — with the wrong doctype and the wrong arguments, which is why
-	copying a page failed every time.
-	"""
-	require_editor()
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-
-		# Find source page
-		source_page = None
-		for p in doc.pages:
-			if p.page_name == page_name:
-				source_page = p
-				break
-
-		if not source_page:
-			frappe.throw(f"Page '{page_name}' not found")
-
-		# Create new page data from source
-		new_page_data = source_page.as_dict()
-		new_page_data.pop("idx", None)
-		new_page_data["page_name"] = new_page_name
-		new_page_data["page_slug"] = f"{new_page_name.lower().replace(' ', '-')}"
-
-		# Add to builder
-		doc.append("pages", new_page_data)
-		doc.save()
-
-		return {
-			"success": True,
-			"page": doc.pages[-1].as_dict(),
-			"pages": [p.as_dict() for p in doc.pages]
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error duplicating page: {str(e)}")
-		frappe.throw(f"Error duplicating page: {str(e)}")
-
-@frappe.whitelist()
-def export_builder(builder_name):
-	"""Export builder as JSON"""
-	try:
-		doc = frappe.get_doc("CMS Page Builder", builder_name)
-		export_data = doc.as_dict()
-
-		# Remove system fields
-		for field in ["doctype", "docstatus", "creation", "modified_by"]:
-			export_data.pop(field, None)
-
-		return {
-			"success": True,
-			"data": export_data,
-			"exported_at": now()
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error exporting builder: {str(e)}")
-		frappe.throw(f"Error exporting builder: {str(e)}")
-
-@frappe.whitelist()
-def import_builder(builder_name, import_data):
-	"""Import builder from JSON"""
-	require_editor()
-	try:
-		if isinstance(import_data, str):
-			import_data = json.loads(import_data)
-
-		# Check if builder exists
-		try:
-			doc = frappe.get_doc("CMS Page Builder", builder_name)
-			doc.pages = []
-		except:
-			doc = frappe.new_doc("CMS Page Builder")
-			doc.builder_name = builder_name
-
-		# Update fields
-		for key, value in import_data.items():
-			if key != "pages":
-				doc.set(key, value)
-
-		# Import pages
-		if "pages" in import_data:
-			doc.pages = []
-			for page_data in import_data["pages"]:
-				page_data.pop("idx", None)
-				doc.append("pages", page_data)
-
-		doc.save()
-		return {
-			"success": True,
-			"doc": doc.as_dict()
-		}
-	except Exception as e:
-		frappe.logger().error(f"Error importing builder: {str(e)}")
-		frappe.throw(f"Error importing builder: {str(e)}")
+# OPS-11/12: the legacy CMS Page Builder endpoints (get_builder … import_builder) and their three record
+# types were removed. Nothing called them; the current editor stores pages in Web Page Builder.
 
 @frappe.whitelist()
 def publish_page_builder(page_name):

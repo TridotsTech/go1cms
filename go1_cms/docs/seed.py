@@ -28,6 +28,8 @@ SPACES = [
 	 "icon": "layers", "sort_order": 1, "is_published": 1, "is_primary": 1},
 	{"slug": "panel", "title": "GO1 Panel", "description": "Plans, sites, domains, billing and your team in the hosted control panel.",
 	 "icon": "grid", "sort_order": 2, "is_published": 0, "is_primary": 0},
+	{"slug": "guide", "title": "Site owner guide", "description": "Plain-language help for every screen of the admin.",
+	 "icon": "book", "sort_order": 3, "is_published": 1, "is_primary": 0},
 ]
 
 # (sidebar group, [(slug, title)]) in reading order: the product website's own order.
@@ -61,6 +63,18 @@ CMS_ARTICLES = [
 	("Developers", [("architecture", "How GO1 CMS is built"), ("extending", "Extending GO1 CMS"),
 	                ("server-rendering", "Server rendering and the React runtime"), ("api-reference", "API reference"),
 	                ("self-hosting", "Self-hosting (open source)"), ("mcp-server", "MCP server and API"), ("faq", "FAQ")]),
+]
+
+# OPS-08: the site owner's manual, one article per admin screen (content/guide/*.md), in reading order.
+GUIDE_ARTICLES = [
+	("Get around", [("how-the-admin-is-laid-out", "How the admin is laid out"), ("glossary", "Glossary"), ("home", "Home")]),
+	("Build", [("projects", "Projects and pages"), ("builder", "The page builder"), ("library", "Library"),
+	           ("theme", "Theme"), ("menus", "Menus")]),
+	("Content", [("posts", "Posts"), ("comments", "Comments"), ("collections", "Collections and content types"),
+	             ("forms", "Forms"), ("media", "Media")]),
+	("Apps", [("plugins", "Plugins"), ("portal", "Portal")]),
+	("Go live", [("publish", "Publish"), ("seo", "SEO"), ("popups", "Popups"), ("analytics", "Analytics")]),
+	("Account", [("docs-admin", "Docs"), ("ai-settings", "AI Settings"), ("control-panel", "The control panel")]),
 ]
 
 # Related features shown under an article, beyond the feature's own "Learn more" article.
@@ -134,10 +148,10 @@ _H1 = re.compile(r"^#\s+.*\n+")
 _DOCS_LINK = re.compile(r"\]\(/docs/([a-z0-9-]+)(#[^)]*)?\)")
 
 
-def _read_cms_article(slug):
-	"""Body Markdown and summary of one product-site article: the H1 is dropped
-	(the title is its own field) and the lead paragraph becomes the summary."""
-	with open(os.path.join(CONTENT, "cms", slug + ".md"), encoding="utf-8") as fh:
+def _read_cms_article(slug, space_dir="cms"):
+	"""Body Markdown and summary of one article file (content/<space_dir>/<slug>.md): the H1 is
+	dropped (the title is its own field) and the lead paragraph becomes the summary."""
+	with open(os.path.join(CONTENT, space_dir, slug + ".md"), encoding="utf-8") as fh:
 		md = fh.read()
 	md = _H1.sub("", md.lstrip(), count=1)
 	paras = md.split("\n\n", 1)
@@ -207,6 +221,19 @@ def run(reset=0, sync_order=0):
 			cms_names[slug] = name
 			made["articles"] += changed
 
+	guide_names = {}
+	order = 0
+	for group, items in GUIDE_ARTICLES:
+		for slug, title in items:
+			order += 10
+			body, summary = _read_cms_article(slug, "guide")
+			name, changed = _upsert("Doc Article", {"space": "guide", "slug": slug}, {
+				"title": title, "slug": slug, "space": "guide", "group_label": group, "sort_order": order,
+				"summary": summary, "body_md": body, "status": "Published",
+			}, reset)
+			guide_names[slug] = name
+			made["articles"] += changed
+
 	panel_names = {}
 	for i, (slug, title, category, plans, tagline, art_slug, art_title) in enumerate(PANEL_FEATURES):
 		name, changed = _upsert("Doc Article", {"space": "panel", "slug": art_slug}, {
@@ -262,6 +289,9 @@ def run(reset=0, sync_order=0):
 		frappe.db.set_value("Doc Space", "cms", "default_article", cms_names.get("introduction"))
 	if reset or not frappe.db.get_value("Doc Space", "panel", "default_article"):
 		frappe.db.set_value("Doc Space", "panel", "default_article", panel_names.get("sign-up-and-workspace"))
+
+	if reset or not frappe.db.get_value("Doc Space", "guide", "default_article"):
+		frappe.db.set_value("Doc Space", "guide", "default_article", guide_names.get(GUIDE_ARTICLES[0][1][0][0]))
 
 	from go1_cms.docs.api import clear_cache
 
