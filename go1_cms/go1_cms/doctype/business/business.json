@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "autoname": "field:business_name",
+ "creation": "2026-10-20 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "business_name",
+  "project",
+  "status",
+  "domain",
+  "column_break_a",
+  "team",
+  "tenant",
+  "plan",
+  "domains_section",
+  "domains"
+ ],
+ "fields": [
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Site name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "The CMS Project that holds this site's pages. One site, one project, one business.",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "CMS Project",
+   "options": "CMS Project",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nSuspended\nArchived"
+  },
+  {
+   "description": "The primary address, e.g. acme.nvi.frappe.cloud or the site's own custom domain. Kept in step with the Domains table.",
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Primary domain",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_a",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "team",
+   "fieldtype": "Data",
+   "label": "Team"
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Data",
+   "label": "Tenant"
+  },
+  {
+   "fieldname": "plan",
+   "fieldtype": "Data",
+   "label": "Plan"
+  },
+  {
+   "fieldname": "domains_section",
+   "fieldtype": "Section Break",
+   "label": "Domains"
+  },
+  {
+   "fieldname": "domains",
+   "fieldtype": "Table",
+   "label": "Domains",
+   "options": "Business Domain"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-20 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Business",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "business_name"
+}

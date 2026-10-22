@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "creation": "2026-10-20 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "domain",
+  "domain_type",
+  "is_primary",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Domain",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "custom_domain",
+   "fieldname": "domain_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "main\nplatform_subdomain\ncustom_domain"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_primary",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Primary"
+  },
+  {
+   "default": "active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "active\npending\nremoved"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-20 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Business Domain",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
