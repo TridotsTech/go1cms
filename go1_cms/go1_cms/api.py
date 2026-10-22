@@ -1059,9 +1059,12 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 		p['page_slug'] = p.get('route')
 		p['route'] = p.get('route')
 		p['publish_status'] = 'Published' if p.get('published') else 'Draft'
-		p['draft_data'] = p.get('draft_layout_json')
-		p['published_data'] = p.get('layout_json')
 		p['sections_list'] = []
+		# Each layout is sent once, and the published one only when the card would
+		# draw from it: a draft with its own sections is what the
+		# Pages screen shows. Sending both (and both again as draft_data /
+		# published_data) made one folder several megabytes.
+		_drop_unused_published_layout(p)
 		layout_str = p.get('draft_layout_json') or p.get('layout_json')
 		if layout_str:
 			try:
@@ -1098,6 +1101,24 @@ def get_pages_list(start=0, page_length=24, search=None, status=None, project=No
 			except Exception:
 				pass
 	return {'pages': pages, 'has_more': len(pages) == page_length}
+
+
+def _drop_unused_published_layout(page):
+	"""Clear `layout_json` on a get_pages_list row when the client would read the
+	draft for both things it builds from a layout (siteStore.mapPage): the card
+	preview takes a draft with sections, and the section list takes the draft
+	unless only the published layout has `elements`."""
+	if not (page.get('draft_layout_json') and page.get('layout_json')):
+		return
+	try:
+		draft = json.loads(page['draft_layout_json'])
+		published = json.loads(page['layout_json'])
+	except Exception:
+		return
+	if not isinstance(draft, dict) or not isinstance(published, dict):
+		return
+	if draft.get('sections') and (draft.get('elements') or not published.get('elements')):
+		page['layout_json'] = None
 
 
 def _page_project_filter(project):
