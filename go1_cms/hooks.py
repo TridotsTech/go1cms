@@ -142,6 +142,7 @@ doc_events = {
 	# Business: every CMS Project has one, and every row that names a project also
 	# names its business (see go1_cms/go1_cms/business.py).
 	"CMS Project": {
+		"before_insert": "go1_cms.go1_cms.business.stamp_site",
 		"after_insert": "go1_cms.go1_cms.business.on_project_save",
 		"on_update": "go1_cms.go1_cms.business.on_project_save",
 		"on_trash": "go1_cms.go1_cms.business.on_project_trash",

@@ -67,6 +67,13 @@ def ensure_business(project):
 	return doc.name
 
 
+def stamp_site(doc, method=None):
+	"""CMS Project before_insert: the website records which Go1 Site it lives on. A site's name is its Frappe Cloud
+	site name, which is the name of this site's record in the control panel."""
+	if frappe.get_meta("CMS Project").has_field("go1_site") and not doc.get("go1_site"):
+		doc.go1_site = frappe.local.site
+
+
 def on_project_save(doc, method=None):
 	"""doc_events for CMS Project (after_insert / on_update)."""
 	if not frappe.db.table_exists("Business"):  # before the first migrate has created it

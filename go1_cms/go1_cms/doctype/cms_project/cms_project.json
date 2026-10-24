@@ -10,6 +10,7 @@
   "project_name",
   "project_slug",
   "status",
+  "go1_site",
   "col_break",
   "estimated_costing",
   "favicon",
@@ -89,6 +90,15 @@
    "in_list_view": 1,
    "label": "Status",
    "options": "Draft\nIn Progress\nPublished\nArchived"
+  },
+  {
+   "description": "The Go1 Site this website lives on (the Frappe Cloud site holding this database), set when the website is created. The panel's Go1 Site record has the same name.",
+   "fieldname": "go1_site",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Go1 Site",
+   "read_only": 1
   },
   {
    "fieldname": "col_break",
