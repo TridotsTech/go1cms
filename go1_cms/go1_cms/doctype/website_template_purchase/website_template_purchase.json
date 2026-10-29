@@ -1,0 +1,167 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:WTP-{#####}",
+ "creation": "2026-10-29 16:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "description": "This site's own record of the store templates it bought or took (Library → Buy / Get), written by cms_frontend.template_store only. A Paid row's Razorpay payment id is what proves the purchase to the store when the template is downloaded.",
+ "field_order": [
+  "template",
+  "template_title",
+  "website_template",
+  "bought_by",
+  "col_a",
+  "status",
+  "amount",
+  "currency",
+  "paid_on",
+  "payment_section",
+  "razorpay_order_id",
+  "razorpay_payment_id",
+  "col_b",
+  "store"
+ ],
+ "fields": [
+  {
+   "fieldname": "template",
+   "fieldtype": "Data",
+   "label": "Template",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1,
+   "description": "The store's id for it, e.g. agamnxt"
+  },
+  {
+   "fieldname": "template_title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "website_template",
+   "fieldtype": "Link",
+   "label": "Website Template",
+   "options": "Website Template",
+   "read_only": 1,
+   "description": "The copy installed on this site"
+  },
+  {
+   "fieldname": "bought_by",
+   "fieldtype": "Link",
+   "label": "Bought by",
+   "options": "User",
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_a",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nPaid\nFree\nFailed",
+   "default": "Pending",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "currency",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "paid_on",
+   "fieldtype": "Datetime",
+   "label": "Paid on",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payment_section",
+   "fieldtype": "Section Break",
+   "label": "Payment"
+  },
+  {
+   "fieldname": "razorpay_order_id",
+   "fieldtype": "Data",
+   "label": "Razorpay order",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "razorpay_payment_id",
+   "fieldtype": "Data",
+   "label": "Razorpay payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_b",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store",
+   "fieldtype": "Data",
+   "label": "Store",
+   "read_only": 1,
+   "description": "The store it was bought from"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-29 16:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "Website Template Purchase",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "Paid",
+   "color": "Green"
+  },
+  {
+   "title": "Free",
+   "color": "Blue"
+  },
+  {
+   "title": "Pending",
+   "color": "Orange"
+  },
+  {
+   "title": "Failed",
+   "color": "Red"
+  }
+ ],
+ "title_field": "template_title",
+ "track_changes": 1
+}
