@@ -512,8 +512,11 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 	if cached:
 		return dict(cached, items=filter_for_viewer(cached.get("items"), menu))
 
+	# A template previewed in the Library names the menu of the site it was made
+	# on, which this site does not have (until the template is used). That is
+	# an answer, not an error: the nav falls back to its own links.
 	if not frappe.db.exists("Menu", menu):
-		frappe.throw(_("Menu {0} not found").format(menu), frappe.DoesNotExistError)
+		return {"menu": menu, "items": [], "missing": 1}
 
 	tree = build_menu_tree(menu)
 	payload = {
