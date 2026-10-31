@@ -1,0 +1,149 @@
+{
+ "actions": [],
+ "creation": "2026-10-30 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_configuration",
+  "delete_file_from_cloud",
+  "aws_credentials",
+  "bucket_name",
+  "aws_key",
+  "aws_secret",
+  "section_break_7",
+  "region_name",
+  "folder_name",
+  "signed_url_expiry_time",
+  "provider_section",
+  "endpoint_url",
+  "addressing_style",
+  "column_break_provider",
+  "public_base_url",
+  "section_break_10",
+  "test_connection",
+  "migrate_existing_files"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_configuration",
+   "fieldtype": "Section Break",
+   "label": "General Configuration"
+  },
+  {
+   "fieldname": "delete_file_from_cloud",
+   "fieldtype": "Check",
+   "label": "Delete file from cloud "
+  },
+  {
+   "fieldname": "aws_credentials",
+   "fieldtype": "Section Break",
+   "label": "Storage credentials"
+  },
+  {
+   "fieldname": "bucket_name",
+   "fieldtype": "Data",
+   "label": "Bucket Name"
+  },
+  {
+   "fieldname": "aws_key",
+   "fieldtype": "Data",
+   "label": "Access Key"
+  },
+  {
+   "fieldname": "aws_secret",
+   "fieldtype": "Password",
+   "label": "Secret Key"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "region_name",
+   "fieldtype": "Data",
+   "label": "Region",
+   "description": "The provider's region name. If the provider has none, leave empty (or \"auto\" for Cloudflare R2)."
+  },
+  {
+   "fieldname": "folder_name",
+   "fieldtype": "Data",
+   "label": "Folder Name"
+  },
+  {
+   "default": "300",
+   "description": "time should be in seconds",
+   "fieldname": "signed_url_expiry_time",
+   "fieldtype": "Int",
+   "label": "Signed URL expiry time"
+  },
+  {
+   "fieldname": "provider_section",
+   "fieldtype": "Section Break",
+   "label": "S3-compatible provider",
+   "description": "Leave these empty for Amazon S3."
+  },
+  {
+   "fieldname": "endpoint_url",
+   "fieldtype": "Data",
+   "label": "Endpoint URL",
+   "description": "The provider's S3 API address, for example https://s3.eu-central-1.wasabisys.com or https://<account>.r2.cloudflarestorage.com"
+  },
+  {
+   "fieldname": "addressing_style",
+   "fieldtype": "Select",
+   "label": "Addressing Style",
+   "options": "Auto\nPath\nVirtual",
+   "default": "Auto",
+   "description": "Auto uses Path when an Endpoint URL is set. Choose Virtual if the provider wants bucket.endpoint addresses."
+  },
+  {
+   "fieldname": "column_break_provider",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "public_base_url",
+   "fieldtype": "Data",
+   "label": "Public Base URL",
+   "description": "Optional: the address public files are served from, such as a CDN, an R2 public domain or https://eu2.contabostorage.com/<tenant>:<bucket>. The file's path is added after it."
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "test_connection",
+   "fieldtype": "Button",
+   "label": "Test Connection"
+  },
+  {
+   "fieldname": "migrate_existing_files",
+   "fieldtype": "Button",
+   "label": "Migrate Existing Files"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Go1 CMS",
+ "name": "S3 File Attachment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

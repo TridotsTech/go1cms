@@ -115,6 +115,12 @@ page_renderer = ["go1_cms.docs.renderer.DocsPageRenderer"]
 # Hook on document methods and events
 
 doc_events = {
+	# Files on S3. Apps run in install order: go1_cms comes after cms_frontend, so image_compress
+	# has finished and S3 gets the final bytes.
+	"File": {
+		"after_insert": "go1_cms.go1_cms.s3_attachment.file_upload_to_s3",
+		"on_trash": "go1_cms.go1_cms.s3_attachment.delete_from_cloud",
+	},
 	"Header Component": {
 		"on_update": "go1_cms.go1_cms.api.update_web_themes",
 	},
