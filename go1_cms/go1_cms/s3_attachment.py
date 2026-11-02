@@ -24,7 +24,8 @@ checks the File's permission and redirects to a signed URL. As in the original, 
 content_hash holds the S3 key.
 
 Where this differs from the original, because this CMS needs it:
-- It runs after cms_frontend's image_compress, so S3 receives the final bytes.
+- S3 receives the final bytes: cms_frontend's image_compress runs first, also where go1_cms installs
+  before cms_frontend (go1cms-saas), because the upload then runs it itself (_compress_first).
 - A file keeps its media library folder (the original moved all to Home/Attachments).
 - Migrating skips files in use and never deletes local copies: pages hold /files/ URLs
   inside their layouts, so moving those files would break the pages.
@@ -286,12 +287,27 @@ def _repoint_attachment(doc, old_url):
 			frappe.db.set_value(doctype, name, field, doc.file_url, update_modified=False)
 
 
+COMPRESS_HOOK = "cms_frontend.image_compress.on_file_insert"
+UPLOAD_HOOK = "go1_cms.go1_cms.s3_attachment.file_upload_to_s3"
+
+
+def _compress_first(doc):
+	"""Apps run their hooks in install order. Where cms_frontend's photo compression comes after this
+	upload, run it now; later it leaves the file alone, as its URL is no longer local."""
+	hooks = frappe.get_doc_hooks().get("File", {}).get("after_insert", [])
+	if COMPRESS_HOOK in hooks and UPLOAD_HOOK in hooks and hooks.index(COMPRESS_HOOK) > hooks.index(UPLOAD_HOOK):
+		frappe.get_attr(COMPRESS_HOOK)(doc)
+
+
 def file_upload_to_s3(doc, method=None):
-	"""File after_insert (after image_compress): move the new file to S3."""
+	"""File after_insert: move the new file to S3."""
 	if cint(doc.is_folder) or not is_configured() or _skipped(doc.file_url, doc.file_name, _parent(doc)[0]):
 		return
 	if frappe.db.count("File", {"file_url": doc.file_url, "name": ["!=", doc.name]}):
 		# Frappe reused an older local file with the same bytes; it stays where it is.
+		return
+	_compress_first(doc)
+	if not doc.file_url.startswith(LOCAL_PREFIXES):
 		return
 	old_url = doc.file_url
 	path = _send(doc, S3Operations())

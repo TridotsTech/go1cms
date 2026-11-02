@@ -31,6 +31,12 @@ def _file(name, content=None, private=0, **values):
 	}).insert(ignore_permissions=True)
 
 
+def _file_local(name):
+	"""A File on disk, inserted while S3 is off (its hook does nothing), for calling the hook by hand."""
+	with mock.patch.object(s3, "is_configured", return_value=False):
+		return _file(name, PNG + frappe.generate_hash().encode())
+
+
 class TestS3Attachment(FrappeTestCase):
 	def setUp(self):
 		self.client = _client()
@@ -83,6 +89,23 @@ class TestS3Attachment(FrappeTestCase):
 			compress.side_effect = smaller
 			_file("compressed.png", PNG + frappe.generate_hash().encode())
 		self.assertEqual(seen["size"], 5)
+
+	def test_compression_runs_first_when_go1_cms_installs_first(self):
+		self.configure()
+		calls = []
+		self.client.upload_file.side_effect = lambda *a, **k: calls.append("upload")
+		first, second = _file_local("first.png"), _file_local("second.png")
+		hooks = frappe.get_doc_hooks()
+		saas_order = {**hooks, "File": {**hooks["File"], "after_insert": [s3.UPLOAD_HOOK, s3.COMPRESS_HOOK]}}
+		with mock.patch("frappe.get_doc_hooks", return_value=saas_order), \
+			mock.patch("cms_frontend.image_compress.on_file_insert", side_effect=lambda *a: calls.append("compress")):
+			s3.file_upload_to_s3(first)
+		self.assertEqual(calls, ["compress", "upload"])
+		calls.clear()
+		with mock.patch("cms_frontend.image_compress.on_file_insert") as compress:
+			s3.file_upload_to_s3(second)
+		compress.assert_not_called()  # here cms_frontend's own hook ran before the upload
+		self.assertEqual(calls, ["upload"])
 
 	def test_key_fits_content_hash(self):
 		self.configure()
@@ -309,6 +332,8 @@ class TestS3Attachment(FrappeTestCase):
 			self.assertEqual(handle.read(), '{"img": "' + base + 's3-test-template/hero.png"}')
 
 	def test_store_previews_link_uploaded_images(self):
+		if "go1_templates" not in frappe.get_installed_apps():
+			self.skipTest("the template store app is not on this site")
 		self.configure()
 		from go1_templates import template_api
 
