@@ -279,6 +279,13 @@ def find_web_page_builder_by_route(route_str):
 			)
 			if res:
 				return res
+	# A page stored at "*" is the site root's detail template (a root_routes news
+	# site's /<article-slug>/): it serves one-segment addresses nothing else matched.
+	if r and "/" not in r:
+		res = frappe.db.get_all('Web Page Builder', filters={'route': ['in', ['*', '/*']], **filters},
+		                        fields=['name', 'page_type', 'w_page_type', 'route', 'page_title', 'project'])
+		if res:
+			return res
 	return None
 
 
@@ -1216,6 +1223,74 @@ def get_page_projects():
 	if stats.get('', {}).get('total'):
 		out.append(folder('__unassigned__', 'Unassigned pages', '', '', None))
 	return out
+
+
+@frappe.whitelist(allow_guest=False)
+def get_project_covers(projects):
+	"""The live collage of each folder card on the Pages screen, for folders
+	with no screenshot: up to three of the project's pages, each as its top
+	sections, drawn by the card like the page cards draw themselves.
+
+	The builder no longer takes screenshots, so the `previews` of
+	get_page_projects are empty for every site built since, and their cards
+	fell back to a plain tinted folder. The cards ask for the ones scrolled
+	into view, a batch at a time, so the root list stays light.
+
+	The home page comes first (routed at the project slug, slug/home or
+	slug/index), then the shortest routes. Detail (`*`) and sign-in style
+	pages go last: they make a dull cover. Returns {project: [[section, …], …]}
+	— the top two sections of each page, draft preferred."""
+	from go1_cms.go1_cms.cms_access import can_access_project
+	require_editor()
+	if isinstance(projects, str):
+		projects = json.loads(projects) if projects.strip().startswith('[') else [projects]
+	projects = [p for p in (projects or [])[:40] if p and can_access_project(p)]
+	if not projects:
+		return {}
+
+	slugs = dict(frappe.get_all('CMS Project', filters={'name': ['in', projects]},
+		fields=['name', 'project_slug'], as_list=True))
+	routes = {}
+	for row in frappe.get_all('Web Page Builder', filters={'project': ['in', projects]},
+			fields=['name', 'project', 'route'], limit_page_length=0):
+		routes.setdefault(row.project, []).append(row)
+
+	dull = ('login', 'signup', 'sign-up', 'register', 'forgot-password', 'reset-password', 'account', 'logout')
+
+	def rank(project, row):
+		route = (row.route or '').strip('/')
+		slug = (slugs.get(project) or '').strip('/')
+		home = {slug, f'{slug}/home', f'{slug}/index', 'home', 'index'} if slug else {'home', 'index'}
+		last = route.rsplit('/', 1)[-1]
+		return (0 if route in home else 1, '*' in route, last in dull, len(route), route)
+
+	picked = {}  # page name -> (project, position)
+	for project, rows in routes.items():
+		for pos, row in enumerate(sorted(rows, key=lambda r: rank(project, r))[:3]):
+			picked[row.name] = (project, pos)
+
+	def top_sections(row, limit):
+		for raw in (row.draft_layout_json, row.layout_json):
+			try:
+				layout = json.loads(raw) if raw else None
+			except Exception:
+				layout = None
+			secs = layout.get('sections') if isinstance(layout, dict) else None
+			if isinstance(secs, list) and secs:
+				found = [s for s in secs if isinstance(s, dict) and s.get('type') == 'freebuilder'
+					and isinstance(s.get('children'), list) and s['children']][:limit]
+				if found:
+					return found
+		return []
+
+	slots = {}
+	for row in frappe.get_all('Web Page Builder', filters={'name': ['in', list(picked)]},
+			fields=['name', 'draft_layout_json', 'layout_json'], limit_page_length=0):
+		project, pos = picked[row.name]
+		secs = top_sections(row, 2)
+		if secs:
+			slots.setdefault(project, []).append((pos, secs))
+	return {p: [secs for _, secs in sorted(slots.get(p, []), key=lambda x: x[0])] for p in projects}
 
 
 def _project_slug(name):
