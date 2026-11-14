@@ -9,7 +9,12 @@ readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
-    "twilio==8.5.0"
+    "twilio==8.5.0",
+    "bleach>=6.0.0",       # go1_cms/docs/render.py: sanitises the Markdown docs
+    "markdown2>=2.5.0",    # the same module
+    "pygments>=2.15.0",    # markdown2's fenced-code-blocks highlighting
+    "boto3>=1.28.0",       # s3_attachment.py
+    "tldextract>=5.0.0",   # domain handling
 ]
 
 [build-system]
