@@ -238,3 +238,6 @@ user_data_fields = [
 get_translated_dict = {
 	("doctype", "Global Defaults"): "frappe.geo.country_info.get_translated_dict"
 }
+
+# cms_frontend asks the host provider to scope each request to one website (extensions.py)
+cms_host_provider = ["go1_cms.agent"]
