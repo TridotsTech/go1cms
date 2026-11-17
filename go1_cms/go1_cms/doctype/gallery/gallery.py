@@ -11,7 +11,7 @@ class Gallery(Document):
 			if self.gallery:
 				count = 1
 				for d in self.gallery:
-					cover_image = frappe.get_list("Gallery Files",filters={"name":d.name,"is_cover_image":1})
+					cover_image = frappe.get_all("Gallery Files",filters={"name":d.name,"is_cover_image":1})
 					if not cover_image and d.is_cover_image==1 and not self.cover_image:
 						d.is_cover_image =1
 					cover_images = [x for x in self.gallery if x.is_cover_image==1]
