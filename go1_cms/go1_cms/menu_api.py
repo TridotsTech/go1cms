@@ -537,6 +537,20 @@ def get_menu_tree(menu=None, name=None, include_hidden=0):
 
 @frappe.whitelist()
 def get_menus(project=None):
+	"""The menu list, narrowed (for someone who does not see every project) to the menus they made and those of their projects."""
+	from go1_cms.go1_cms.cms_access import allowed_projects as _allowed
+
+	menus = _menus(project)
+	allowed = _allowed()
+	if allowed is None:
+		return menus
+	mine = set(frappe.get_all("Menu", filters={"owner": frappe.session.user}, pluck="name", ignore_permissions=True))
+	if allowed and frappe.get_meta("Menu").has_field("project"):
+		mine |= set(frappe.get_all("Menu", filters={"project": ["in", allowed]}, pluck="name", ignore_permissions=True))
+	return [m for m in menus if m.get("name") in mine]
+
+
+def _menus(project=None):
 	"""Menu list for the builder rail and the FB2 menu picker, with item counts.
 
 	With `project`, only that project's menus plus the shared ones (no project)

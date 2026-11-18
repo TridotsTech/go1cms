@@ -42,13 +42,15 @@ def _site_chrome():
 		nav.append({"label": "Learn", "href": "/learn", "key": "learn"})
 	if "pricing" in routes:
 		nav.append({"label": "Pricing", "href": "/pricing", "key": "pricing"})
-	has_panel = "go1_cpanel" in frappe.get_installed_apps()
-	logo = "/assets/go1_cpanel/site/go1-cms-logo.svg" if has_panel else "/assets/cms_frontend/frontend/favicon.svg"
+	# An app that runs a hosted service on this site (the control panel) sets the cms_docs_site hook: its logo, and where "open the app" goes.
+	site = frappe.get_hooks("cms_docs_site") or {}
+	if isinstance(site, (list, tuple)):
+		site = site[0] if site else {}
 	return {
-		"nav": nav, "github": GITHUB, "logo_url": logo,
+		"nav": nav, "github": GITHUB, "logo_url": site.get("logo") or "/assets/cms_frontend/frontend/favicon.svg",
 		"signup_route": "/signup" if "signup" in routes else None,
-		"panel_route": "/cms/panel" if has_panel else "/cms",
-		"panel_label": "Open control panel" if has_panel else "Open the CMS",
+		"panel_route": site.get("route") or "/cms",
+		"panel_label": site.get("label") or "Open the CMS",
 	}
 
 

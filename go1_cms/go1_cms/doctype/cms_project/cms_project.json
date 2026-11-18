@@ -10,7 +10,6 @@
   "project_name",
   "project_slug",
   "status",
-  "go1_site",
   "col_break",
   "estimated_costing",
   "favicon",
@@ -92,15 +91,6 @@
    "options": "Draft\nIn Progress\nPublished\nArchived"
   },
   {
-   "description": "The Go1 Site this website lives on (the Frappe Cloud site holding this database), set when the website is created. The panel's Go1 Site record has the same name.",
-   "fieldname": "go1_site",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Go1 Site",
-   "read_only": 1
-  },
-  {
    "fieldname": "col_break",
    "fieldtype": "Column Break"
   },
@@ -110,7 +100,7 @@
    "label": "Estimated Costing"
   },
   {
-   "description": "Browser-tab / home-screen icon for every page of this project (square PNG, 512×512 works best). Leave empty to use the CMS default.",
+   "description": "Browser-tab / home-screen icon for every page of this project (square PNG, 512\u00d7512 works best). Leave empty to use the CMS default.",
    "fieldname": "favicon",
    "fieldtype": "Attach Image",
    "label": "Favicon"
@@ -221,7 +211,7 @@
    "label": "Global JavaScript"
   },
   {
-   "description": "Runs once on every published page of this project (the storefront runtime, analytics hooks, shared helpers). Editable from the page builder under Settings › Global JS. Never runs inside the builder.",
+   "description": "Runs once on every published page of this project (the storefront runtime, analytics hooks, shared helpers). Editable from the page builder under Settings \u203a Global JS. Never runs inside the builder.",
    "fieldname": "global_js",
    "fieldtype": "Code",
    "label": "Global JS",
@@ -340,7 +330,7 @@
    "fieldname": "pwa_icon",
    "fieldtype": "Attach Image",
    "label": "App icon",
-   "description": "Square, at least 512 × 512."
+   "description": "Square, at least 512 \u00d7 512."
   },
   {
    "collapsible": 1,
@@ -381,7 +371,7 @@
    "fieldtype": "Long Text",
    "hidden": 1,
    "label": "Website CSS (draft)",
-   "description": "THM-06: one stylesheet for every page of this website — the builder's copy."
+   "description": "THM-06: one stylesheet for every page of this website \u2014 the builder's copy."
   },
   {
    "fieldname": "site_css_live",

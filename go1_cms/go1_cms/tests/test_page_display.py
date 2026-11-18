@@ -41,7 +41,7 @@ class TestPageDisplay(FrappeTestCase):
 
 	def tearDown(self):
 		frappe.set_user("Administrator")
-		frappe.local.cpanel_project = None
+		frappe.local.cms_scoped_project = None
 
 	# ── visitors ──────────────────────────────────────────────────────────
 
@@ -108,9 +108,9 @@ class TestPageDisplay(FrappeTestCase):
 
 	def test_a_websites_own_domain_never_serves_another_websites_page(self):
 		other = make_project("zz-ops09 other", "zz-ops09-other")
-		frappe.local.cpanel_project = other
+		frappe.local.cms_scoped_project = other
 		self.assertFalse(api.find_web_page_builder_by_route(self.live_route))
-		frappe.local.cpanel_project = self.project
+		frappe.local.cms_scoped_project = self.project
 		self.assertTrue(api.find_web_page_builder_by_route(self.live_route))
 
 	def test_no_route_finds_nothing(self):

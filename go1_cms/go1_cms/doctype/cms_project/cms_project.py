@@ -15,8 +15,8 @@ class CMSProject(Document):
 			self.append("members", {"user": user, "access": "Owner"})
 
 	def after_insert(self):
-		# A Panel Customer reaches pages through User Permissions (see
-		# cms_frontend.panel_agent.permissions); give them one on the website they made.
+		# A Panel Customer (the role self-sign-up gives) reaches pages through User Permissions (see
+		# cms_frontend.customer_permissions); give them one on the website they made.
 		user = frappe.session.user
 		roles = frappe.get_roles(user)
 		if "Panel Customer" not in roles or "System Manager" in roles:

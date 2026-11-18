@@ -250,9 +250,9 @@ def find_web_page_builder_by_route(route_str):
 	if r == "demo" or r == "":
 		possible_routes.extend(["/", "", "demo", "p/demo", "/p/demo"])
 
-	# A request on a website's own domain (control-panel agent: one site, several websites)
-	# only ever sees that website's pages; any other project's page is "not found" there.
-	only_project = getattr(frappe.local, "cpanel_project", None)
+	# A request scoped to one website (an app that serves several websites on one site, each on its own domain, sets
+	# frappe.local.cms_scoped_project) only ever sees that website's pages; any other project's page is "not found" there.
+	only_project = getattr(frappe.local, "cms_scoped_project", None)
 	filters = {'project': only_project} if only_project else {}
 
 	for pr in possible_routes:
@@ -988,6 +988,26 @@ def get_page_repeater_records(route=None, node_id=None, start=0, page_length=0, 
 
 @frappe.whitelist(allow_guest=False)
 def get_pages_list(start=0, page_length=24, search=None, status=None, project=None, tag=None):
+	"""The Pages screen's list, narrowed to the projects the user may open."""
+	from go1_cms.go1_cms.cms_access import allowed_projects as _allowed
+
+	allowed = _allowed()
+	if allowed is None:
+		return _pages_list(start, page_length, search, status, project, tag)
+	start, page_length = int(start), int(page_length)
+	if project:
+		if project not in allowed:
+			return {"pages": [], "has_more": False}
+		return _pages_list(start, page_length, search, status, project, tag)
+	# "All": merge the user's own projects, newest first, then page the merged list
+	rows = []
+	for p in allowed:
+		rows.extend(_pages_list(0, start + page_length + 1, search, status, p, tag)["pages"])
+	rows.sort(key=lambda r: str(r.get("modified") or ""), reverse=True)
+	return {"pages": rows[start:start + page_length], "has_more": len(rows) > start + page_length}
+
+
+def _pages_list(start=0, page_length=24, search=None, status=None, project=None, tag=None):
 	require_editor()
 	start = int(start)
 	page_length = int(page_length)
@@ -1141,6 +1161,23 @@ def _page_project_filter(project):
 
 @frappe.whitelist(allow_guest=False)
 def get_pages_stats(project=None):
+	"""The All / Live / Draft / Review / Scheduled counts, narrowed to the projects the user may open."""
+	from go1_cms.go1_cms.cms_access import allowed_projects as _allowed
+
+	allowed = _allowed()
+	if allowed is None:
+		return _pages_stats(project)
+	empty = {"All": 0, "Live": 0, "Draft": 0, "Review": 0, "Scheduled": 0}
+	if project:
+		return _pages_stats(project) if project in allowed else empty
+	total = dict(empty)
+	for p in allowed:
+		for key, value in _pages_stats(p).items():
+			total[key] = total.get(key, 0) + (value or 0)
+	return total
+
+
+def _pages_stats(project=None):
 	# `project` scopes the counts to one folder of the Pages screen, so the
 	# All / Publish / Draft tabs inside a project count that project alone.
 	require_editor()
@@ -1152,6 +1189,18 @@ def get_pages_stats(project=None):
 
 @frappe.whitelist(allow_guest=False)
 def get_page_projects():
+	"""The Pages screen's folders. Someone who does not see every project (cms_access.allowed_projects) gets only their own, and no
+	"Unassigned pages" folder."""
+	from go1_cms.go1_cms.cms_access import allowed_projects as _allowed
+
+	out = _page_projects()
+	allowed = _allowed()
+	if allowed is None:
+		return out
+	return [folder for folder in out if folder.get("name") in set(allowed)]
+
+
+def _page_projects():
 	"""The folders of the Pages screen: one per CMS Project, plus a virtual
 	"Unassigned" folder when pages exist without a project.
 
