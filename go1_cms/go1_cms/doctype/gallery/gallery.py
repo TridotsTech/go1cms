@@ -1,12 +1,37 @@
 # Copyright (c) 2022, Tridotstech and contributors
 # For license information, please see license.txt
 
+import re
+
 import frappe
 from frappe.model.document import Document
 
+
+def make_gallery_route(title):
+	"""'KRISHNA JEYANTHI 2026' -> 'gallery/krishna-jeyanthi-2026'"""
+	slug = re.sub(r"['’]", "", (title or "").lower())
+	slug = re.sub(r"[^a-z0-9]+", "-", slug).strip("-")
+	return f"gallery/{slug}" if slug else None
+
+
 class Gallery(Document):
-	# pass
 	def validate(self):
+		self.set_route()
+		self.set_cover_image()
+
+	def set_route(self):
+		# Fill the route from the title only when it is empty, or on a new
+		# gallery where it still holds the auto value. Existing routes are live
+		# URLs, so they are never rewritten.
+		base = make_gallery_route(self.title)
+		if not base or (self.route and not (self.is_new() and self.route == base)):
+			return
+		route, n = base, 2
+		while frappe.db.exists("Gallery", {"route": route, "name": ["!=", self.name]}):
+			route, n = f"{base}-{n}", n + 1
+		self.route = route
+
+	def set_cover_image(self):
 		try:
 			if self.gallery:
 				count = 1

@@ -5,6 +5,16 @@ frappe.ui.form.on('Gallery', {
 	refresh(frm){
 		$(`[data-route="Form/Gallery/${cur_frm.doc.name}"]`).find('[data-fieldname="gallery"]').find('.btn.btn-xs.btn-secondary.grid-add-row').css({"display":"none"})
 	},
+	title(frm) {
+		// Preview the route while typing a new gallery's title. The server
+		// (Gallery.set_route) makes it unique and never rewrites saved routes.
+		if (!frm.is_new() && frm.doc.route) return;
+		const slug = (frm.doc.title || "").toLowerCase()
+			.replace(/['’]/g, "")
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-+|-+$/g, "");
+		frm.set_value("route", slug ? `gallery/${slug}` : "");
+	},
 	attach_files(frm) {
 		let uploader = new frappe.ui.FileUploader({
 			as_dataurl: true,
