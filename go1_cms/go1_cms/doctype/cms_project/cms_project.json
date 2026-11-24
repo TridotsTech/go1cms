@@ -32,21 +32,7 @@
   "description",
   "global_js_section",
   "global_js",
-  "portal_section",
   "site_type",
-  "portal_signup",
-  "portal_home",
-  "portal_col",
-  "portal_party_type",
-  "portal_layout",
-  "portal_menu",
-  "portal_roles",
-  "portal_pay_section",
-  "portal_currency",
-  "razorpay_key_id",
-  "razorpay_key_secret",
-  "razorpay_webhook_secret",
-  "portal_pay_col",
   "pwa_enabled",
   "pwa_name",
   "pwa_color",
@@ -106,7 +92,7 @@
    "label": "Estimated Costing"
   },
   {
-   "description": "Browser-tab / home-screen icon for every page of this project (square PNG, 512\u00d7512 works best). Leave empty to use the CMS default.",
+   "description": "Browser-tab / home-screen icon for every page of this project (square PNG, 512×512 works best). Leave empty to use the CMS default.",
    "fieldname": "favicon",
    "fieldtype": "Attach Image",
    "label": "Favicon"
@@ -217,17 +203,11 @@
    "label": "Global JavaScript"
   },
   {
-   "description": "Runs once on every published page of this project (the storefront runtime, analytics hooks, shared helpers). Editable from the page builder under Settings \u203a Global JS. Never runs inside the builder.",
+   "description": "Runs once on every published page of this project (the storefront runtime, analytics hooks, shared helpers). Editable from the page builder under Settings › Global JS. Never runs inside the builder.",
    "fieldname": "global_js",
    "fieldtype": "Code",
    "label": "Global JS",
    "options": "JS"
-  },
-  {
-   "fieldname": "portal_section",
-   "fieldtype": "Section Break",
-   "label": "Portal",
-   "collapsible": 1
   },
   {
    "fieldname": "site_type",
@@ -236,83 +216,6 @@
    "options": "Website\nPortal\nWeb App",
    "default": "Website",
    "description": "Portals and web apps have signed-in members, roles and private pages."
-  },
-  {
-   "fieldname": "portal_signup",
-   "fieldtype": "Select",
-   "label": "New members",
-   "options": "Invite only\nApproval\nOpen",
-   "default": "Invite only",
-   "description": "Open: anyone can join. Approval: sign-ups wait for an owner. Invite only: members are added by an owner."
-  },
-  {
-   "fieldname": "portal_home",
-   "fieldtype": "Data",
-   "label": "After sign-in go to",
-   "description": "An address on this website, e.g. /acme/account."
-  },
-  {
-   "fieldname": "portal_col",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "portal_party_type",
-   "fieldtype": "Link",
-   "label": "Members are",
-   "options": "DocType",
-   "description": "Link each member to one of these records, e.g. Customer."
-  },
-  {
-   "fieldname": "portal_layout",
-   "fieldtype": "Select",
-   "label": "Members' pages look like",
-   "options": "Website pages\nApp layout",
-   "default": "App layout",
-   "description": "App layout: a sidebar menu, a top bar with notifications and the account menu, and tabs on phones."
-  },
-  {
-   "fieldname": "portal_menu",
-   "fieldtype": "Link",
-   "label": "App menu",
-   "options": "Menu",
-   "depends_on": "eval:doc.portal_layout=='App layout'"
-  },
-  {
-   "fieldname": "portal_roles",
-   "fieldtype": "Table",
-   "label": "Portal roles",
-   "options": "CMS Portal Role"
-  },
-  {
-   "fieldname": "portal_pay_section",
-   "fieldtype": "Section Break",
-   "label": "Portal payments and app",
-   "collapsible": 1
-  },
-  {
-   "fieldname": "portal_currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency"
-  },
-  {
-   "fieldname": "razorpay_key_id",
-   "fieldtype": "Data",
-   "label": "Razorpay key id"
-  },
-  {
-   "fieldname": "razorpay_key_secret",
-   "fieldtype": "Password",
-   "label": "Razorpay key secret"
-  },
-  {
-   "fieldname": "razorpay_webhook_secret",
-   "fieldtype": "Password",
-   "label": "Razorpay webhook secret"
-  },
-  {
-   "fieldname": "portal_pay_col",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "pwa_enabled",
@@ -336,7 +239,7 @@
    "fieldname": "pwa_icon",
    "fieldtype": "Attach Image",
    "label": "App icon",
-   "description": "Square, at least 512 \u00d7 512."
+   "description": "Square, at least 512 × 512."
   },
   {
    "collapsible": 1,
@@ -377,7 +280,7 @@
    "fieldtype": "Long Text",
    "hidden": 1,
    "label": "Website CSS (draft)",
-   "description": "THM-06: one stylesheet for every page of this website \u2014 the builder's copy."
+   "description": "THM-06: one stylesheet for every page of this website — the builder's copy."
   },
   {
    "fieldname": "site_css_live",
@@ -459,7 +362,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-24 13:30:00.000000",
+ "modified": "2026-11-24 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Project",
