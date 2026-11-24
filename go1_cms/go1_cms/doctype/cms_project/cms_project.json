@@ -63,7 +63,13 @@
   "brand_voice_audience",
   "brand_voice_use",
   "brand_voice_avoid",
-  "brand_voice_notes"
+  "brand_voice_notes",
+  "frontend_stack",
+  "site_chrome_section",
+  "site_header_draft",
+  "site_header_live",
+  "site_footer_draft",
+  "site_footer_live"
  ],
  "fields": [
   {
@@ -411,11 +417,49 @@
    "fieldname": "brand_voice_notes",
    "fieldtype": "Small Text",
    "label": "Other notes on how we write"
+  },
+  {
+   "default": "vue",
+   "fieldname": "frontend_stack",
+   "fieldtype": "Select",
+   "label": "Frontend Stack",
+   "options": "vue\nreact",
+   "description": "How the public pages are rendered. React is for paid plans."
+  },
+  {
+   "fieldname": "site_chrome_section",
+   "fieldtype": "Section Break",
+   "label": "Site-wide header and footer",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "site_header_draft",
+   "fieldtype": "Long Text",
+   "label": "Header (draft)",
+   "hidden": 1
+  },
+  {
+   "fieldname": "site_header_live",
+   "fieldtype": "Long Text",
+   "label": "Header (live)",
+   "hidden": 1
+  },
+  {
+   "fieldname": "site_footer_draft",
+   "fieldtype": "Long Text",
+   "label": "Footer (draft)",
+   "hidden": 1
+  },
+  {
+   "fieldname": "site_footer_live",
+   "fieldtype": "Long Text",
+   "label": "Footer (live)",
+   "hidden": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-30 22:00:00.000000",
+ "modified": "2026-11-24 13:30:00.000000",
  "modified_by": "Administrator",
  "module": "Go1 CMS",
  "name": "CMS Project",
